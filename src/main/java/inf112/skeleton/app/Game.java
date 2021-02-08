@@ -26,6 +26,13 @@ public class Game extends InputAdapter implements ApplicationListener {
 
     // The board layer in the map
     private TiledMapTileLayer Board;
+    private TiledMapTileLayer Player;
+
+    // Cell for player state
+    private TiledMapTileLayer.Cell playerNormal;
+
+    // Player position initialized at 0, 0
+    private Vector2 playerPos = new Vector2(0, 0);
 
     // Renderer & camera
     private OrthogonalTiledMapRenderer renderer;
@@ -44,6 +51,7 @@ public class Game extends InputAdapter implements ApplicationListener {
         Gdx.input.setInputProcessor(this);
 
         loadMapLayers();
+        loadPlayerTextures();
         initializeRendering();
     }
 
@@ -55,8 +63,26 @@ public class Game extends InputAdapter implements ApplicationListener {
         TmxMapLoader tmxMap = new TmxMapLoader();
         tiledMap = tmxMap.load("assets/test-map.tmx");
 
-        // Load board layer from entire map to board layer
+        // Load all layer from entire map to seperate layers
         Board  = (TiledMapTileLayer) tiledMap.getLayers().get("Board");
+        Player = (TiledMapTileLayer) tiledMap.getLayers().get("Player");
+    }
+
+    /**
+     * Load player texture and split into each player state
+     */
+    private void loadPlayerTextures(){
+        // Load the entire player texture
+        Texture rawPlayerTexture = new Texture("assets/player.png");
+
+        // Split player texture into seperate regions
+        TextureRegion [][] splitTextures = TextureRegion.split(rawPlayerTexture,300, 300);
+
+        // Put the texture regions into seperate tiles
+        StaticTiledMapTile playerNormalStaticTile = new StaticTiledMapTile(splitTextures[0][0]);
+
+        // Set player state cells to corresponding tiles
+        playerNormal = new TiledMapTileLayer.Cell().setTile(playerNormalStaticTile);
     }
 
     /**
@@ -88,6 +114,9 @@ public class Game extends InputAdapter implements ApplicationListener {
     public void render() {
         Gdx.gl.glClearColor(1, 1, 1, 1);
         Gdx.gl.glClear(GL30.GL_COLOR_BUFFER_BIT);
+
+        // Set player cell to render
+        Player.setCell((int) playerPos.x, (int) playerPos.y, playerNormal);
 
         // Render frame
         renderer.render();
