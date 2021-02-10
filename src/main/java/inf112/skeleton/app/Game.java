@@ -29,9 +29,10 @@ public class Game extends InputAdapter implements ApplicationListener {
     // Entire map
     private TiledMap tiledMap;
 
-    // The board layer in the map
+    // Layers in the tiledMap
     private TiledMapTileLayer Board;
     private TiledMapTileLayer Player;
+    private TiledMapTileLayer Flag;
 
     // Cell for player state
     private TiledMapTileLayer.Cell playerNormal;
@@ -68,6 +69,7 @@ public class Game extends InputAdapter implements ApplicationListener {
         // Load all layer from entire map to seperate layers
         Board  = (TiledMapTileLayer) tiledMap.getLayers().get("Board");
         Player = (TiledMapTileLayer) tiledMap.getLayers().get("Player");
+        Flag   = (TiledMapTileLayer) tiledMap.getLayers().get("Flag");
     }
 
     /**
