@@ -2,6 +2,7 @@ package inf112.skeleton.app;
 
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL30;
@@ -21,6 +22,10 @@ public class Game extends InputAdapter implements ApplicationListener {
     private SpriteBatch batch;
     private BitmapFont font;
 
+    // Board dimensions
+    private int BOARD_X = 5;
+    private int BOARD_Y = 5;
+
     // Entire map
     private TiledMap tiledMap;
 
@@ -37,9 +42,6 @@ public class Game extends InputAdapter implements ApplicationListener {
     // Renderer & camera
     private OrthogonalTiledMapRenderer renderer;
     private OrthographicCamera camera;
-    // Camera dimensions
-    private int CAMERA_X = 5;
-    private int CAMERA_Y = 5;
 
     @Override
     public void create() {
@@ -91,8 +93,8 @@ public class Game extends InputAdapter implements ApplicationListener {
     private void initializeRendering(){
         // Initialize camera object
         camera = new OrthographicCamera();
-        // Set camera to orthographic
-        camera.setToOrtho(false, CAMERA_X, CAMERA_Y);
+        // Set camera to orthographic, size board dimensions
+        camera.setToOrtho(false, BOARD_X, BOARD_Y);
         // Set camera X-position
         camera.position.x = 2.5F;
         // Update changes to camera
@@ -108,6 +110,62 @@ public class Game extends InputAdapter implements ApplicationListener {
     public void dispose() {
         batch.dispose();
         font.dispose();
+    }
+
+    /**
+     * This function is called by libgdx when a key is released.
+     *
+     * @param keyCode keycode of key released
+     * @return true if keyrelease was handled
+     */
+    @Override
+    public boolean keyUp (int keyCode){
+        // Clear current player cell regardless of whether player moved
+        Player.setCell((int)playerPos.x, (int)playerPos.y, new TiledMapTileLayer.Cell());
+
+        switch (keyCode){
+            case Input.Keys.LEFT:
+                if (playerPos.x > 0){
+                    // Update player position
+                    playerPos.x-=1;
+
+                    // Key release was handled, so return true
+                    return true;
+                }
+                break;
+            case Input.Keys.RIGHT:
+                if (playerPos.x < BOARD_X-1){
+                    // Update player position
+                    playerPos.x+=1;
+
+                    // Key release was handled, so return true
+                    return true;
+                }
+                break;
+            case Input.Keys.UP:
+                if (playerPos.y < BOARD_Y-1){
+                    // Update player position
+                    playerPos.y+=1;
+
+                    // Key release was handled, so return true
+                    return true;
+                }
+                break;
+            case Input.Keys.DOWN:
+                if (playerPos.y > 0){
+                    // Update player position
+                    playerPos.y-=1;
+
+                    // Key release was handled, so return true
+                    return true;
+                }
+                break;
+            default:
+                break;
+        }
+
+        // Key press wasn't handled, so return false
+        return false;
     }
 
     @Override
