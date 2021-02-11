@@ -22,10 +22,15 @@ Kommunikasjon vil i all hovudsak foregå på discord og messenger og vi vil nytt
 
 ### Deloppgave 3: venta produkt
 
-Målet med produktet er å ha en versjon av RoboRally som kan spilles over nett, med nok funksjonalitet til at det er en gøy opplevelse for alle innvolvert.
+Målet med produktet er å ha ein versjon av RoboRally som kan spelast over nett, med nok funksjonalitet til at det er ein kjekk oppleving for alle dei involverte.
 
 * Brukarhistoriane ligg i README.md i prioritert rekkefølge
 
+### Oppsummering 
+
+For å summere opp tykkjer vi prosjektet så langt har stort sett gått bra. Valet om å gjere all koden i plenum førte til at alle til ein kvar tid var oppdatert. Prosjektstrukturen vår var til dels avhengig av at alle medlemma stilte opp på alle møtene og det kunne ha vore ei potensiell fallgruve, men alle medlemma møtte på alle møtene. I tillegg vil vi spesielt påpeike at kommunikasjon og møtestruktur har utmerka seg positivt. På møtene var det låg terskel for diskusjon noko som var fruktbart for sluttresultatet, spesielt då med tanke på brukarhistoriane, som vi hadde fleire runder med. Vi satte oss enkle, oppnåelege mål og arbeida i eit fornuftig og jamt tempo.
+
+Til neste gong ynskjer vi å ha kodestrukturen klar før vi byrjar å programmere, slik at vi sleppe å gjere om på ting. Vi ynskjer også å arbeide litt meir strukturert, men innser at dette har til dels blitt påverka av korona då vi tenkjer at fysiske møter kunne ha vore ei positiv verknad. I tillegg har vi ikkje skilt visningslogikk frå forretningslogikk, men det er også noko som skal gjerast til neste gong. Vi håper også at vi skal få høve til å teste det faktiske spelet fysisk til neste innlevering. 
 
 
 
