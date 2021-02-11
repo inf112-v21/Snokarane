@@ -1,6 +1,6 @@
 # Description
 
-A java implementaion of the game "RoboRally" using the libgdx library.
+A work in progress java implementaion of the game "RoboRally" using the libgdx library.
 
 
 # How to run
