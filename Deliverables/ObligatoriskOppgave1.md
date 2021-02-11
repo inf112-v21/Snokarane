@@ -1,6 +1,6 @@
-#Obligatorisk Oppgave 1
+# Obligatorisk Oppgave 1
 
-###Deloppgave 1: Organisering av teamet
+### Deloppgave 1: Organisering av teamet
 
 
 Jørgen, Audun og Peter har jamt over bra med kodeerfaring mellom anna frå INF100, 
@@ -15,5 +15,5 @@ Vi ser for oss at dette berre er eit utgangspunkt for prosjektet og at rollane v
 TODO: LSKlrive at vi har prosjet board på github (på nynorsk)
 
 
-###Deloppgave 2: prosess for laget
+### Deloppgave 2: prosess for laget
 
