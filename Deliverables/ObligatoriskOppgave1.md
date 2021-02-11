@@ -24,7 +24,7 @@ Kommunikasjon vil i all hovudsak foregå på discord og messenger og vi vil nytt
 
 Målet med produktet er å ha en versjon av RoboRally som kan spilles over nett, med nok funksjonalitet til at det er en gøy opplevelse for alle innvolvert.
 
-* Brukarhistoriane ligg i README.md
+* Brukarhistoriane ligg i README.md i prioritert rekkefølge
 
 
 
