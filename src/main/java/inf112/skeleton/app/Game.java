@@ -20,43 +20,54 @@ import com.badlogic.gdx.maps.tiled.tiles.StaticTiledMapTile;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Handles rendering, textures and event handling (key presses)
+ * Currently this class also contains most of the game logic
+ */
 public class Game extends InputAdapter implements ApplicationListener {
+    // For rendering text to screen
     private SpriteBatch batch;
     private BitmapFont font;
 
-    // Board dimensions
+    // Board dimensions (amount of tiles in X and Y direction)
     private int BOARD_X = 5;
     private int BOARD_Y = 5;
 
     // Entire map (graphic)
     private TiledMap tiledMap;
 
-    // Layers in the tiledMap
+    // Layers from the tiledMap
     private TiledMapTileLayer boardLayer;
     private TiledMapTileLayer playerLayer;
     private TiledMapTileLayer flagLayer;
 
-    // Flag positions in the map
+    // Flags on the map are stored here for easy access
     List<Flag> flagPositions;
 
-    // Cell for player state
+    // Cells for each player state
     private TiledMapTileLayer.Cell playerNormal;
     private TiledMapTileLayer.Cell playerWon;
 
-    // Player object
+    // Player object that stores player win state, flags visited and coordinates
     Player player;
 
-    // Renderer & camera
     private OrthogonalTiledMapRenderer renderer;
     private OrthographicCamera camera;
 
+    /**
+     * Initialize all libgdx objects:
+     *  Batch, font, input processor, textures, map layers, camera and renderer,
+     * and Fetch flags from flag layer
+     *
+     * This function is called on libgdx startup
+     */
     @Override
     public void create() {
         batch = new SpriteBatch();
         font = new BitmapFont();
         font.setColor(Color.RED);
 
-        // Register input processor
+        // Register input processor to handle key presses
         Gdx.input.setInputProcessor(this);
 
         // Create a player to move around the screen
@@ -74,14 +85,14 @@ public class Game extends InputAdapter implements ApplicationListener {
     }
 
     /**
-     * Load map layers into each member variable
+     * Load all map layers into their own member variable
      */
     private void loadMapLayers(){
-        // Load .tmx file
+        // Load .tmx file into tiledMap member
         TmxMapLoader tmxMap = new TmxMapLoader();
         tiledMap = tmxMap.load("assets/test-map.tmx");
 
-        // Load all layer from entire map to seperate layers
+        // Separate each layer from tiledMap
         boardLayer = (TiledMapTileLayer) tiledMap.getLayers().get("Board");
         playerLayer = (TiledMapTileLayer) tiledMap.getLayers().get("Player");
         flagLayer = (TiledMapTileLayer) tiledMap.getLayers().get("Flag");
@@ -116,12 +127,11 @@ public class Game extends InputAdapter implements ApplicationListener {
         camera.setToOrtho(false, BOARD_X, BOARD_Y);
         // Set camera X-position
         camera.position.x = 2.5F;
-        // Update changes to camera
         camera.update();
 
-        // Initialize renderer                                           v--- tile size
+        // Initialize renderer                                  v--- 300F is tile size
         renderer = new OrthogonalTiledMapRenderer(tiledMap, 1F/300F);
-        // Set view to camera
+        // Set renderer to view camera
         renderer.setView(camera);
     }
 
@@ -135,13 +145,13 @@ public class Game extends InputAdapter implements ApplicationListener {
     public boolean keyUp (int keyCode){
         boolean keyHandled = false;
 
-        // Clear current player cell regardless of whether player moved
+        // Clear current player cell regardless of whether player moved, since it's set again in render()
         playerLayer.setCell(player.getX(), player.getY(), new TiledMapTileLayer.Cell());
 
         switch (keyCode){
             case Input.Keys.LEFT:
                 if (player.getX() > 0){
-                    // Update player position
+                    // Update player position to left
                     player.move(-1, 0);
 
                     keyHandled = true;
@@ -149,7 +159,7 @@ public class Game extends InputAdapter implements ApplicationListener {
                 break;
             case Input.Keys.RIGHT:
                 if (player.getX() < BOARD_X-1){
-                    // Update player position
+                    // Update player position to right
                     player.move(1, 0);
 
                     keyHandled = true;
@@ -157,7 +167,7 @@ public class Game extends InputAdapter implements ApplicationListener {
                 break;
             case Input.Keys.UP:
                 if (player.getY() < BOARD_Y-1){
-                    // Update player position
+                    // Update player position to up
                     player.move(0, 1);
 
                     keyHandled = true;
@@ -165,7 +175,7 @@ public class Game extends InputAdapter implements ApplicationListener {
                 break;
             case Input.Keys.DOWN:
                 if (player.getY() > 0){
-                    // Update player position
+                    // Update player position to down
                     player.move(0, -1);
 
                     keyHandled = true;
@@ -175,6 +185,8 @@ public class Game extends InputAdapter implements ApplicationListener {
                 break;
         }
 
+        // There aren't any good places to check for win conditions right now, so we will have to do this here,
+        // As the keyUp function is the best place to handle something that is to be checked every time we press a key
         if (keyHandled){
             checkForFlags();
             checkIfPlayerWon();
@@ -188,7 +200,7 @@ public class Game extends InputAdapter implements ApplicationListener {
      * Check if player moved on a flag
      */
     public void checkForFlags(){
-        // Check if player moved onto a flag 
+        // Check if player moved onto a flag
         for (Flag f : flagPositions){
             if (f.getX() == player.getX() && f.getY() == player.getY()){
                 player.visitFlag(f);
@@ -196,23 +208,25 @@ public class Game extends InputAdapter implements ApplicationListener {
         }
     }
 
+    /**
+     * This function sets player win state to true if the visited flags amount equal all flags count in map
+     */
     public void checkIfPlayerWon(){
-        // There aren't any good places to check for win conditions right now, so we will have to do this here,
-        // As the keyUp function is the best place to handle something that is to be checked every time we press a key
         if (player.getVisitedFlags().size() == flagPositions.size()){
             player.isWinner = true;
         }
     }
 
     /**
-     * Get all flag positions in layer
-     * @return list of flag coordinates as GridPoint2 objects
+     * Get all flag positions in layer flag layer
+     * @return list of all flags found
      */
     private List<Flag> getFlagPositions(){
         List<Flag> flags = new ArrayList<>();
 
         for (int i = 0; i <= flagLayer.getWidth(); i++){
             for (int j = 0; j <= flagLayer.getHeight(); j++){
+                // getCell returns null if nothing is found in the current cell in this layer
                 if (flagLayer.getCell(i, j) != null){
                     flags.add(new Flag(i, j));
                 }
@@ -221,22 +235,27 @@ public class Game extends InputAdapter implements ApplicationListener {
         return flags;
     }
 
+    /**
+     * Render all objects and text to the screen
+     */
     @Override
     public void render() {
         Gdx.gl.glClearColor(1, 1, 1, 1);
         Gdx.gl.glClear(GL30.GL_COLOR_BUFFER_BIT);
 
+        // Shows player texture depending on if player has won or not
         if (player.isWinner){
             playerLayer.setCell(player.getX(), player.getY(), playerWon);
         } else {
             // Set player cell to render
             playerLayer.setCell(player.getX(), player.getY(), playerNormal);
         }
-        // Render frame
+
+        // Render current frame to screen
         renderer.render();
 
-        // TEMPORARY: write some text to show the player they won
-        // This has to be placed after renderer.render() else it doesnt show
+        // Write some text to show the player they won
+        // This has to be placed after renderer.render() else it doesn't show on screen
         if (player.isWinner){
             batch.begin();
             font.draw(batch, "Player won!", 200, 100);
