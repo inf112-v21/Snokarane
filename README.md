@@ -1,3 +1,14 @@
+# Description
+
+A java implementaion of the game "RoboRally" using the libgdx library.
+
+
+# How to run
+1. Clone project using Git
+2. Run Main.java
+
+
+
 # Brukarhistorier
  
 ### Historie #1: 
