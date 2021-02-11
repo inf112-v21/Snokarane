@@ -9,6 +9,9 @@ public class Player {
     // Player position initialized at 0, 0
     private GridPoint2 position = new GridPoint2(0, 0);
 
+    // Win/Lose state of player
+    public boolean isWinner = false;
+
     // All flags visited
     private List<Flag> flagsVisited = new ArrayList<>();
 
