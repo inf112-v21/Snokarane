@@ -7,7 +7,7 @@ import static org.junit.Assert.assertEquals;
 public class FlagTest {
 
     @Test
-    public void PlayerIsInitializedAtPosition00(){
+    public void FlagIsInitializedAtCorrectPosition(){
         Flag flag = new Flag(0, 1);
 
         assertEquals(flag.getX(), 0);
