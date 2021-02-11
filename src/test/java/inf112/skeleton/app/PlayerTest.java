@@ -1,5 +1,6 @@
 package inf112.skeleton.app;
 
+import org.junit.Before;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -9,18 +10,21 @@ import static org.junit.Assert.*;
 
 public class PlayerTest {
 
+    Player player;
+
+    @Before
+    public void init(){
+        player = new Player();
+    }
+
     @Test
     public void PlayerIsInitializedAtPosition00(){
-        Player player = new Player();
-
         assertEquals(player.getX(), 0);
         assertEquals(player.getY(), 0);
     }
 
     @Test
     public void PlayerCoordinatesAreUpdatedWhenMoved(){
-        Player player = new Player();
-
         player.move(1, 1);
 
         assertEquals(player.getX(), 1);
@@ -29,7 +33,6 @@ public class PlayerTest {
 
     @Test
     public void visitFlagThatIsNotAlreadyVisited(){
-        Player player = new Player();
         Flag flag = new Flag(2, 2);
 
         assertTrue(player.visitFlag(flag));
@@ -38,7 +41,6 @@ public class PlayerTest {
 
     @Test
     public void visitFlagThatHasBeenVisited(){
-        Player player = new Player();
         Flag flag = new Flag(2, 2);
         player.visitFlag(flag);
 
