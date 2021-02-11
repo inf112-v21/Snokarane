@@ -22,7 +22,7 @@ Kommunikasjon vil i all hovudsak foregå på discord og messenger og vi vil nytt
 
 ### Deloppgave 3: venta produkt
 
-TODO: skrive ei god skildring av målet med produktet
+Målet med produktet er å ha en versjon av RoboRally som kan spilles over nett, med nok funksjonalitet til at det er en gøy opplevelse for alle innvolvert.
 
 * Brukarhistoriane ligg i README.md
 
