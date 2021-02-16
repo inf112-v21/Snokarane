@@ -88,6 +88,7 @@ Planleggje og organisere vidare arbeid
 **Møtte:** Jørgen Lohne, Hallvard Kobbeltveit, Audun Ljone Henriksen og Peter Augustin Gillow Krooni
 
 **Diskusjon/arbeid:**
-- Fortsatte på programmeringa i plenum
-- Byrja på arbeidet med å leggje 
+- Fortsatte/gjorde ferdig programmeringa i plenum
+- Byrja på arbeidet med å leggje all dokumentasjon inn i Git i markdown-format
 
+**Neste møte:** 17.02
