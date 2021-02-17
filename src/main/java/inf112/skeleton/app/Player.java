@@ -2,6 +2,10 @@ package inf112.skeleton.app;
 
 import com.badlogic.gdx.math.GridPoint2;
 
+import com.esotericsoftware.kryonet.Client;
+import com.esotericsoftware.kryonet.Connection;
+import com.esotericsoftware.kryonet.Listener;
+
 import java.util.*;
 
 public class Player {
