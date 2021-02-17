@@ -17,9 +17,6 @@ import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.maps.tiled.tiles.StaticTiledMapTile;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * Handles rendering, textures and event handling (key presses)
  * Currently this class also contains most of the game logic
@@ -29,9 +26,8 @@ public class Game extends InputAdapter implements ApplicationListener {
     private SpriteBatch batch;
     private BitmapFont font;
 
-    // Board dimensions (amount of tiles in X and Y direction)
-    private int BOARD_X = 5;
-    private int BOARD_Y = 5;
+    // Game map object
+    private Map gameMap;
 
     // Entire map (graphic)
     private TiledMap tiledMap;
@@ -40,9 +36,6 @@ public class Game extends InputAdapter implements ApplicationListener {
     private TiledMapTileLayer boardLayer;
     private TiledMapTileLayer playerLayer;
     private TiledMapTileLayer flagLayer;
-
-    // Flags on the map are stored here for easy access
-    List<Flag> flagPositions;
 
     // Cells for each player state
     private TiledMapTileLayer.Cell playerNormal;
@@ -73,26 +66,35 @@ public class Game extends InputAdapter implements ApplicationListener {
         // Create a player to move around the screen
         player = new Player();
 
-        // Load all separate map layers
-        loadMapLayers();
-        // Load in all the different textures for the player
+        // Initialize game map
+        gameMap = new Map();
+
+        // Load .tmx file from disk
+        tiledMap = loadTileMapFromFile("assets/test-map.tmx");
+        // Load map layers from tiledMap into separate layers
+        loadMapLayers(tiledMap);
+        // Initialize player textures from .png file
         loadPlayerTextures();
+        // Get flag positions from flag layer into gameMap
+        gameMap.getFlagPositionsFromLayer(flagLayer);
+
         // Start camera/rendering
         initializeRendering();
+    }
 
-        // Get all flag positions from Flag layer and store them as Flag objects
-        flagPositions = getFlagPositions();
+    /**
+     * @return TiledMap object loaded from path
+     * @param path path to .tmx file for map
+     */
+    public TiledMap loadTileMapFromFile(String path){
+        return new TmxMapLoader().load(path);
     }
 
     /**
      * Load all map layers into their own member variable
      */
-    private void loadMapLayers(){
-        // Load .tmx file into tiledMap member
-        TmxMapLoader tmxMap = new TmxMapLoader();
-        tiledMap = tmxMap.load("assets/test-map.tmx");
-
-        // Separate each layer from tiledMap
+    public void loadMapLayers(TiledMap tiledMap){
+        // Separate each layer from the tiledMap
         boardLayer = (TiledMapTileLayer) tiledMap.getLayers().get("Board");
         playerLayer = (TiledMapTileLayer) tiledMap.getLayers().get("Player");
         flagLayer = (TiledMapTileLayer) tiledMap.getLayers().get("Flag");
@@ -101,12 +103,12 @@ public class Game extends InputAdapter implements ApplicationListener {
     /**
      * Load player texture and split into each player state
      */
-    private void loadPlayerTextures(){
+    public void loadPlayerTextures(){
         // Load the entire player texture
         Texture rawPlayerTexture = new Texture("assets/player.png");
 
         // Split player texture into seperate regions
-        TextureRegion [][] splitTextures = TextureRegion.split(rawPlayerTexture,300, 300);
+        TextureRegion[][] splitTextures = TextureRegion.split(rawPlayerTexture,300, 300);
 
         // Put the texture regions into seperate tiles
         StaticTiledMapTile playerNormalStaticTile = new StaticTiledMapTile(splitTextures[0][0]);
@@ -124,7 +126,7 @@ public class Game extends InputAdapter implements ApplicationListener {
         // Initialize camera object
         camera = new OrthographicCamera();
         // Set camera to orthographic, size board dimensions
-        camera.setToOrtho(false, BOARD_X, BOARD_Y);
+        camera.setToOrtho(false, gameMap.getBoardX(), gameMap.getBoardY());
         // Set camera X-position
         camera.position.x = 2.5F;
         camera.update();
@@ -158,7 +160,7 @@ public class Game extends InputAdapter implements ApplicationListener {
                 }
                 break;
             case Input.Keys.RIGHT:
-                if (player.getX() < BOARD_X-1){
+                if (player.getX() < gameMap.getBoardX()-1){
                     // Update player position to right
                     player.move(1, 0);
 
@@ -166,7 +168,7 @@ public class Game extends InputAdapter implements ApplicationListener {
                 }
                 break;
             case Input.Keys.UP:
-                if (player.getY() < BOARD_Y-1){
+                if (player.getY() < gameMap.getBoardY()-1){
                     // Update player position to up
                     player.move(0, 1);
 
@@ -188,51 +190,12 @@ public class Game extends InputAdapter implements ApplicationListener {
         // There aren't any good places to check for win conditions right now, so we will have to do this here,
         // As the keyUp function is the best place to handle something that is to be checked every time we press a key
         if (keyHandled){
-            checkForFlags();
-            checkIfPlayerWon();
+            player = gameMap.checkForFlags(player);
+            player = gameMap.checkIfPlayerWon(player);
         }
 
         // Return key press flag
         return keyHandled;
-    }
-
-    /**
-     * Check if player moved on a flag
-     */
-    public void checkForFlags(){
-        // Check if player moved onto a flag
-        for (Flag f : flagPositions){
-            if (f.getX() == player.getX() && f.getY() == player.getY()){
-                player.visitFlag(f);
-            }
-        }
-    }
-
-    /**
-     * This function sets player win state to true if the visited flags amount equal all flags count in map
-     */
-    public void checkIfPlayerWon(){
-        if (player.getVisitedFlags().size() == flagPositions.size()){
-            player.isWinner = true;
-        }
-    }
-
-    /**
-     * Get all flag positions in layer flag layer
-     * @return list of all flags found
-     */
-    private List<Flag> getFlagPositions(){
-        List<Flag> flags = new ArrayList<>();
-
-        for (int i = 0; i <= flagLayer.getWidth(); i++){
-            for (int j = 0; j <= flagLayer.getHeight(); j++){
-                // getCell returns null if nothing is found in the current cell in this layer
-                if (flagLayer.getCell(i, j) != null){
-                    flags.add(new Flag(i, j));
-                }
-            }
-        }
-        return flags;
     }
 
     /**
