@@ -12,7 +12,7 @@ Hallvard stiller med mindre kodeerfaring og dermed fann vi det naturleg at han g
 Vi ser for oss at dette berre er eit utgangspunkt for prosjektet og at rollane vil flyte over i kvarandre utover i prosjektet. Vi bestemte oss for å ha procject board på github då dette er alle noko er kjent med frå før.
 
 
-### Deloppgave 2: prosess for laget
+### Deloppgave 2: Prosess for laget
 
 Vi kjem til å forsøke å ha fokus på test-driven development i løpet av prosjektet. Dette fordi vi meiner det ser ut til å vere eit godt utgangspunkt i samband med korleis faget ser ut til å vektleggje det i tillegg til at dette er noko samtlege har lyst til å lære seg. Samstundes vil det bli ein del parprogrammering, spesielt i starten, delvis for å kompensere for at vi ikkje kan møtast fysisk, men også grunna forskjellane i kompetansenivået slik at alle skal få høve til å bidra. 
  
@@ -20,7 +20,7 @@ I tillegg til dei faste møtene kvar onsdag, ynskjer vi å møtes måndager kl 1
  
 Kommunikasjon vil i all hovudsak foregå på discord og messenger og vi vil nytte oss av github, google docs og andre relevante medium for deling og oppbevaring av felles dokument. Vi er alle einige om at det skal vere låg terskel for å ta kontakt dersom ein lurer på noko.
 
-### Deloppgave 3: venta produkt
+### Deloppgave 3: Venta produkt
 
 Målet med produktet er å ha ein versjon av RoboRally som kan spelast over nett, med nok funksjonalitet til at det er ein kjekk oppleving for alle dei involverte.
 
