@@ -3,6 +3,7 @@ package inf112.skeleton.app;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.tiled.TiledMap;
+import com.badlogic.gdx.maps.tiled.TiledMapTile;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.tiles.StaticTiledMapTile;
@@ -10,13 +11,18 @@ import com.badlogic.gdx.maps.tiled.tiles.StaticTiledMapTile;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Handles actions of the objects on the map
+ */
 public class Map {
 
-    private List<Flag> flags = new ArrayList<>();
-    private List<Player> players = new ArrayList<>();
+    private static final int BOARD_X = 5;
+    private static final int BOARD_Y = 5;
 
-    private int BOARD_X = 5;
-    private int BOARD_Y = 5;
+    // Layers of the map
+    private TiledMapTileLayer boardLayer;
+    private TiledMapTileLayer playerLayer;
+    private TiledMapTileLayer flagLayer;
 
     // Flags on the map are stored here for easy access
     List<Flag> flagPositions = new ArrayList<>();
@@ -32,17 +38,22 @@ public class Map {
     }
 
     /**
-     * @return TiledMap object loaded from path
-     * @param path path to .tmx file for map
+     * Load all map layers into their own member variable
      */
-    public TiledMap loadTileMapFromFile(String path){
-        return new TmxMapLoader().load(path);
+    public void loadMapLayers(TiledMap tiledMap){
+        // Separate each layer from the tiledMap
+        boardLayer = (TiledMapTileLayer) tiledMap.getLayers().get("Board");
+        playerLayer = (TiledMapTileLayer) tiledMap.getLayers().get("Player");
+        flagLayer = (TiledMapTileLayer) tiledMap.getLayers().get("Flag");
+
+        // Sneakily yoink the positions of the flags here, don't tell the OOP police
+        getFlagPositionsFromLayer(flagLayer);
     }
 
     /**
      * Get all flag positions in layer flag layer
      */
-    public void getFlagPositionsFromLayer(TiledMapTileLayer flagLayer){
+    private void getFlagPositionsFromLayer(TiledMapTileLayer flagLayer){
         List<Flag> flags = new ArrayList<>();
 
         for (int i = 0; i <= flagLayer.getWidth(); i++){
@@ -77,5 +88,21 @@ public class Map {
             player.isWinner = true;
         }
         return player;
+    }
+
+    /**
+     * Clear cell at
+     * @param player location (x, y)
+     */
+    public void clearPlayerCell(Player player){
+        playerLayer.setCell(player.getX(), player.getY(), new TiledMapTileLayer.Cell());
+    }
+
+    /**
+     * Set cell at
+     * @param player location (x, y)
+     */
+    public void setPlayerCell(Player player, TiledMapTileLayer.Cell cell){
+        playerLayer.setCell(player.getX(), player.getY(), cell);
     }
 }

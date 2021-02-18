@@ -32,11 +32,6 @@ public class Game extends InputAdapter implements ApplicationListener {
     // Entire map (graphic)
     private TiledMap tiledMap;
 
-    // Layers from the tiledMap
-    private TiledMapTileLayer boardLayer;
-    private TiledMapTileLayer playerLayer;
-    private TiledMapTileLayer flagLayer;
-
     // Cells for each player state
     private TiledMapTileLayer.Cell playerNormal;
     private TiledMapTileLayer.Cell playerWon;
@@ -71,12 +66,11 @@ public class Game extends InputAdapter implements ApplicationListener {
 
         // Load .tmx file from disk
         tiledMap = loadTileMapFromFile("assets/test-map.tmx");
-        // Load map layers from tiledMap into separate layers
-        loadMapLayers(tiledMap);
+        // Load map layers from tiledMap into separate layers in Map
+        gameMap.loadMapLayers(tiledMap);
+
         // Initialize player textures from .png file
         loadPlayerTextures();
-        // Get flag positions from flag layer into gameMap
-        gameMap.getFlagPositionsFromLayer(flagLayer);
 
         // Start camera/rendering
         initializeRendering();
@@ -88,16 +82,6 @@ public class Game extends InputAdapter implements ApplicationListener {
      */
     public TiledMap loadTileMapFromFile(String path){
         return new TmxMapLoader().load(path);
-    }
-
-    /**
-     * Load all map layers into their own member variable
-     */
-    public void loadMapLayers(TiledMap tiledMap){
-        // Separate each layer from the tiledMap
-        boardLayer = (TiledMapTileLayer) tiledMap.getLayers().get("Board");
-        playerLayer = (TiledMapTileLayer) tiledMap.getLayers().get("Player");
-        flagLayer = (TiledMapTileLayer) tiledMap.getLayers().get("Flag");
     }
 
     /**
@@ -140,23 +124,35 @@ public class Game extends InputAdapter implements ApplicationListener {
     /**
      * This function is called by libgdx when a key is released.
      *
-     * @param keyCode keycode of key released
      * @return true if keyrelease was handled
      */
     @Override
     public boolean keyUp (int keyCode){
-        boolean keyHandled = false;
-
         // Clear current player cell regardless of whether player moved, since it's set again in render()
-        playerLayer.setCell(player.getX(), player.getY(), new TiledMapTileLayer.Cell());
+        gameMap.clearPlayerCell(player);
 
+        // There aren't any good places to check for win conditions right now, so we will have to do this here,
+        // As the keyUp function is the best place to handle something that is to be checked every time we press a key
+        if (handleKey(keyCode)){
+            player = gameMap.checkForFlags(player);
+            player = gameMap.checkIfPlayerWon(player);
+
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Move player based on input
+     */
+    private boolean handleKey(int keyCode){
         switch (keyCode){
             case Input.Keys.LEFT:
                 if (player.getX() > 0){
                     // Update player position to left
                     player.move(-1, 0);
 
-                    keyHandled = true;
+                    return true;
                 }
                 break;
             case Input.Keys.RIGHT:
@@ -164,7 +160,7 @@ public class Game extends InputAdapter implements ApplicationListener {
                     // Update player position to right
                     player.move(1, 0);
 
-                    keyHandled = true;
+                    return true;
                 }
                 break;
             case Input.Keys.UP:
@@ -172,7 +168,7 @@ public class Game extends InputAdapter implements ApplicationListener {
                     // Update player position to up
                     player.move(0, 1);
 
-                    keyHandled = true;
+                    return true;
                 }
                 break;
             case Input.Keys.DOWN:
@@ -180,22 +176,13 @@ public class Game extends InputAdapter implements ApplicationListener {
                     // Update player position to down
                     player.move(0, -1);
 
-                    keyHandled = true;
+                    return true;
                 }
                 break;
             default:
                 break;
         }
-
-        // There aren't any good places to check for win conditions right now, so we will have to do this here,
-        // As the keyUp function is the best place to handle something that is to be checked every time we press a key
-        if (keyHandled){
-            player = gameMap.checkForFlags(player);
-            player = gameMap.checkIfPlayerWon(player);
-        }
-
-        // Return key press flag
-        return keyHandled;
+        return false;
     }
 
     /**
@@ -208,10 +195,10 @@ public class Game extends InputAdapter implements ApplicationListener {
 
         // Shows player texture depending on if player has won or not
         if (player.isWinner){
-            playerLayer.setCell(player.getX(), player.getY(), playerWon);
+            gameMap.setPlayerCell(player, playerWon);
         } else {
             // Set player cell to render
-            playerLayer.setCell(player.getX(), player.getY(), playerNormal);
+            gameMap.setPlayerCell(player, playerNormal);
         }
 
         // Render current frame to screen
