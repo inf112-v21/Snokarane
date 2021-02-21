@@ -1,20 +1,27 @@
 package inf112.skeleton.app;
 
+import org.junit.Before;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
 
 public class GameClientTest {
 
+    GameClient GameClient;
 
-    @Test
-    public void isGameClientTest(){
-        GameClient GameClient = new GameClient();
-
-        assertFalse(GameClient.isHost);
-
-
+    @Before
+    public void setUp() {
+        GameClient = new GameClient();
     }
 
+    @Test
+    public void isGameClientTest() {
+        assertFalse(GameClient.isHost);
+    }
+
+    @Test
+    public void failToConnectTest() {
+        assertFalse(GameClient.initialize());
+    }
 
 }
