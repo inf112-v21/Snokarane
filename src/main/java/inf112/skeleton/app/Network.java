@@ -24,7 +24,7 @@ public abstract class Network {
      * @return A server or client object based on what the user chose. Returns null if the user closes the dialog
      */
     public static Network choseRole() {
-        Object[] possibilities = {"Host", "Server"};
+        Object[] possibilities = {"Host", "Client"};
         String s = prompt("Which role would you like?", possibilities);
         if (Objects.isNull(s)) {
             return null;

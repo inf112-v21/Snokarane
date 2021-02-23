@@ -17,10 +17,10 @@ public class GameClient extends Network{
 
     @Override
     public boolean initialize(){
-        IP = prompt("Please enter the IP-address you wish to connect to", null);
-        client = new Client();
-        client.start();
-        try {
+            IP = prompt("Please enter the IP-address you wish to connect to", null);
+            client = new Client();
+            client.start();
+            try {
             client.connect(5000, IP, 54555, 54777);
             return true;
         }
@@ -29,5 +29,4 @@ public class GameClient extends Network{
             return false;
         }
     }
-
 }
