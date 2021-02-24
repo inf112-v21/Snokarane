@@ -65,7 +65,7 @@ public class Game extends InputAdapter implements ApplicationListener {
         gameMap = new Map();
 
         // Load .tmx file from disk
-        tiledMap = loadTileMapFromFile("assets/test-map.tmx");
+        tiledMap = loadTileMapFromFile("test-map.tmx");
         // Load map layers from tiledMap into separate layers in Map
         gameMap.loadMapLayers(tiledMap);
 
@@ -89,7 +89,7 @@ public class Game extends InputAdapter implements ApplicationListener {
      */
     public void loadPlayerTextures(){
         // Load the entire player texture
-        Texture rawPlayerTexture = new Texture("assets/player.png");
+        Texture rawPlayerTexture = new Texture("player.png");
 
         // Split player texture into seperate regions
         TextureRegion[][] splitTextures = TextureRegion.split(rawPlayerTexture,300, 300);

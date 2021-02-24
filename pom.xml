@@ -56,12 +56,12 @@
   <build>
     <resources>
       <resource>
-        <directory>${basedir}/assets</directory>
+        <directory>${basedir}/src/main/resources</directory>
       </resource>
     </resources>
     <testResources>
       <testResource>
-        <directory>${basedir}/assets</directory>
+        <directory>${basedir}/src/test/resources</directory>
       </testResource>
     </testResources>
     <pluginManagement><!-- lock down plugins versions to avoid using Maven defaults (may be moved to parent pom) -->
