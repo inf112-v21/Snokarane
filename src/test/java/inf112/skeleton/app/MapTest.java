@@ -40,7 +40,7 @@ public class MapTest {
     }
 
     @Test
-    public void twoFlagsAreLoadedFromTestMap(){
+    public void twoFlagsAreLoaded(){
         assertEquals(2, map.flagPositions.size());
     }
 
