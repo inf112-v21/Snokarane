@@ -1,11 +1,12 @@
 # Description
 
-A work in progress java implementaion of the game "RoboRally" using the libgdx library.
+A work in progress java implementaion of the board game ["RoboRally"](https://en.wikipedia.org/wiki/RoboRally) using the [libgdx library](https://libgdx.com/).
 
 
 # How to run
-1. Clone project using Git
-2. Run Main.java
+0. Install Java 13 or later.
+1. Clone project using Git.
+2. Run Main.java using an IDE such as IntelliJ (recommended) or Eclipse. Alternativly compile and run using your preferred method.
 
 
 
