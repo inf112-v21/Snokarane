@@ -129,7 +129,7 @@ public class Game extends InputAdapter implements ApplicationListener {
     @Override
     public boolean keyUp (int keyCode){
         // Clear current player cell regardless of whether player moved, since it's set again in render()
-        gameMap.clearPlayerCell(player);
+        gameMap.clearCellAtPlayerPos(player);
 
         // There aren't any good places to check for win conditions right now, so we will have to do this here,
         // As the keyUp function is the best place to handle something that is to be checked every time we press a key
@@ -195,10 +195,10 @@ public class Game extends InputAdapter implements ApplicationListener {
 
         // Shows player texture depending on if player has won or not
         if (player.isWinner){
-            gameMap.setPlayerCell(player, playerWon);
+            gameMap.setCellAtPlayerPos(player, playerWon);
         } else {
             // Set player cell to render
-            gameMap.setPlayerCell(player, playerNormal);
+            gameMap.setCellAtPlayerPos(player, playerNormal);
         }
 
         // Render current frame to screen
