@@ -10,29 +10,36 @@ import java.util.*;
 
 public class Player {
 
-    // Player position initialized at 0, 0
-    private GridPoint2 position = new GridPoint2(0, 0);
 
     // Win/Lose state of player
     public boolean isWinner = false;
-
+    // Player position initialized at 0, 0
+    private final GridPoint2 position = new GridPoint2(0, 0);
     // All flags visited
-    private List<Flag> flagsVisited = new ArrayList<>();
+    private final List<Flag> flagsVisited = new ArrayList<>();
+
+    //Current direction of player
+    private Direction playerDirection;
 
     public void move(int x, int y) {
-        position.x+=x;
-        position.y+=y;
+        position.x += x;
+        position.y += y;
     }
 
-    public int getX() { return position.x; }
-    public int getY() { return position.y; }
+    public int getX() {
+        return position.x;
+    }
+
+    public int getY() {
+        return position.y;
+    }
 
     /**
      * @param flag flag to visist
      * @return true if flag hasn't been visisted before
      */
-    public boolean visitFlag(Flag flag){
-        if (!flagsVisited.contains(flag)){
+    public boolean visitFlag(Flag flag) {
+        if (!flagsVisited.contains(flag)) {
             flagsVisited.add(flag);
             return true;
         }
@@ -41,5 +48,17 @@ public class Player {
 
     public List<Flag> getVisitedFlags() {
         return flagsVisited;
+    }
+
+
+    public Direction getDirection() {
+        return playerDirection;
+    }
+
+    public enum Direction {
+        NORTH,
+        SOUTH,
+        EAST,
+        WEST
     }
 }
