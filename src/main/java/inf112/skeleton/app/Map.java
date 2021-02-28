@@ -50,6 +50,16 @@ public class Map {
         getFlagPositionsFromLayer(flagLayer);
     }
 
+    public TiledMapTileLayer getBoardLayer(){
+        return boardLayer;
+    }
+    public TiledMapTileLayer getFlagLayer(){
+        return flagLayer;
+    }
+    public TiledMapTileLayer getPlayerLayer(){
+        return playerLayer;
+    }
+
     /**
      * Get all flag positions in layer flag layer
      */
@@ -94,7 +104,7 @@ public class Map {
      * Clear cell at
      * @param player location (x, y)
      */
-    public void clearPlayerCell(Player player){
+    public void clearCellAtPlayerPos(Player player){
         playerLayer.setCell(player.getX(), player.getY(), new TiledMapTileLayer.Cell());
     }
 
@@ -102,7 +112,18 @@ public class Map {
      * Set cell at
      * @param player location (x, y)
      */
-    public void setPlayerCell(Player player, TiledMapTileLayer.Cell cell){
+    public void setCellAtPlayerPos(Player player, TiledMapTileLayer.Cell cell){
         playerLayer.setCell(player.getX(), player.getY(), cell);
+    }
+
+    /**
+     * Get cell in either flag or board (whichever is currently placed at player pos) layer at
+     * @param player location (x, y)
+     */
+    public TiledMapTileLayer.Cell getCellAtPlayerPos(Player player){
+        int x = player.getX();
+        int y = player.getY();
+        // This should be reworked
+        return (flagLayer.getCell(x, y) != null) ? flagLayer.getCell(x, y) : boardLayer.getCell(x, y);
     }
 }

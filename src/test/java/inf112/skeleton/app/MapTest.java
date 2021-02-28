@@ -10,8 +10,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.*;
 
 @RunWith(GdxTestRunner.class)
 public class MapTest {
@@ -24,6 +23,13 @@ public class MapTest {
     public void init(){
         tiledMap = new TmxMapLoader().load("test-map.tmx");
         map.loadMapLayers(tiledMap);
+    }
+
+    @Test
+    public void allMapLayersWereLoaded(){
+        assertNotNull(map.getBoardLayer());
+        assertNotNull(map.getFlagLayer());
+        assertNotNull(map.getPlayerLayer());
     }
 
     @Test
@@ -44,15 +50,27 @@ public class MapTest {
         assertEquals(2, map.flagPositions.size());
     }
 
-    @Test
-    public void checkIfPlayerCellIsSet(){
+    public void movePlayerToFlag(){
         // flag is at 4, 1
         int playerMoveX = 1;
         int playerMoveY = 4;
 
         player.move(playerMoveX, playerMoveY);
+    }
+
+    @Test
+    public void checkIfPlayerFlagVisitsAreRegistered(){
+        movePlayerToFlag();
         map.checkForFlags(player);
 
         assertEquals(1, player.getVisitedFlags().size());
+    }
+
+    @Test
+    public void checkIfPlayerStandsOnCorrectCell(){
+        movePlayerToFlag();
+        map.checkForFlags(player);
+
+        assertNotEquals(null, map.getCellAtPlayerPos(player));
     }
 }
