@@ -1,15 +1,17 @@
 package inf112.skeleton.app;
 
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.tiled.TiledMap;
-import com.badlogic.gdx.maps.tiled.TiledMapTile;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
-import com.badlogic.gdx.maps.tiled.TmxMapLoader;
-import com.badlogic.gdx.maps.tiled.tiles.StaticTiledMapTile;
+import inf112.skeleton.app.game.objects.Flag;
+import inf112.skeleton.app.game.objects.PlayerToken;
 
 import java.util.ArrayList;
 import java.util.List;
+
+/**
+ * TODO:
+ * This class has functionality that is to be moved to GameClient and GameHost respectively
+ */
 
 /**
  * Handles actions of the objects on the map
@@ -82,7 +84,7 @@ public class Map {
      * This should be called every time a player moves anywhere as part of a basic check,
      * since this is the only way a player gets flag visits registered
      */
-    public Player checkForFlags(Player player){
+    public PlayerToken checkForFlags(PlayerToken player){
         // Check if player moved onto a flag
         for (Flag f : flagPositions){
             if (f.getX() == player.getX() && f.getY() == player.getY()){
@@ -95,7 +97,7 @@ public class Map {
     /**
      * This function sets player win state to true if the visited flags amount equal all flags count in map
      */
-    public Player checkIfPlayerWon(Player player){
+    public PlayerToken checkIfPlayerWon(PlayerToken player){
         if (player.getVisitedFlags().size() == flagPositions.size()){
             player.isWinner = true;
         }
@@ -106,7 +108,7 @@ public class Map {
      * Clear cell at
      * @param player location (x, y)
      */
-    public void clearCellAtPlayerPos(Player player){
+    public void clearCellAtPlayerPos(PlayerToken player){
         playerLayer.setCell(player.getX(), player.getY(), new TiledMapTileLayer.Cell());
     }
 
@@ -114,7 +116,7 @@ public class Map {
      * Set cell at
      * @param player location (x, y)
      */
-    public void setCellAtPlayerPos(Player player, TiledMapTileLayer.Cell cell){
+    public void setCellAtPlayerPos(PlayerToken player, TiledMapTileLayer.Cell cell){
         playerLayer.setCell(player.getX(), player.getY(), cell);
     }
 
@@ -122,7 +124,7 @@ public class Map {
      * Get cell in either flag or board (whichever is currently placed at player pos) layer at
      * @param player location (x, y)
      */
-    public TiledMapTileLayer.Cell getCellAtPlayerPos(Player player){
+    public TiledMapTileLayer.Cell getCellAtPlayerPos(PlayerToken player){
         int x = player.getX();
         int y = player.getY();
         // This should be reworked

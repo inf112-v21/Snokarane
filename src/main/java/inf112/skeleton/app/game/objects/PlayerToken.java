@@ -1,14 +1,10 @@
-package inf112.skeleton.app;
+package inf112.skeleton.app.game.objects;
 
 import com.badlogic.gdx.math.GridPoint2;
 
-import com.esotericsoftware.kryonet.Client;
-import com.esotericsoftware.kryonet.Connection;
-import com.esotericsoftware.kryonet.Listener;
-
 import java.util.*;
 
-public class Player {
+public class PlayerToken {
 
 
     // Win/Lose state of player

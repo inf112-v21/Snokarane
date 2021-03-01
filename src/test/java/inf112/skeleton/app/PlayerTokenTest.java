@@ -1,5 +1,7 @@
 package inf112.skeleton.app;
 
+import inf112.skeleton.app.game.objects.Flag;
+import inf112.skeleton.app.game.objects.PlayerToken;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -8,13 +10,13 @@ import java.util.List;
 
 import static org.junit.Assert.*;
 
-public class PlayerTest {
+public class PlayerTokenTest {
 
-    Player player;
+    PlayerToken player;
 
     @Before
     public void init(){
-        player = new Player();
+        player = new PlayerToken();
     }
 
     @Test
@@ -50,8 +52,8 @@ public class PlayerTest {
 
     @Test
     public void visitingAllFlagsRegardlessOfOrderWins(){
-        Player player1 = new Player();
-        Player player2 = new Player();
+        PlayerToken player1 = new PlayerToken();
+        PlayerToken player2 = new PlayerToken();
         List<Flag> flags = new ArrayList<>();
 
         Flag flag1 = new Flag(1, 1);

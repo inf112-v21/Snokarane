@@ -1,11 +1,9 @@
 package inf112.skeleton.app;
 
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.tiled.TiledMap;
-import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
-import com.badlogic.gdx.maps.tiled.tiles.StaticTiledMapTile;
+import inf112.skeleton.app.game.objects.Flag;
+import inf112.skeleton.app.game.objects.PlayerToken;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -17,7 +15,7 @@ import static org.junit.Assert.*;
 @RunWith(GdxTestRunner.class)
 public class MapTest {
 
-    Player player = new Player();
+    PlayerToken player = new PlayerToken();
     TiledMap tiledMap = new TiledMap();
     Map map = new Map();
 

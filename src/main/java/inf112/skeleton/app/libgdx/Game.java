@@ -1,4 +1,4 @@
-package inf112.skeleton.app;
+package inf112.skeleton.app.libgdx;
 
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
@@ -16,6 +16,8 @@ import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.maps.tiled.tiles.StaticTiledMapTile;
+import inf112.skeleton.app.Map;
+import inf112.skeleton.app.game.objects.PlayerToken;
 
 /**
  * Handles rendering, textures and event handling (key presses)
@@ -37,7 +39,7 @@ public class Game extends InputAdapter implements ApplicationListener {
     private TiledMapTileLayer.Cell playerWon;
 
     // Player object that stores player win state, flags visited and coordinates
-    Player player;
+    PlayerToken player;
 
     private OrthogonalTiledMapRenderer renderer;
     private OrthographicCamera camera;
@@ -59,7 +61,7 @@ public class Game extends InputAdapter implements ApplicationListener {
         Gdx.input.setInputProcessor(this);
 
         // Create a player to move around the screen
-        player = new Player();
+        player = new PlayerToken();
 
         // Initialize game map
         gameMap = new Map();

@@ -1,9 +1,10 @@
-package inf112.skeleton.app;
+package inf112.skeleton.app.network;
 
 import com.esotericsoftware.kryonet.Server;
+
 import java.io.IOException;
 
-public class GameServer extends Network{
+public class NetworkHost extends Network {
 
     Server server;
 

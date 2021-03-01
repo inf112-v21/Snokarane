@@ -1,17 +1,18 @@
 package inf112.skeleton.app;
 
+import inf112.skeleton.app.network.NetworkClient;
 import org.junit.Before;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
 
-public class GameClientTest {
+public class NetworkClientTest {
 
-    GameClient GameClient;
+    NetworkClient GameClient;
 
     @Before
     public void setUp() {
-        GameClient = new GameClient();
+        GameClient = new NetworkClient();
     }
 
     @Test

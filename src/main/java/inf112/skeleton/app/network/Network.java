@@ -1,11 +1,6 @@
-package inf112.skeleton.app;
-
-import com.esotericsoftware.kryonet.Client;
-import com.esotericsoftware.kryonet.Server;
+package inf112.skeleton.app.network;
 
 import javax.swing.*;
-import java.awt.*;
-import java.io.IOException;
 import java.util.Objects;
 
 public abstract class Network {
@@ -30,12 +25,12 @@ public abstract class Network {
             return null;
         }
         else if(s.equals("Host")) {
-            Network server = new GameServer();
+            Network server = new NetworkHost();
             server.isHost = true;
             return server;
         }
         else {
-            Network client = new GameClient();
+            Network client = new NetworkClient();
             client.isHost = false;
             return client;
         }
