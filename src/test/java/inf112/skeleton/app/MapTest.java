@@ -10,6 +10,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import java.util.List;
+
 import static org.junit.Assert.*;
 
 @RunWith(GdxTestRunner.class)
@@ -72,5 +74,28 @@ public class MapTest {
         map.checkForFlags(player);
 
         assertNotEquals(null, map.getCellAtPlayerPos(player));
+    }
+
+    @Test
+    public void checkIfPlayerWinsWhenWinConditionsAreFulfilled(){
+        // Win conditions as of writing this test is visiting all flags in the correct order
+        movePlayerToFlag();
+        map.checkForFlags(player);
+
+        List<Flag> playerFlags = player.getVisitedFlags();
+        List<Flag> mapFlags = map.flagPositions;
+
+        // One flag only
+        assertTrue(mapFlags.contains(playerFlags.get(0)));
+
+        // Move player to other flag, otherwise the rest of these asserts won't pass
+        player.move(3, 0);
+        map.checkForFlags(player);
+
+        // Correct size only
+        assertEquals(playerFlags.size(), mapFlags.size());
+
+        // Correct order and size
+        assertEquals(playerFlags, mapFlags);
     }
 }
