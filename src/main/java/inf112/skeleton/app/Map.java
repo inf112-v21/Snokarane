@@ -79,6 +79,8 @@ public class Map {
 
     /**
      * Check if player moved on a flag
+     * This should be called every time a player moves anywhere as part of a basic check,
+     * since this is the only way a player gets flag visits registered
      */
     public Player checkForFlags(Player player){
         // Check if player moved onto a flag
