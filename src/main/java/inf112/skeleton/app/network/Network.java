@@ -5,14 +5,7 @@ import java.util.Objects;
 
 public abstract class Network {
 
-    protected Boolean isHost;
-    //Purely for testing
-    public static void main(String[] args){
-        Network myNetwork = choseRole();
-        myNetwork.initialize();
-        System.out.println(myNetwork);
-        System.out.println(myNetwork.isHost);
-    }
+    public Boolean isHost;
 
     /**
      * Prompts the user to choose server or client
@@ -39,14 +32,16 @@ public abstract class Network {
     /**
      * Stops the server or client.
      */
-    protected abstract void stop();
+    public abstract void stop();
+
+    public abstract void registerClasses();
 
     /**
      * Initializes the server or client. If the network is a client, it prompts the user for the IP they wish to connect
      * to
      * @return True if the connection went through, false otherwise
      */
-    protected abstract boolean initialize();
+    public abstract boolean initialize();
 
     public static String prompt(String prompt, Object[] possibilities) {
         String choice;

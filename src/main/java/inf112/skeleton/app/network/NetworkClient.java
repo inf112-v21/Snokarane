@@ -1,6 +1,8 @@
 package inf112.skeleton.app.network;
 
+import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryonet.Client;
+import inf112.skeleton.app.game.objects.PlayerToken;
 
 import java.io.IOException;
 
@@ -11,8 +13,14 @@ public class NetworkClient extends Network {
     String IP;
 
     @Override
-    protected void stop() {
+    public void stop() {
         client.stop();
+    }
+
+    @Override
+    public void registerClasses() {
+        Kryo kryo = client.getKryo();
+        kryo.register(PlayerToken.class);
     }
 
     @Override
