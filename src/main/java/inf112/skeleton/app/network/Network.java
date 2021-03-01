@@ -1,6 +1,13 @@
 package inf112.skeleton.app.network;
 
+import com.esotericsoftware.kryo.Kryo;
+import com.esotericsoftware.kryonet.Connection;
+import com.esotericsoftware.kryonet.EndPoint;
+import com.esotericsoftware.kryonet.rmi.ObjectSpace;
+
 import javax.swing.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 public abstract class Network {
@@ -34,7 +41,15 @@ public abstract class Network {
      */
     public abstract void stop();
 
-    public abstract void registerClasses();
+    protected void registerClasses(EndPoint endPoint) {
+        Kryo kryo = endPoint.getKryo();
+        for (Class c : NetworkData.classesToRegister()) {
+            kryo.register(c);
+        }
+        ObjectSpace.registerClasses(kryo);
+        ObjectSpace objectSpace = new ObjectSpace();
+        objectSpace.register(1, this);
+    }
 
     /**
      * Initializes the server or client. If the network is a client, it prompts the user for the IP they wish to connect
