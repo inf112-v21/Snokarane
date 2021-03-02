@@ -4,6 +4,7 @@ import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.EndPoint;
 import com.esotericsoftware.kryonet.rmi.ObjectSpace;
+import inf112.skeleton.app.Map;
 
 import javax.swing.*;
 import java.util.ArrayList;
@@ -40,6 +41,16 @@ public abstract class Network {
      * Stops the server or client.
      */
     public abstract void stop();
+
+    /**
+     * For hosts only
+     */
+    public abstract void initConnections();
+
+    /**
+     * For clients only
+     */
+    public abstract void setMap(Map map);
 
     protected void registerClasses(EndPoint endPoint) {
         Kryo kryo = endPoint.getKryo();

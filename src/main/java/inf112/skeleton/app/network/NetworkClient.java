@@ -14,13 +14,17 @@ import java.io.IOException;
 public class NetworkClient extends Network {
 
 
-    Client client;
+    public Client client;
     String IP;
     Map map;
 
     @Override
     public void stop() {
         client.stop();
+    }
+
+    @Override
+    public void initConnections() {
     }
 
     public void setMap(Map map) {
