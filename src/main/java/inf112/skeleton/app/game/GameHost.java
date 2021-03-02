@@ -32,7 +32,7 @@ public class GameHost extends GamePlayer {
      */
     @Override
     public void registerChosenCards() {
-        System.out.println(this.chosenCards);
+        //System.out.println(this.chosenCards);
         waitForClientsToFinishCardChoices();
         host.clientCards.clear();
     }
@@ -50,11 +50,14 @@ public class GameHost extends GamePlayer {
      */
     public void waitForClientsToFinishCardChoices(){
         // If all clients have sent their cards, the host's client card storage size is same as the amount of clients connected
-        if (host.clientCards.size() == host.connections.length){
-            // TODO: do something to cards, game logic things
-        } else{
-            waitForClientsToFinishCardChoices();
+        while (host.clientCards.size() != host.connections.length){
+            System.out.println("Client size" + Integer.toString(host.clientCards.size()));
+            System.out.println("Connections size" + Integer.toString(host.connections.length) + "\n\n");
+
         }
+        System.out.println("We done");
+        for (int i: host.clientCards.keySet())
+            System.out.println(host.clientCards.get(i));
     }
 
 }

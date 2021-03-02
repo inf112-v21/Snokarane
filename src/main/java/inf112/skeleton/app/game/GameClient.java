@@ -29,6 +29,7 @@ public class GameClient extends GamePlayer {
     public void registerChosenCards() {
         cardList listOfCards = new cardList();
         listOfCards.cardList = chosenCards;
+        System.out.println("Sending the cards");
         client.client.sendTCP(listOfCards);
     }
 

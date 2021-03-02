@@ -43,6 +43,7 @@ public class NetworkHost extends Network {
                 // Only cards get sent through here
                 //TODO Make a wrapper class for List<Card>
                 if (object instanceof cardList) {
+                    System.out.println("Got cards!");
                     clientCards.put(c.getID(),((cardList) object).cardList);
                 }
             }
