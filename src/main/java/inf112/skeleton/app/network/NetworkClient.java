@@ -46,8 +46,7 @@ public class NetworkClient extends Network {
                     map.loadMapLayers((TiledMap) object);
                 }
                 if (object instanceof String) {
-                    if (((String)object).equals("Draw cards!"))
-                        gameClient.drawCards();
+                    gameClient.drawCardsFromDeck();
                 }
             }
             public void disconnected (Connection connection) {

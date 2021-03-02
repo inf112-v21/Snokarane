@@ -63,7 +63,7 @@ public class Game extends InputAdapter implements ApplicationListener {
      */
     public void startGame(){
         // Choose whether to host or connect
-        network = this.network.choseRole();
+        network = Network.choseRole();
         // Initializes connections, ports and opens for sending and receiving data
         this.network.initialize();
 
@@ -76,7 +76,7 @@ public class Game extends InputAdapter implements ApplicationListener {
 
     private void startHost(){
         // Send prompt til all connected clients
-        network.prompt("All players connected.", null);
+        Network.prompt("All players connected.", null);
         // Start connection to current clients. This is to be able to accept data transfers from clients
         this.network.initConnections();
         // Starts GameHost session using network that was initialized

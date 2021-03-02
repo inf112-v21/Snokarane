@@ -73,6 +73,7 @@ public class NetworkHost extends Network {
      * Prompts all connected clients to draw cards
      */
     public void promptCardDraw() {
+        System.out.println("Sent it");
         server.sendToAllTCP("Draw cards!");
     }
 
