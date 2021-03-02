@@ -8,6 +8,7 @@ import com.esotericsoftware.kryonet.Connection;
  */
 public class GamePlayer extends Connection {
     //Needs to extend this to call functions over the net
+
     public void pickCard(){}
     public void getCard(){}
 }

@@ -19,8 +19,4 @@ public class GameClient extends GamePlayer {
     public void addCardToHand(Card card){
         hand.add(card);
     }
-
-
-
-
 }

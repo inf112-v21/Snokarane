@@ -7,6 +7,7 @@ import com.esotericsoftware.kryonet.Client;
 import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
 import com.esotericsoftware.kryonet.rmi.ObjectSpace;
+import inf112.skeleton.app.Map;
 
 import java.io.IOException;
 
@@ -15,10 +16,15 @@ public class NetworkClient extends Network {
 
     Client client;
     String IP;
+    Map map;
 
     @Override
     public void stop() {
         client.stop();
+    }
+
+    public void setMap(Map map) {
+        this.map = map;
     }
 
     @Override
@@ -31,7 +37,7 @@ public class NetworkClient extends Network {
         client.addListener(new Listener.ThreadedListener(new Listener() {
             public void received (Connection connection, Object object) {
                 if (object instanceof TiledMap ) {
-                    //TODO: Add what happens if TiledMapTile object is sent
+                    map.loadMapLayers((TiledMap) object);
                 }
             }
             public void disconnected (Connection connection) {
