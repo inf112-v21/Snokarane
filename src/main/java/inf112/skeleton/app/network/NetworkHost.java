@@ -8,6 +8,7 @@ import com.esotericsoftware.kryonet.Server;
 import com.esotericsoftware.kryonet.rmi.ObjectSpace;
 import inf112.skeleton.app.Map;
 import inf112.skeleton.app.game.GameClient;
+import inf112.skeleton.app.game.GamePlayer;
 import inf112.skeleton.app.game.objects.Card;
 import inf112.skeleton.app.game.objects.PlayerToken;
 
@@ -20,8 +21,7 @@ import java.util.List;
 public class NetworkHost extends Network {
 
     Server server;
-    Connection[] connections;
-    public List<GameClient> clients = new ArrayList<>();
+    public Connection[] connections;
     public HashMap<Integer, List<Card>> clientCards = new HashMap<>();
 
     boolean Initialized = false;
@@ -38,6 +38,7 @@ public class NetworkHost extends Network {
         registerClasses(server);
         server.start();
         server.addListener(new Listener() {
+            @Override
             public void received (Connection c, Object object) {
                 // Only cards get sent through here
                 //TODO Make a wrapper class for List<Card>
@@ -68,40 +69,21 @@ public class NetworkHost extends Network {
     }
 
     /**
+     * Prompts all connected clients to draw cards
+     */
+    public void promptCardDraw() {
+        server.sendToAllTCP("Draw cards!");
+    }
+
+    /**
      * Initializes the connections for the server. Call this only when all users are connected.
      */
     public void initConnections() {
         connections = server.getConnections();
-        for (Connection c: connections) {
-            clients.add(ObjectSpace.getRemoteObject(c, NetworkData.GameClient, GameClient.class));
-        }
     }
 
     @Override
     public void setMap(Map map) {
-    }
-
-    /**
-     * TODO Deprecated
-     * Uses KryoNet to ask the users to pick cards
-     * @return A list containing the list of the users different card choices, where the inner lists are in order.
-     */
-    public List<List<Card>> getCards() {
-        if (clients.isEmpty()) {
-            System.out.println("Call initConnections first, or make sure that users are connected");
-            return null;
-        }
-
-        //TODO: Call it's own getCards first
-
-        List<List<Card>> playerChoices = new ArrayList<>();
-        for (GameClient client: clients) {
-            client.drawCardsFromDeck();
-            //TODO: Call whatever the method ends up being called
-           // playerChoices.add(client.pickCard());
-        }
-        return playerChoices;
-
     }
 
 }

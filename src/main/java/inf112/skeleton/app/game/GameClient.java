@@ -14,9 +14,9 @@ public class GameClient extends GamePlayer {
 
     public GameClient(NetworkClient network) {
         super.GamePlayer();
+        network.gameClient = this;
         client = network;
         connectionID = client.client.getID();
-        new ObjectSpace(this).register(NetworkData.GameClient, this);
     }
     NetworkClient client;
     // Client connection ID

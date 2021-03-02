@@ -57,9 +57,6 @@ public abstract class Network {
         for (Class c : NetworkData.classesToRegister()) {
             kryo.register(c);
         }
-        ObjectSpace.registerClasses(kryo);
-        ObjectSpace objectSpace = new ObjectSpace();
-        objectSpace.register(1, this);
     }
 
     /**

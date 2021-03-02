@@ -8,6 +8,7 @@ import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
 import com.esotericsoftware.kryonet.rmi.ObjectSpace;
 import inf112.skeleton.app.Map;
+import inf112.skeleton.app.game.GameClient;
 
 import java.io.IOException;
 
@@ -17,6 +18,7 @@ public class NetworkClient extends Network {
     public Client client;
     String IP;
     Map map;
+    public GameClient gameClient;
 
     @Override
     public void stop() {
@@ -42,6 +44,10 @@ public class NetworkClient extends Network {
             public void received (Connection connection, Object object) {
                 if (object instanceof TiledMap ) {
                     map.loadMapLayers((TiledMap) object);
+                }
+                if (object instanceof String) {
+                    if (((String)object).equals("Draw cards!"))
+                        gameClient.drawCards();
                 }
             }
             public void disconnected (Connection connection) {

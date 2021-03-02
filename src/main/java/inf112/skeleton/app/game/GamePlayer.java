@@ -10,7 +10,7 @@ import java.util.ArrayList;
  * Elements that a player in RoboRally can interact with
  * f.ex. picking a card
  */                               //Needs to extend this to call functions over the net
-public abstract class GamePlayer extends Connection {
+public abstract class GamePlayer{
 
     public PLAYERSTATE state = PLAYERSTATE.NONE;
 
