@@ -17,7 +17,16 @@ import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.maps.tiled.tiles.StaticTiledMapTile;
 import inf112.skeleton.app.Map;
+import inf112.skeleton.app.game.GameClient;
+import inf112.skeleton.app.game.GameHost;
+import inf112.skeleton.app.game.GamePlayer;
+import inf112.skeleton.app.game.objects.Card;
 import inf112.skeleton.app.game.objects.PlayerToken;
+import inf112.skeleton.app.network.Network;
+import inf112.skeleton.app.network.NetworkClient;
+import inf112.skeleton.app.network.NetworkHost;
+
+import java.util.List;
 
 /**
  * Handles rendering, textures and event handling (key presses)
@@ -28,21 +37,55 @@ public class Game extends InputAdapter implements ApplicationListener {
     private SpriteBatch batch;
     private BitmapFont font;
 
-    // Game map object
-    private Map gameMap;
-
     // Entire map (graphic)
     private TiledMap tiledMap;
+
+    int BOARD_X = 5;
+    int BOARD_Y = 5;
 
     // Cells for each player state
     private TiledMapTileLayer.Cell playerNormal;
     private TiledMapTileLayer.Cell playerWon;
 
-    // Player object that stores player win state, flags visited and coordinates
-    PlayerToken player;
-
     private OrthogonalTiledMapRenderer renderer;
     private OrthographicCamera camera;
+
+    /**
+     * Client objects
+     */
+    // Handles all player based actions (picking cards, decks to send over network etc.)
+    GamePlayer gamePlayer;
+    // Handles all data transfers over internet
+    Network network;
+
+    /**
+     * Initialize objects depending on host status
+     */
+    public void startGame(){
+        // Choose whether to host or connect
+        this.network.choseRole();
+        // Initializes connections, ports and opens for sending and receiving data
+        this.network.initialize();
+
+        if (network.isHost)
+            startHost();
+        else
+            startClient();
+
+    }
+
+    private void startHost(){
+        // Send prompt til all connected clients
+        network.prompt("All players connected.", null);
+        // Start connection to current clients. This is to be able to accept data transfers from clients
+        this.network.initConnections();
+        // Starts GameHost session using network that was initialized
+        gamePlayer = new GameHost((NetworkHost)network);
+        gamePlayer.drawCards();
+    }
+    private void startClient(){
+        gamePlayer = new GameClient((NetworkClient)network);
+    }
 
     /**
      * Initialize all libgdx objects:
@@ -57,19 +100,14 @@ public class Game extends InputAdapter implements ApplicationListener {
         font = new BitmapFont();
         font.setColor(Color.RED);
 
+        // Start game/network objects
+        startGame();
+        
         // Register input processor to handle key presses
         Gdx.input.setInputProcessor(this);
 
-        // Create a player to move around the screen
-        player = new PlayerToken();
-
-        // Initialize game map
-        gameMap = new Map();
-
         // Load .tmx file from disk
         tiledMap = loadTileMapFromFile("test-map.tmx");
-        // Load map layers from tiledMap into separate layers in Map
-        gameMap.loadMapLayers(tiledMap);
 
         // Initialize player textures from .png file
         loadPlayerTextures();
@@ -112,7 +150,7 @@ public class Game extends InputAdapter implements ApplicationListener {
         // Initialize camera object
         camera = new OrthographicCamera();
         // Set camera to orthographic, size board dimensions
-        camera.setToOrtho(false, gameMap.getBoardX(), gameMap.getBoardY());
+        camera.setToOrtho(false, BOARD_X, BOARD_Y);
         // Set camera X-position
         camera.position.x = 2.5F;
         camera.update();
@@ -130,61 +168,18 @@ public class Game extends InputAdapter implements ApplicationListener {
      */
     @Override
     public boolean keyUp (int keyCode){
-        // Clear current player cell regardless of whether player moved, since it's set again in render()
-        gameMap.clearCellAtPlayerPos(player);
-
-        // There aren't any good places to check for win conditions right now, so we will have to do this here,
-        // As the keyUp function is the best place to handle something that is to be checked every time we press a key
-        if (handleKey(keyCode)){
-            player = gameMap.checkForFlags(player);
-            player = gameMap.checkIfPlayerWon(player);
-
-            return true;
+        if (gamePlayer.state == GamePlayer.PLAYERSTATE.PICKING_CARDS){
+            // TODO: Draw cards from deck on all people
+            while (!keyUp(keyCode)){
+                gamePlayer.chooseCards(keyCode);
+                if(gamePlayer.chosenCards.size() >= 5){
+                    gamePlayer.state = GamePlayer.PLAYERSTATE.SENDING_CARDS;
+                    gamePlayer.registerChosenCards();
+                    return true;
+                }
+            }
         }
-        return false;
-    }
-
-    /**
-     * Move player based on input
-     */
-    private boolean handleKey(int keyCode){
-        switch (keyCode){
-            case Input.Keys.LEFT:
-                if (player.getX() > 0){
-                    // Update player position to left
-                    player.move(-1, 0);
-
-                    return true;
-                }
-                break;
-            case Input.Keys.RIGHT:
-                if (player.getX() < gameMap.getBoardX()-1){
-                    // Update player position to right
-                    player.move(1, 0);
-
-                    return true;
-                }
-                break;
-            case Input.Keys.UP:
-                if (player.getY() < gameMap.getBoardY()-1){
-                    // Update player position to up
-                    player.move(0, 1);
-
-                    return true;
-                }
-                break;
-            case Input.Keys.DOWN:
-                if (player.getY() > 0){
-                    // Update player position to down
-                    player.move(0, -1);
-
-                    return true;
-                }
-                break;
-            default:
-                break;
-        }
-        return false;
+        return true;
     }
 
     /**
@@ -195,24 +190,10 @@ public class Game extends InputAdapter implements ApplicationListener {
         Gdx.gl.glClearColor(1, 1, 1, 1);
         Gdx.gl.glClear(GL30.GL_COLOR_BUFFER_BIT);
 
-        // Shows player texture depending on if player has won or not
-        if (player.isWinner){
-            gameMap.setCellAtPlayerPos(player, playerWon);
-        } else {
-            // Set player cell to render
-            gameMap.setCellAtPlayerPos(player, playerNormal);
-        }
+
 
         // Render current frame to screen
         renderer.render();
-
-        // Write some text to show the player they won
-        // This has to be placed after renderer.render() else it doesn't show on screen
-        if (player.isWinner){
-            batch.begin();
-            font.draw(batch, "Player won!", 200, 100);
-            batch.end();
-        }
     }
 
     @Override
