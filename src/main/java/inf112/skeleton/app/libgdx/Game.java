@@ -63,7 +63,7 @@ public class Game extends InputAdapter implements ApplicationListener {
      */
     public void startGame(){
         // Choose whether to host or connect
-        this.network.choseRole();
+        network = this.network.choseRole();
         // Initializes connections, ports and opens for sending and receiving data
         this.network.initialize();
 
