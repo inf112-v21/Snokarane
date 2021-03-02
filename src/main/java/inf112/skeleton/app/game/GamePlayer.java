@@ -25,7 +25,9 @@ public abstract class GamePlayer{
     public void GamePlayer(){
         // Create deck TODO select random items from CardType
         for (int i = 0; i<500; i++){
-            deck.add(new Card(CardType.FORWARDONE));
+            Card card = new Card();
+            card.setCardType(CardType.FORWARDONE);
+            deck.add(new Card());
         }
     }
 

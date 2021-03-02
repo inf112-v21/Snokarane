@@ -10,7 +10,8 @@ public class CardTest {
 
     @Test
     public void getCardTypeTest(){
-        Card card = new Card(CardType.FORWARDONE);
+        Card card = new Card();
+        card.setCardType(CardType.FORWARDONE);
 
         assertEquals(CardType.FORWARDONE, card.getCardType());
 
