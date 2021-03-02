@@ -3,6 +3,7 @@ package inf112.skeleton.app.network;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import inf112.skeleton.app.game.objects.Card;
+import inf112.skeleton.app.game.objects.CardType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,6 +28,7 @@ public class NetworkData {
         classesToRegister.add(Card.class);
         classesToRegister.add(cardList.class);
         classesToRegister.add(ArrayList.class);
+        classesToRegister.add(CardType.class);
         return classesToRegister;
     }
 }
