@@ -12,6 +12,7 @@ import java.util.List;
 public class GameHost extends GamePlayer {
     // Network connection to be used in game
     public GameHost(NetworkHost network){
+        super.GamePlayer();
         host = network;
 
         // Give each client a new player token to keep track of player data

@@ -3,10 +3,8 @@ package inf112.skeleton.app.game;
 import com.esotericsoftware.kryonet.Connection;
 import inf112.skeleton.app.game.objects.Card;
 import inf112.skeleton.app.game.objects.CardType;
-import inf112.skeleton.app.libgdx.Game;
 
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Elements that a player in RoboRally can interact with
