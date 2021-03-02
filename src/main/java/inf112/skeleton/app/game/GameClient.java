@@ -6,6 +6,7 @@ import com.esotericsoftware.kryonet.rmi.ObjectSpace;
 import inf112.skeleton.app.libgdx.Game;
 import inf112.skeleton.app.network.NetworkClient;
 import inf112.skeleton.app.network.NetworkData;
+import inf112.skeleton.app.network.cardList;
 
 import java.util.ArrayList;
 
@@ -26,7 +27,9 @@ public class GameClient extends GamePlayer {
      */
     @Override
     public void registerChosenCards() {
-        client.client.sendTCP(chosenCards);
+        cardList listOfCards = new cardList();
+        listOfCards.cardList = chosenCards;
+        client.client.sendTCP(listOfCards);
     }
 
     @Override

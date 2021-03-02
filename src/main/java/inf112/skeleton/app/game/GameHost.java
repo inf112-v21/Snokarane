@@ -31,6 +31,7 @@ public class GameHost extends GamePlayer {
      */
     @Override
     public void registerChosenCards() {
+        System.out.println(this.chosenCards);
         waitForClientsToFinishCardChoices();
         host.clientCards.clear();
     }

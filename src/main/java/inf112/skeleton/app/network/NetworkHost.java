@@ -40,7 +40,10 @@ public class NetworkHost extends Network {
         server.addListener(new Listener() {
             public void received (Connection c, Object object) {
                 // Only cards get sent through here
-                clientCards.put(c.getID(), (List<Card>)object);
+                //TODO Make a wrapper class for List<Card>
+                if (object instanceof cardList) {
+                    clientCards.put(c.getID(),((cardList) object).cardList);
+                }
             }
         });
 

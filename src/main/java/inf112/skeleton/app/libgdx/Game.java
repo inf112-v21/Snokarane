@@ -169,8 +169,9 @@ public class Game extends InputAdapter implements ApplicationListener {
     @Override
     public boolean keyUp (int keyCode){
         if (gamePlayer.state == GamePlayer.PLAYERSTATE.PICKING_CARDS){
+            //TODO: FIX UNICODE SHIT
             // TODO: Draw cards from deck on all people
-            while (!keyUp(keyCode)){
+            if(keyCode > 0 && keyCode < 10){
                 gamePlayer.chooseCards(keyCode);
                 if(gamePlayer.chosenCards.size() >= 5){
                     gamePlayer.state = GamePlayer.PLAYERSTATE.SENDING_CARDS;

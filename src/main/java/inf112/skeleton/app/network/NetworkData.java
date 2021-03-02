@@ -25,6 +25,7 @@ public class NetworkData {
         List<Class> classesToRegister = new ArrayList<>();
         classesToRegister.add(TiledMap.class);
         classesToRegister.add(Card.class);
+        classesToRegister.add(cardList.class);
         return classesToRegister;
     }
 }
