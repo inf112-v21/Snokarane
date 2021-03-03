@@ -19,9 +19,13 @@ import com.badlogic.gdx.maps.tiled.tiles.StaticTiledMapTile;
 import inf112.skeleton.app.game.GameClient;
 import inf112.skeleton.app.game.GameHost;
 import inf112.skeleton.app.game.GamePlayer;
+import inf112.skeleton.app.game.objects.Flag;
 import inf112.skeleton.app.network.Network;
 import inf112.skeleton.app.network.NetworkClient;
 import inf112.skeleton.app.network.NetworkHost;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Handles rendering, textures and event handling (key presses)
@@ -38,6 +42,15 @@ public class Game extends InputAdapter implements ApplicationListener {
     // Board dimensions
     int BOARD_X = 5;
     int BOARD_Y = 5;
+
+    // Layers of the map
+    private TiledMapTileLayer boardLayer;
+    private TiledMapTileLayer playerLayer;
+    private TiledMapTileLayer flagLayer;
+
+    // Flags on the map are stored here for easy access
+    // TODO: this should really only useful in GameHost
+    List<Flag> flagPositions = new ArrayList<>();
 
     // Cells for each player state
     private TiledMapTileLayer.Cell playerNormal;
@@ -198,19 +211,83 @@ public class Game extends InputAdapter implements ApplicationListener {
         Gdx.gl.glClearColor(1, 1, 1, 1);
         Gdx.gl.glClear(GL30.GL_COLOR_BUFFER_BIT);
 
+        // TODO: !!!THIS SHOULD BE DONE IN GAMEHOST, more explained in updateMap
+        // Clear all player cells
+        if (playerLayer != null){
+            for (int i = 0; i<playerLayer.getWidth(); i++){
+                for (int j = 0; j<playerLayer.getHeight(); j++){
+                    playerLayer.setCell(i, j, new TiledMapTileLayer.Cell());
+                }
+            }
+        }
+
         // Sends map to client of host, updates map in (this) if client
         updateMap();
+
+        // TODO: you need to update the playerLayer
+        // TODO: In GameHost's tiledMap every time a player is moved.
+        // TODO: Maybe it's best to send a wrapper that contains
+        // TODO: Each layer in updateMap() instead of the entire TiledMap
+        // TODO: that way, each time the updateMap is called, you can then
+        // TODO: update the playerLayer on each client wtih the correct
+        // TODO: cells representing the players here.
+        // TODO: That way this entire for loop thing below isnt needed,
+        // TODO but the player layer is updated in updateMap instead.
+        // New player cells have been recieved, so update them
+        if (playerLayer != null){
+            for (int i = 0; i<playerLayer.getWidth(); i++){
+                for (int j = 0; j<playerLayer.getHeight(); j++){
+                    //playerLayer.setCell(i, j, playerNormal);
+                }
+            }
+        }
 
         // Render current frame to screen
         renderer.render();
     }
 
+    // TODO: dont sent tiledMap to GamePlayer, send a wrapper for each of the layers.
+    // TODO: That way you can update the playerLayer INSIDE GameHost,
+    // TODO: By clearing the playerLayer.setCell(current player token location, new TiledMapTileLayer.Cell())
+    // TODO: Then doing the PlayerToken moves (processCards() etc.), and
+    // TODO: then doing playerLayer.setCell(New player token location, PlayerNormal etc.)
+    // TODO: That way the map is properly updated on all clients, from GameHost.
     public void updateMap(){
         if (network.isHost){
             gamePlayer.updateMap(this.tiledMap);
         }else{
             tiledMap = gamePlayer.updateMap(null);
         }
+        loadMapLayers(tiledMap);
+    }
+
+    /**
+     * Load all map layers into their own member variable
+     */
+    public void loadMapLayers(TiledMap tiledMap){
+        // Separate each layer from the tiledMap
+        boardLayer = (TiledMapTileLayer) tiledMap.getLayers().get("Board");
+        playerLayer = (TiledMapTileLayer) tiledMap.getLayers().get("Player");
+        flagLayer = (TiledMapTileLayer) tiledMap.getLayers().get("Flag");
+
+        // Sneakily yoink the positions of the flags here, don't tell the OOP police
+        getFlagPositionsFromLayer(flagLayer);
+    }
+    /**
+     * Get all flag positions in layer flag layer
+     */
+    private void getFlagPositionsFromLayer(TiledMapTileLayer flagLayer){
+        List<Flag> flags = new ArrayList<>();
+
+        for (int i = 0; i <= flagLayer.getWidth(); i++){
+            for (int j = 0; j <= flagLayer.getHeight(); j++){
+                // getCell returns null if nothing is found in the current cell in this layer
+                if (flagLayer.getCell(i, j) != null){
+                    flags.add(new Flag(i, j));
+                }
+            }
+        }
+        flagPositions.addAll(flags);
     }
 
     /**
