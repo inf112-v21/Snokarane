@@ -14,10 +14,9 @@ import java.io.IOException;
 
 public class NetworkClient extends Network {
 
-
     public Client client;
     String IP;
-    Map map;
+    public TiledMap tiledMap;
     public GameClient gameClient;
 
     @Override
@@ -27,10 +26,6 @@ public class NetworkClient extends Network {
 
     @Override
     public void initConnections() {
-    }
-
-    public void setMap(Map map) {
-        this.map = map;
     }
 
     @Override
@@ -43,7 +38,7 @@ public class NetworkClient extends Network {
         client.addListener(new Listener.ThreadedListener(new Listener() {
             public void received (Connection connection, Object object) {
                 if (object instanceof TiledMap ) {
-                    map.loadMapLayers((TiledMap) object);
+                    tiledMap = (TiledMap) object;
                 }
                 if (object instanceof String) {
                     gameClient.drawCardsFromDeck();

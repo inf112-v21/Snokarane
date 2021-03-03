@@ -41,7 +41,6 @@ public class NetworkHost extends Network {
             @Override
             public void received (Connection c, Object object) {
                 // Only cards get sent through here
-                //TODO Make a wrapper class for List<Card>
                 if (object instanceof cardList) {
                     System.out.println("Got cards!");
                     clientCards.put(c.getID(),((cardList) object).cardList);
@@ -82,10 +81,6 @@ public class NetworkHost extends Network {
      */
     public void initConnections() {
         connections = server.getConnections();
-    }
-
-    @Override
-    public void setMap(Map map) {
     }
 
 }

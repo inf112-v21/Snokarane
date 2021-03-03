@@ -47,11 +47,6 @@ public abstract class Network {
      */
     public abstract void initConnections();
 
-    /**
-     * For clients only
-     */
-    public abstract void setMap(Map map);
-
     protected void registerClasses(EndPoint endPoint) {
         Kryo kryo = endPoint.getKryo();
         for (Class c : NetworkData.classesToRegister()) {
