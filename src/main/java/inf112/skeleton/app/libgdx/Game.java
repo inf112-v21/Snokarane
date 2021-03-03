@@ -16,17 +16,12 @@ import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.maps.tiled.tiles.StaticTiledMapTile;
-import inf112.skeleton.app.Map;
 import inf112.skeleton.app.game.GameClient;
 import inf112.skeleton.app.game.GameHost;
 import inf112.skeleton.app.game.GamePlayer;
-import inf112.skeleton.app.game.objects.Card;
-import inf112.skeleton.app.game.objects.PlayerToken;
 import inf112.skeleton.app.network.Network;
 import inf112.skeleton.app.network.NetworkClient;
 import inf112.skeleton.app.network.NetworkHost;
-
-import java.util.List;
 
 /**
  * Handles rendering, textures and event handling (key presses)
@@ -173,20 +168,28 @@ public class Game extends InputAdapter implements ApplicationListener {
     @Override
     public boolean keyUp (int keyCode){
         if (gamePlayer.state == GamePlayer.PLAYERSTATE.PICKING_CARDS){
-            //TODO: FIX UNICODE SHIT
-            // TODO: Draw cards from deck on all people
-            if(keyCode > 0 && keyCode < 10){
-                gamePlayer.chooseCards(keyCode);
-                if(gamePlayer.chosenCards.size() >= 5){
-                    gamePlayer.state = GamePlayer.PLAYERSTATE.SENDING_CARDS;
-                    gamePlayer.registerChosenCards();
-                    return true;
-                }
+            if(keyCode >= Input.Keys.NUM_1 && keyCode <= Input.Keys.NUM_9){
+                return pickCardsOnKeyPress(keyCode);
             }
         }
-        return true;
+        return false;
     }
 
+    /**
+     * Helper function for keyUp to pick cards for player
+     *
+     * @param keyCode key pressed
+     * @return if key was registered as correct and acted on
+     */
+    private boolean pickCardsOnKeyPress(int keyCode){
+        gamePlayer.chooseCards(keyCode-7); // Input.Keys.Num_1 starts at 8
+        if(gamePlayer.chosenCards.size() >= 5){
+            gamePlayer.state = GamePlayer.PLAYERSTATE.SENDING_CARDS;
+            gamePlayer.registerChosenCards();
+            return true;
+        }
+        return false;
+    }
     /**
      * Render all objects and text to the screen
      */
