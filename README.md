@@ -7,9 +7,9 @@ A work in progress java implementaion of the board game ["RoboRally"](https://en
 0. Install Java 13 or later.
 1. Clone project using Git.
 2. Run Main.java using an IDE such as IntelliJ (recommended) or Eclipse. Alternativly compile and run using your preferred method.
-3. Choose host or client
-3a. Host: wait for connected players
-3b. Client: connect to ip of host
+3. Choose host or client.
+* 3a. Host: wait for connected players.
+* 3b. Client: connect to ip of host.
 
 
 
