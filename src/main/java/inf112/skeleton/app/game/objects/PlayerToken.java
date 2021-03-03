@@ -15,7 +15,8 @@ public class PlayerToken {
     private final List<Flag> flagsVisited = new ArrayList<>();
 
     //Current direction of player
-    private Direction playerDirection;
+    //TODO: THis is just a random default. Maybe it should depend on something
+    private Direction playerDirection = Direction.NORTH;
 
     /**
      * Moves the player 1 step in the direction it is facing

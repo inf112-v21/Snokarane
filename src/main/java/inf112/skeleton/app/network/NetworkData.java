@@ -33,6 +33,7 @@ public class NetworkData {
         classesToRegister.add(CardType.class);
         classesToRegister.add(MapLayers.class);
         classesToRegister.add(MapLayerWrapper.class);
+        classesToRegister.add(TiledMapTileLayer.class);
         return classesToRegister;
     }
 }
