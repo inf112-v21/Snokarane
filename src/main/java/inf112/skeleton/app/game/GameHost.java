@@ -73,21 +73,28 @@ public class GameHost extends GamePlayer {
                 System.out.print("HEHEHEHE3");
                 List<Card> cards = host.clientCards.get(key);
                 Card currentCard = cards.remove(0);
-                PlayerToken currentPlayerToken = clientPlayers.get(key);
 
-                System.out.print(currentPlayerToken.getX());
-                resolveCard(currentCard, currentPlayerToken);
-                System.out.print(currentPlayerToken.getX());
+                // Move the clients player token
+                PlayerToken newPlayerToken = resolveCard(currentCard, clientPlayers.get(key));
 
-                clientPlayers.put(key, currentPlayerToken);
+                // Place new token in clientPlayers
+                clientPlayers.put(key, newPlayerToken);
             }
         }
     }
 
-    public void resolveCard(Card card, PlayerToken token){
+    /**
+     * Resolve card moves on token
+     *
+     * @param card card to resolve
+     * @param token token to move
+     * @return token that has been moved
+     */
+    private PlayerToken resolveCard(Card card, PlayerToken token){
         if(card.getCardType() == CardType.FORWARDONE){
             token.move(1, 0);
         }
+        return token;
     }
 
 }
