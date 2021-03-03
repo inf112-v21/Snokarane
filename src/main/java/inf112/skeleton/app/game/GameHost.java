@@ -1,5 +1,6 @@
 package inf112.skeleton.app.game;
 
+import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.esotericsoftware.kryonet.Client;
 import com.esotericsoftware.kryonet.Connection;
 import inf112.skeleton.app.game.objects.Card;
@@ -23,6 +24,9 @@ public class GameHost extends GamePlayer {
             clientPlayers.put(c.getID(), new PlayerToken());
         }
     }
+
+    TiledMap tiledMap;
+
     NetworkHost host;
     // Has all clients (which contain connnection ID's) as well as their tokens
     HashMap<Integer, PlayerToken> clientPlayers;
@@ -48,6 +52,12 @@ public class GameHost extends GamePlayer {
         drawCardsFromDeck(); // draw host cards
     }
 
+    @Override
+    public TiledMap updateMap(TiledMap tiledMap) {
+        this.tiledMap = tiledMap;
+        return null;
+    }
+
     /**
      * Recursively call this function until all clients have sent their cards to the host
      */
@@ -66,11 +76,14 @@ public class GameHost extends GamePlayer {
         // iterator i is same as client connection id
         for (int i = 0; i<cardsProcessedPerRound; i++){
             for (int key : clientPlayers.keySet()){
-                System.out.println("HEHEHE333");
                 List<Card> cards = host.clientCards.get(key);
                 Card currentCard = cards.remove(0);
                 // Move the clients player token
                 resolveCard(currentCard, clientPlayers.get(key));
+                // Send moves to client
+                host.sendMaps(tiledMap);
+                //artificialDelayToShowMoves();
+                //processPlayerMoves();
             }
         }
     }

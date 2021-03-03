@@ -1,4 +1,5 @@
 package inf112.skeleton.app.game;
+import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import inf112.skeleton.app.game.objects.Card;
 
@@ -37,5 +38,11 @@ public class GameClient extends GamePlayer {
     @Override
     public void drawCards() {
         // nothing happens here :o
+    }
+
+    // Return newest version of tiledMap from client
+    @Override
+    public TiledMap updateMap(TiledMap tiledMap) {
+        return client.tiledMap;
     }
 }

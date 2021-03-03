@@ -1,5 +1,6 @@
 package inf112.skeleton.app.game;
 
+import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.esotericsoftware.kryonet.Connection;
 import inf112.skeleton.app.game.objects.Card;
 import inf112.skeleton.app.game.objects.CardType;
@@ -54,6 +55,9 @@ public abstract class GamePlayer{
     // initialized from this class, we need this as an abstract function here which makes GameClient
     // have an empty function, but this seems like the best solution to this problem for now.
     public abstract void drawCards();
+
+    // return updated map if client, send new map to clients if host
+    public abstract TiledMap updateMap(TiledMap tiledMap);
 
     public enum PLAYERSTATE{
         WAITING,
