@@ -25,8 +25,12 @@ public class PlayerTokenTest {
         assertEquals(player.getY(), 0);
     }
 
+    /**
+     * TODO: DEPRECATED
+     */
     @Test
     public void PlayerCoordinatesAreUpdatedWhenMoved(){
+
         player.move(1, 1);
 
         assertEquals(player.getX(), 1);

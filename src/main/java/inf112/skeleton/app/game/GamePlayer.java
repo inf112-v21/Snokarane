@@ -2,10 +2,12 @@ package inf112.skeleton.app.game;
 
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.esotericsoftware.kryonet.Connection;
+import edu.emory.mathcs.backport.java.util.Arrays;
 import inf112.skeleton.app.game.objects.Card;
 import inf112.skeleton.app.game.objects.CardType;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Elements that a player in RoboRally can interact with
@@ -16,19 +18,23 @@ public abstract class GamePlayer{
     public PLAYERSTATE state = PLAYERSTATE.NONE;
 
     public ArrayList<Card> chosenCards = new ArrayList<>();
-    ArrayList<Card> hand = new ArrayList<>();
-    ArrayList<Card> deck = new ArrayList<>();
-    ArrayList<Card> discard = new ArrayList<>();
+    public ArrayList<Card> hand = new ArrayList<>();
+    public ArrayList<Card> deck = new ArrayList<>();
+    public ArrayList<Card> discard = new ArrayList<>();
 
     /**
      * Give player a stack of cards to deck
      */
-    public void GamePlayer(){
-        // Create deck TODO select random items from CardType
-        for (int i = 0; i<500; i++){
-            Card card = new Card();
-            card.setCardType(CardType.FORWARDONE);
-            deck.add(card);
+    public GamePlayer(){
+        //Move1, Move2, Move3, Back up, Rotate right, Rotate left, U-turn
+        List<Integer> numOfEachCardType = Arrays.asList(new Integer[]{18, 12, 6, 6, 18, 18, 6});
+        for(int i = 0; i < numOfEachCardType.size(); i++) {
+            CardType cardType = CardType.values()[i];
+            for (int j = 0; j < numOfEachCardType.get(i); j++) {
+                Card card = new Card();
+                card.setCardType(cardType);
+                deck.add(card);
+            }
         }
     }
 
@@ -36,8 +42,15 @@ public abstract class GamePlayer{
      * Adds cards to hand from deck, and sets playerstate to PICKING_CARDS
      */
     public void drawCardsFromDeck(){
-        for (int i = 0; i<9; i++){
+        int cardsToAdd = Math.min(9-hand.size(), deck.size()-hand.size());
+
+        for (int i = 0; i<cardsToAdd; i++){
             hand.add(deck.remove(0));
+        }
+        if (hand.size() != 9) {
+            deck.addAll(discard);
+            discard = new ArrayList<>();
+            drawCardsFromDeck();
         }
         state = PLAYERSTATE.PICKING_CARDS;
     }
@@ -46,8 +59,9 @@ public abstract class GamePlayer{
     public abstract void registerChosenCards();
 
     public void chooseCards(int cardSelection){
-        // TODO remove cards
-        chosenCards.add(deck.get(cardSelection));
+        chosenCards.add(hand.get(cardSelection));
+        //TODO: Should this be null, or should there be a 'null'-equivalent in the CardType enum?
+        hand.set(cardSelection, null);
     }
 
     // Starts next turn, everyone draws cards.

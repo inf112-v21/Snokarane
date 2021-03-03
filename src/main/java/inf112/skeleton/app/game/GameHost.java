@@ -9,13 +9,14 @@ import inf112.skeleton.app.game.objects.PlayerToken;
 import inf112.skeleton.app.network.Network;
 import inf112.skeleton.app.network.NetworkHost;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
 public class GameHost extends GamePlayer {
     // Network connection to be used in game
     public GameHost(NetworkHost network){
-        super.GamePlayer();
+        super();
         host = network;
 
         // Give each client a new player token to keep track of player data
@@ -37,7 +38,14 @@ public class GameHost extends GamePlayer {
      */
     @Override
     public void registerChosenCards() {
-        //System.out.println(this.chosenCards);
+        // Add the cards (prematurely for now) to the discard pile)
+        discard.addAll(chosenCards);
+        discard.addAll(hand);
+
+        // Reset the chosen cards and the hand
+        chosenCards = new ArrayList<>();
+        hand = new ArrayList<>();
+
         waitForClientsToFinishCardChoices();
         processCards();
         host.clientCards.clear();
@@ -93,11 +101,46 @@ public class GameHost extends GamePlayer {
      *
      * @param card card to resolve
      * @param token token to move
-     * @return token that has been moved
      */
-    private void resolveCard(Card card, PlayerToken token){
-        if(card.getCardType().equals(CardType.FORWARDONE)){
-            token.move(1, 0);
+    private void resolveCard(Card card, PlayerToken token) {
+        switch (card.getCardType()) {
+            case FORWARDONE:
+                movePlayer(token, 1);
+            case FORWARDTWO:
+                movePlayer(token, 2);
+            case FORWARDTHREE:
+                movePlayer(token, 3);
+            case BACK_UP:
+                movePlayer(token, -1);
+            case TURNLEFT:
+                token.rotate(CardType.TURNLEFT);
+            case TURNRIGHT:
+                token.rotate(CardType.TURNRIGHT);
+            case UTURN:
+                token.rotate(CardType.UTURN);
+
+        }
+    }
+    private void movePlayer(PlayerToken player, int dist) {
+        for(int i = 0; i < dist; i++) {
+            //TODO: Implement the needed methods somewhere, somehow
+
+            // If the tile the player is trying to move into is empty
+            // it can simply move there
+            if (map.areLayersEmpty(player.wouldEndUp())) {
+                player.move();
+            }
+            // If the tile the player is trying to move into is a wall
+            // the player stands still
+            // If the tile the player is trying to move into is another player
+            // the player moves the other player, then itself
+            else if (map.containsPlayer(player.wouldEndUp())) {
+                map.getPlayer(player.wouldEndUp()).move(player.getDirection());
+                player.move();
+            }
+            else if (map.containsWall(player.wouldEndUp())) {
+                continue;
+            }
         }
     }
 
