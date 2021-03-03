@@ -1,6 +1,7 @@
 package inf112.skeleton.app.game;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 
+import inf112.skeleton.app.libgdx.MapLayerWrapper;
 import inf112.skeleton.app.network.NetworkClient;
 import inf112.skeleton.app.network.cardList;
 
@@ -46,10 +47,16 @@ public class GameClient extends GamePlayer {
     public void drawCards() {
         // nothing happens here :o
     }
+    // This function is not in use in this class
+    @Override
+    public void getMap(MapLayerWrapper mlp) {
+        // nothing happens here :o
+    }
 
     // Return newest version of tiledMap from client
     @Override
-    public TiledMap updateMap(TiledMap tiledMap) {
-        return client.tiledMap;
+    public MapLayerWrapper updateMap(MapLayerWrapper mlp) {
+        return client.mlp;
     }
+
 }

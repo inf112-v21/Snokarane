@@ -5,6 +5,7 @@ import com.esotericsoftware.kryonet.Connection;
 import edu.emory.mathcs.backport.java.util.Arrays;
 import inf112.skeleton.app.game.objects.Card;
 import inf112.skeleton.app.game.objects.CardType;
+import inf112.skeleton.app.libgdx.MapLayerWrapper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -71,7 +72,8 @@ public abstract class GamePlayer{
     public abstract void drawCards();
 
     // return updated map if client, send new map to clients if host
-    public abstract TiledMap updateMap(TiledMap tiledMap);
+    public abstract MapLayerWrapper updateMap(MapLayerWrapper mlp);
+    public abstract void getMap(MapLayerWrapper mlp);
 
     public enum PLAYERSTATE{
         WAITING,
