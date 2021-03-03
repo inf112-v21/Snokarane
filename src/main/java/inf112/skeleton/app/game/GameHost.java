@@ -62,19 +62,15 @@ public class GameHost extends GamePlayer {
     }
 
     public void processCards(){
-        int cardsProccessedPerRound = 5;
+        int cardsProcessedPerRound = 5;
         // iterator i is same as client connection id
-        for (int i = 0; i<cardsProccessedPerRound; i++){
+        for (int i = 0; i<cardsProcessedPerRound; i++){
             for (int key : clientPlayers.keySet()){
                 System.out.println("HEHEHE333");
                 List<Card> cards = host.clientCards.get(key);
                 Card currentCard = cards.remove(0);
-                System.out.println(clientPlayers.get(key).getX());
                 // Move the clients player token
-                PlayerToken newPlayerToken = resolveCard(currentCard, clientPlayers.get(key));
-                System.out.println(newPlayerToken.getX());
-                // Place new token in clientPlayers
-                clientPlayers.put(key, newPlayerToken);
+                resolveCard(currentCard, clientPlayers.get(key));
             }
         }
     }
@@ -86,13 +82,10 @@ public class GameHost extends GamePlayer {
      * @param token token to move
      * @return token that has been moved
      */
-    private PlayerToken resolveCard(Card card, PlayerToken token){
-        System.out.println(card.getCardType());
+    private void resolveCard(Card card, PlayerToken token){
         if(card.getCardType().equals(CardType.FORWARDONE)){
-            System.out.println("Hei");
             token.move(1, 0);
         }
-        return token;
     }
 
 }
