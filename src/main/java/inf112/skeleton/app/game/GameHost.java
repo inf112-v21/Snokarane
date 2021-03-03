@@ -15,7 +15,7 @@ import java.util.List;
 public class GameHost extends GamePlayer {
     // Network connection to be used in game
     public GameHost(NetworkHost network){
-        super.GamePlayer();
+        super();
         host = network;
 
         // Give each client a new player token to keep track of player data
@@ -93,7 +93,6 @@ public class GameHost extends GamePlayer {
      *
      * @param card card to resolve
      * @param token token to move
-     * @return token that has been moved
      */
     private void resolveCard(Card card, PlayerToken token){
         if(card.getCardType().equals(CardType.FORWARDONE)){

@@ -14,7 +14,7 @@ import java.util.ArrayList;
 public class GameClient extends GamePlayer {
 
     public GameClient(NetworkClient network) {
-        super.GamePlayer();
+        super();
         network.gameClient = this;
         client = network;
         connectionID = client.client.getID();
