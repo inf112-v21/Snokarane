@@ -39,6 +39,8 @@ public class Game extends InputAdapter implements ApplicationListener {
     // Entire map (graphic)
     private TiledMap tiledMap;
 
+    MapLayerWrapper mlp;
+
     // Board dimensions
     int BOARD_X = 5;
     int BOARD_Y = 5;
@@ -73,6 +75,13 @@ public class Game extends InputAdapter implements ApplicationListener {
      */
     // Function called regardless of host or player status, initializes network and asks for host/client role selection
     public void startGame(){
+        // Initialize mapLayerWrapper
+        mlp = new MapLayerWrapper();
+        // Set MapLayerWrappers player state cells
+        mlp.setPlayerCells(playerNormal, playerWon);
+        // Load map layers into wrapper
+        mlp.loadLayers(boardLayer, playerLayer, flagLayer);
+
         // Choose whether to host or connect
         network = Network.choseRole();
         // Initializes connections, ports and opens for sending and receiving data
@@ -92,6 +101,7 @@ public class Game extends InputAdapter implements ApplicationListener {
         this.network.initConnections();
         // Starts GameHost session using network that was initialized
         gamePlayer = new GameHost((NetworkHost)network);
+        gamePlayer.getMap(mlp);
         gamePlayer.drawCards();
     }
     // Start game as client
@@ -111,9 +121,6 @@ public class Game extends InputAdapter implements ApplicationListener {
         batch = new SpriteBatch();
         font = new BitmapFont();
         font.setColor(Color.RED);
-
-        // Start game/network objects
-        startGame();
         
         // Register input processor to handle key presses
         Gdx.input.setInputProcessor(this);
@@ -121,8 +128,14 @@ public class Game extends InputAdapter implements ApplicationListener {
         // Load .tmx file from disk
         tiledMap = loadTileMapFromFile("test-map.tmx");
 
+        // Load the map's layers
+        loadMapLayers(tiledMap);
+
         // Initialize player textures from .png file
         loadPlayerTextures();
+
+        // Start game/network objects
+        startGame();
 
         // Start camera/rendering
         initializeRendering();
@@ -211,54 +224,20 @@ public class Game extends InputAdapter implements ApplicationListener {
         Gdx.gl.glClearColor(1, 1, 1, 1);
         Gdx.gl.glClear(GL30.GL_COLOR_BUFFER_BIT);
 
-        // TODO: !!!THIS SHOULD BE DONE IN GAMEHOST, more explained in updateMap
-        // Clear all player cells
-        if (playerLayer != null){
-            for (int i = 0; i<playerLayer.getWidth(); i++){
-                for (int j = 0; j<playerLayer.getHeight(); j++){
-                    playerLayer.setCell(i, j, new TiledMapTileLayer.Cell());
-                }
-            }
-        }
-
         // Sends map to client of host, updates map in (this) if client
         updateMap();
-
-        // TODO: you need to update the playerLayer
-        // TODO: In GameHost's tiledMap every time a player is moved.
-        // TODO: Maybe it's best to send a wrapper that contains
-        // TODO: Each layer in updateMap() instead of the entire TiledMap
-        // TODO: that way, each time the updateMap is called, you can then
-        // TODO: update the playerLayer on each client wtih the correct
-        // TODO: cells representing the players here.
-        // TODO: That way this entire for loop thing below isnt needed,
-        // TODO but the player layer is updated in updateMap instead.
-        // New player cells have been recieved, so update them
-        if (playerLayer != null){
-            for (int i = 0; i<playerLayer.getWidth(); i++){
-                for (int j = 0; j<playerLayer.getHeight(); j++){
-                    //playerLayer.setCell(i, j, playerNormal);
-                }
-            }
-        }
 
         // Render current frame to screen
         renderer.render();
     }
 
-    // TODO: dont sent tiledMap to GamePlayer, send a wrapper for each of the layers.
-    // TODO: That way you can update the playerLayer INSIDE GameHost,
-    // TODO: By clearing the playerLayer.setCell(current player token location, new TiledMapTileLayer.Cell())
-    // TODO: Then doing the PlayerToken moves (processCards() etc.), and
-    // TODO: then doing playerLayer.setCell(New player token location, PlayerNormal etc.)
-    // TODO: That way the map is properly updated on all clients, from GameHost.
     public void updateMap(){
-        if (network.isHost){
-            gamePlayer.updateMap(this.tiledMap);
-        }else{
-            tiledMap = gamePlayer.updateMap(null);
+        if (mlp != null){
+            mlp = gamePlayer.updateMap(null);
+            this.playerLayer = mlp.getPlayerLayer();
+            this.boardLayer = mlp.getBoardLayer();
+            this.flagLayer = mlp.getFlagLayer();
         }
-        loadMapLayers(tiledMap);
     }
 
     /**
