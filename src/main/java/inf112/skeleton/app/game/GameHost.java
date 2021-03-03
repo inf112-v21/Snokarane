@@ -3,6 +3,7 @@ package inf112.skeleton.app.game;
 import com.esotericsoftware.kryonet.Client;
 import com.esotericsoftware.kryonet.Connection;
 import inf112.skeleton.app.game.objects.Card;
+import inf112.skeleton.app.game.objects.CardType;
 import inf112.skeleton.app.game.objects.PlayerToken;
 import inf112.skeleton.app.network.Network;
 import inf112.skeleton.app.network.NetworkHost;
@@ -19,12 +20,12 @@ public class GameHost extends GamePlayer {
         // Give each client a new player token to keep track of player data
         clientPlayers = new HashMap<>();
         for (Connection c : host.connections){
-            clientPlayers.put(c, new PlayerToken());
+            clientPlayers.put(c.getID(), new PlayerToken());
         }
     }
     NetworkHost host;
     // Has all clients (which contain connnection ID's) as well as their tokens
-    HashMap<Connection, PlayerToken> clientPlayers;
+    HashMap<Integer, PlayerToken> clientPlayers;
 
     /**
      * Registers the client's chosen cards, then clears the host's storage of
@@ -34,7 +35,9 @@ public class GameHost extends GamePlayer {
     public void registerChosenCards() {
         //System.out.println(this.chosenCards);
         waitForClientsToFinishCardChoices();
+        processCards();
         host.clientCards.clear();
+        drawCards();
     }
 
     /**
@@ -58,6 +61,33 @@ public class GameHost extends GamePlayer {
         System.out.println("We done");
         for (int i: host.clientCards.keySet())
             System.out.println(host.clientCards.get(i));
+    }
+
+    public void processCards(){
+        System.out.print("HEHEHEHE");
+        int cardsProccessedPerRound = 5;
+        // iterator i is same as client connection id
+        for (int i = 0; i<cardsProccessedPerRound; i++){
+            System.out.print("HEHEHEHE2");
+            for (int key : clientPlayers.keySet()){
+                System.out.print("HEHEHEHE3");
+                List<Card> cards = host.clientCards.get(key);
+                Card currentCard = cards.remove(0);
+                PlayerToken currentPlayerToken = clientPlayers.get(key);
+
+                System.out.print(currentPlayerToken.getX());
+                resolveCard(currentCard, currentPlayerToken);
+                System.out.print(currentPlayerToken.getX());
+
+                clientPlayers.put(key, currentPlayerToken);
+            }
+        }
+    }
+
+    public void resolveCard(Card card, PlayerToken token){
+        if(card.getCardType() == CardType.FORWARDONE){
+            token.move(1, 0);
+        }
     }
 
 }
