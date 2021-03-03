@@ -50,6 +50,9 @@ public class MapTest {
         assertEquals(2, map.flagPositions.size());
     }
 
+    /**
+     * TODO: DEPRECATED
+     */
     public void movePlayerToFlag(){
         // flag is at 4, 1
         int playerMoveX = 1;
@@ -87,6 +90,9 @@ public class MapTest {
         assertTrue(mapFlags.contains(playerFlags.get(0)));
 
         // Move player to other flag, otherwise the rest of these asserts won't pass
+        /**
+         * TODO: Deprecated
+         */
         player.move(3, 0);
         map.checkForFlags(player);
 

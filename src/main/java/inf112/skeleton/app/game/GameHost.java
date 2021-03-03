@@ -102,9 +102,45 @@ public class GameHost extends GamePlayer {
      * @param card card to resolve
      * @param token token to move
      */
-    private void resolveCard(Card card, PlayerToken token){
-        if(card.getCardType().equals(CardType.FORWARDONE)){
-            token.move(1, 0);
+    private void resolveCard(Card card, PlayerToken token) {
+        switch (card.getCardType()) {
+            case FORWARDONE:
+                movePlayer(token, 1);
+            case FORWARDTWO:
+                movePlayer(token, 2);
+            case FORWARDTHREE:
+                movePlayer(token, 3);
+            case BACK_UP:
+                movePlayer(token, -1);
+            case TURNLEFT:
+                token.rotate(CardType.TURNLEFT);
+            case TURNRIGHT:
+                token.rotate(CardType.TURNRIGHT);
+            case UTURN:
+                token.rotate(CardType.UTURN);
+
+        }
+    }
+    private void movePlayer(PlayerToken player, int dist) {
+        for(int i = 0; i < dist; i++) {
+            //TODO: Implement the needed methods somewhere, somehow
+
+            // If the tile the player is trying to move into is empty
+            // it can simply move there
+            if (map.areLayersEmpty(player.wouldEndUp())) {
+                player.move();
+            }
+            // If the tile the player is trying to move into is a wall
+            // the player stands still
+            // If the tile the player is trying to move into is another player
+            // the player moves the other player, then itself
+            else if (map.containsPlayer(player.wouldEndUp())) {
+                map.getPlayer(player.wouldEndUp()).move(player.getDirection());
+                player.move();
+            }
+            else if (map.containsWall(player.wouldEndUp())) {
+                continue;
+            }
         }
     }
 
