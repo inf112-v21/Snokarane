@@ -52,21 +52,37 @@ public class PlayerToken {
         return false;
     }
 
+    /**
+     *
+     * @return List of all the flags the player has visited
+     */
     public List<Flag> getVisitedFlags() {
         return flagsVisited;
     }
 
-
+    /**
+     * @return The direction the player is facing
+     */
     public Direction getDirection() {
         return playerDirection;
     }
 
+    /**
+     * @return The position where the player would end up if they move one step in the direction
+     * they are currently facing.
+     */
     public GridPoint2 wouldEndUp() {
         GridPoint2 newPos = new GridPoint2(position.x, position.y);
         moveDir(newPos, playerDirection);
         return newPos;
     }
 
+    /**
+     * Updates the position matrix to reflect on what it would be like if a player
+     * moved one step in the given direction
+     * @param position The position to update
+     * @param direction The direction to move
+     */
     private void moveDir(GridPoint2 position, Direction direction) {
         switch (direction) {
             case NORTH:
@@ -80,24 +96,28 @@ public class PlayerToken {
         }
     }
 
+    /**
+     * Rotates the player in the given direction
+     * @param rotationDirection A CardType that is either TURNLEFT, TURNRIGHT, or UTURN
+     */
     public void rotate(CardType rotationDirection) {
         switch (playerDirection) {
             case EAST:
                 if (rotationDirection == CardType.TURNLEFT) playerDirection = Direction.NORTH;
-                if (rotationDirection == CardType.TURNRIGHT) playerDirection = Direction.SOUTH;
-                if (rotationDirection == CardType.UTURN) playerDirection = Direction.WEST;
+                else if (rotationDirection == CardType.TURNRIGHT) playerDirection = Direction.SOUTH;
+                else if (rotationDirection == CardType.UTURN) playerDirection = Direction.WEST;
             case WEST:
                 if (rotationDirection == CardType.TURNLEFT) playerDirection = Direction.SOUTH;
-                if (rotationDirection == CardType.TURNRIGHT) playerDirection = Direction.NORTH;
-                if (rotationDirection == CardType.UTURN) playerDirection = Direction.EAST;
+                else if (rotationDirection == CardType.TURNRIGHT) playerDirection = Direction.NORTH;
+                else if (rotationDirection == CardType.UTURN) playerDirection = Direction.EAST;
             case NORTH:
                 if (rotationDirection == CardType.TURNLEFT) playerDirection = Direction.WEST;
-                if (rotationDirection == CardType.TURNRIGHT) playerDirection = Direction.EAST;
-                if (rotationDirection == CardType.UTURN) playerDirection = Direction.SOUTH;
+                else if (rotationDirection == CardType.TURNRIGHT) playerDirection = Direction.EAST;
+                else if (rotationDirection == CardType.UTURN) playerDirection = Direction.SOUTH;
             case SOUTH:
                 if (rotationDirection == CardType.TURNLEFT) playerDirection = Direction.EAST;
-                if (rotationDirection == CardType.TURNRIGHT) playerDirection = Direction.WEST;
-                if (rotationDirection == CardType.UTURN) playerDirection = Direction.NORTH;
+                else if (rotationDirection == CardType.TURNRIGHT) playerDirection = Direction.WEST;
+                else if (rotationDirection == CardType.UTURN) playerDirection = Direction.NORTH;
         }
     }
 

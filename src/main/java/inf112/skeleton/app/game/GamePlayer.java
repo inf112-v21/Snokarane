@@ -8,6 +8,8 @@ import inf112.skeleton.app.game.objects.CardType;
 import inf112.skeleton.app.libgdx.MapLayerWrapper;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -37,6 +39,7 @@ public abstract class GamePlayer{
                 deck.add(card);
             }
         }
+        Collections.shuffle(deck);
     }
 
     /**
@@ -50,6 +53,7 @@ public abstract class GamePlayer{
         }
         if (hand.size() != 9) {
             deck.addAll(discard);
+            Collections.shuffle(deck);
             discard = new ArrayList<>();
             drawCardsFromDeck();
         }
