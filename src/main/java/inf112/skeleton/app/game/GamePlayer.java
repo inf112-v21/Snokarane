@@ -27,7 +27,7 @@ public abstract class GamePlayer{
         for (int i = 0; i<500; i++){
             Card card = new Card();
             card.setCardType(CardType.FORWARDONE);
-            deck.add(new Card());
+            deck.add(card);
         }
     }
 

@@ -54,8 +54,6 @@ public class GameHost extends GamePlayer {
     public void waitForClientsToFinishCardChoices(){
         // If all clients have sent their cards, the host's client card storage size is same as the amount of clients connected
         while (host.clientCards.size() != host.connections.length){
-            System.out.println("Client size" + Integer.toString(host.clientCards.size()));
-            System.out.println("Connections size" + Integer.toString(host.connections.length) + "\n\n");
 
         }
         System.out.println("We done");
@@ -64,19 +62,17 @@ public class GameHost extends GamePlayer {
     }
 
     public void processCards(){
-        System.out.print("HEHEHEHE");
         int cardsProccessedPerRound = 5;
         // iterator i is same as client connection id
         for (int i = 0; i<cardsProccessedPerRound; i++){
-            System.out.print("HEHEHEHE2");
             for (int key : clientPlayers.keySet()){
-                System.out.print("HEHEHEHE3");
+                System.out.println("HEHEHE333");
                 List<Card> cards = host.clientCards.get(key);
                 Card currentCard = cards.remove(0);
-
+                System.out.println(clientPlayers.get(key).getX());
                 // Move the clients player token
                 PlayerToken newPlayerToken = resolveCard(currentCard, clientPlayers.get(key));
-
+                System.out.println(newPlayerToken.getX());
                 // Place new token in clientPlayers
                 clientPlayers.put(key, newPlayerToken);
             }
@@ -91,7 +87,9 @@ public class GameHost extends GamePlayer {
      * @return token that has been moved
      */
     private PlayerToken resolveCard(Card card, PlayerToken token){
-        if(card.getCardType() == CardType.FORWARDONE){
+        System.out.println(card.getCardType());
+        if(card.getCardType().equals(CardType.FORWARDONE)){
+            System.out.println("Hei");
             token.move(1, 0);
         }
         return token;
