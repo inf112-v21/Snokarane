@@ -198,10 +198,19 @@ public class Game extends InputAdapter implements ApplicationListener {
         Gdx.gl.glClearColor(1, 1, 1, 1);
         Gdx.gl.glClear(GL30.GL_COLOR_BUFFER_BIT);
 
-
+        // Sends map to client of host, updates map in (this) if client
+        updateMap();
 
         // Render current frame to screen
         renderer.render();
+    }
+
+    public void updateMap(){
+        if (network.isHost){
+            gamePlayer.updateMap(this.tiledMap);
+        }else{
+            tiledMap = gamePlayer.updateMap(null);
+        }
     }
 
     /**
