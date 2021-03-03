@@ -30,7 +30,7 @@ import java.util.List;
 
 /**
  * Handles rendering, textures and event handling (key presses)
- * Currently this class also contains most of the game logic
+ * Game(this class) runs client side on each players PC, so only objects and methods necessary to have client side should be used here
  */
 public class Game extends InputAdapter implements ApplicationListener {
     // For rendering text to screen
@@ -40,6 +40,7 @@ public class Game extends InputAdapter implements ApplicationListener {
     // Entire map (graphic)
     private TiledMap tiledMap;
 
+    // Board dimensions
     int BOARD_X = 5;
     int BOARD_Y = 5;
 
@@ -60,7 +61,9 @@ public class Game extends InputAdapter implements ApplicationListener {
 
     /**
      * Initialize objects depending on host status
+     * These methods are needed to start a game session to other players over network
      */
+    // Function called regardless of host or player status, initializes network and asks for host/client role selection
     public void startGame(){
         // Choose whether to host or connect
         network = Network.choseRole();
@@ -73,7 +76,7 @@ public class Game extends InputAdapter implements ApplicationListener {
             startClient();
 
     }
-
+    // Start game as host
     private void startHost(){
         // Send prompt til all connected clients
         Network.prompt("All players connected.", null);
@@ -83,6 +86,7 @@ public class Game extends InputAdapter implements ApplicationListener {
         gamePlayer = new GameHost((NetworkHost)network);
         gamePlayer.drawCards();
     }
+    // Start game as client
     private void startClient(){
         gamePlayer = new GameClient((NetworkClient)network);
     }
@@ -197,6 +201,9 @@ public class Game extends InputAdapter implements ApplicationListener {
         renderer.render();
     }
 
+    /**
+     * These functions are not currently in use, but inherited from superclass
+     */
     @Override
     public void dispose() {
         batch.dispose();
