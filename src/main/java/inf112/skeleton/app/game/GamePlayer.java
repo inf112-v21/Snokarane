@@ -49,7 +49,10 @@ public abstract class GamePlayer{
         chosenCards.add(deck.get(cardSelection));
     }
 
-    // Starts next turn, everyone draws cards
+    // Starts next turn, everyone draws cards.
+    // In Game.java this function is used only in GameHost, but since GameClient and GameHost is
+    // initialized from this class, we need this as an abstract function here which makes GameClient
+    // have an empty function, but this seems like the best solution to this problem for now.
     public abstract void drawCards();
 
     public enum PLAYERSTATE{

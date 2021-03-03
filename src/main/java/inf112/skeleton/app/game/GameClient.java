@@ -33,6 +33,7 @@ public class GameClient extends GamePlayer {
         client.client.sendTCP(listOfCards);
     }
 
+    // This function is not in use in this class
     @Override
     public void drawCards() {
         // nothing happens here :o
