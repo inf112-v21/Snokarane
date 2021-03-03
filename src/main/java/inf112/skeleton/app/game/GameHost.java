@@ -9,6 +9,7 @@ import inf112.skeleton.app.game.objects.PlayerToken;
 import inf112.skeleton.app.network.Network;
 import inf112.skeleton.app.network.NetworkHost;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -37,7 +38,14 @@ public class GameHost extends GamePlayer {
      */
     @Override
     public void registerChosenCards() {
-        //System.out.println(this.chosenCards);
+        // Add the cards (prematurely for now) to the discard pile)
+        discard.addAll(chosenCards);
+        discard.addAll(hand);
+
+        // Reset the chosen cards and the hand
+        chosenCards = new ArrayList<>();
+        hand = new ArrayList<>();
+
         waitForClientsToFinishCardChoices();
         processCards();
         host.clientCards.clear();

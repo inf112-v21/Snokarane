@@ -1,15 +1,11 @@
 package inf112.skeleton.app.game;
 import com.badlogic.gdx.maps.tiled.TiledMap;
-import com.badlogic.gdx.scenes.scene2d.InputEvent;
-import inf112.skeleton.app.game.objects.Card;
 
-import com.esotericsoftware.kryonet.rmi.ObjectSpace;
-import inf112.skeleton.app.libgdx.Game;
 import inf112.skeleton.app.network.NetworkClient;
-import inf112.skeleton.app.network.NetworkData;
 import inf112.skeleton.app.network.cardList;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 public class GameClient extends GamePlayer {
 
@@ -17,11 +13,8 @@ public class GameClient extends GamePlayer {
         super();
         network.gameClient = this;
         client = network;
-        connectionID = client.client.getID();
     }
     NetworkClient client;
-    // Client connection ID
-    int connectionID;
 
     /**
      * Send clients chosen card to NetworkHost
@@ -34,6 +27,9 @@ public class GameClient extends GamePlayer {
 
         // Add the cards (prematurely for now) to the discard pile)
         discard.addAll(chosenCards);
+
+        //TODO Fix this is you fix the todo in GamePlayer chosecards
+        hand.removeAll(Collections.singleton(null));
         discard.addAll(hand);
 
         // Actually send the cards to the host

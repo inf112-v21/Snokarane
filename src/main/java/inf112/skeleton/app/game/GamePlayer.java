@@ -18,9 +18,9 @@ public abstract class GamePlayer{
     public PLAYERSTATE state = PLAYERSTATE.NONE;
 
     public ArrayList<Card> chosenCards = new ArrayList<>();
-    ArrayList<Card> hand = new ArrayList<>();
-    ArrayList<Card> deck = new ArrayList<>();
-    ArrayList<Card> discard = new ArrayList<>();
+    public ArrayList<Card> hand = new ArrayList<>();
+    public ArrayList<Card> deck = new ArrayList<>();
+    public ArrayList<Card> discard = new ArrayList<>();
 
     /**
      * Give player a stack of cards to deck
@@ -42,13 +42,15 @@ public abstract class GamePlayer{
      * Adds cards to hand from deck, and sets playerstate to PICKING_CARDS
      */
     public void drawCardsFromDeck(){
-        for (int i = 0; i<Math.min(9-hand.size(), deck.size()-hand.size()); i++){
+        int cardsToAdd = Math.min(9-hand.size(), deck.size()-hand.size());
+
+        for (int i = 0; i<cardsToAdd; i++){
             hand.add(deck.remove(0));
         }
         if (hand.size() != 9) {
             deck.addAll(discard);
             discard = new ArrayList<>();
-            drawCards();
+            drawCardsFromDeck();
         }
         state = PLAYERSTATE.PICKING_CARDS;
     }
@@ -57,9 +59,9 @@ public abstract class GamePlayer{
     public abstract void registerChosenCards();
 
     public void chooseCards(int cardSelection){
-        chosenCards.add(deck.get(cardSelection));
+        chosenCards.add(hand.get(cardSelection));
         //TODO: Should this be null, or should there be a 'null'-equivalent in the CardType enum?
-        deck.set(cardSelection, null);
+        hand.set(cardSelection, null);
     }
 
     // Starts next turn, everyone draws cards.
