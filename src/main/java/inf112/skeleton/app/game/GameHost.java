@@ -1,6 +1,7 @@
 package inf112.skeleton.app.game;
 
 import com.badlogic.gdx.maps.tiled.TiledMap;
+import com.badlogic.gdx.math.GridPoint2;
 import com.esotericsoftware.kryonet.Client;
 import com.esotericsoftware.kryonet.Connection;
 import inf112.skeleton.app.game.objects.Card;
@@ -140,27 +141,36 @@ public class GameHost extends GamePlayer {
     }
     private void movePlayer(PlayerToken player, int dist) {
         for(int i = 0; i < dist; i++) {
-            //TODO: Implement the needed methods somewhere, somehow
+            GridPoint2 wouldEndUp = player.wouldEndUp();
 
-            /**
+            //TODO: Simple out of bounds check, fix this with some death logic
+            if (wouldEndUp.x < 0 || wouldEndUp.x > 4 || wouldEndUp.y < 0 || wouldEndUp.y > 4) {
+                continue;
+            }
+
             // If the tile the player is trying to move into is empty
             // it can simply move there
-            if (map.areLayersEmpty(player.wouldEndUp())) {
+            else if (mlp.isEmpty(wouldEndUp)) {
                 player.move();
             }
             // If the tile the player is trying to move into is a wall
             // the player stands still
             // If the tile the player is trying to move into is another player
             // the player moves the other player, then itself
-            else if (map.containsPlayer(player.wouldEndUp())) {
-                map.getPlayer(player.wouldEndUp()).move(player.getDirection());
-                player.move();
+            //TODO: Reallllllly shitty way to do this
+            else if (mlp.containsPlayer(wouldEndUp)) {
+                for (PlayerToken token: clientPlayers.values()) {
+                    if (token.getX() == wouldEndUp.x && token.getY() == wouldEndUp.y) {
+                        token.move(player.getDirection());
+                        player.move();
+                    }
+                }
             }
-            else if (map.containsWall(player.wouldEndUp())) {
-                continue;
-            }*/
 
-            player.move();
+            //else if (map.containsWall(player.wouldEndUp())) {
+            //    continue;
+            //}
+
         }
     }
 

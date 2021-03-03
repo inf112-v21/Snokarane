@@ -3,6 +3,7 @@ package inf112.skeleton.app.libgdx;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTile;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
+import com.badlogic.gdx.math.GridPoint2;
 import inf112.skeleton.app.game.objects.PlayerToken;
 
 import java.util.HashMap;
@@ -31,6 +32,14 @@ public class MapLayerWrapper {
     public void setPlayerCells(TiledMapTileLayer.Cell playerNormal, TiledMapTileLayer.Cell playerWon){
         this.playerNormal = playerNormal;
         this.playerWon = playerWon;
+    }
+
+    public boolean containsPlayer(GridPoint2 position) {
+        return playerLayer.getCell(position.x, position.y) == playerNormal;
+    }
+
+    public boolean isEmpty(GridPoint2 position) {
+        return playerLayer.getCell(position.x, position.y) == none;
     }
 
     public void loadLayers(TiledMapTileLayer board, TiledMapTileLayer player, TiledMapTileLayer flag){
