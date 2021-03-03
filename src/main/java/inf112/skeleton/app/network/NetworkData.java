@@ -5,6 +5,7 @@ import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import inf112.skeleton.app.game.objects.Card;
 import inf112.skeleton.app.game.objects.CardType;
+import inf112.skeleton.app.libgdx.MapLayerWrapper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,6 +32,7 @@ public class NetworkData {
         classesToRegister.add(ArrayList.class);
         classesToRegister.add(CardType.class);
         classesToRegister.add(MapLayers.class);
+        classesToRegister.add(MapLayerWrapper.class);
         return classesToRegister;
     }
 }

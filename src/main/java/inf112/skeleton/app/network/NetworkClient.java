@@ -1,5 +1,6 @@
 package inf112.skeleton.app.network;
 
+import com.badlogic.gdx.maps.MapLayer;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTile;
 import com.esotericsoftware.kryo.Kryo;
@@ -9,6 +10,7 @@ import com.esotericsoftware.kryonet.Listener;
 import com.esotericsoftware.kryonet.rmi.ObjectSpace;
 import inf112.skeleton.app.Map;
 import inf112.skeleton.app.game.GameClient;
+import inf112.skeleton.app.libgdx.MapLayerWrapper;
 
 import java.io.IOException;
 
@@ -17,6 +19,7 @@ public class NetworkClient extends Network {
     public Client client;
     String IP;
     public TiledMap tiledMap;
+    public MapLayerWrapper mlp;
     public GameClient gameClient;
 
     @Override
@@ -42,6 +45,9 @@ public class NetworkClient extends Network {
                 }
                 if (object instanceof String) {
                     gameClient.drawCardsFromDeck();
+                }
+                if (object instanceof MapLayerWrapper){
+                    mlp = (MapLayerWrapper) object;
                 }
             }
             public void disconnected (Connection connection) {

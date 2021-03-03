@@ -11,6 +11,7 @@ import inf112.skeleton.app.game.GameClient;
 import inf112.skeleton.app.game.GamePlayer;
 import inf112.skeleton.app.game.objects.Card;
 import inf112.skeleton.app.game.objects.PlayerToken;
+import inf112.skeleton.app.libgdx.MapLayerWrapper;
 
 import java.io.IOException;
 import java.lang.reflect.Array;
@@ -67,6 +68,12 @@ public class NetworkHost extends Network {
     public void sendMaps(TiledMap map) {
         server.sendToAllTCP(map);
     }
+
+    /**
+     * Sends MapLayerWrapper to all clients
+     * @param mlp map layer data that should be sent
+     */
+    public void sendMapLayerWrapper(MapLayerWrapper mlp) { server.sendToAllTCP(mlp); }
 
     /**
      * Prompts all connected clients to draw cards
