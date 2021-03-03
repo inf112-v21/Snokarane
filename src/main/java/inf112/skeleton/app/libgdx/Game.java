@@ -39,7 +39,7 @@ public class Game extends InputAdapter implements ApplicationListener {
     // Entire map (graphic)
     private TiledMap tiledMap;
 
-    MapLayerWrapper mlp;
+    Map mlp;
 
     // Board dimensions
     int BOARD_X = 5;
@@ -76,7 +76,7 @@ public class Game extends InputAdapter implements ApplicationListener {
     // Function called regardless of host or player status, initializes network and asks for host/client role selection
     public void startGame(){
         // Initialize mapLayerWrapper
-        mlp = new MapLayerWrapper();
+        mlp = new Map();
         // Set MapLayerWrappers player state cells
         mlp.setPlayerCells(playerNormal, playerWon);
         // Load map layers into wrapper

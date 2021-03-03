@@ -1,14 +1,11 @@
 package inf112.skeleton.app.game;
 
-import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.math.GridPoint2;
-import com.esotericsoftware.kryonet.Client;
 import com.esotericsoftware.kryonet.Connection;
 import inf112.skeleton.app.game.objects.Card;
 import inf112.skeleton.app.game.objects.CardType;
 import inf112.skeleton.app.game.objects.PlayerToken;
-import inf112.skeleton.app.libgdx.MapLayerWrapper;
-import inf112.skeleton.app.network.Network;
+import inf112.skeleton.app.libgdx.Map;
 import inf112.skeleton.app.network.NetworkHost;
 
 import java.util.ArrayList;
@@ -28,7 +25,7 @@ public class GameHost extends GamePlayer {
         }
     }
 
-    public MapLayerWrapper mlp;
+    public Map mlp;
 
     NetworkHost host;
     // Has all clients (which contain connnection ID's) as well as their tokens
@@ -63,12 +60,12 @@ public class GameHost extends GamePlayer {
     }
 
     @Override
-    public MapLayerWrapper updateMap(MapLayerWrapper mlp) {
+    public Map updateMap(Map mlp) {
         return this.mlp;
     }
 
     @Override
-    public void getMap(MapLayerWrapper mlp){
+    public void getMap(Map mlp){
         this.mlp = mlp;
     }
 
@@ -107,7 +104,7 @@ public class GameHost extends GamePlayer {
                 mlp.setCell(clientPlayers.get(key).getX(), clientPlayers.get(key).getY(), mlp.playerNormal);
 
                 // Send updated map to clients
-                host.sendMapLayerWrapper(mlp);
+                host.sendMapLayerWrapper(mlp.getWrapper());
                 //artificialDelayToShowMoves();
                 //processPlayerMoves();
             }

@@ -1,21 +1,14 @@
 package inf112.skeleton.app.network;
 
 import com.badlogic.gdx.maps.tiled.TiledMap;
-import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
 import com.esotericsoftware.kryonet.Server;
-import com.esotericsoftware.kryonet.rmi.ObjectSpace;
-import inf112.skeleton.app.Map;
-import inf112.skeleton.app.game.GameClient;
-import inf112.skeleton.app.game.GamePlayer;
 import inf112.skeleton.app.game.objects.Card;
-import inf112.skeleton.app.game.objects.PlayerToken;
+import inf112.skeleton.app.libgdx.Map;
 import inf112.skeleton.app.libgdx.MapLayerWrapper;
 
 import java.io.IOException;
-import java.lang.reflect.Array;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -71,9 +64,9 @@ public class NetworkHost extends Network {
 
     /**
      * Sends MapLayerWrapper to all clients
-     * @param mlp map layer data that should be sent
+     * @param wrapper map layer data that should be sent
      */
-    public void sendMapLayerWrapper(MapLayerWrapper mlp) { server.sendToAllTCP(mlp); }
+    public void sendMapLayerWrapper(MapLayerWrapper wrapper) { server.sendToAllTCP(wrapper); }
 
     /**
      * Prompts all connected clients to draw cards

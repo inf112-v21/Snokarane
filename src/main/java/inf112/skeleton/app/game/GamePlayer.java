@@ -1,14 +1,11 @@
 package inf112.skeleton.app.game;
 
-import com.badlogic.gdx.maps.tiled.TiledMap;
-import com.esotericsoftware.kryonet.Connection;
 import edu.emory.mathcs.backport.java.util.Arrays;
 import inf112.skeleton.app.game.objects.Card;
 import inf112.skeleton.app.game.objects.CardType;
-import inf112.skeleton.app.libgdx.MapLayerWrapper;
+import inf112.skeleton.app.libgdx.Map;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -77,8 +74,8 @@ public abstract class GamePlayer{
     public abstract void drawCards();
 
     // return updated map if client, send new map to clients if host
-    public abstract MapLayerWrapper updateMap(MapLayerWrapper mlp);
-    public abstract void getMap(MapLayerWrapper mlp);
+    public abstract Map updateMap(Map mlp);
+    public abstract void getMap(Map mlp);
 
     public enum PLAYERSTATE{
         WAITING,
