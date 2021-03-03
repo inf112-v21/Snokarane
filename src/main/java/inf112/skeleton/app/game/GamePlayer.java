@@ -42,8 +42,13 @@ public abstract class GamePlayer{
      * Adds cards to hand from deck, and sets playerstate to PICKING_CARDS
      */
     public void drawCardsFromDeck(){
-        for (int i = 0; i<9; i++){
+        for (int i = 0; i<Math.min(9-hand.size(), deck.size()-hand.size()); i++){
             hand.add(deck.remove(0));
+        }
+        if (hand.size() != 9) {
+            deck.addAll(discard);
+            discard = new ArrayList<>();
+            drawCards();
         }
         state = PLAYERSTATE.PICKING_CARDS;
     }
@@ -52,8 +57,9 @@ public abstract class GamePlayer{
     public abstract void registerChosenCards();
 
     public void chooseCards(int cardSelection){
-        // TODO remove cards
         chosenCards.add(deck.get(cardSelection));
+        //TODO: Should this be null, or should there be a 'null'-equivalent in the CardType enum?
+        deck.set(cardSelection, null);
     }
 
     // Starts next turn, everyone draws cards.
