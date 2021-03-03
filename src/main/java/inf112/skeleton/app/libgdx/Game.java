@@ -234,6 +234,10 @@ public class Game extends InputAdapter implements ApplicationListener {
     public void updateMap(){
         if (mlp != null){
             mlp = gamePlayer.updateMap(null);
+
+            //TODO Check if this is correct
+            if (mlp == null) return;
+
             this.playerLayer = mlp.getPlayerLayer();
             this.boardLayer = mlp.getBoardLayer();
             this.flagLayer = mlp.getFlagLayer();
