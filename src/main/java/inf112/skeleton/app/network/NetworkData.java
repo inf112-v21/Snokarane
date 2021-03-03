@@ -1,5 +1,6 @@
 package inf112.skeleton.app.network;
 
+import com.badlogic.gdx.maps.MapLayers;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import inf112.skeleton.app.game.objects.Card;
@@ -29,6 +30,7 @@ public class NetworkData {
         classesToRegister.add(cardList.class);
         classesToRegister.add(ArrayList.class);
         classesToRegister.add(CardType.class);
+        classesToRegister.add(MapLayers.class);
         return classesToRegister;
     }
 }
