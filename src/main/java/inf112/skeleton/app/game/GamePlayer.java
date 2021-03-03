@@ -64,6 +64,7 @@ public abstract class GamePlayer{
     public abstract void registerChosenCards();
 
     public void chooseCards(int cardSelection){
+        if (hand.get(cardSelection) == null) return;
         chosenCards.add(hand.get(cardSelection));
         //TODO: Should this be null, or should there be a 'null'-equivalent in the CardType enum?
         hand.set(cardSelection, null);
