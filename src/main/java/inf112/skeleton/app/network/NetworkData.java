@@ -35,6 +35,7 @@ public class NetworkData {
         classesToRegister.add(MapLayerWrapper.class);
         classesToRegister.add(TiledMapTileLayer.class);
         classesToRegister.add(TiledMapTileLayer.Cell.class);
+        classesToRegister.add(TiledMapTileLayer.Cell[][].class);
         return classesToRegister;
     }
 }
