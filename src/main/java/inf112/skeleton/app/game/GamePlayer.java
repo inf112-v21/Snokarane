@@ -2,10 +2,12 @@ package inf112.skeleton.app.game;
 
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.esotericsoftware.kryonet.Connection;
+import edu.emory.mathcs.backport.java.util.Arrays;
 import inf112.skeleton.app.game.objects.Card;
 import inf112.skeleton.app.game.objects.CardType;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Elements that a player in RoboRally can interact with
@@ -23,12 +25,16 @@ public abstract class GamePlayer{
     /**
      * Give player a stack of cards to deck
      */
-    public void GamePlayer(){
-        // Create deck TODO select random items from CardType
-        for (int i = 0; i<500; i++){
-            Card card = new Card();
-            card.setCardType(CardType.FORWARDONE);
-            deck.add(card);
+    public GamePlayer(){
+        //Move1, Move2, Move3, Back up, Rotate right, Rotate left, U-turn
+        List<Integer> numOfEachCardType = Arrays.asList(new Integer[]{18, 12, 6, 6, 18, 18, 6});
+        for(int i = 0; i < numOfEachCardType.size(); i++) {
+            CardType cardType = CardType.values()[i];
+            for (int j = 0; j < numOfEachCardType.get(i); j++) {
+                Card card = new Card();
+                card.setCardType(cardType);
+                deck.add(card);
+            }
         }
     }
 
