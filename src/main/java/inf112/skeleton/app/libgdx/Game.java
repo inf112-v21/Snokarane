@@ -19,6 +19,7 @@ import com.badlogic.gdx.maps.tiled.tiles.StaticTiledMapTile;
 import inf112.skeleton.app.game.GameClient;
 import inf112.skeleton.app.game.GameHost;
 import inf112.skeleton.app.game.GamePlayer;
+import inf112.skeleton.app.game.objects.Card;
 import inf112.skeleton.app.game.objects.Flag;
 import inf112.skeleton.app.game.objects.PlayerToken;
 import inf112.skeleton.app.network.Network;
@@ -39,6 +40,9 @@ public class Game extends InputAdapter implements ApplicationListener {
 
     // Entire map (graphic)
     private TiledMap tiledMap;
+
+    // Display deck flag
+    boolean displayDeck = false;
 
     Map mlp;
 
@@ -192,9 +196,12 @@ public class Game extends InputAdapter implements ApplicationListener {
     @Override
     public boolean keyUp (int keyCode){
         if (gamePlayer.state == GamePlayer.PLAYERSTATE.PICKING_CARDS){
+            displayDeck = true;
             if(keyCode >= Input.Keys.NUM_1 && keyCode <= Input.Keys.NUM_9){
                 return pickCardsOnKeyPress(keyCode);
             }
+        } else {
+            displayDeck = false;
         }
         return false;
     }
@@ -227,6 +234,68 @@ public class Game extends InputAdapter implements ApplicationListener {
 
         // Render current frame to screen
         renderer.render();
+
+        drawDeck();
+
+    }
+
+    // Draw deck and selected cards on screen
+    private void drawDeck(){
+        int baseX = 50;
+        int baseY = 100; // Dont change me to something non divisible by two :)
+
+        batch.begin();
+        font.setColor(255, 255, 255, 255);
+        font.getData().setScale(2);
+        font.draw(batch, "Hand:",baseX, baseY*2);
+        font.getData().setScale(1);
+        font.setColor(255, 255, 0, 255);
+
+        int xPos = baseX;
+        int yPos = baseY;
+        int cardNum = 1;
+        int currentCardPosition = 0;
+        List<Integer> lostCardsPositions = new ArrayList<>();
+
+        for (Card c : gamePlayer.hand){
+            if (c == null)
+                lostCardsPositions.add(currentCardPosition);
+
+            currentCardPosition++;
+        }
+
+        int lostCardsShown = 0;
+        for (Card c : gamePlayer.hand){
+            if (c == null) {
+                font.setColor(0, 255, 0, 255);
+                font.draw(batch, Integer.toString(cardNum) + ". " + gamePlayer.chosenCards.get(lostCardsShown).getCardType().toString(), xPos, yPos);
+                font.setColor(255, 255, 0, 255);
+                lostCardsShown++;
+            }else {
+                font.setColor(255, 255, 0, 255);
+                font.draw(batch, Integer.toString(cardNum)+". " + c.getCardType().toString(), xPos, yPos);
+                font.setColor(255, 255, 0, 255);
+            }
+            cardNum++;
+            xPos += 200;
+            if (xPos >= 500){
+                yPos -= 20;
+                xPos = baseX;
+            }
+        }
+
+        font.draw(batch, "Deck:", baseX, baseY + baseY/4);
+
+        if (lostCardsShown>=4){
+            font.getData().setScale(1);
+            font.setColor(0, 100, 200, 255);
+            font.draw(batch, "Last card!", baseX, baseY + baseY/2);
+        }
+        font.setColor(255, 0, 0, 255);
+        font.getData().setScale(2);
+        font.draw(batch, Integer.toString(lostCardsShown),baseX+100, baseY*2);
+
+        batch.end();
     }
 
     public void updateMap(){
