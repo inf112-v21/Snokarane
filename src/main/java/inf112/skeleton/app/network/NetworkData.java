@@ -43,6 +43,7 @@ public class NetworkData {
         classesToRegister.add(TiledMapTileLayer.Cell[].class);
         classesToRegister.add(StaticTiledMapTile.class);
         classesToRegister.add(TiledMapTile.class);
+        classesToRegister.add(TiledMapTile.BlendMode.class);
         return classesToRegister;
     }
 }
