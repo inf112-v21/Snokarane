@@ -16,7 +16,7 @@ A work in progress java implementaion of the board game ["RoboRally"](https://en
   - Select "Ok" to play when prompted about all players connected
 
 - Multiplayer
-  - Host - select "Host" on the role menu and wait for other players to connect
+  - Host - select "Host" on the role menu and wait for other players to connect. Press ok on the new prompt only when all players are connected.
   - Client - select "Client" on the role menu and connect to the host's IP adress
 
 ## Controls
