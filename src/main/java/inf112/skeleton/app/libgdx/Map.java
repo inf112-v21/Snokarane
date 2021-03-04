@@ -34,7 +34,13 @@ public class Map {
     }
 
     // NOTE! No args constructor required so kryonet can serialize
-    public Map(){ }
+    public Map(){
+        for (int i = 0; i<BOARD_X; i++){
+            for (int j = 0; j<BOARD_Y; j++){
+                playerLayer[i][j] = new PlayerToken();
+            }
+        }
+    }
 
     public boolean containsPlayer(GridPoint2 position) {
         return playerLayer[position.x][position.y].charState != PlayerToken.CHARACTER_STATES.NONE;
