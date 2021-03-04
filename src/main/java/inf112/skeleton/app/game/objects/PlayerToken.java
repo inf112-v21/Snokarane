@@ -14,6 +14,15 @@ public class PlayerToken {
     // All flags visited
     private final List<Flag> flagsVisited = new ArrayList<>();
 
+    public CHARACTER_STATES charState = CHARACTER_STATES.NONE;
+
+    // What texture gets displayed on character
+    public enum CHARACTER_STATES{
+        PLAYERNORMAL,
+        PLAYERWON,
+        NONE
+    }
+
     //Current direction of player
     //TODO: THis is just a random default. Maybe it should depend on something
     private Direction playerDirection = Direction.NORTH;
