@@ -4,7 +4,7 @@ import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 
 public class MapLayerWrapper {
 
-    public TiledMapTileLayer boardLayer;
-    public TiledMapTileLayer playerLayer;
-    public TiledMapTileLayer flagLayer;
+    public TiledMapTileLayer.Cell[][] boardLayer;
+    public TiledMapTileLayer.Cell[][] playerLayer;
+    public TiledMapTileLayer.Cell[][] flagLayer;
 }

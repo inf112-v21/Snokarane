@@ -42,8 +42,8 @@ public class Game extends InputAdapter implements ApplicationListener {
     Map mlp;
 
     // Board dimensions
-    int BOARD_X = 5;
-    int BOARD_Y = 5;
+    public static int BOARD_X = 5;
+    public static int BOARD_Y = 5;
 
     // Layers of the map
     private TiledMapTileLayer boardLayer;

@@ -1,6 +1,5 @@
 package inf112.skeleton.app.network;
 
-import com.badlogic.gdx.maps.MapLayer;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.esotericsoftware.kryonet.Client;
 import com.esotericsoftware.kryonet.Connection;
@@ -41,7 +40,7 @@ public class NetworkClient extends Network {
                     gameClient.drawCardsFromDeck();
                 }
                 if (object instanceof MapLayerWrapper){
-                    mlp.setLayersFromWrapper((MapLayerWrapper) object);
+                    mlp.setCellsFromWrapper((MapLayerWrapper) object);
                 }
             }
             public void disconnected (Connection connection) {

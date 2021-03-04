@@ -67,15 +67,23 @@ public class Map {
 
     public MapLayerWrapper getWrapper() {
         MapLayerWrapper wrapper = new MapLayerWrapper();
-        wrapper.playerLayer = this.playerLayer;
-        wrapper.boardLayer = this.boardLayer;
-        wrapper.flagLayer = this.flagLayer;
+        for (int x = 0; x < Game.BOARD_X; x++) {
+            for (int y = 0; y < Game.BOARD_Y; y++) {
+                wrapper.playerLayer[x][y] = this.playerLayer.getCell(x, y);
+                wrapper.boardLayer[x][y] = this.boardLayer.getCell(x, y);
+                wrapper.flagLayer[x][y] = this.flagLayer.getCell(x, y);
+            }
+        }
         return wrapper;
     }
 
-    public void setLayersFromWrapper(MapLayerWrapper wrapper) {
-        this.playerLayer = wrapper.playerLayer;
-        this.flagLayer = wrapper.flagLayer;
-        this.boardLayer = wrapper.boardLayer;
+    public void setCellsFromWrapper(MapLayerWrapper wrapper) {
+        for (int x = 0; x < Game.BOARD_X; x++) {
+            for (int y = 0; y < Game.BOARD_Y; y++) {
+                this.playerLayer.setCell(x, y, wrapper.playerLayer[x][y]);
+                this.boardLayer.setCell(x, y, wrapper.boardLayer[x][y]);
+                this.flagLayer.setCell(x, y, wrapper.flagLayer[x][y]);
+            }
+        }
     }
 }
