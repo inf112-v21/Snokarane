@@ -104,7 +104,7 @@ public class GameHost extends GamePlayer {
                 resolveCard(currentCard, clientPlayers.get(key));
 
                 // Update player cell
-                mlp.setCell(clientPlayers.get(key).getX(), clientPlayers.get(key).getY(), clientPlayers.get(key).charState);
+                mlp.setCell(clientPlayers.get(key).getX(), clientPlayers.get(key).getY(), PlayerToken.CHARACTER_STATES.PLAYERNORMAL);
 
                 // Send updated map to clients
                 host.sendMapLayerWrapper(wrapper());
