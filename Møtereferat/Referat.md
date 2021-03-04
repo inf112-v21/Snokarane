@@ -122,6 +122,7 @@ Fortsette på planlegging av prosjekt og prosjektstruktur
 ## **Referat møte måndag 22.02.2021**
 
 **Stad:** Discord, Tid: 1215-1400
+
 **Agenda:** Recap og fortsette arbeid med obligatorisk 2
 
 **Møtte:** Jørgen Lohne, Hallvard Kobbeltveit, Audun Ljone Henriksen og Peter Augustin Gillow Krooni
@@ -160,9 +161,11 @@ Fortsette på planlegging av prosjekt og prosjektstruktur
 ## **Referat møte fredag 26.02.2021**
 
 **Stad:** Høgteknologisenteret, tid 1030
+
 **Agenda:** Teste ut roborally 
 
 **Møtte:** Jørgen Lohne, Hallvard Kobbeltveit, Audun Ljone Henriksen
+
 **Ikkje møtt:** Peter Augustin Gillow Krooni, avtalt på førehand
 
 **Diskusjon/arbeid:**
@@ -174,6 +177,7 @@ Fortsette på planlegging av prosjekt og prosjektstruktur
 ## **Referat møte måndag 01.02.2021**
 
 **Stad:** Discord
+
 **Agenda:** Planlegge og ferdigstille arbeid med oblig2
 
 **Møtte:** Jørgen Lohne, Hallvard Kobbeltveit, Audun Ljone Henriksen og Peter Augustin Gillow Krooni
@@ -191,6 +195,7 @@ Fortsette på planlegging av prosjekt og prosjektstruktur
 ## **Referat møte tysdag 02.03.2021**
 
 **Stad:** Discord
+
 **Agenda:** Planlegge og jobbe med koden i plenum
 
 **Møtte:** Jørgen Lohne, Hallvard Kobbeltveit, Audun Ljone Henriksen og Peter Augustin Gillow Krooni
@@ -207,6 +212,7 @@ Fortsette på planlegging av prosjekt og prosjektstruktur
 ## **Referat møte torsdag 03.03.2021**
 
 **Stad: Discord**
+
 **Agenda:** Planlegge og jobbe med koden i plenum
 
 **Møtte:** Jørgen Lohne, Hallvard Kobbeltveit, Audun Ljone Henriksen og Peter Augustin Gillow Krooni
@@ -223,6 +229,7 @@ Fortsette på planlegging av prosjekt og prosjektstruktur
 ## **Referat møte onsdag 04.03.2021**
 
 **Stad:** Discord
+
 **Agenda:** Jobbe med kode og dokmentasjon i plenum
 
 **Møtte:** Jørgen Lohne, Hallvard Kobbeltveit, Audun Ljone Henriksen og Peter Augustin Gillow Krooni
