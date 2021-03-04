@@ -10,16 +10,28 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * Elements that a player in RoboRally can interact with
- * f.ex. picking a card
- */                               //Needs to extend this to call functions over the net
+ * Base class for players
+ * This class contains cards chosen from players, and ways to update the game map from client to host.
+ */
 public abstract class GamePlayer{
 
+    // Gameplay states the player is in during the game
+    public enum PLAYERSTATE{
+        PICKING_CARDS,
+        SENDING_CARDS,
+        NONE
+    }
+
+    // Current state of gameplay of player
     public PLAYERSTATE state = PLAYERSTATE.NONE;
 
+    // Cards selected to be sent to host for processing
     public ArrayList<Card> chosenCards = new ArrayList<>();
+    // Cards to choose from in current turn
     public ArrayList<Card> hand = new ArrayList<>();
+    // Where cards get selected from
     public ArrayList<Card> deck = new ArrayList<>();
+    // Cards that weren't selected
     public ArrayList<Card> discard = new ArrayList<>();
 
     /**
@@ -40,7 +52,7 @@ public abstract class GamePlayer{
     }
 
     /**
-     * Adds cards to hand from deck, and sets playerstate to PICKING_CARDS
+     * Adds cards to hand from deck, and sets playerstate to PICKING_CARDS when added
      */
     public void drawCardsFromDeck(){
         int cardsToAdd = Math.min(9-hand.size(), deck.size()-hand.size());
@@ -57,9 +69,12 @@ public abstract class GamePlayer{
         state = PLAYERSTATE.PICKING_CARDS;
     }
 
-    // Register cards from chosenCards as cards of choice :)
+    // Register cards from chosenCards as cards of choice to send
     public abstract void registerChosenCards();
 
+    /**
+     * Add selected card from hand to chosenCards
+     */
     public void chooseCards(int cardSelection){
         if (hand.get(cardSelection) == null) return;
         chosenCards.add(hand.get(cardSelection));
@@ -75,13 +90,6 @@ public abstract class GamePlayer{
 
     // return updated map if client, send new map to clients if host
     public abstract Map updateMap(Map mlp);
-    public abstract void getMap(Map mlp);
-
-    public enum PLAYERSTATE{
-        WAITING,
-        RECIEVING_CARDS,
-        PICKING_CARDS,
-        SENDING_CARDS,
-        NONE
-    }
+    // Set local map
+    public abstract void setMap(Map mlp);
 }

@@ -8,40 +8,58 @@ import inf112.skeleton.app.game.objects.PlayerToken;
 import inf112.skeleton.app.libgdx.Game;
 import inf112.skeleton.app.libgdx.Map;
 import inf112.skeleton.app.libgdx.NetworkDataWrapper;
-import inf112.skeleton.app.network.Network;
 import inf112.skeleton.app.network.NetworkHost;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
+/**
+ * GameHost contains all game logic like cards, and moving players according to their selected cards.
+ * This class is used as a central point of synchronizing maps, as GameClients ask this class for map updates
+ * whenever the map is to be displayed.
+ */
 public class GameHost extends GamePlayer {
-    // Network connection to be used in game
+
+    /**
+     * @param network connection to be used in game
+     */
     public GameHost(NetworkHost network){
+        // Add cards to deck
         super();
         host = network;
 
         // Give each client a new player token to keep track of player data
         clientPlayers = new HashMap<>();
-        int i = 0;
+
+        initializePlayerTokens();
+    }
+
+    // Game map
+    public Map mlp;
+
+    NetworkHost host;
+
+    // Has all clients (which contain connnection ID's) as well as their tokens
+    HashMap<Integer, PlayerToken> clientPlayers;
+
+    /**
+     * Create tokens for each connected client as well as the host
+     */
+    private void initializePlayerTokens(){
+        // Set token character states to normal default and give connection ID to token
         for (Connection c : host.connections){
             PlayerToken token = new PlayerToken();
             token.charState = PlayerToken.CHARACTER_STATES.PLAYERNORMAL;
             token.ID = c.getID();
             clientPlayers.put(c.getID(), token);
         }
+        // This is so processCards also includes the host
         PlayerToken token = new PlayerToken();
         token.charState = PlayerToken.CHARACTER_STATES.PLAYERNORMAL;
         token.ID = NetworkHost.hostID;
         clientPlayers.put(NetworkHost.hostID, token);
     }
-
-    public Map mlp;
-
-    NetworkHost host;
-    // Has all clients (which contain connnection ID's) as well as their tokens
-    HashMap<Integer, PlayerToken> clientPlayers;
 
     /**
      * Registers the client's chosen cards, then clears the host's storage of
@@ -74,18 +92,25 @@ public class GameHost extends GamePlayer {
         drawCardsFromDeck(); // draw host cards
     }
 
+    /**
+     * Return host's version of map
+     * @param mlp for clients
+     * @return host's map
+     */
     @Override
     public Map updateMap(Map mlp) {
         return this.mlp;
     }
 
+    /**
+     * Update maps between networks
+     * @param mlp map
+     */
     @Override
-    public void getMap(Map mlp){
+    public void setMap(Map mlp){
         this.mlp = mlp;
         this.mlp.setID(NetworkHost.hostID);
         host.sendMapLayerWrapper(wrapper());
-
-        //TODO Fix this terrible implementation...
         mlp.loadPlayers(wrapper());
     }
 
@@ -95,11 +120,13 @@ public class GameHost extends GamePlayer {
     public void waitForClientsToFinishCardChoices() {
         // If all clients have sent their cards, the host's client card storage size is same as the amount of clients connected
         while (host.playerCards.size() != host.connections.length+1){
-
+            // TODO: artificial delay to help pace the game
         }
     }
 
-    // TODO: need to process host card selections too
+    /**
+     * Process card selection from all clients and host
+     */
     public void processCards() {
         int cardsProcessedPerRound = 5;
 
@@ -113,13 +140,17 @@ public class GameHost extends GamePlayer {
                 resolveCard(currentCard, clientPlayers.get(key));
             }
         }
-        // Send updated map to clients
+        // Send new map to clients
         host.sendMapLayerWrapper(wrapper());
 
-        // Force the board to update, not sure if necessary
+        // Force local board to update
         mlp.loadPlayers(wrapper());
     }
 
+    /**
+     * Initialize wrapper and add player tokens to wrapper for transfer
+     * @return initialized wrapper
+     */
     private NetworkDataWrapper wrapper() {
         NetworkDataWrapper wrapper = new NetworkDataWrapper();
         wrapper.PlayerTokens.addAll(clientPlayers.values());
@@ -171,6 +202,14 @@ public class GameHost extends GamePlayer {
 
         }
     }
+
+    /**
+     * Move
+     * @param player
+     * @param dist distance
+     * in
+     * @param direction
+     */
     private void movePlayer(PlayerToken player, int dist, PlayerToken.Direction direction) {
         for(int i = 0; i < dist; i++) {
             GridPoint2 wouldEndUp = player.wouldEndUp(direction);
@@ -185,5 +224,4 @@ public class GameHost extends GamePlayer {
 
         }
     }
-
 }
