@@ -2,6 +2,7 @@ package inf112.skeleton.app.network;
 
 import com.badlogic.gdx.Files;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3FileHandle;
+import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.FileTextureData;
@@ -61,6 +62,7 @@ public class NetworkData {
 
         // Do I need all these? Probably not. Am I sick of doing them one
         // by one? Absolutely.
+        classesToRegister.add(Pixmap.Format.class);
         classesToRegister.add(com.badlogic.gdx.graphics.Color.class);
         classesToRegister.add(com.badlogic.gdx.graphics.Colors.class);
         classesToRegister.add(com.badlogic.gdx.graphics.Cubemap.class);
