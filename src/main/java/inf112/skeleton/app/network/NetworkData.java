@@ -52,6 +52,8 @@ public class NetworkData {
         classesToRegister.add(TiledMapTile.BlendMode.class);
         classesToRegister.add(TextureRegion.class);
         classesToRegister.add(Texture.class);
+        classesToRegister.add(Texture.TextureFilter.class);
+        classesToRegister.add(Texture.TextureWrap.class);
         classesToRegister.add(FileTextureData.class);
         classesToRegister.add(Lwjgl3FileHandle.class);
 
