@@ -36,12 +36,12 @@ public class GameHost extends GamePlayer {
     }
 
     // Game map
-    public Map mlp;
+    private Map mlp;
 
-    NetworkHost host;
+    private NetworkHost host;
 
     // Has all clients (which contain connnection ID's) as well as their tokens
-    HashMap<Integer, PlayerToken> clientPlayers;
+    private HashMap<Integer, PlayerToken> clientPlayers;
 
     /**
      * Create tokens for each connected client as well as the host
@@ -118,7 +118,7 @@ public class GameHost extends GamePlayer {
     /**
      * Process card selection from all clients and host
      */
-    public void processCards() {
+    private void processCards() {
         int cardsProcessedPerRound = 5;
 
         // iterator i is same as client connection id

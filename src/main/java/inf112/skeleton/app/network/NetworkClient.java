@@ -13,7 +13,7 @@ import java.io.IOException;
 public class NetworkClient extends Network {
 
     public Client client;
-    String IP;
+    protected String IP;
     public Map mlp;
     public GameClient gameClient;
 

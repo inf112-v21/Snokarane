@@ -13,16 +13,15 @@ import java.util.List;
 
 public class NetworkHost extends Network {
 
-    Server server;
+    private Server server;
     public Connection[] connections;
+
     // Map connection ID's to cards players chose
     public HashMap<Integer, List<Card>> playerCards = new HashMap<>();
 
     // Random number, and a poor implementation
     // Just grabbing a random negative number so that it doesn't clash with connection.getID()
     public static int hostID = -230230;
-
-    boolean Initialized = false;
 
     // Initialize internet
     @Override
@@ -43,8 +42,6 @@ public class NetworkHost extends Network {
 
         try {
             this.server.bind(54555);
-            Initialized = true;
-
             return true;
         }
         catch (IOException e){
@@ -65,7 +62,7 @@ public class NetworkHost extends Network {
      * Prompts all connected clients to draw cards
      */
     public void promptCardDraw() {
-        System.out.println("Sent it");
+        System.out.println("Prompted clients to draw cards.");
         server.sendToAllTCP("Draw cards!");
     }
 

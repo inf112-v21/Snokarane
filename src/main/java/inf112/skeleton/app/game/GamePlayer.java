@@ -30,9 +30,9 @@ public abstract class GamePlayer{
     // Cards to choose from in current turn
     public ArrayList<Card> hand = new ArrayList<>();
     // Where cards get selected from
-    public ArrayList<Card> deck = new ArrayList<>();
+    protected ArrayList<Card> deck = new ArrayList<>();
     // Cards that weren't selected
-    public ArrayList<Card> discard = new ArrayList<>();
+    protected ArrayList<Card> discard = new ArrayList<>();
 
     /**
      * Give player a stack of cards to deck

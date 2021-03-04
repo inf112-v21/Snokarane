@@ -23,7 +23,7 @@ public class GameClient extends GamePlayer {
         client = network;
     }
 
-    NetworkClient client;
+    private NetworkClient client;
 
     /**
      * Send clients chosen card to NetworkHost
