@@ -78,9 +78,9 @@ public class PlayerToken {
      * @return The position where the player would end up if they move one step in the direction
      * they are currently facing.
      */
-    public GridPoint2 wouldEndUp() {
+    public GridPoint2 wouldEndUp(Direction direction) {
         GridPoint2 newPos = new GridPoint2(position.x, position.y);
-        moveDir(newPos, playerDirection);
+        moveDir(newPos, direction);
         return newPos;
     }
 
@@ -91,7 +91,6 @@ public class PlayerToken {
      * @param direction The direction to move
      */
     private void moveDir(GridPoint2 position, Direction direction) {
-        System.out.println(direction);
         switch (direction) {
             case NORTH:
                 position.y +=1;
@@ -113,7 +112,6 @@ public class PlayerToken {
      * @param rotationDirection A CardType that is either TURNLEFT, TURNRIGHT, or UTURN
      */
     public void rotate(CardType rotationDirection) {
-        System.out.println(rotationDirection);
         switch (playerDirection) {
             case EAST:
                 if (rotationDirection == CardType.TURNLEFT) playerDirection = Direction.NORTH;
