@@ -16,3 +16,9 @@ A work in progress java implementaion of the board game ["RoboRally"](https://en
 #  User stories
  
  User stories, acceptance criteria, and tasks can be found [here](https://docs.google.com/spreadsheets/d/1A_78OKM1BRXeeG4MR3e6AafYpPxnElqm3xPFjLozlGY/edit?usp=sharing)
+
+# Known bugs
+
+The host has to be the last actor to choose their 5 cards. Otherwise the program crashes.
+
+The players aren't displayed properly before the game is started 
