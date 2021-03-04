@@ -87,6 +87,7 @@ public class GameHost extends GamePlayer {
     // TODO: need to process host card selections too
     public void processCards(){
         int cardsProcessedPerRound = 5;
+
         // iterator i is same as client connection id
         for (int i = 0; i<cardsProcessedPerRound; i++){
             for (int key : clientPlayers.keySet()){
@@ -103,7 +104,7 @@ public class GameHost extends GamePlayer {
                 resolveCard(currentCard, clientPlayers.get(key));
 
                 // Update player cell
-                mlp.setCell(clientPlayers.get(key).getX(), clientPlayers.get(key).getY(), clientPlayers.get(key));
+                mlp.setCell(clientPlayers.get(key).getX(), clientPlayers.get(key).getY(), clientPlayers.get(key).charState);
 
                 // Send updated map to clients
                 host.sendMapLayerWrapper(wrapper());
