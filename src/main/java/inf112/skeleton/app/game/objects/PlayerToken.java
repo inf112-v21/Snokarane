@@ -10,7 +10,7 @@ public class PlayerToken {
     // Win/Lose state of player
     public boolean isWinner = false;
     // Player position initialized at 0, 0
-    private final GridPoint2 position = new GridPoint2(0, 0);
+    public final GridPoint2 position = new GridPoint2(0, 0);
     // All flags visited
     private final List<Flag> flagsVisited = new ArrayList<>();
 

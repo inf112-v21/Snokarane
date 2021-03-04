@@ -19,7 +19,7 @@ public class NetworkHost extends Network {
 
     // Random number, and a poor implementation
     //Just grabbing a random negative number so that it doesn't clash with connection.getID()
-    public int hostID = -230230;
+    public static int hostID = -230230;
 
     boolean Initialized = false;
 

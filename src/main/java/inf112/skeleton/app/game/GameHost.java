@@ -23,17 +23,19 @@ public class GameHost extends GamePlayer {
 
         // Give each client a new player token to keep track of player data
         clientPlayers = new HashMap<>();
+        int i = 0;
         for (Connection c : host.connections){
             PlayerToken token = new PlayerToken();
             token.charState = PlayerToken.CHARACTER_STATES.PLAYERNORMAL;
             token.ID = c.getID();
+            token.position.x += i;
             clientPlayers.put(c.getID(), token);
         }
         PlayerToken token = new PlayerToken();
         token.charState = PlayerToken.CHARACTER_STATES.PLAYERNORMAL;
         token.ID = host.hostID;
+        token.position.x += i;
         clientPlayers.put(host.hostID, token);
-
     }
 
     public Map mlp;
@@ -81,7 +83,11 @@ public class GameHost extends GamePlayer {
     @Override
     public void getMap(Map mlp){
         this.mlp = mlp;
-        mlp.setID(host.hostID);
+        this.mlp.setID(host.hostID);
+        host.sendMapLayerWrapper(wrapper());
+
+        //TODO Fix this terrible implementation...
+        mlp.loadPlayers(wrapper());
     }
 
     /**
@@ -115,7 +121,7 @@ public class GameHost extends GamePlayer {
                 resolveCard(currentCard, clientPlayers.get(key));
 
                 // Update player cell
-                mlp.setCell(clientPlayers.get(key).getX(), clientPlayers.get(key).getY(), clientPlayers.get(key).charState);
+                mlp.setCell(clientPlayers.get(key).getX(), clientPlayers.get(key).getY(), clientPlayers.get(key));
 
                 // Send updated map to clients
                 host.sendMapLayerWrapper(wrapper());
@@ -168,7 +174,7 @@ public class GameHost extends GamePlayer {
 
             //TODO: Simple out of bounds check, fix this with some death logic
             if (wouldEndUp.x < 0 || wouldEndUp.x >= Game.BOARD_X || wouldEndUp.y < 0 || wouldEndUp.y >= Game.BOARD_Y) {
-                continue;
+                break;
             }
 
             // If the tile the player is trying to move into is empty
@@ -184,8 +190,8 @@ public class GameHost extends GamePlayer {
             else if (mlp.containsPlayer(wouldEndUp)) {
                 for (PlayerToken token: clientPlayers.values()) {
                     if (token.getX() == wouldEndUp.x && token.getY() == wouldEndUp.y) {
-                        token.move(player.getDirection());
-                        player.move();
+                        //token.move(player.getDirection());
+                        //player.move();
                     }
                 }
             }

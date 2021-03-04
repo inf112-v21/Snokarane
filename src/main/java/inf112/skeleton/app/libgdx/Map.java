@@ -68,8 +68,12 @@ public class Map {
         playerLayer[playerX][playerY] = PlayerToken.CHARACTER_STATES.NONE;
     }
 
-    public void setCell(int playerX, int playerY, PlayerToken.CHARACTER_STATES state) {
-        playerLayer[playerX][playerY] = state;
+    public void setCell(int playerX, int playerY, PlayerToken token) {
+        if (token.ID == this.ID) {
+            playerLayer[playerX][playerY] = PlayerToken.CHARACTER_STATES.PLAYERSELFNORMAL;
+        }
+        else {
+            playerLayer[playerX][playerY] = token.charState;
+        }
     }
-
 }
