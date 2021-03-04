@@ -58,9 +58,11 @@ public class Map {
         for (int i = 0; i<wrapper.PlayerTokens.size(); i++){
             PlayerToken token = wrapper.PlayerTokens.get(i);
             if (token.ID == this.ID) {
-                token.charState = PlayerToken.CHARACTER_STATES.PLAYERSELFNORMAL;
+                playerLayer[wrapper.PlayerTokens.get(i).getX()][wrapper.PlayerTokens.get(i).getY()] = PlayerToken.CHARACTER_STATES.PLAYERSELFNORMAL;
             }
-            playerLayer[wrapper.PlayerTokens.get(i).getX()][wrapper.PlayerTokens.get(i).getY()] = wrapper.PlayerTokens.get(i).charState;
+            else {
+                playerLayer[wrapper.PlayerTokens.get(i).getX()][wrapper.PlayerTokens.get(i).getY()] = wrapper.PlayerTokens.get(i).charState;
+            }
         }
     }
 
