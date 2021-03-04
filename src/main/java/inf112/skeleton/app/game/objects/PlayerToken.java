@@ -101,16 +101,16 @@ public class PlayerToken {
         System.out.println(direction);
         switch (direction) {
             case NORTH:
-                position.x +=1;
+                position.y +=1;
                 break;
             case SOUTH:
-                position.x -=1;
+                position.y -=1;
                 break;
             case WEST:
-                position.y -= 1;
+                position.x -= 1;
                 break;
             case EAST:
-                position.y += 1;
+                position.x += 1;
                 break;
         }
     }

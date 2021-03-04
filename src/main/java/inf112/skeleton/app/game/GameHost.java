@@ -33,6 +33,7 @@ public class GameHost extends GamePlayer {
         token.charState = PlayerToken.CHARACTER_STATES.PLAYERNORMAL;
         token.ID = host.hostID;
         clientPlayers.put(host.hostID, token);
+
     }
 
     public Map mlp;
@@ -80,6 +81,7 @@ public class GameHost extends GamePlayer {
     @Override
     public void getMap(Map mlp){
         this.mlp = mlp;
+        mlp.setID(host.hostID);
     }
 
     /**
@@ -87,10 +89,8 @@ public class GameHost extends GamePlayer {
      */
     public void waitForClientsToFinishCardChoices() {
         // If all clients have sent their cards, the host's client card storage size is same as the amount of clients connected
-        while (host.playerCards.size() != host.connections.length){
-            for (int i = 0; i < 1000000000; i++) {
-                continue;
-            }
+        while (host.playerCards.size() != host.connections.length+1){
+
         }
     }
 

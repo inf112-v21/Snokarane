@@ -58,7 +58,7 @@ public class Map {
         for (int i = 0; i<wrapper.PlayerTokens.size(); i++){
             PlayerToken token = wrapper.PlayerTokens.get(i);
             if (token.ID == this.ID) {
-                //TODO token.charState = PlayerToken.CHARACTER_STATES.PLAYERSELFNORMAL;
+                token.charState = PlayerToken.CHARACTER_STATES.PLAYERSELFNORMAL;
             }
             playerLayer[wrapper.PlayerTokens.get(i).getX()][wrapper.PlayerTokens.get(i).getY()] = wrapper.PlayerTokens.get(i).charState;
         }
