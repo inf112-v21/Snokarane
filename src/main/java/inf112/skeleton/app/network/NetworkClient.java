@@ -15,7 +15,6 @@ public class NetworkClient extends Network {
 
     public Client client;
     String IP;
-    public TiledMap tiledMap;
     public Map mlp;
     public GameClient gameClient;
 
@@ -42,6 +41,10 @@ public class NetworkClient extends Network {
                 }
                 if (object instanceof NetworkDataWrapper){
                     mlp.loadPlayers((NetworkDataWrapper) object);
+                }
+
+                if(object instanceof Integer) {
+                    mlp.setID((Integer) object);
                 }
             }
             public void disconnected (Connection connection) {

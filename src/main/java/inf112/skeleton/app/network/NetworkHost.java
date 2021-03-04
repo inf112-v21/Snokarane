@@ -83,9 +83,13 @@ public class NetworkHost extends Network {
 
     /**
      * Initializes the connections for the server. Call this only when all users are connected.
+     * It also sends the IDs to the clients.
      */
     public void initConnections() {
         connections = server.getConnections();
+        for (Connection c : connections) {
+            server.sendToTCP(c.getID(), c.getID());
+        }
     }
 
 }

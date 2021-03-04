@@ -22,6 +22,7 @@ public class Map {
 
     int BOARD_X = Game.BOARD_X;
     int BOARD_Y = Game.BOARD_Y;
+    int ID;
 
     public PlayerToken.CHARACTER_STATES [][] playerLayer = new PlayerToken.CHARACTER_STATES [BOARD_X][BOARD_Y];
     public Flag            [][] flagLayer      = new Flag          [BOARD_X][BOARD_Y];
@@ -38,6 +39,10 @@ public class Map {
         clearPlayerLayer();
     }
 
+    public void setID(int ID) {
+        this.ID = ID;
+    }
+
     public boolean containsPlayer(GridPoint2 position) {
         return playerLayer[position.x][position.y] != PlayerToken.CHARACTER_STATES.NONE;
     }
@@ -51,6 +56,10 @@ public class Map {
     public void loadPlayers(NetworkDataWrapper wrapper) {
         clearPlayerLayer();
         for (int i = 0; i<wrapper.PlayerTokens.size(); i++){
+            PlayerToken token = wrapper.PlayerTokens.get(i);
+            if (token.ID == this.ID) {
+                //TODO token.charState = PlayerToken.CHARACTER_STATES.PLAYERSELFNORMAL;
+            }
             playerLayer[wrapper.PlayerTokens.get(i).getX()][wrapper.PlayerTokens.get(i).getY()] = wrapper.PlayerTokens.get(i).charState;
         }
     }

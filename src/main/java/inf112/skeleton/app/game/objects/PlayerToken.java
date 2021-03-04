@@ -16,10 +16,14 @@ public class PlayerToken {
 
     public CHARACTER_STATES charState = CHARACTER_STATES.NONE;
 
+    public int ID;
+
     // What texture gets displayed on character
     public enum CHARACTER_STATES{
         PLAYERNORMAL,
         PLAYERWON,
+        PLAYERSELFNORMAL,
+        PLAYERSELFWON,
         NONE
     }
 
@@ -83,7 +87,7 @@ public class PlayerToken {
      */
     public GridPoint2 wouldEndUp() {
         GridPoint2 newPos = new GridPoint2(position.x, position.y);
-        newPos = moveDir(newPos, playerDirection);
+        moveDir(newPos, playerDirection);
         return newPos;
     }
 
@@ -93,7 +97,7 @@ public class PlayerToken {
      * @param position The position to update
      * @param direction The direction to move
      */
-    private GridPoint2 moveDir(GridPoint2 position, Direction direction) {
+    private void moveDir(GridPoint2 position, Direction direction) {
         System.out.println(direction);
         switch (direction) {
             case NORTH:
@@ -109,7 +113,6 @@ public class PlayerToken {
                 position.y += 1;
                 break;
         }
-        return position;
     }
 
     /**
