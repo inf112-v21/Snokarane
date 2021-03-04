@@ -1,6 +1,5 @@
 package inf112.skeleton.app.network;
 
-import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.esotericsoftware.kryonet.Client;
 import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
@@ -10,7 +9,6 @@ import inf112.skeleton.app.libgdx.Map;
 import inf112.skeleton.app.libgdx.NetworkDataWrapper;
 
 import java.io.IOException;
-import java.sql.PseudoColumnUsage;
 
 public class NetworkClient extends Network {
 

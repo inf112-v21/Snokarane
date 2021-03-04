@@ -42,7 +42,7 @@ public abstract class Network {
      */
     protected void registerClasses(EndPoint endPoint) {
         Kryo kryo = endPoint.getKryo();
-        for (Class c : NetworkData.classesToRegister()) {
+        for (Class<?> c : NetworkData.classesToRegister()) {
             kryo.register(c);
         }
     }

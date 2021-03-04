@@ -1,6 +1,5 @@
 package inf112.skeleton.app.network;
 
-import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
 import com.esotericsoftware.kryonet.Server;
@@ -67,8 +66,14 @@ public class NetworkHost extends Network {
         server.sendToAllTCP("Draw cards!");
     }
 
+    /**
+     * Broadcasts the winner so that all the clients and the host can display and handle it
+     * @param winner The player who won.
+     */
     public void sendWinner(PlayerToken winner) {
+        System.out.println(winner.ID + " has won! Congratulations");
         server.sendToAllTCP(winner);
+        System.exit(0);
     }
 
     /**

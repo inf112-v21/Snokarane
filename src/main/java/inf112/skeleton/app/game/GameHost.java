@@ -141,14 +141,11 @@ public class GameHost extends GamePlayer {
 
         if(winner != null) {
             host.sendWinner(winner);
-            System.out.println(winner.ID + " has won!!!");
-            System.exit(0);
+
         }
 
         // Send new map to clients
         host.sendMapLayerWrapper(wrapper());
-
-
     }
 
     /**

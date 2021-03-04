@@ -1,6 +1,5 @@
 package inf112.skeleton.app.network;
 
-import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.math.GridPoint2;
 import inf112.skeleton.app.game.objects.Card;
 import inf112.skeleton.app.game.objects.CardType;
@@ -17,8 +16,8 @@ import java.util.List;
 public class NetworkData {
 
     // Register classes to kryonet
-    public static List<Class> classesToRegister() {
-        List<Class> classesToRegister = new ArrayList<>();
+    public static List<Class<?>> classesToRegister() {
+        List<Class<?>> classesToRegister = new ArrayList<>();
         classesToRegister.add(Card.class);
         classesToRegister.add(CardList.class);
         classesToRegister.add(ArrayList.class);

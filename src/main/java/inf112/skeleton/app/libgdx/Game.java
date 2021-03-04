@@ -48,9 +48,7 @@ public class Game extends InputAdapter implements ApplicationListener {
     public static int BOARD_Y = 10;
 
     // Layers of the map
-    private TiledMapTileLayer boardLayer;
     private TiledMapTileLayer playerLayer;
-    private TiledMapTileLayer flagLayer;
 
     // Flags on the map are stored here for easy access
     // TODO: this should really only useful in GameHost
@@ -61,7 +59,6 @@ public class Game extends InputAdapter implements ApplicationListener {
     private TiledMapTileLayer.Cell playerWon;
 
     private OrthogonalTiledMapRenderer renderer;
-    private OrthographicCamera camera;
 
     /**
      * Client objects
@@ -173,7 +170,7 @@ public class Game extends InputAdapter implements ApplicationListener {
      */
     private void initializeRendering(){
         // Initialize camera object
-        camera = new OrthographicCamera();
+        OrthographicCamera camera = new OrthographicCamera();
         // Set camera to orthographic, size board dimensions
         camera.setToOrtho(false, BOARD_X, BOARD_Y);
         // Set camera X-position
@@ -394,9 +391,8 @@ public class Game extends InputAdapter implements ApplicationListener {
      */
     public void loadMapLayers(TiledMap tiledMap){
         // Separate each layer from the tiledMap
-        boardLayer = (TiledMapTileLayer) tiledMap.getLayers().get("Board");
         playerLayer = (TiledMapTileLayer) tiledMap.getLayers().get("Player");
-        flagLayer = (TiledMapTileLayer) tiledMap.getLayers().get("Flag");
+        TiledMapTileLayer flagLayer = (TiledMapTileLayer) tiledMap.getLayers().get("Flag");
 
         // Sneakily yoink the positions of the flags here, don't tell the OOP police
         getFlagPositionsFromLayer(flagLayer);

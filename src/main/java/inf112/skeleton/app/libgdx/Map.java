@@ -1,16 +1,7 @@
 package inf112.skeleton.app.libgdx;
 
-import com.badlogic.gdx.maps.tiled.TiledMap;
-import com.badlogic.gdx.maps.tiled.TiledMapTile;
-import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
-import com.badlogic.gdx.math.GridPoint2;
-import com.badlogic.gdx.math.Vector2;
 import inf112.skeleton.app.game.objects.Flag;
 import inf112.skeleton.app.game.objects.PlayerToken;
-import inf112.skeleton.app.network.Network;
-
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -20,8 +11,8 @@ import java.util.List;
  */
 public class Map {
 
-    private int BOARD_X = Game.BOARD_X;
-    private int BOARD_Y = Game.BOARD_Y;
+    private final int BOARD_X = Game.BOARD_X;
+    private final int BOARD_Y = Game.BOARD_Y;
     private int ID;
     public List<Flag> flagList;
 
@@ -35,7 +26,7 @@ public class Map {
      * Only thing clients needs to render players is state and direction so this is wrapped
      * into this class.
      */
-    class PlayerRenderInformation{
+    static class PlayerRenderInformation{
         public PlayerToken.CHARACTER_STATES state = PlayerToken.CHARACTER_STATES.NONE;
         public PlayerToken.Direction dir = PlayerToken.Direction.NORTH;
         public PlayerRenderInformation(){}
@@ -60,6 +51,12 @@ public class Map {
         }
     }
 
+    /**
+     * Checks if any players have won the current game. If multiple players win
+     * only the first one is returned
+     * @param players All the players playing the game
+     * @return The first person in the list who has won.
+     */
     public PlayerToken hasWon(List<PlayerToken> players) {
         for (PlayerToken player : players) {
             for (Flag flag : flagList) {
@@ -79,7 +76,6 @@ public class Map {
      */
     public void loadPlayers(NetworkDataWrapper wrapper) {
         clearPlayerLayer();
-        PlayerToken winner = null;
         for (int i = 0; i<wrapper.PlayerTokens.size(); i++){
             PlayerToken token = wrapper.PlayerTokens.get(i);
             if (token.ID == this.ID) {
