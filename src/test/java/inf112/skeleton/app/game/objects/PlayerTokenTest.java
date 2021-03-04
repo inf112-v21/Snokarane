@@ -1,4 +1,4 @@
-package inf112.skeleton.app;
+package inf112.skeleton.app.game.objects;
 
 import inf112.skeleton.app.game.objects.Flag;
 import inf112.skeleton.app.game.objects.PlayerToken;

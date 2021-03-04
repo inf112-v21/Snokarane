@@ -17,7 +17,7 @@ public class MapTest {
 
     PlayerToken player = new PlayerToken();
     TiledMap tiledMap = new TiledMap();
-    Map map = new Map();
+    inf112.skeleton.app.Map map = new inf112.skeleton.app.Map();
 
     @Before
     public void init(){
