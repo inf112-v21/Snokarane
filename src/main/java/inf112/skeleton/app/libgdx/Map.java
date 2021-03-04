@@ -35,18 +35,21 @@ public class Map {
 
     // NOTE! No args constructor required so kryonet can serialize
     public Map(){
+        clearPlayerLayer();
+    }
+
+    public boolean containsPlayer(GridPoint2 position) {
+        return playerLayer[position.x][position.y] != PlayerToken.CHARACTER_STATES.NONE;
+    }
+    public void clearPlayerLayer() {
         for (int i = 0; i<BOARD_X; i++){
             for (int j = 0; j<BOARD_Y; j++){
                 playerLayer[i][j] = PlayerToken.CHARACTER_STATES.NONE;
             }
         }
     }
-
-    public boolean containsPlayer(GridPoint2 position) {
-        return playerLayer[position.x][position.y] != PlayerToken.CHARACTER_STATES.NONE;
-    }
-
     public void loadPlayers(NetworkDataWrapper wrapper) {
+        clearPlayerLayer();
         for (int i = 0; i<wrapper.PlayerTokens.size(); i++){
             playerLayer[wrapper.PlayerTokens.get(i).getX()][wrapper.PlayerTokens.get(i).getY()] = wrapper.PlayerTokens.get(i).charState;
         }

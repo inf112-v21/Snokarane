@@ -23,7 +23,9 @@ public class GameHost extends GamePlayer {
         // Give each client a new player token to keep track of player data
         clientPlayers = new HashMap<>();
         for (Connection c : host.connections){
-            clientPlayers.put(c.getID(), new PlayerToken());
+            PlayerToken token = new PlayerToken();
+            token.charState = PlayerToken.CHARACTER_STATES.PLAYERNORMAL;
+            clientPlayers.put(c.getID(), token);
         }
     }
 
@@ -79,9 +81,6 @@ public class GameHost extends GamePlayer {
         while (host.clientCards.size() != host.connections.length){
 
         }
-        System.out.println("We done");
-        for (int i: host.clientCards.keySet())
-            System.out.println(host.clientCards.get(i));
     }
 
     // TODO: need to process host card selections too
@@ -104,6 +103,7 @@ public class GameHost extends GamePlayer {
                 resolveCard(currentCard, clientPlayers.get(key));
 
                 // Update player cell
+                System.out.println("Halla bby");
                 mlp.setCell(clientPlayers.get(key).getX(), clientPlayers.get(key).getY(), clientPlayers.get(key).charState);
 
                 // Send updated map to clients
