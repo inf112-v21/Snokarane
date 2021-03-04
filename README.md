@@ -9,7 +9,7 @@ A work in progress java implementaion of the board game ["RoboRally"](https://en
 2. Clone project using Git.
 3. Run Main.java using an IDE such as IntelliJ (recommended) or Eclipse. Alternativly compile and run using your preferred method.
 
-## How to play
+### 1. How to play
 
 - Single player 
   - Select "Host" on the role menu
@@ -19,7 +19,7 @@ A work in progress java implementaion of the board game ["RoboRally"](https://en
   - Host - select "Host" on the role menu and wait for other players to connect. Press ok on the new prompt only when all players are connected.
   - Client - select "Client" on the role menu and connect to the host's IP adress
 
-## Controls
+### 2. Controls
 
 Use keys 1-9 to select the corresponding card in your deck menu to choose your build. Wait for all players to complete their turn before you start the next turn. First player to reach all the flags wins.
 
