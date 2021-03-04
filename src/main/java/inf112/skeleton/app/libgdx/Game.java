@@ -217,7 +217,7 @@ public class Game extends InputAdapter implements ApplicationListener {
      * @return if key was registered as correct and acted on
      */
     private boolean pickCardsOnKeyPress(int keyCode) throws InterruptedException {
-        gamePlayer.chooseCards(keyCode-7); // Input.Keys.Num_1 starts at 8
+        gamePlayer.chooseCards(keyCode-8); // Input.Keys.Num_1 starts at 8
         if(gamePlayer.chosenCards.size() >= 5){
             gamePlayer.state = GamePlayer.PLAYERSTATE.SENDING_CARDS;
             gamePlayer.registerChosenCards();
