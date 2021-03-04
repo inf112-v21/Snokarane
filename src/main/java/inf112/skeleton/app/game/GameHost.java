@@ -106,17 +106,11 @@ public class GameHost extends GamePlayer {
         // iterator i is same as client connection id
         for (int i = 0; i<cardsProcessedPerRound; i++){
             for (int key : clientPlayers.keySet()){
-                System.out.println(key);
                 List<Card> cards = host.playerCards.get(key);
                 Card currentCard = cards.remove(0);
-                PlayerToken player = clientPlayers.get(key);
-                int playerX = player.getX();
-                int playerY = player.getY();
 
                 // Move the clients player token
                 resolveCard(currentCard, clientPlayers.get(key));
-
-
             }
         }
         // Send updated map to clients
@@ -184,8 +178,9 @@ public class GameHost extends GamePlayer {
             if (wouldEndUp.x < 0 || wouldEndUp.x >= Game.BOARD_X || wouldEndUp.y < 0 || wouldEndUp.y >= Game.BOARD_Y) {
                 break;
             }
-
-            player.move(direction);
+            else {
+                player.move(direction);
+            }
 
         }
     }
