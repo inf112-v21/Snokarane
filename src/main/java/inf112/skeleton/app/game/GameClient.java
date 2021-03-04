@@ -16,6 +16,7 @@ public class GameClient extends GamePlayer {
      * @param network client network that has a connection to host
      */
     public GameClient(NetworkClient network) {
+
         // Add cards to deck
         super();
         network.gameClient = this;
