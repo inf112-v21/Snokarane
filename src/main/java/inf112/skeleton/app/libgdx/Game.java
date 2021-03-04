@@ -244,7 +244,7 @@ public class Game extends InputAdapter implements ApplicationListener {
     public void translatePlayerLayer(){
         for (int x = 0; x<mlp.playerLayer.length; x++){
             for (int y = 0; y<mlp.playerLayer[x].length; y++){
-                switch (mlp.playerLayer[x][y].charState){
+                switch (mlp.playerLayer[x][y]){
                     case PLAYERNORMAL:
                         playerLayer.setCell(x, y, playerNormal);
                         break;

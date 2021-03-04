@@ -20,10 +20,10 @@ import java.util.List;
  */
 public class Map {
 
-    int BOARD_X = 5;
-    int BOARD_Y = 5;
+    int BOARD_X = Game.BOARD_X;
+    int BOARD_Y = Game.BOARD_Y;
 
-    public PlayerToken     [][] playerLayer    = new PlayerToken   [BOARD_X][BOARD_Y];
+    public PlayerToken.CHARACTER_STATES [][] playerLayer = new PlayerToken.CHARACTER_STATES [BOARD_X][BOARD_Y];
     public Flag            [][] flagLayer      = new Flag          [BOARD_X][BOARD_Y];
     public BoardTileTypes  [][] boardLayer     = new BoardTileTypes[BOARD_X][BOARD_Y];
 
@@ -37,27 +37,27 @@ public class Map {
     public Map(){
         for (int i = 0; i<BOARD_X; i++){
             for (int j = 0; j<BOARD_Y; j++){
-                playerLayer[i][j] = new PlayerToken();
+                playerLayer[i][j] = PlayerToken.CHARACTER_STATES.NONE;
             }
         }
     }
 
     public boolean containsPlayer(GridPoint2 position) {
-        return playerLayer[position.x][position.y].charState != PlayerToken.CHARACTER_STATES.NONE;
+        return playerLayer[position.x][position.y] != PlayerToken.CHARACTER_STATES.NONE;
     }
 
     public void loadPlayers(NetworkDataWrapper wrapper) {
         for (int i = 0; i<wrapper.PlayerTokens.size(); i++){
-            playerLayer[wrapper.PlayerTokens.get(i).getX()][wrapper.PlayerTokens.get(i).getY()] = wrapper.PlayerTokens.get(i);
+            playerLayer[wrapper.PlayerTokens.get(i).getX()][wrapper.PlayerTokens.get(i).getY()] = wrapper.PlayerTokens.get(i).charState;
         }
     }
 
     public void clearCell(int playerX, int playerY) {
-        playerLayer[playerX][playerY].charState = PlayerToken.CHARACTER_STATES.NONE;
+        playerLayer[playerX][playerY] = PlayerToken.CHARACTER_STATES.NONE;
     }
 
-    public void setCell(int playerX, int playerY, PlayerToken playerToken) {
-        playerLayer[playerX][playerY] = playerToken;
+    public void setCell(int playerX, int playerY, PlayerToken.CHARACTER_STATES state) {
+        playerLayer[playerX][playerY] = state;
     }
 
 }
