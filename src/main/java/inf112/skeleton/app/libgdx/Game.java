@@ -41,9 +41,6 @@ public class Game extends InputAdapter implements ApplicationListener {
     // Entire map (graphic)
     private TiledMap tiledMap;
 
-    // Display deck flag
-    boolean displayDeck = false;
-
     Map mlp;
 
     // Board dimensions
@@ -196,12 +193,9 @@ public class Game extends InputAdapter implements ApplicationListener {
     @Override
     public boolean keyUp (int keyCode){
         if (gamePlayer.state == GamePlayer.PLAYERSTATE.PICKING_CARDS){
-            displayDeck = true;
             if(keyCode >= Input.Keys.NUM_1 && keyCode <= Input.Keys.NUM_9){
                 return pickCardsOnKeyPress(keyCode);
             }
-        } else {
-            displayDeck = false;
         }
         return false;
     }
@@ -215,6 +209,7 @@ public class Game extends InputAdapter implements ApplicationListener {
     private boolean pickCardsOnKeyPress(int keyCode) {
         gamePlayer.chooseCards(keyCode-8); // Input.Keys.Num_1 starts at 8
         if(gamePlayer.chosenCards.size() >= 5){
+            resetCellRotation();
             gamePlayer.state = GamePlayer.PLAYERSTATE.SENDING_CARDS;
             gamePlayer.registerChosenCards();
             return true;
@@ -231,8 +226,6 @@ public class Game extends InputAdapter implements ApplicationListener {
 
         // Sends map to client of host, updates map in (this) if client
         updateMap();
-
-        rotateCellsAccordingToDirection();
 
         // Render current frame to screen
         renderer.render();
@@ -300,6 +293,16 @@ public class Game extends InputAdapter implements ApplicationListener {
         batch.end();
     }
 
+    private void resetCellRotation(){
+        for (int x = 0; x<playerLayer.getWidth(); x++){
+            for (int y = 0; y<playerLayer.getHeight(); y++){
+                TiledMapTileLayer.Cell cell = playerLayer.getCell(x, y);
+                cell.setRotation(0);
+                playerLayer.setCell(x, y, cell);
+            }
+        }
+    }
+
     private void rotateCellsAccordingToDirection(){
         batch.begin();
         font.getData().setScale(1);
@@ -342,6 +345,7 @@ public class Game extends InputAdapter implements ApplicationListener {
             if (mlp == null) return;
 
             translatePlayerLayer();
+            rotateCellsAccordingToDirection();
             // TODO: board and flag layer doesn't change as of this version
         }
     }
