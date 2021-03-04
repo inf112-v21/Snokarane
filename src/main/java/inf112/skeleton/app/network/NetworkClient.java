@@ -6,7 +6,6 @@ import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
 import inf112.skeleton.app.game.GameClient;
 import inf112.skeleton.app.libgdx.Map;
-import inf112.skeleton.app.libgdx.MapLayerWrapper;
 import inf112.skeleton.app.libgdx.NetworkDataWrapper;
 
 import java.io.IOException;
@@ -19,14 +18,14 @@ public class NetworkClient extends Network {
     public GameClient gameClient;
 
     @Override
-    public void stop() {
-        client.stop();
-    }
-
-    @Override
     public void initConnections() {
     }
 
+    /**
+     * Initialize network,
+     *
+     * @return if network correctly started
+     */
     @Override
     public boolean initialize(){
 
@@ -34,6 +33,7 @@ public class NetworkClient extends Network {
         registerClasses(client);
         client.start();
 
+        // Add listeners to all objects that are sent over internet
         client.addListener(new Listener.ThreadedListener(new Listener() {
             public void received (Connection connection, Object object) {
                 if (object instanceof String) {

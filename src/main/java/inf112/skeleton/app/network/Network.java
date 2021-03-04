@@ -38,15 +38,13 @@ public abstract class Network {
     }
 
     /**
-     * Stops the server or client.
-     */
-    public abstract void stop();
-
-    /**
      * For hosts only
      */
     public abstract void initConnections();
 
+    /**
+     * Register classes to send over internet
+     */
     protected void registerClasses(EndPoint endPoint) {
         Kryo kryo = endPoint.getKryo();
         for (Class c : NetworkData.classesToRegister()) {

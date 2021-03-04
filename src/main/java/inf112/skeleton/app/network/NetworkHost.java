@@ -15,20 +15,16 @@ public class NetworkHost extends Network {
 
     Server server;
     public Connection[] connections;
+    // Map connection ID's to cards players chose
     public HashMap<Integer, List<Card>> playerCards = new HashMap<>();
 
     // Random number, and a poor implementation
-    //Just grabbing a random negative number so that it doesn't clash with connection.getID()
+    // Just grabbing a random negative number so that it doesn't clash with connection.getID()
     public static int hostID = -230230;
 
     boolean Initialized = false;
 
-    @Override
-    public void stop() {
-        server.stop();
-    }
-
-
+    // Initialize internet
     @Override
     public boolean initialize(){
         server = new Server();
@@ -38,9 +34,9 @@ public class NetworkHost extends Network {
             @Override
             public void received (Connection c, Object object) {
                 // Only cards get sent through here
-                if (object instanceof cardList) {
-                    System.out.println("Got cards!");
-                    playerCards.put(c.getID(),((cardList) object).cardList);
+                if (object instanceof CardList) {
+                    System.out.println("Recieved cards from client.");
+                    playerCards.put(c.getID(),((CardList) object).cardList);
                 }
             }
         });
@@ -55,14 +51,6 @@ public class NetworkHost extends Network {
             System.out.println("Encountered an exception during binding");
             return false;
         }
-    }
-
-    /**
-     * Sends the map to all the connected clients
-     * @param map The TiledMap that should be sent
-     */
-    public void sendMaps(TiledMap map) {
-        server.sendToAllTCP(map);
     }
 
     /**
