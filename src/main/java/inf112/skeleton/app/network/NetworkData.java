@@ -1,5 +1,6 @@
 package inf112.skeleton.app.network;
 
+import com.badlogic.gdx.backends.lwjgl3.Lwjgl3FileHandle;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.FileTextureData;
@@ -50,6 +51,7 @@ public class NetworkData {
         classesToRegister.add(TextureRegion.class);
         classesToRegister.add(Texture.class);
         classesToRegister.add(FileTextureData.class);
+        classesToRegister.add(Lwjgl3FileHandle.class);
         return classesToRegister;
     }
 }
