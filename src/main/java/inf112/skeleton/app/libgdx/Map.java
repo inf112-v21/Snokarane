@@ -24,20 +24,20 @@ public class Map {
     int BOARD_Y = Game.BOARD_Y;
     int ID;
 
+    /**
+     * 2D map like structure contain information about all players in the game.
+     */
     public PlayerRenderInformation [][] playerLayer = new PlayerRenderInformation [BOARD_X][BOARD_Y];
-    public Flag            [][] flagLayer      = new Flag          [BOARD_X][BOARD_Y];
-    public BoardTileTypes  [][] boardLayer     = new BoardTileTypes[BOARD_X][BOARD_Y];
 
+    /**
+     * This is a sort of replacement for tuples that java lack,
+     * Only thing clients needs to render players is state and direction so this is wrapped
+     * into this class.
+     */
     class PlayerRenderInformation{
         public PlayerToken.CHARACTER_STATES state = PlayerToken.CHARACTER_STATES.NONE;
         public PlayerToken.Direction dir = PlayerToken.Direction.NORTH;
         public PlayerRenderInformation(){}
-    }
-
-    enum BoardTileTypes{
-        Tile,
-        Hole,
-        Belt
     }
 
     // NOTE! No args constructor required so kryonet can serialize
@@ -45,13 +45,12 @@ public class Map {
         clearPlayerLayer();
     }
 
+    // Set map ID
     public void setID(int ID) {
         this.ID = ID;
     }
 
-    public boolean containsPlayer(GridPoint2 position) {
-        return playerLayer[position.x][position.y].state != PlayerToken.CHARACTER_STATES.NONE;
-    }
+    // Sets entire player layer to default objects
     public void clearPlayerLayer() {
         for (int i = 0; i<BOARD_X; i++){
             for (int j = 0; j<BOARD_Y; j++){
@@ -59,6 +58,11 @@ public class Map {
             }
         }
     }
+
+    /**
+     * Load players from network into map
+     * @param wrapper network wrapper
+     */
     public void loadPlayers(NetworkDataWrapper wrapper) {
         clearPlayerLayer();
         for (int i = 0; i<wrapper.PlayerTokens.size(); i++){
