@@ -27,18 +27,6 @@ public class PlayerTokenTest {
 
 
     @Test
-    public void PlayerCoordinatesAreUpdatedWhenMoved(){
-        /**
-         * TODO: DEPRECATED
-         * player.move(1, 1);
-         */
-
-
-        assertEquals(player.getX(), 1);
-        assertEquals(player.getY(), 1);
-    }
-
-    @Test
     public void visitFlagThatIsNotAlreadyVisited(){
         Flag flag = new Flag(2, 2);
 
