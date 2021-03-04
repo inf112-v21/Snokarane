@@ -47,8 +47,8 @@ public class Game extends InputAdapter implements ApplicationListener {
     Map mlp;
 
     // Board dimensions
-    public static int BOARD_X = 5;
-    public static int BOARD_Y = 5;
+    public static int BOARD_X = 10;
+    public static int BOARD_Y = 10;
 
     // Layers of the map
     private TiledMapTileLayer boardLayer;
@@ -128,7 +128,7 @@ public class Game extends InputAdapter implements ApplicationListener {
         Gdx.input.setInputProcessor(this);
 
         // Load .tmx file from disk
-        tiledMap = loadTileMapFromFile("test-map.tmx");
+        tiledMap = loadTileMapFromFile("10x10-testmap.tmx");
 
         // Load the map's layers
         loadMapLayers(tiledMap);
@@ -179,7 +179,7 @@ public class Game extends InputAdapter implements ApplicationListener {
         // Set camera to orthographic, size board dimensions
         camera.setToOrtho(false, BOARD_X, BOARD_Y);
         // Set camera X-position
-        camera.position.x = 2.5F;
+        camera.position.x = 5F;
         camera.update();
 
         // Initialize renderer                                  v--- 300F is tile size
@@ -279,7 +279,7 @@ public class Game extends InputAdapter implements ApplicationListener {
                 font.setColor(255, 255, 0, 255);
             }
             cardNum++;
-            xPos += 200;
+            xPos += 150;
             if (xPos >= 500){
                 yPos -= 20;
                 xPos = baseX;
