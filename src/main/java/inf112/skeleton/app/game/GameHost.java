@@ -28,13 +28,11 @@ public class GameHost extends GamePlayer {
             PlayerToken token = new PlayerToken();
             token.charState = PlayerToken.CHARACTER_STATES.PLAYERNORMAL;
             token.ID = c.getID();
-            token.position.x += i;
             clientPlayers.put(c.getID(), token);
         }
         PlayerToken token = new PlayerToken();
         token.charState = PlayerToken.CHARACTER_STATES.PLAYERNORMAL;
         token.ID = host.hostID;
-        token.position.x += i;
         clientPlayers.put(host.hostID, token);
     }
 
