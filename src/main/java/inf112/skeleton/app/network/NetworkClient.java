@@ -16,7 +16,7 @@ public class NetworkClient extends Network {
     public Client client;
     String IP;
     public TiledMap tiledMap;
-    public Map mlp = new Map();
+    public Map mlp;
     public GameClient gameClient;
 
     @Override

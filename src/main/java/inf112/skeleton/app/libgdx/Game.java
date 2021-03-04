@@ -107,6 +107,7 @@ public class Game extends InputAdapter implements ApplicationListener {
     // Start game as client
     private void startClient(){
         gamePlayer = new GameClient((NetworkClient)network);
+        gamePlayer.getMap(mlp);
     }
 
     /**

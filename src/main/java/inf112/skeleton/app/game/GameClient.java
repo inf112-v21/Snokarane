@@ -49,7 +49,7 @@ public class GameClient extends GamePlayer {
     // This function is not in use in this class
     @Override
     public void getMap(Map mlp) {
-        // nothing happens here :o
+        client.mlp = mlp;
     }
 
     // Return newest version of tiledMap from client
