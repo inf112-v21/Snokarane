@@ -24,9 +24,15 @@ public class Map {
     int BOARD_Y = Game.BOARD_Y;
     int ID;
 
-    public PlayerToken.CHARACTER_STATES [][] playerLayer = new PlayerToken.CHARACTER_STATES [BOARD_X][BOARD_Y];
+    public PlayerRenderInformation [][] playerLayer = new PlayerRenderInformation [BOARD_X][BOARD_Y];
     public Flag            [][] flagLayer      = new Flag          [BOARD_X][BOARD_Y];
     public BoardTileTypes  [][] boardLayer     = new BoardTileTypes[BOARD_X][BOARD_Y];
+
+    class PlayerRenderInformation{
+        public PlayerToken.CHARACTER_STATES state = PlayerToken.CHARACTER_STATES.NONE;
+        public PlayerToken.Direction dir = PlayerToken.Direction.NORTH;
+        public PlayerRenderInformation(){}
+    }
 
     enum BoardTileTypes{
         Tile,
@@ -44,12 +50,12 @@ public class Map {
     }
 
     public boolean containsPlayer(GridPoint2 position) {
-        return playerLayer[position.x][position.y] != PlayerToken.CHARACTER_STATES.NONE;
+        return playerLayer[position.x][position.y].state != PlayerToken.CHARACTER_STATES.NONE;
     }
     public void clearPlayerLayer() {
         for (int i = 0; i<BOARD_X; i++){
             for (int j = 0; j<BOARD_Y; j++){
-                playerLayer[i][j] = PlayerToken.CHARACTER_STATES.NONE;
+                playerLayer[i][j] = new PlayerRenderInformation();
             }
         }
     }
@@ -58,24 +64,26 @@ public class Map {
         for (int i = 0; i<wrapper.PlayerTokens.size(); i++){
             PlayerToken token = wrapper.PlayerTokens.get(i);
             if (token.ID == this.ID) {
-                playerLayer[wrapper.PlayerTokens.get(i).getX()][wrapper.PlayerTokens.get(i).getY()] = PlayerToken.CHARACTER_STATES.PLAYERSELFNORMAL;
+                playerLayer[token.getX()][token.getY()].state = PlayerToken.CHARACTER_STATES.PLAYERSELFNORMAL;
             }
             else {
-                playerLayer[wrapper.PlayerTokens.get(i).getX()][wrapper.PlayerTokens.get(i).getY()] = wrapper.PlayerTokens.get(i).charState;
+                playerLayer[token.getX()][token.getY()].state = token.charState;
             }
+            playerLayer[token.getX()][token.getY()].dir = token.getDirection();
         }
     }
 
     public void clearCell(int playerX, int playerY) {
-        playerLayer[playerX][playerY] = PlayerToken.CHARACTER_STATES.NONE;
+        playerLayer[playerX][playerY].state = PlayerToken.CHARACTER_STATES.NONE;
     }
 
     public void setCell(int playerX, int playerY, PlayerToken token) {
         if (token.ID == this.ID) {
-            playerLayer[playerX][playerY] = PlayerToken.CHARACTER_STATES.PLAYERSELFNORMAL;
+            playerLayer[playerX][playerY].state = PlayerToken.CHARACTER_STATES.PLAYERSELFNORMAL;
         }
         else {
-            playerLayer[playerX][playerY] = token.charState;
+            playerLayer[playerX][playerY].state = token.charState;
         }
+        playerLayer[token.getX()][token.getY()].dir = token.getDirection();
     }
 }
