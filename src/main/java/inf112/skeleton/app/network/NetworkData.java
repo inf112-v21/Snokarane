@@ -42,6 +42,7 @@ public class NetworkData {
         classesToRegister.add(ArrayList.class);
         classesToRegister.add(CardType.class);
         classesToRegister.add(PlayerToken.class);
+        classesToRegister.add(PlayerToken.Direction.class);
         classesToRegister.add(NetworkDataWrapper.class);
 
         return classesToRegister;
