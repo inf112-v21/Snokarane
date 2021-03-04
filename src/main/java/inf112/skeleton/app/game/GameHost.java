@@ -46,7 +46,7 @@ public class GameHost extends GamePlayer {
      * clients card so that the clientCards map can be used again next turn.
      */
     @Override
-    public void registerChosenCards() throws InterruptedException {
+    public void registerChosenCards() {
         // Add the cards (prematurely for now) to the discard pile)
         discard.addAll(chosenCards);
         discard.addAll(hand);
@@ -54,12 +54,12 @@ public class GameHost extends GamePlayer {
         //Update the clientCards in host
         host.playerCards.put(host.hostID, chosenCards);
 
+        waitForClientsToFinishCardChoices();
+        processCards();
+
         // Reset the chosen cards and the hand
         chosenCards = new ArrayList<>();
         hand = new ArrayList<>();
-
-        waitForClientsToFinishCardChoices();
-        processCards();
         host.playerCards.clear();
         drawCards();
     }
@@ -85,21 +85,23 @@ public class GameHost extends GamePlayer {
     /**
      * Recursively call this function until all clients have sent their cards to the host
      */
-    public void waitForClientsToFinishCardChoices() throws InterruptedException {
+    public void waitForClientsToFinishCardChoices() {
         // If all clients have sent their cards, the host's client card storage size is same as the amount of clients connected
         while (host.playerCards.size() != host.connections.length){
-            TimeUnit.MILLISECONDS.sleep(100);
-
+            for (int i = 0; i < 1000000000; i++) {
+                continue;
+            }
         }
     }
 
     // TODO: need to process host card selections too
-    public void processCards() throws InterruptedException {
+    public void processCards() {
         int cardsProcessedPerRound = 5;
 
         // iterator i is same as client connection id
         for (int i = 0; i<cardsProcessedPerRound; i++){
             for (int key : clientPlayers.keySet()){
+                System.out.println(key);
                 List<Card> cards = host.playerCards.get(key);
                 Card currentCard = cards.remove(0);
                 PlayerToken player = clientPlayers.get(key);
@@ -117,8 +119,6 @@ public class GameHost extends GamePlayer {
 
                 // Send updated map to clients
                 host.sendMapLayerWrapper(wrapper());
-
-                TimeUnit.MILLISECONDS.sleep(500);
                 //processPlayerMoves();
             }
         }

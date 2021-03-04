@@ -198,11 +198,7 @@ public class Game extends InputAdapter implements ApplicationListener {
         if (gamePlayer.state == GamePlayer.PLAYERSTATE.PICKING_CARDS){
             displayDeck = true;
             if(keyCode >= Input.Keys.NUM_1 && keyCode <= Input.Keys.NUM_9){
-                try {
-                    return pickCardsOnKeyPress(keyCode);
-                } catch (InterruptedException e) {
-                    return false;
-                }
+                return pickCardsOnKeyPress(keyCode);
             }
         } else {
             displayDeck = false;
@@ -216,7 +212,7 @@ public class Game extends InputAdapter implements ApplicationListener {
      * @param keyCode key pressed
      * @return if key was registered as correct and acted on
      */
-    private boolean pickCardsOnKeyPress(int keyCode) throws InterruptedException {
+    private boolean pickCardsOnKeyPress(int keyCode) {
         gamePlayer.chooseCards(keyCode-8); // Input.Keys.Num_1 starts at 8
         if(gamePlayer.chosenCards.size() >= 5){
             gamePlayer.state = GamePlayer.PLAYERSTATE.SENDING_CARDS;

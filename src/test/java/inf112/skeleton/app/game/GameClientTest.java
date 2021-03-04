@@ -1,12 +1,9 @@
 package inf112.skeleton.app.game;
 
-import com.badlogic.gdx.maps.tiled.TiledMap;
 import inf112.skeleton.app.game.GameClient;
 import inf112.skeleton.app.game.GamePlayer;
 import inf112.skeleton.app.game.objects.Card;
 import inf112.skeleton.app.game.objects.CardType;
-import inf112.skeleton.app.game.objects.Flag;
-import inf112.skeleton.app.network.Network;
 import inf112.skeleton.app.network.NetworkClient;
 import org.junit.Test;
 
@@ -17,7 +14,7 @@ import static org.junit.Assert.assertEquals;
 public class GameClientTest {
 
     @Test
-    public void HandsAreDrawnCorrectly(){
+    public void HandsAreDrawnCorrectly() throws InterruptedException {
         NetworkClient network = new NetworkClient();
         // Press cancel on the prompt
         //TODO Make an initilizier that just makes a random object purely for testing?
@@ -26,10 +23,7 @@ public class GameClientTest {
 
         for (int k = 0; k < 9; k++){
             assertEquals(84-k*9, player.deck.size());
-            //System.out.println(player.deck.size());
             player.drawCardsFromDeck();
-            //System.out.println(player.deck.size());
-            //System.out.println("-----------------");
             assertEquals(9, player.hand.size());
             assertEquals(k*9, player.discard.size());
 
