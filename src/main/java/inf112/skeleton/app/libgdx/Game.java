@@ -20,6 +20,7 @@ import inf112.skeleton.app.game.GameClient;
 import inf112.skeleton.app.game.GameHost;
 import inf112.skeleton.app.game.GamePlayer;
 import inf112.skeleton.app.game.objects.Flag;
+import inf112.skeleton.app.game.objects.PlayerToken;
 import inf112.skeleton.app.network.Network;
 import inf112.skeleton.app.network.NetworkClient;
 import inf112.skeleton.app.network.NetworkHost;
@@ -77,10 +78,6 @@ public class Game extends InputAdapter implements ApplicationListener {
     public void startGame(){
         // Initialize mapLayerWrapper
         mlp = new Map();
-        // Set MapLayerWrappers player state cells
-        mlp.setPlayerCells(playerNormal, playerWon);
-        // Load map layers into wrapper
-        mlp.loadLayers(boardLayer, playerLayer, flagLayer);
 
         // Choose whether to host or connect
         network = Network.choseRole();
@@ -239,9 +236,28 @@ public class Game extends InputAdapter implements ApplicationListener {
             //TODO Check if this is correct
             if (mlp == null) return;
 
-            this.playerLayer = mlp.getPlayerLayer();
-            this.boardLayer = mlp.getBoardLayer();
-            this.flagLayer = mlp.getFlagLayer();
+            translatePlayerLayer();
+            // TODO: board and flag layer doesn't change as of this version
+        }
+    }
+
+    public void translatePlayerLayer(){
+        for (int x = 0; x<mlp.playerLayer.length; x++){
+            for (int y = 0; y<mlp.playerLayer[x].length; y++){
+                switch (mlp.playerLayer[x][y].charState){
+                    case PLAYERNORMAL:
+                        playerLayer.setCell(x, y, playerNormal);
+                        break;
+                    case PLAYERWON:
+                        playerLayer.setCell(x, y, playerWon);
+                        break;
+                    case NONE:
+                        playerLayer.setCell(x, y, new TiledMapTileLayer.Cell());
+                        break;
+                    default:
+                        break;
+                }
+            }
         }
     }
 
