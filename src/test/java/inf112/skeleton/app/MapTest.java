@@ -52,9 +52,6 @@ public class MapTest {
 
     /**
      * TODO: DEPRECATED
-     */
-
-
 
     public void movePlayerToFlag(){
         // flag is at 4, 1
@@ -62,10 +59,10 @@ public class MapTest {
         int playerMoveY = 4;
 
         player.move(playerMoveX, playerMoveY);
+    }*/
 
     @Test
     public void checkIfPlayerFlagVisitsAreRegistered(){
-        movePlayerToFlag();
         map.checkForFlags(player);
 
         assertEquals(1, player.getVisitedFlags().size());
@@ -73,7 +70,6 @@ public class MapTest {
 
     @Test
     public void checkIfPlayerStandsOnCorrectCell(){
-        movePlayerToFlag();
         map.checkForFlags(player);
 
         assertNotEquals(null, map.getCellAtPlayerPos(player));
@@ -82,7 +78,6 @@ public class MapTest {
     @Test
     public void checkIfPlayerWinsWhenWinConditionsAreFulfilled(){
         // Win conditions as of writing this test is visiting all flags in the correct order
-        movePlayerToFlag();
         map.checkForFlags(player);
 
         List<Flag> playerFlags = player.getVisitedFlags();
@@ -94,10 +89,9 @@ public class MapTest {
         // Move player to other flag, otherwise the rest of these asserts won't pass
         /**
          * TODO: Deprecated
+         * player.move(3, 0);
          */
 
-
-        player.move(3, 0);
         map.checkForFlags(player);
 
         // Correct size only
@@ -106,5 +100,4 @@ public class MapTest {
         // Correct order and size
         assertEquals(playerFlags, mapFlags);
     }
-
 }

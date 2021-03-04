@@ -39,11 +39,11 @@ public class Game extends InputAdapter implements ApplicationListener {
     // Entire map (graphic)
     private TiledMap tiledMap;
 
-    MapLayerWrapper mlp;
+    Map mlp;
 
     // Board dimensions
-    int BOARD_X = 5;
-    int BOARD_Y = 5;
+    public static int BOARD_X = 5;
+    public static int BOARD_Y = 5;
 
     // Layers of the map
     private TiledMapTileLayer boardLayer;
@@ -76,7 +76,7 @@ public class Game extends InputAdapter implements ApplicationListener {
     // Function called regardless of host or player status, initializes network and asks for host/client role selection
     public void startGame(){
         // Initialize mapLayerWrapper
-        mlp = new MapLayerWrapper();
+        mlp = new Map();
         // Set MapLayerWrappers player state cells
         mlp.setPlayerCells(playerNormal, playerWon);
         // Load map layers into wrapper
@@ -107,6 +107,7 @@ public class Game extends InputAdapter implements ApplicationListener {
     // Start game as client
     private void startClient(){
         gamePlayer = new GameClient((NetworkClient)network);
+        gamePlayer.getMap(mlp);
     }
 
     /**
@@ -234,6 +235,10 @@ public class Game extends InputAdapter implements ApplicationListener {
     public void updateMap(){
         if (mlp != null){
             mlp = gamePlayer.updateMap(null);
+
+            //TODO Check if this is correct
+            if (mlp == null) return;
+
             this.playerLayer = mlp.getPlayerLayer();
             this.boardLayer = mlp.getBoardLayer();
             this.flagLayer = mlp.getFlagLayer();

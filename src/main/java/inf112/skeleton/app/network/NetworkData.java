@@ -1,11 +1,24 @@
 package inf112.skeleton.app.network;
 
+import com.badlogic.gdx.Files;
+import com.badlogic.gdx.backends.lwjgl3.Lwjgl3FileHandle;
+import com.badlogic.gdx.graphics.Pixmap;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.glutils.FileTextureData;
 import com.badlogic.gdx.maps.MapLayers;
 import com.badlogic.gdx.maps.tiled.TiledMap;
+import com.badlogic.gdx.maps.tiled.TiledMapTile;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
+import com.badlogic.gdx.maps.tiled.tiles.StaticTiledMapTile;
+import com.badlogic.gdx.math.GridPoint2;
 import inf112.skeleton.app.game.objects.Card;
 import inf112.skeleton.app.game.objects.CardType;
+import inf112.skeleton.app.game.objects.Flag;
+import inf112.skeleton.app.game.objects.PlayerToken;
+import inf112.skeleton.app.libgdx.Map;
 import inf112.skeleton.app.libgdx.MapLayerWrapper;
+import inf112.skeleton.app.libgdx.NetworkDataWrapper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,13 +39,16 @@ public class NetworkData {
     // I think this should be here?
     public static List<Class> classesToRegister() {
         List<Class> classesToRegister = new ArrayList<>();
-        classesToRegister.add(TiledMap.class);
         classesToRegister.add(Card.class);
         classesToRegister.add(cardList.class);
         classesToRegister.add(ArrayList.class);
         classesToRegister.add(CardType.class);
-        classesToRegister.add(MapLayers.class);
-        classesToRegister.add(MapLayerWrapper.class);
+        classesToRegister.add(PlayerToken.class);
+        classesToRegister.add(PlayerToken.Direction.class);
+        classesToRegister.add(GridPoint2.class);
+        classesToRegister.add(NetworkDataWrapper.class);
+        classesToRegister.add(Flag.class);
+
         return classesToRegister;
     }
 }
