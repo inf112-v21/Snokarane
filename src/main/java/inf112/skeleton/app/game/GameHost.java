@@ -136,7 +136,7 @@ public class GameHost extends GamePlayer {
         // Force local board to update
         mlp.loadPlayers(wrapper());
         List<PlayerToken> playerTokens = new ArrayList<>(clientPlayers.values());
-
+        mlp.registerFlags(playerTokens);
         PlayerToken winner = mlp.hasWon(playerTokens);
 
         if(winner != null) {

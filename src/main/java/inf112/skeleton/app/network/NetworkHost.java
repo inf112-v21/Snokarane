@@ -34,7 +34,7 @@ public class NetworkHost extends Network {
             public void received (Connection c, Object object) {
                 // Only cards get sent through here
                 if (object instanceof CardList) {
-                    System.out.println("Recieved cards from client.");
+                    System.out.println("Recieved cards from client number " + c.getID());
                     playerCards.put(c.getID(),((CardList) object).cardList);
                 }
             }

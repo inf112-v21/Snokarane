@@ -50,7 +50,15 @@ public class Map {
             }
         }
     }
-
+    public void registerFlags(List<PlayerToken> players) {
+        for (PlayerToken player : players) {
+            for (Flag flag : flagList) {
+                if (player.getX() == flag.getX() && player.getY() == flag.getY()) {
+                    player.visitFlag(flag);
+                }
+            }
+        }
+    }
     /**
      * Checks if any players have won the current game. If multiple players win
      * only the first one is returned
@@ -59,11 +67,6 @@ public class Map {
      */
     public PlayerToken hasWon(List<PlayerToken> players) {
         for (PlayerToken player : players) {
-            for (Flag flag : flagList) {
-                if (player.getX() == flag.getX() && player.getY() == flag.getY()) {
-                    player.visitFlag(flag);
-                }
-            }
             if (player.getVisitedFlags().size() == flagList.size())
                 return player;
         }
