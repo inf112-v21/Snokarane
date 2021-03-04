@@ -232,6 +232,8 @@ public class Game extends InputAdapter implements ApplicationListener {
         // Sends map to client of host, updates map in (this) if client
         updateMap();
 
+        rotateCellsAccordingToDirection();
+
         // Render current frame to screen
         renderer.render();
 
@@ -298,6 +300,40 @@ public class Game extends InputAdapter implements ApplicationListener {
         batch.end();
     }
 
+    private void rotateCellsAccordingToDirection(){
+        batch.begin();
+        font.getData().setScale(1);
+        for (int x = 0; x<mlp.playerLayer.length; x++){
+            for (int y = 0; y<mlp.playerLayer[x].length; y++){
+                if (mlp.playerLayer[x][y].state != PlayerToken.CHARACTER_STATES.NONE){
+                    switch (mlp.playerLayer[x][y].dir){
+                        case NORTH:
+                            TiledMapTileLayer.Cell celln = playerLayer.getCell(x, y);
+                            celln.setRotation(0);
+                            playerLayer.setCell(x, y, celln);
+                            break;
+                        case EAST:
+                            TiledMapTileLayer.Cell celle = playerLayer.getCell(x, y);
+                            celle.setRotation(3);
+                            playerLayer.setCell(x, y, celle);
+                            break;
+                        case SOUTH:
+                            TiledMapTileLayer.Cell cells = playerLayer.getCell(x, y);
+                            cells.setRotation(2);
+                            playerLayer.setCell(x, y, cells);
+                            break;
+                        case WEST:
+                            TiledMapTileLayer.Cell cellw = playerLayer.getCell(x, y);
+                            cellw.setRotation(1);
+                            playerLayer.setCell(x, y, cellw);
+                            break;
+                    }
+                }
+            }
+        }
+        batch.end();
+    }
+
     public void updateMap(){
         if (mlp != null){
             mlp = gamePlayer.updateMap(null);
@@ -313,7 +349,7 @@ public class Game extends InputAdapter implements ApplicationListener {
     public void translatePlayerLayer(){
         for (int x = 0; x<mlp.playerLayer.length; x++){
             for (int y = 0; y<mlp.playerLayer[x].length; y++){
-                switch (mlp.playerLayer[x][y]){
+                switch (mlp.playerLayer[x][y].state){
                     case PLAYERNORMAL:
                         playerLayer.setCell(x, y, playerNormal);
                         break;
@@ -321,6 +357,9 @@ public class Game extends InputAdapter implements ApplicationListener {
                         playerLayer.setCell(x, y, playerWon);
                         break;
                     case PLAYERSELFNORMAL:        // todo
+                        playerLayer.setCell(x, y, playerNormal);
+                        break;
+                    case PLAYERSELFWON:        // todo
                         playerLayer.setCell(x, y, playerWon);
                         break;
                     case NONE:
