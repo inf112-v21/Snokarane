@@ -158,6 +158,7 @@ public class GameHost extends GamePlayer {
                         movePlayer(token, 1, PlayerToken.Direction.WEST);
                         break;
                 }
+                break;
             case TURNLEFT:
                 token.rotate(CardType.TURNLEFT);
                 break;
