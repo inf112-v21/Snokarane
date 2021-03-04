@@ -1,4 +1,4 @@
-package inf112.skeleton.app;
+package inf112.skeleton.app.network;
 
 import inf112.skeleton.app.network.NetworkHost;
 import org.junit.Test;

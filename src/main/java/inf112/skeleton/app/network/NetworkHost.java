@@ -5,8 +5,6 @@ import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
 import com.esotericsoftware.kryonet.Server;
 import inf112.skeleton.app.game.objects.Card;
-import inf112.skeleton.app.libgdx.Map;
-import inf112.skeleton.app.libgdx.MapLayerWrapper;
 import inf112.skeleton.app.libgdx.NetworkDataWrapper;
 
 import java.io.IOException;
@@ -17,7 +15,11 @@ public class NetworkHost extends Network {
 
     Server server;
     public Connection[] connections;
-    public HashMap<Integer, List<Card>> clientCards = new HashMap<>();
+    public HashMap<Integer, List<Card>> playerCards = new HashMap<>();
+
+    // Random number, and a poor implementation
+    //Just grabbing a random negative number so that it doesn't clash with connection.getID()
+    public int hostID = -230230;
 
     boolean Initialized = false;
 
@@ -38,7 +40,7 @@ public class NetworkHost extends Network {
                 // Only cards get sent through here
                 if (object instanceof cardList) {
                     System.out.println("Got cards!");
-                    clientCards.put(c.getID(),((cardList) object).cardList);
+                    playerCards.put(c.getID(),((cardList) object).cardList);
                 }
             }
         });
@@ -67,7 +69,9 @@ public class NetworkHost extends Network {
      * Sends MapLayerWrapper to all clients
      * @param wrapper map layer data that should be sent
      */
-    public void sendMapLayerWrapper(NetworkDataWrapper wrapper) { server.sendToAllTCP(wrapper); }
+    public void sendMapLayerWrapper(NetworkDataWrapper wrapper) {
+        server.sendToAllTCP(wrapper);
+    }
 
     /**
      * Prompts all connected clients to draw cards

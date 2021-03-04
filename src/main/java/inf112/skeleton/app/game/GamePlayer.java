@@ -58,7 +58,7 @@ public abstract class GamePlayer{
     }
 
     // Register cards from chosenCards as cards of choice :)
-    public abstract void registerChosenCards();
+    public abstract void registerChosenCards() throws InterruptedException;
 
     public void chooseCards(int cardSelection){
         if (hand.get(cardSelection) == null) return;

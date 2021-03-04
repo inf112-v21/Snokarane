@@ -13,6 +13,7 @@ import inf112.skeleton.app.network.NetworkHost;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 public class GameHost extends GamePlayer {
     // Network connection to be used in game
@@ -27,6 +28,9 @@ public class GameHost extends GamePlayer {
             token.charState = PlayerToken.CHARACTER_STATES.PLAYERNORMAL;
             clientPlayers.put(c.getID(), token);
         }
+        PlayerToken token = new PlayerToken();
+        token.charState = PlayerToken.CHARACTER_STATES.PLAYERNORMAL;
+        clientPlayers.put(host.hostID, token);
     }
 
     public Map mlp;
@@ -40,10 +44,13 @@ public class GameHost extends GamePlayer {
      * clients card so that the clientCards map can be used again next turn.
      */
     @Override
-    public void registerChosenCards() {
+    public void registerChosenCards() throws InterruptedException {
         // Add the cards (prematurely for now) to the discard pile)
         discard.addAll(chosenCards);
         discard.addAll(hand);
+
+        //Update the clientCards in host
+        host.playerCards.put(host.hostID, chosenCards);
 
         // Reset the chosen cards and the hand
         chosenCards = new ArrayList<>();
@@ -51,7 +58,7 @@ public class GameHost extends GamePlayer {
 
         waitForClientsToFinishCardChoices();
         processCards();
-        host.clientCards.clear();
+        host.playerCards.clear();
         drawCards();
     }
 
@@ -76,21 +83,22 @@ public class GameHost extends GamePlayer {
     /**
      * Recursively call this function until all clients have sent their cards to the host
      */
-    public void waitForClientsToFinishCardChoices(){
+    public void waitForClientsToFinishCardChoices() throws InterruptedException {
         // If all clients have sent their cards, the host's client card storage size is same as the amount of clients connected
-        while (host.clientCards.size() != host.connections.length){
+        while (host.playerCards.size() != host.connections.length){
+            TimeUnit.MILLISECONDS.sleep(100);
 
         }
     }
 
     // TODO: need to process host card selections too
-    public void processCards(){
+    public void processCards() throws InterruptedException {
         int cardsProcessedPerRound = 5;
 
         // iterator i is same as client connection id
         for (int i = 0; i<cardsProcessedPerRound; i++){
             for (int key : clientPlayers.keySet()){
-                List<Card> cards = host.clientCards.get(key);
+                List<Card> cards = host.playerCards.get(key);
                 Card currentCard = cards.remove(0);
                 PlayerToken player = clientPlayers.get(key);
                 int playerX = player.getX();
@@ -103,12 +111,12 @@ public class GameHost extends GamePlayer {
                 resolveCard(currentCard, clientPlayers.get(key));
 
                 // Update player cell
-                System.out.println("Halla bby");
                 mlp.setCell(clientPlayers.get(key).getX(), clientPlayers.get(key).getY(), clientPlayers.get(key).charState);
 
                 // Send updated map to clients
                 host.sendMapLayerWrapper(wrapper());
-                //artificialDelayToShowMoves();
+
+                TimeUnit.MILLISECONDS.sleep(500);
                 //processPlayerMoves();
             }
         }
@@ -116,9 +124,7 @@ public class GameHost extends GamePlayer {
 
     private NetworkDataWrapper wrapper() {
         NetworkDataWrapper wrapper = new NetworkDataWrapper();
-        for (PlayerToken player : clientPlayers.values()) {
-            wrapper.PlayerTokens.add(player);
-        }
+        wrapper.PlayerTokens.addAll(clientPlayers.values());
         return wrapper;
     }
 

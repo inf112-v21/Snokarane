@@ -1,4 +1,4 @@
-package inf112.skeleton.app;
+package inf112.skeleton.app.game.objects;
 
 import inf112.skeleton.app.game.objects.Card;
 import inf112.skeleton.app.game.objects.CardType;
