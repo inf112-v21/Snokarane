@@ -141,17 +141,30 @@ public class GameHost extends GamePlayer {
     private void resolveCard(Card card, PlayerToken token) {
         switch (card.getCardType()) {
             case FORWARDONE:
-                movePlayer(token, 1);
+                movePlayer(token, 1, token.getDirection());
                 break;
             case FORWARDTWO:
-                movePlayer(token, 2);
+                movePlayer(token, 2, token.getDirection());
                 break;
             case FORWARDTHREE:
-                movePlayer(token, 3);
+                movePlayer(token, 3, token.getDirection());
                 break;
             case BACK_UP:
-                movePlayer(token, -1);
-                break;
+                switch (token.getDirection()) {
+                    case NORTH:
+                        movePlayer(token, 1, PlayerToken.Direction.SOUTH);
+                        break;
+                    case SOUTH:
+                        movePlayer(token, 1, PlayerToken.Direction.NORTH);
+                        break;
+                    case WEST:
+                        movePlayer(token, 1, PlayerToken.Direction.EAST);
+                        break;
+                    case EAST:
+                        movePlayer(token, 1, PlayerToken.Direction.WEST);
+                        break;
+                }
+
             case TURNLEFT:
                 token.rotate(CardType.TURNLEFT);
                 break;
@@ -164,7 +177,7 @@ public class GameHost extends GamePlayer {
 
         }
     }
-    private void movePlayer(PlayerToken player, int dist) {
+    private void movePlayer(PlayerToken player, int dist, PlayerToken.Direction direction) {
         for(int i = 0; i < dist; i++) {
             GridPoint2 wouldEndUp = player.wouldEndUp();
 
@@ -173,7 +186,7 @@ public class GameHost extends GamePlayer {
                 break;
             }
 
-            player.move();
+            player.move(direction);
 
         }
     }

@@ -32,13 +32,6 @@ public class PlayerToken {
     private Direction playerDirection = Direction.NORTH;
 
     /**
-     * Moves the player 1 step in the direction it is facing
-     */
-    public void move() {
-        moveDir(position, playerDirection);
-    }
-
-    /**
      * Use this method to move a player when the player is being pushed by something.
      * @param direction The direction you want to move, regardless of the players direction
      */
