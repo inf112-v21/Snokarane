@@ -4,9 +4,12 @@ import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTile;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.math.GridPoint2;
+import com.badlogic.gdx.math.Vector2;
+import inf112.skeleton.app.game.objects.Flag;
 import inf112.skeleton.app.game.objects.PlayerToken;
 import inf112.skeleton.app.network.Network;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -17,59 +20,38 @@ import java.util.List;
  */
 public class Map {
 
-    // Layers of the map
-    private TiledMapTileLayer boardLayer;
-    private TiledMapTileLayer playerLayer;
-    private TiledMapTileLayer flagLayer;
+    int BOARD_X = 5;
+    int BOARD_Y = 5;
 
-    // Cells for each player state
-    public TiledMapTileLayer.Cell playerNormal;
-    public TiledMapTileLayer.Cell playerWon;
-    public TiledMapTileLayer.Cell none = new TiledMapTileLayer.Cell();
+    public PlayerToken     [][] playerLayer    = new PlayerToken   [BOARD_X][BOARD_Y];
+    public Flag            [][] flagLayer      = new Flag          [BOARD_X][BOARD_Y];
+    public BoardTileTypes  [][] boardLayer     = new BoardTileTypes[BOARD_X][BOARD_Y];
+
+    enum BoardTileTypes{
+        Tile,
+        Hole,
+        Belt
+    }
 
     // NOTE! No args constructor required so kryonet can serialize
     public Map(){ }
 
-    public void setPlayerCells(TiledMapTileLayer.Cell playerNormal, TiledMapTileLayer.Cell playerWon){
-        this.playerNormal = playerNormal;
-        this.playerWon = playerWon;
-    }
-
     public boolean containsPlayer(GridPoint2 position) {
-        return playerLayer.getCell(position.x, position.y) == playerNormal;
-    }
-
-    public boolean isEmpty(GridPoint2 position) {
-        return playerLayer.getCell(position.x, position.y) == none || playerLayer.getCell(position.x, position.y) == null;
-    }
-
-    public void loadLayers(TiledMapTileLayer board, TiledMapTileLayer player, TiledMapTileLayer flag){
-        this.boardLayer = board;
-        this.playerLayer = player;
-        this.flagLayer = flag;
+        return playerLayer[position.x][position.y].charState != PlayerToken.CHARACTER_STATES.NONE;
     }
 
     public void loadPlayers(NetworkDataWrapper wrapper) {
-        for (PlayerToken player : wrapper.PlayerTokens) {
-            setCell(player.getX(), player.getY(), playerNormal);
+        for (int i = 0; i<wrapper.PlayerTokens.size(); i++){
+            playerLayer[wrapper.PlayerTokens.get(i).getX()][wrapper.PlayerTokens.get(i).getY()] = wrapper.PlayerTokens.get(i);
         }
     }
 
-    // Gets & Sets TODO: use getter setter things
-    public TiledMapTileLayer getBoardLayer  (){ return boardLayer   ;}
-    public TiledMapTileLayer getPlayerLayer (){ return playerLayer  ;}
-    public TiledMapTileLayer getFlagLayer   (){ return flagLayer    ;}
-
-    public void setBoardLayer  (TiledMapTileLayer boardLayer    ){ this.boardLayer  = boardLayer    ;}
-    public void setPlayerLayer (TiledMapTileLayer playerLayer   ){ this.playerLayer = playerLayer   ;}
-    public void setFlagLayer   (TiledMapTileLayer flagLayer     ){ this.flagLayer   = flagLayer     ;}
-
     public void clearCell(int playerX, int playerY) {
-        playerLayer.setCell(playerX, playerY, none);
+        playerLayer[playerX][playerY].charState = PlayerToken.CHARACTER_STATES.NONE;
     }
 
-    public void setCell(int playerX, int playerY, TiledMapTileLayer.Cell cellType) {
-        playerLayer.setCell(playerX, playerY, cellType);
+    public void setCell(int playerX, int playerY, PlayerToken playerToken) {
+        playerLayer[playerX][playerY] = playerToken;
     }
 
 }

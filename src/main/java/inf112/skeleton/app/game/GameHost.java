@@ -96,14 +96,14 @@ public class GameHost extends GamePlayer {
                 int playerX = player.getX();
                 int playerY = player.getY();
 
-                //Clear player cell to prepare for move
+                // Clear cell for moving
                 mlp.clearCell(playerX, playerY);
 
                 // Move the clients player token
                 resolveCard(currentCard, clientPlayers.get(key));
 
-                // Update player layer cell
-                mlp.setCell(clientPlayers.get(key).getX(), clientPlayers.get(key).getY(), mlp.playerNormal);
+                // Update player cell
+                mlp.setCell(clientPlayers.get(key).getX(), clientPlayers.get(key).getY(), clientPlayers.get(key));
 
                 // Send updated map to clients
                 host.sendMapLayerWrapper(wrapper());
@@ -164,7 +164,7 @@ public class GameHost extends GamePlayer {
 
             // If the tile the player is trying to move into is empty
             // it can simply move there
-            else if (mlp.isEmpty(wouldEndUp)) {
+            else if (!mlp.containsPlayer(wouldEndUp)) {
                 player.move();
             }
             // If the tile the player is trying to move into is a wall
