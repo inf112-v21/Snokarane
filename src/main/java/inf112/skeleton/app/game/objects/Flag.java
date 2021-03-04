@@ -5,7 +5,9 @@ import com.badlogic.gdx.math.GridPoint2;
 public class Flag {
 
     private GridPoint2 position;
+    public Flag(){
 
+    }
     public Flag(int x, int y){
         position = new GridPoint2(x, y);
     }
