@@ -8,6 +8,7 @@ import inf112.skeleton.app.game.objects.PlayerToken;
 import inf112.skeleton.app.libgdx.Game;
 import inf112.skeleton.app.libgdx.Map;
 import inf112.skeleton.app.libgdx.NetworkDataWrapper;
+import inf112.skeleton.app.network.Network;
 import inf112.skeleton.app.network.NetworkHost;
 
 import java.util.ArrayList;
@@ -32,8 +33,8 @@ public class GameHost extends GamePlayer {
         }
         PlayerToken token = new PlayerToken();
         token.charState = PlayerToken.CHARACTER_STATES.PLAYERNORMAL;
-        token.ID = host.hostID;
-        clientPlayers.put(host.hostID, token);
+        token.ID = NetworkHost.hostID;
+        clientPlayers.put(NetworkHost.hostID, token);
     }
 
     public Map mlp;
@@ -53,7 +54,7 @@ public class GameHost extends GamePlayer {
         discard.addAll(hand);
 
         //Update the clientCards in host
-        host.playerCards.put(host.hostID, chosenCards);
+        host.playerCards.put(NetworkHost.hostID, chosenCards);
 
         waitForClientsToFinishCardChoices();
         processCards();
@@ -81,7 +82,7 @@ public class GameHost extends GamePlayer {
     @Override
     public void getMap(Map mlp){
         this.mlp = mlp;
-        this.mlp.setID(host.hostID);
+        this.mlp.setID(NetworkHost.hostID);
         host.sendMapLayerWrapper(wrapper());
 
         //TODO Fix this terrible implementation...
@@ -112,20 +113,17 @@ public class GameHost extends GamePlayer {
                 int playerX = player.getX();
                 int playerY = player.getY();
 
-                // Clear cell for moving
-                mlp.clearCell(playerX, playerY);
-
                 // Move the clients player token
                 resolveCard(currentCard, clientPlayers.get(key));
 
-                // Update player cell
-                mlp.setCell(clientPlayers.get(key).getX(), clientPlayers.get(key).getY(), clientPlayers.get(key));
 
-                // Send updated map to clients
-                host.sendMapLayerWrapper(wrapper());
-                //processPlayerMoves();
             }
         }
+        // Send updated map to clients
+        host.sendMapLayerWrapper(wrapper());
+
+        // Force the board to update, not sure if necessary
+        mlp.loadPlayers(wrapper());
     }
 
     private NetworkDataWrapper wrapper() {
@@ -175,28 +173,7 @@ public class GameHost extends GamePlayer {
                 break;
             }
 
-            // If the tile the player is trying to move into is empty
-            // it can simply move there
-            else if (!mlp.containsPlayer(wouldEndUp)) {
-                player.move();
-            }
-            // If the tile the player is trying to move into is a wall
-            // the player stands still
-            // If the tile the player is trying to move into is another player
-            // the player moves the other player, then itself
-            //TODO: Reallllllly shitty way to do this
-            else if (mlp.containsPlayer(wouldEndUp)) {
-                for (PlayerToken token: clientPlayers.values()) {
-                    if (token.getX() == wouldEndUp.x && token.getY() == wouldEndUp.y) {
-                        //token.move(player.getDirection());
-                        //player.move();
-                    }
-                }
-            }
-
-            //else if (map.containsWall(player.wouldEndUp())) {
-            //    continue;
-            //}
+            player.move();
 
         }
     }
