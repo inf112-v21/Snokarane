@@ -93,19 +93,19 @@ public class Game extends InputAdapter implements ApplicationListener {
     }
     // Start game as host
     private void startHost(){
-        // Send prompt til all connected clients
+        // Send prompt to all connected clients
         Network.prompt("All players connected.", null);
         // Start connection to current clients. This is to be able to accept data transfers from clients
         this.network.initConnections();
         // Starts GameHost session using network that was initialized
         gamePlayer = new GameHost((NetworkHost)network);
-        gamePlayer.getMap(mlp);
+        gamePlayer.setMap(mlp);
         gamePlayer.drawCards();
     }
     // Start game as client
     private void startClient(){
         gamePlayer = new GameClient((NetworkClient)network);
-        gamePlayer.getMap(mlp);
+        gamePlayer.setMap(mlp);
     }
 
     /**
@@ -188,7 +188,7 @@ public class Game extends InputAdapter implements ApplicationListener {
     /**
      * This function is called by libgdx when a key is released.
      *
-     * @return true if keyrelease was handled
+     * @return true if keyrelease was handled (per libgdx)
      */
     @Override
     public boolean keyUp (int keyCode){
@@ -215,6 +215,7 @@ public class Game extends InputAdapter implements ApplicationListener {
         }
         return false;
     }
+
     /**
      * Render all objects and text to the screen
      */
@@ -229,15 +230,18 @@ public class Game extends InputAdapter implements ApplicationListener {
         // Render current frame to screen
         renderer.render();
 
+        // Draw current deck (has to be called after render to show correctly)
         drawDeck();
-
     }
 
-    // Draw deck and selected cards on screen
+    /**
+     * Draw deck and selected cards on screen
+     */
     private void drawDeck(){
         int baseX = 50;
         int baseY = 100; // Dont change me to something non divisible by two :)
 
+        // Draw hand indicator
         batch.begin();
         font.setColor(255, 255, 255, 255);
         font.getData().setScale(2);
@@ -245,31 +249,26 @@ public class Game extends InputAdapter implements ApplicationListener {
         font.getData().setScale(1);
         font.setColor(255, 255, 0, 255);
 
+        // Initialize some helper variables
         int xPos = baseX;
         int yPos = baseY;
         int cardNum = 1;
-        int currentCardPosition = 0;
-        List<Integer> lostCardsPositions = new ArrayList<>();
-
-        for (Card c : gamePlayer.hand){
-            if (c == null)
-                lostCardsPositions.add(currentCardPosition);
-
-            currentCardPosition++;
-        }
-
         int lostCardsShown = 0;
+
         for (Card c : gamePlayer.hand){
+            // If card was removed from hand and added to chosenCards, display them as green
             if (c == null) {
                 font.setColor(0, 255, 0, 255);
                 font.draw(batch, Integer.toString(cardNum) + ". " + gamePlayer.chosenCards.get(lostCardsShown).getCardType().toString(), xPos, yPos);
                 font.setColor(255, 255, 0, 255);
                 lostCardsShown++;
             }else {
+                // Else display as yellow
                 font.setColor(255, 255, 0, 255);
                 font.draw(batch, Integer.toString(cardNum)+". " + c.getCardType().toString(), xPos, yPos);
                 font.setColor(255, 255, 0, 255);
             }
+            // Change positioning for next card
             cardNum++;
             xPos += 150;
             if (xPos >= 500){
@@ -278,6 +277,7 @@ public class Game extends InputAdapter implements ApplicationListener {
             }
         }
 
+        // Draw how many cards have been chosen so far
         font.draw(batch, "Deck:", baseX, baseY + baseY/4);
 
         if (lostCardsShown>=4){
@@ -285,13 +285,16 @@ public class Game extends InputAdapter implements ApplicationListener {
             font.setColor(0, 100, 200, 255);
             font.draw(batch, "Last card!", baseX, baseY + baseY/2);
         }
+
         font.setColor(255, 0, 0, 255);
         font.getData().setScale(2);
         font.draw(batch, Integer.toString(lostCardsShown),baseX+100, baseY*2);
-
         batch.end();
     }
 
+    /**
+     * Reset cell rotation on all cells in the map to 0
+     */
     private void resetCellRotation(){
         for (int x = 0; x<playerLayer.getWidth(); x++){
             for (int y = 0; y<playerLayer.getHeight(); y++){
@@ -302,6 +305,9 @@ public class Game extends InputAdapter implements ApplicationListener {
         }
     }
 
+    /**
+     * Rotates cells according to location in map player layer directions
+     */
     private void rotateCellsAccordingToDirection(){
         batch.begin();
         font.getData().setScale(1);
@@ -336,12 +342,13 @@ public class Game extends InputAdapter implements ApplicationListener {
         batch.end();
     }
 
+    /**
+     * Query for map update in networks, and calls some methods to decode information from map sent over network
+     */
     public void updateMap(){
         if (mlp != null){
             mlp = gamePlayer.updateMap(null);
 
-            //TODO Check if this is correct
-            if (mlp == null) return;
             translatePlayerLayer();
             resetCellRotation();
             rotateCellsAccordingToDirection();
@@ -349,6 +356,9 @@ public class Game extends InputAdapter implements ApplicationListener {
         }
     }
 
+    /**
+     * Gets player locations and states from map and sets tiledmaplayer cells to correct texture
+     */
     public void translatePlayerLayer(){
         for (int x = 0; x<mlp.playerLayer.length; x++){
             for (int y = 0; y<mlp.playerLayer[x].length; y++){
@@ -359,13 +369,16 @@ public class Game extends InputAdapter implements ApplicationListener {
                     case PLAYERWON:
                         playerLayer.setCell(x, y, playerWon);
                         break;
-                    case PLAYERSELFNORMAL:        // todo
+                    case PLAYERSELFNORMAL:
+                        // todo we don't have a texture to show which player this player is, so using playerwon as filler
                         playerLayer.setCell(x, y, playerWon);
                         break;
-                    case PLAYERSELFWON:        // todo
+                    case PLAYERSELFWON:
+                        // todo
                         playerLayer.setCell(x, y, playerWon);
                         break;
                     case NONE:
+                        // Clear cell if no players are found
                         playerLayer.setCell(x, y, new TiledMapTileLayer.Cell());
                         break;
                     default:
@@ -387,6 +400,7 @@ public class Game extends InputAdapter implements ApplicationListener {
         // Sneakily yoink the positions of the flags here, don't tell the OOP police
         getFlagPositionsFromLayer(flagLayer);
     }
+
     /**
      * Get all flag positions in layer flag layer
      */
