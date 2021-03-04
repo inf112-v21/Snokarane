@@ -27,6 +27,7 @@ Use keys 1-9 to select the corresponding card in your deck menu to choose your b
 
 - start the game to test if the grapchics appear
 - connect to a host IP to test the networking
+- start the game to test if you are dealt cards
 - select a sequence of cards to test if the player ends up on the correct tile
 - select a sequence of cards to test if the player ends up in the correct direction
 

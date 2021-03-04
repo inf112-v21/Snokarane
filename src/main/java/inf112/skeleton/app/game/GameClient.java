@@ -7,13 +7,21 @@ import inf112.skeleton.app.network.cardList;
 import java.util.ArrayList;
 import java.util.Collections;
 
+/**
+ * This class contains information the client needs to interact with the game
+ */
 public class GameClient extends GamePlayer {
 
+    /**
+     * @param network client network that has a connection to host
+     */
     public GameClient(NetworkClient network) {
+        // Add cards to deck
         super();
         network.gameClient = this;
         client = network;
     }
+
     NetworkClient client;
 
     /**
@@ -26,13 +34,13 @@ public class GameClient extends GamePlayer {
         listOfCards.cardList = chosenCards;
 
         // Actually send the cards to the host
-        System.out.println("Sending the cards");
+        System.out.println("Sending the cards to host...");
         client.client.sendTCP(listOfCards);
 
         // Add the cards (prematurely for now) to the discard pile)
         discard.addAll(chosenCards);
 
-        //TODO Fix this is you fix the todo in GamePlayer chosecards
+        //TODO Fix this is, then you fix the todo in GamePlayer chosecards
         hand.removeAll(Collections.singleton(null));
         discard.addAll(hand);
 
@@ -44,15 +52,15 @@ public class GameClient extends GamePlayer {
     // This function is not in use in this class
     @Override
     public void drawCards() {
-        // nothing happens here :o
     }
-    // This function is not in use in this class
+
+    // Get map from network client
     @Override
-    public void getMap(Map mlp) {
+    public void setMap(Map mlp) {
         client.mlp = mlp;
     }
 
-    // Return newest version of tiledMap from client
+    // Return newest version of Map instance from client
     @Override
     public Map updateMap(Map mlp) {
         return client.mlp;
