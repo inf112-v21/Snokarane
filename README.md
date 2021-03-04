@@ -16,8 +16,9 @@ A work in progress java implementaion of the board game ["RoboRally"](https://en
   - Select "Ok" to play when prompted about all players connected
 
 - Multiplayer
-  - Host - select "Host" on the role menu and wait for other players to connect. Press ok on the new prompt only when all players are connected.
+  - Host - select "Host" on the role menu and wait for other players to connect. Press ok on the new prompt only when all players are connected. You can see this by waiting until you have a number of "recieved cards" in the consol log equal to the number of clients between each round.
   - Client - select "Client" on the role menu and connect to the host's IP adress
+  - The UiB-owl with sparks on it is your character. 
 
 ### 2. Controls
 
@@ -44,7 +45,3 @@ The host has to be the last actor to choose their 5 cards. Otherwise the program
 All other players than you are seemingly turned the wrong direction. This doesn't affect gameplay that much as your position should always be correct.
 
 If a player disconnects during a session, the whole game has to be restarted.
-
-The players are named in the order they connect to the host (1,2,3,..) and the host is named -230230
-
-
