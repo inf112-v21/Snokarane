@@ -174,7 +174,7 @@ Fortsette på planlegging av prosjekt og prosjektstruktur
 
 **Neste møte:** 01.03
 
-## **Referat møte måndag 01.02.2021**
+## **Referat møte måndag 01.03.2021**
 
 **Stad:** Discord
 
