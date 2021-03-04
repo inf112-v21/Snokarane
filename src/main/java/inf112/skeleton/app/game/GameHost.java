@@ -133,11 +133,21 @@ public class GameHost extends GamePlayer {
                 resolveCard(currentCard, clientPlayers.get(key));
             }
         }
+        // Force local board to update
+        mlp.loadPlayers(wrapper());
+
+        PlayerToken winner = mlp.hasWon((List<PlayerToken>) clientPlayers.values());
+
+        if(winner != null) {
+            host.sendWinner(winner);
+            System.out.println(winner.ID + " has won!!!");
+            System.exit(0);
+        }
+
         // Send new map to clients
         host.sendMapLayerWrapper(wrapper());
 
-        // Force local board to update
-        mlp.loadPlayers(wrapper());
+
     }
 
     /**

@@ -54,7 +54,7 @@ public class Game extends InputAdapter implements ApplicationListener {
 
     // Flags on the map are stored here for easy access
     // TODO: this should really only useful in GameHost
-    List<Flag> flagPositions = new ArrayList<>();
+    public List<Flag> flagPositions = new ArrayList<>();
 
     // Cells for each player state
     private TiledMapTileLayer.Cell playerNormal;
@@ -79,6 +79,7 @@ public class Game extends InputAdapter implements ApplicationListener {
     public void startGame(){
         // Initialize mapLayerWrapper
         mlp = new Map();
+        mlp.flagList = flagPositions;
 
         // Choose whether to host or connect
         network = Network.choseRole();
@@ -259,13 +260,13 @@ public class Game extends InputAdapter implements ApplicationListener {
             // If card was removed from hand and added to chosenCards, display them as green
             if (c == null) {
                 font.setColor(0, 255, 0, 255);
-                font.draw(batch, Integer.toString(cardNum) + ". " + gamePlayer.chosenCards.get(lostCardsShown).getCardType().toString(), xPos, yPos);
+                font.draw(batch, cardNum + ". " + gamePlayer.chosenCards.get(lostCardsShown).getCardType().toString(), xPos, yPos);
                 font.setColor(255, 255, 0, 255);
                 lostCardsShown++;
             }else {
                 // Else display as yellow
                 font.setColor(255, 255, 0, 255);
-                font.draw(batch, Integer.toString(cardNum)+". " + c.getCardType().toString(), xPos, yPos);
+                font.draw(batch, cardNum +". " + c.getCardType().toString(), xPos, yPos);
                 font.setColor(255, 255, 0, 255);
             }
             // Change positioning for next card

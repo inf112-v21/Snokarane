@@ -20,9 +20,10 @@ import java.util.List;
  */
 public class Map {
 
-    int BOARD_X = Game.BOARD_X;
-    int BOARD_Y = Game.BOARD_Y;
-    int ID;
+    private int BOARD_X = Game.BOARD_X;
+    private int BOARD_Y = Game.BOARD_Y;
+    private int ID;
+    public List<Flag> flagList;
 
     /**
      * 2D map like structure contain information about all players in the game.
@@ -59,12 +60,26 @@ public class Map {
         }
     }
 
+    public PlayerToken hasWon(List<PlayerToken> players) {
+        for (PlayerToken player : players) {
+            for (Flag flag : flagList) {
+                if (player.getX() == flag.getX() && player.getY() == flag.getY()) {
+                    player.visitFlag(flag);
+                }
+            }
+            if (player.getVisitedFlags().size() == flagList.size())
+                return player;
+        }
+        return null;
+    }
+
     /**
-     * Load players from network into map
-     * @param wrapper network wrapper
+     * Loads player from network into map
+     * @param wrapper The NetworkDataWrapper that contains the players
      */
     public void loadPlayers(NetworkDataWrapper wrapper) {
         clearPlayerLayer();
+        PlayerToken winner = null;
         for (int i = 0; i<wrapper.PlayerTokens.size(); i++){
             PlayerToken token = wrapper.PlayerTokens.get(i);
             if (token.ID == this.ID) {

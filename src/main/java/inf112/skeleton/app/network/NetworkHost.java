@@ -5,6 +5,7 @@ import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
 import com.esotericsoftware.kryonet.Server;
 import inf112.skeleton.app.game.objects.Card;
+import inf112.skeleton.app.game.objects.PlayerToken;
 import inf112.skeleton.app.libgdx.NetworkDataWrapper;
 
 import java.io.IOException;
@@ -64,6 +65,10 @@ public class NetworkHost extends Network {
     public void promptCardDraw() {
         System.out.println("Prompted clients to draw cards.");
         server.sendToAllTCP("Draw cards!");
+    }
+
+    public void sendWinner(PlayerToken winner) {
+        server.sendToAllTCP(winner);
     }
 
     /**

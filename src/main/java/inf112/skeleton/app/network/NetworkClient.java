@@ -5,10 +5,12 @@ import com.esotericsoftware.kryonet.Client;
 import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
 import inf112.skeleton.app.game.GameClient;
+import inf112.skeleton.app.game.objects.PlayerToken;
 import inf112.skeleton.app.libgdx.Map;
 import inf112.skeleton.app.libgdx.NetworkDataWrapper;
 
 import java.io.IOException;
+import java.sql.PseudoColumnUsage;
 
 public class NetworkClient extends Network {
 
@@ -45,6 +47,11 @@ public class NetworkClient extends Network {
 
                 if(object instanceof Integer) {
                     mlp.setID((Integer) object);
+                }
+
+                if (object instanceof PlayerToken) {
+                    System.out.println(((PlayerToken) object).ID + " has won! Congratulations to them!");
+                    System.exit(0);
                 }
             }
             public void disconnected (Connection connection) {
