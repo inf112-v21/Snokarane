@@ -28,6 +28,8 @@ public class PlayerTokenTest {
     /**
      * TODO: DEPRECATED
      */
+
+
     @Test
     public void PlayerCoordinatesAreUpdatedWhenMoved(){
 
@@ -75,4 +77,5 @@ public class PlayerTokenTest {
         assertEquals(player2.getVisitedFlags().size(), flags.size());
 
     }
+
 }

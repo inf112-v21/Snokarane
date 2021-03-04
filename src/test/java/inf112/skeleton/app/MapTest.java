@@ -53,13 +53,15 @@ public class MapTest {
     /**
      * TODO: DEPRECATED
      */
+
+
+
     public void movePlayerToFlag(){
         // flag is at 4, 1
         int playerMoveX = 1;
         int playerMoveY = 4;
 
         player.move(playerMoveX, playerMoveY);
-    }
 
     @Test
     public void checkIfPlayerFlagVisitsAreRegistered(){
@@ -93,6 +95,8 @@ public class MapTest {
         /**
          * TODO: Deprecated
          */
+
+
         player.move(3, 0);
         map.checkForFlags(player);
 
@@ -102,4 +106,5 @@ public class MapTest {
         // Correct order and size
         assertEquals(playerFlags, mapFlags);
     }
+
 }
