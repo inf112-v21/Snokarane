@@ -52,6 +52,9 @@ public class NetworkData {
         classesToRegister.add(Texture.class);
         classesToRegister.add(FileTextureData.class);
         classesToRegister.add(Lwjgl3FileHandle.class);
+
+        // This is starting to seem like a bad idea...
+        classesToRegister.add(java.io.File.class);
         return classesToRegister;
     }
 }
