@@ -1,14 +1,9 @@
 package inf112.skeleton.app.network;
 
 import com.esotericsoftware.kryo.Kryo;
-import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.EndPoint;
-import com.esotericsoftware.kryonet.rmi.ObjectSpace;
-import inf112.skeleton.app.Map;
 
 import javax.swing.*;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 
 public abstract class Network {
