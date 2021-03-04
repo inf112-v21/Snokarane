@@ -22,7 +22,16 @@ public class PlayerToken {
      * Moves the player 1 step in the direction it is facing
      */
     public void move() {
-        moveDir(position, playerDirection);
+        switch (playerDirection) {
+            case NORTH:
+                this.position.x +=1;
+            case SOUTH:
+                this.position.x -=1;
+            case WEST:
+                this.position.y -= 1;
+            case EAST:
+                this.position.y += 1;
+        }
     }
 
     /**
@@ -30,7 +39,16 @@ public class PlayerToken {
      * @param direction The direction you want to move, regardless of the players direction
      */
     public void move(Direction direction) {
-        moveDir(position, direction);
+        switch (direction) {
+            case NORTH:
+                this.position.x +=1;
+            case SOUTH:
+                this.position.x -=1;
+            case WEST:
+                this.position.y -= 1;
+            case EAST:
+                this.position.y += 1;
+        }
     }
 
     public int getX() {
@@ -74,27 +92,17 @@ public class PlayerToken {
      */
     public GridPoint2 wouldEndUp() {
         GridPoint2 newPos = new GridPoint2(position.x, position.y);
-        moveDir(newPos, playerDirection);
-        return newPos;
-    }
-
-    /**
-     * Updates the position matrix to reflect on what it would be like if a player
-     * moved one step in the given direction
-     * @param position The position to update
-     * @param direction The direction to move
-     */
-    private void moveDir(GridPoint2 position, Direction direction) {
-        switch (direction) {
+        switch (playerDirection) {
             case NORTH:
-                position.x +=1;
+                newPos.x +=1;
             case SOUTH:
-                position.x -=1;
+                newPos.x -=1;
             case WEST:
-                position.y -= 1;
+                newPos.y -= 1;
             case EAST:
-                position.y += 1;
+                newPos.y += 1;
         }
+        return newPos;
     }
 
     /**
@@ -102,6 +110,7 @@ public class PlayerToken {
      * @param rotationDirection A CardType that is either TURNLEFT, TURNRIGHT, or UTURN
      */
     public void rotate(CardType rotationDirection) {
+        System.out.println(rotationDirection);
         switch (playerDirection) {
             case EAST:
                 if (rotationDirection == CardType.TURNLEFT) playerDirection = Direction.NORTH;
