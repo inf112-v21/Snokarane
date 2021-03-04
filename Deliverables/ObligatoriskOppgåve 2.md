@@ -22,7 +22,9 @@ Gruppedynamikken og kommunikasjonen har som sagt vore god og vore utslagsgivande
 Vi har fram til no vore delvis suksessfulle med prosjektmetodikken vår. Vi kom i mål med alle MVP ved hjelp av ein solid sprint på slutten, men ser eit stort betringspotensiale. Frå og med neste scrum-møte har vi satt oss to mål for å betre på dette:
  
 - Grundigere planlegging
+
 Vi har fram til no stort sett nytta scrum-møtene til å jobbe med brukerhistorier i plenum. Vi tenkjer at vi kan nytte denne tida meir effektivt ved å i større grad planlegge og strukturere arbeidet. Difor vil agendaen på scrum-møtene framover bli meir dedikert til planlegging framfor brukerhistorier.
  
 - Bli meir metodisk i arbeidet
+
 Dette henge i stor grad saman med forrige punkt, men vil også innebære at vi kjem til å setje opp minst eitt fysisk møte før neste innlevering. Dette vil hjelpe oss i arbeidet med å jobbe med kodestruktur og identifisere komande utfordringar. Fram til no har vi måtte gjere om på mykje kode utover i prosjektet, men vi tenkjer at når planlegginga er god er det også lettere å arbeide meir metodisk. 
