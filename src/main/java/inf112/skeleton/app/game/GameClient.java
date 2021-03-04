@@ -25,16 +25,16 @@ public class GameClient extends GamePlayer {
         cardList listOfCards = new cardList();
         listOfCards.cardList = chosenCards;
 
+        // Actually send the cards to the host
+        System.out.println("Sending the cards");
+        client.client.sendTCP(listOfCards);
+
         // Add the cards (prematurely for now) to the discard pile)
         discard.addAll(chosenCards);
 
         //TODO Fix this is you fix the todo in GamePlayer chosecards
         hand.removeAll(Collections.singleton(null));
         discard.addAll(hand);
-
-        // Actually send the cards to the host
-        System.out.println("Sending the cards");
-        client.client.sendTCP(listOfCards);
 
         // Reset the chosen cards and the hand
         chosenCards = new ArrayList<>();
