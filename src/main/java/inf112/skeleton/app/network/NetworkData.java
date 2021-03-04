@@ -2,6 +2,7 @@ package inf112.skeleton.app.network;
 
 import com.badlogic.gdx.maps.MapLayers;
 import com.badlogic.gdx.maps.tiled.TiledMap;
+import com.badlogic.gdx.maps.tiled.TiledMapTile;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.tiles.StaticTiledMapTile;
 import inf112.skeleton.app.game.objects.Card;
@@ -37,6 +38,11 @@ public class NetworkData {
         classesToRegister.add(Map.class);
         classesToRegister.add(TiledMapTileLayer.class);
         classesToRegister.add(MapLayerWrapper.class);
+        classesToRegister.add(TiledMapTileLayer.Cell.class);
+        classesToRegister.add(TiledMapTileLayer.Cell[][].class);
+        classesToRegister.add(TiledMapTileLayer.Cell[].class);
+        classesToRegister.add(StaticTiledMapTile.class);
+        classesToRegister.add(TiledMapTile.class);
         return classesToRegister;
     }
 }
