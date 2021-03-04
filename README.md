@@ -21,4 +21,4 @@ A work in progress java implementaion of the board game ["RoboRally"](https://en
 
 The host has to be the last actor to choose their 5 cards. Otherwise the program crashes.
 
-The players aren't displayed properly before the game is started 
+All other players than you are seemingly turned the wrong direction. This doesn't affect gameplay that much as your position should always be correct.
