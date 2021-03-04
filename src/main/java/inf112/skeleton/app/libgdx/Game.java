@@ -357,7 +357,7 @@ public class Game extends InputAdapter implements ApplicationListener {
                         playerLayer.setCell(x, y, playerWon);
                         break;
                     case PLAYERSELFNORMAL:        // todo
-                        playerLayer.setCell(x, y, playerNormal);
+                        playerLayer.setCell(x, y, playerWon);
                         break;
                     case PLAYERSELFWON:        // todo
                         playerLayer.setCell(x, y, playerWon);
