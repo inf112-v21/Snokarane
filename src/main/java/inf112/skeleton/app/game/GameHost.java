@@ -114,7 +114,9 @@ public class GameHost extends GamePlayer {
 
     private NetworkDataWrapper wrapper() {
         NetworkDataWrapper wrapper = new NetworkDataWrapper();
-        wrapper.PlayerTokens = (List<PlayerToken>) clientPlayers.values();
+        for (PlayerToken player : clientPlayers.values()) {
+            wrapper.PlayerTokens.add(player);
+        }
         return wrapper;
     }
 
