@@ -1,5 +1,6 @@
 package inf112.skeleton.app.network;
 
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.MapLayers;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTile;
@@ -44,6 +45,7 @@ public class NetworkData {
         classesToRegister.add(StaticTiledMapTile.class);
         classesToRegister.add(TiledMapTile.class);
         classesToRegister.add(TiledMapTile.BlendMode.class);
+        classesToRegister.add(TextureRegion.class);
         return classesToRegister;
     }
 }
