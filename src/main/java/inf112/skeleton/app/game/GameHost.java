@@ -164,7 +164,6 @@ public class GameHost extends GamePlayer {
                         movePlayer(token, 1, PlayerToken.Direction.WEST);
                         break;
                 }
-
             case TURNLEFT:
                 token.rotate(CardType.TURNLEFT);
                 break;
@@ -179,7 +178,7 @@ public class GameHost extends GamePlayer {
     }
     private void movePlayer(PlayerToken player, int dist, PlayerToken.Direction direction) {
         for(int i = 0; i < dist; i++) {
-            GridPoint2 wouldEndUp = player.wouldEndUp();
+            GridPoint2 wouldEndUp = player.wouldEndUp(direction);
 
             //TODO: Simple out of bounds check, fix this with some death logic
             if (wouldEndUp.x < 0 || wouldEndUp.x >= Game.BOARD_X || wouldEndUp.y < 0 || wouldEndUp.y >= Game.BOARD_Y) {
