@@ -11,8 +11,10 @@ import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTile;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.tiles.StaticTiledMapTile;
+import com.badlogic.gdx.math.GridPoint2;
 import inf112.skeleton.app.game.objects.Card;
 import inf112.skeleton.app.game.objects.CardType;
+import inf112.skeleton.app.game.objects.Flag;
 import inf112.skeleton.app.game.objects.PlayerToken;
 import inf112.skeleton.app.libgdx.Map;
 import inf112.skeleton.app.libgdx.MapLayerWrapper;
@@ -43,7 +45,9 @@ public class NetworkData {
         classesToRegister.add(CardType.class);
         classesToRegister.add(PlayerToken.class);
         classesToRegister.add(PlayerToken.Direction.class);
+        classesToRegister.add(GridPoint2.class);
         classesToRegister.add(NetworkDataWrapper.class);
+        classesToRegister.add(Flag.class);
 
         return classesToRegister;
     }
