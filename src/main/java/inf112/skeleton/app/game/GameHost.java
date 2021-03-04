@@ -5,6 +5,7 @@ import com.esotericsoftware.kryonet.Connection;
 import inf112.skeleton.app.game.objects.Card;
 import inf112.skeleton.app.game.objects.CardType;
 import inf112.skeleton.app.game.objects.PlayerToken;
+import inf112.skeleton.app.libgdx.Game;
 import inf112.skeleton.app.libgdx.Map;
 import inf112.skeleton.app.libgdx.NetworkDataWrapper;
 import inf112.skeleton.app.network.NetworkHost;
@@ -130,18 +131,25 @@ public class GameHost extends GamePlayer {
         switch (card.getCardType()) {
             case FORWARDONE:
                 movePlayer(token, 1);
+                break;
             case FORWARDTWO:
                 movePlayer(token, 2);
+                break;
             case FORWARDTHREE:
                 movePlayer(token, 3);
+                break;
             case BACK_UP:
                 movePlayer(token, -1);
+                break;
             case TURNLEFT:
                 token.rotate(CardType.TURNLEFT);
+                break;
             case TURNRIGHT:
                 token.rotate(CardType.TURNRIGHT);
+                break;
             case UTURN:
                 token.rotate(CardType.UTURN);
+                break;
 
         }
     }
@@ -150,7 +158,7 @@ public class GameHost extends GamePlayer {
             GridPoint2 wouldEndUp = player.wouldEndUp();
 
             //TODO: Simple out of bounds check, fix this with some death logic
-            if (wouldEndUp.x < 0 || wouldEndUp.x > 4 || wouldEndUp.y < 0 || wouldEndUp.y > 4) {
+            if (wouldEndUp.x < 0 || wouldEndUp.x >= Game.BOARD_X || wouldEndUp.y < 0 || wouldEndUp.y >= Game.BOARD_Y) {
                 continue;
             }
 
