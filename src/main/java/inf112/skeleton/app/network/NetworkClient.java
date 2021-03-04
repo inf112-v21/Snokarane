@@ -7,6 +7,7 @@ import com.esotericsoftware.kryonet.Listener;
 import inf112.skeleton.app.game.GameClient;
 import inf112.skeleton.app.libgdx.Map;
 import inf112.skeleton.app.libgdx.MapLayerWrapper;
+import inf112.skeleton.app.libgdx.NetworkDataWrapper;
 
 import java.io.IOException;
 
@@ -39,8 +40,8 @@ public class NetworkClient extends Network {
                 if (object instanceof String) {
                     gameClient.drawCardsFromDeck();
                 }
-                if (object instanceof MapLayerWrapper){
-                    mlp.setCellsFromWrapper((MapLayerWrapper) object);
+                if (object instanceof NetworkDataWrapper){
+                    mlp.loadPlayers((NetworkDataWrapper) object);
                 }
             }
             public void disconnected (Connection connection) {

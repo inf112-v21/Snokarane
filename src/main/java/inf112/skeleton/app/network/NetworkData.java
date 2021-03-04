@@ -15,6 +15,7 @@ import inf112.skeleton.app.game.objects.Card;
 import inf112.skeleton.app.game.objects.CardType;
 import inf112.skeleton.app.libgdx.Map;
 import inf112.skeleton.app.libgdx.MapLayerWrapper;
+import inf112.skeleton.app.libgdx.NetworkDataWrapper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,7 +44,7 @@ public class NetworkData {
         classesToRegister.add(MapLayers.class);
         classesToRegister.add(Map.class);
         classesToRegister.add(TiledMapTileLayer.class);
-        classesToRegister.add(MapLayerWrapper.class);
+        classesToRegister.add(NetworkDataWrapper.class);
         classesToRegister.add(TiledMapTileLayer.Cell.class);
         classesToRegister.add(TiledMapTileLayer.Cell[][].class);
         classesToRegister.add(TiledMapTileLayer.Cell[].class);

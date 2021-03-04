@@ -5,6 +5,7 @@ import com.badlogic.gdx.maps.tiled.TiledMapTile;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.math.GridPoint2;
 import inf112.skeleton.app.game.objects.PlayerToken;
+import inf112.skeleton.app.network.Network;
 
 import java.util.HashMap;
 import java.util.List;
@@ -48,6 +49,12 @@ public class Map {
         this.flagLayer = flag;
     }
 
+    public void loadPlayers(NetworkDataWrapper wrapper) {
+        for (PlayerToken player : wrapper.PlayerTokens) {
+            setCell(player.getX(), player.getY(), playerNormal);
+        }
+    }
+
     // Gets & Sets TODO: use getter setter things
     public TiledMapTileLayer getBoardLayer  (){ return boardLayer   ;}
     public TiledMapTileLayer getPlayerLayer (){ return playerLayer  ;}
@@ -65,25 +72,4 @@ public class Map {
         playerLayer.setCell(playerX, playerY, cellType);
     }
 
-    public MapLayerWrapper getWrapper() {
-        MapLayerWrapper wrapper = new MapLayerWrapper();
-        for (int x = 0; x < Game.BOARD_X; x++) {
-            for (int y = 0; y < Game.BOARD_Y; y++) {
-                wrapper.playerLayer[x][y] = this.playerLayer.getCell(x, y);
-                wrapper.boardLayer[x][y] = this.boardLayer.getCell(x, y);
-                wrapper.flagLayer[x][y] = this.flagLayer.getCell(x, y);
-            }
-        }
-        return wrapper;
-    }
-
-    public void setCellsFromWrapper(MapLayerWrapper wrapper) {
-        for (int x = 0; x < Game.BOARD_X; x++) {
-            for (int y = 0; y < Game.BOARD_Y; y++) {
-                this.playerLayer.setCell(x, y, wrapper.playerLayer[x][y]);
-                this.boardLayer.setCell(x, y, wrapper.boardLayer[x][y]);
-                this.flagLayer.setCell(x, y, wrapper.flagLayer[x][y]);
-            }
-        }
-    }
 }

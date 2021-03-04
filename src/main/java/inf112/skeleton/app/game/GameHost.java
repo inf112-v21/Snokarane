@@ -6,6 +6,7 @@ import inf112.skeleton.app.game.objects.Card;
 import inf112.skeleton.app.game.objects.CardType;
 import inf112.skeleton.app.game.objects.PlayerToken;
 import inf112.skeleton.app.libgdx.Map;
+import inf112.skeleton.app.libgdx.NetworkDataWrapper;
 import inf112.skeleton.app.network.NetworkHost;
 
 import java.util.ArrayList;
@@ -104,11 +105,17 @@ public class GameHost extends GamePlayer {
                 mlp.setCell(clientPlayers.get(key).getX(), clientPlayers.get(key).getY(), mlp.playerNormal);
 
                 // Send updated map to clients
-                host.sendMapLayerWrapper(mlp.getWrapper());
+                host.sendMapLayerWrapper(wrapper());
                 //artificialDelayToShowMoves();
                 //processPlayerMoves();
             }
         }
+    }
+
+    private NetworkDataWrapper wrapper() {
+        NetworkDataWrapper wrapper = new NetworkDataWrapper();
+        wrapper.PlayerTokens = (List<PlayerToken>) clientPlayers.values();
+        return wrapper;
     }
 
     /**

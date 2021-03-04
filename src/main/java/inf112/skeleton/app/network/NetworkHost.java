@@ -7,6 +7,7 @@ import com.esotericsoftware.kryonet.Server;
 import inf112.skeleton.app.game.objects.Card;
 import inf112.skeleton.app.libgdx.Map;
 import inf112.skeleton.app.libgdx.MapLayerWrapper;
+import inf112.skeleton.app.libgdx.NetworkDataWrapper;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -66,7 +67,7 @@ public class NetworkHost extends Network {
      * Sends MapLayerWrapper to all clients
      * @param wrapper map layer data that should be sent
      */
-    public void sendMapLayerWrapper(MapLayerWrapper wrapper) { server.sendToAllTCP(wrapper); }
+    public void sendMapLayerWrapper(NetworkDataWrapper wrapper) { server.sendToAllTCP(wrapper); }
 
     /**
      * Prompts all connected clients to draw cards
