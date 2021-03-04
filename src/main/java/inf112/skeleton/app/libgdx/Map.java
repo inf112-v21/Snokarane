@@ -40,7 +40,7 @@ public class Map {
     }
 
     public boolean isEmpty(GridPoint2 position) {
-        return playerLayer.getCell(position.x, position.y) == none;
+        return playerLayer.getCell(position.x, position.y) == none || playerLayer.getCell(position.x, position.y) == null;
     }
 
     public void loadLayers(TiledMapTileLayer board, TiledMapTileLayer player, TiledMapTileLayer flag){
