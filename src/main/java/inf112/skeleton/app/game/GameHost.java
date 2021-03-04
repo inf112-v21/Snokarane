@@ -74,7 +74,7 @@ public class GameHost extends GamePlayer {
         //Update the clientCards in host
         host.playerCards.put(NetworkHost.hostID, chosenCards);
 
-        waitForClientsToFinishCardChoices();
+        //TODO add a way to wait for the clients
         processCards();
 
         // Reset the chosen cards and the hand
@@ -85,7 +85,7 @@ public class GameHost extends GamePlayer {
     }
 
     /**
-     * Draw cards to deck
+     * Draw cards to deck for both host and clients
      */
     public void drawCards(){
         host.promptCardDraw();
@@ -103,7 +103,8 @@ public class GameHost extends GamePlayer {
     }
 
     /**
-     * Update maps between networks
+     * Updates the map in the host, loads it for both clients and host
+     * so that the map is properly loaded when the game starts.
      * @param mlp map
      */
     @Override
@@ -115,16 +116,6 @@ public class GameHost extends GamePlayer {
     }
 
     /**
-     * Recursively call this function until all clients have sent their cards to the host
-     */
-    public void waitForClientsToFinishCardChoices() {
-        // If all clients have sent their cards, the host's client card storage size is same as the amount of clients connected
-        while (host.playerCards.size() != host.connections.length+1){
-            // TODO: artificial delay to help pace the game
-        }
-    }
-
-    /**
      * Process card selection from all clients and host
      */
     public void processCards() {
@@ -133,6 +124,8 @@ public class GameHost extends GamePlayer {
         // iterator i is same as client connection id
         for (int i = 0; i<cardsProcessedPerRound; i++){
             for (int key : clientPlayers.keySet()){
+
+                // Get next card for the given player and pop it so it can be played
                 List<Card> cards = host.playerCards.get(key);
                 Card currentCard = cards.remove(0);
 
@@ -204,11 +197,10 @@ public class GameHost extends GamePlayer {
     }
 
     /**
-     * Move
-     * @param player
-     * @param dist distance
-     * in
-     * @param direction
+     * Move the player according to the rules of the game
+     * @param player the player that should move
+     * @param dist the number of steps you want to take
+     * @param direction the direction you want to move, usually player.getDirection()
      */
     private void movePlayer(PlayerToken player, int dist, PlayerToken.Direction direction) {
         for(int i = 0; i < dist; i++) {
