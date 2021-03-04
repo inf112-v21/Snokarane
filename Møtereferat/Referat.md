@@ -240,7 +240,12 @@ Fortsette på planlegging av prosjekt og prosjektstruktur
 - Vart einig om at Hallvard + 1 skulle ta presentasjon neste onsdag, men at vi ikkje byrjar på det før vi er ferdig med innlevering
 - La til link til google docs brukerhistorier, akseptansekrav og arbeidsoppgåver inne på prosjektsida
 - Fjerna noko unødvendig libgdx-funksjonalitet inne i map-klassen
-- Testa på nytt, kom litt lenger denne gong
+- Testa på nytt og fekk det til å fungere delvis
+- Implementerte nye funksjonar og testa dei
+- Ordna eit problem der rotering av spelfigur ikkje viste på brettet
+- Testa og fekk eit fungerande spel med enkelte bugs, td "back_up"- kortet fungerer ikkje slik det skal
+- Fiksa "back_up"- kortet
+- Skreiv ferdig tekst til obligatorisk2 og la det og  alt av møtereferat inn i md-format 
 
 
 
