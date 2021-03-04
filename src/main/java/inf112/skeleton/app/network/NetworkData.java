@@ -48,6 +48,7 @@ public class NetworkData {
         classesToRegister.add(GridPoint2.class);
         classesToRegister.add(NetworkDataWrapper.class);
         classesToRegister.add(Flag.class);
+        classesToRegister.add(PlayerToken.CHARACTER_STATES.class);
 
         return classesToRegister;
     }
