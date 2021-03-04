@@ -1,5 +1,6 @@
 package inf112.skeleton.app.network;
 
+import com.badlogic.gdx.Files;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3FileHandle;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -55,6 +56,7 @@ public class NetworkData {
 
         // This is starting to seem like a bad idea...
         classesToRegister.add(java.io.File.class);
+        classesToRegister.add(Files.FileType.class);
         return classesToRegister;
     }
 }
