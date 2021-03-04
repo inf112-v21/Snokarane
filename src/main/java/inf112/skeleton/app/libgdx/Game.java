@@ -320,6 +320,9 @@ public class Game extends InputAdapter implements ApplicationListener {
                     case PLAYERWON:
                         playerLayer.setCell(x, y, playerWon);
                         break;
+                    case PLAYERSELFNORMAL:        // todo
+                        playerLayer.setCell(x, y, playerWon);
+                        break;
                     case NONE:
                         playerLayer.setCell(x, y, new TiledMapTileLayer.Cell());
                         break;
