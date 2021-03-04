@@ -44,6 +44,6 @@ The host has to be the last actor to choose their 5 cards. Otherwise the program
 
 All other players than you are seemingly turned the wrong direction. This doesn't affect gameplay that much as your position should always be correct.
 
-If a player disconnects during a session, the whole game has to be restarted.
+# Known issues
 
-The position of cards in your hand sometimes shuffles for no good reason
+If a player disconnects during a session, the whole game has to be restarted.
