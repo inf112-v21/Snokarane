@@ -2,7 +2,7 @@ package inf112.skeleton.app.game;
 
 import inf112.skeleton.app.libgdx.Map;
 import inf112.skeleton.app.network.NetworkClient;
-import inf112.skeleton.app.network.cardList;
+import inf112.skeleton.app.network.CardList;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -30,7 +30,7 @@ public class GameClient extends GamePlayer {
     @Override
     public void registerChosenCards() {
         // Turn list of card into cardList-wrapper to be sent over network
-        cardList listOfCards = new cardList();
+        CardList listOfCards = new CardList();
         listOfCards.cardList = chosenCards;
 
         // Actually send the cards to the host
