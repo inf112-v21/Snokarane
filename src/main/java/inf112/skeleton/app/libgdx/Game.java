@@ -209,7 +209,6 @@ public class Game extends InputAdapter implements ApplicationListener {
     private boolean pickCardsOnKeyPress(int keyCode) {
         gamePlayer.chooseCards(keyCode-8); // Input.Keys.Num_1 starts at 8
         if(gamePlayer.chosenCards.size() >= 5){
-            resetCellRotation();
             gamePlayer.state = GamePlayer.PLAYERSTATE.SENDING_CARDS;
             gamePlayer.registerChosenCards();
             return true;
@@ -343,8 +342,8 @@ public class Game extends InputAdapter implements ApplicationListener {
 
             //TODO Check if this is correct
             if (mlp == null) return;
-
             translatePlayerLayer();
+            resetCellRotation();
             rotateCellsAccordingToDirection();
             // TODO: board and flag layer doesn't change as of this version
         }

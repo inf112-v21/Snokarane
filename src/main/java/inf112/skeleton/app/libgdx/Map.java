@@ -72,18 +72,4 @@ public class Map {
             playerLayer[token.getX()][token.getY()].dir = token.getDirection();
         }
     }
-
-    public void clearCell(int playerX, int playerY) {
-        playerLayer[playerX][playerY].state = PlayerToken.CHARACTER_STATES.NONE;
-    }
-
-    public void setCell(int playerX, int playerY, PlayerToken token) {
-        if (token.ID == this.ID) {
-            playerLayer[playerX][playerY].state = PlayerToken.CHARACTER_STATES.PLAYERSELFNORMAL;
-        }
-        else {
-            playerLayer[playerX][playerY].state = token.charState;
-        }
-        playerLayer[token.getX()][token.getY()].dir = token.getDirection();
-    }
 }
