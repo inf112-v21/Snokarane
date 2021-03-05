@@ -38,7 +38,8 @@ Use keys 1-9 to select the corresponding card in your deck menu to choose your b
 
 GUI test:
 1. Start the game in single player mode. 
-2. If graphics winodw appears the test is succsesful.
+2. Chose host in the first prompt, then press enter in the next one.
+3. If graphics winodw appears the test is succsesful.
 
 Network test:
 1. Launch a host
