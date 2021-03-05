@@ -38,7 +38,8 @@ Use keys 1-9 to select the corresponding card in your deck menu to choose your b
 
 GUI test:
 1. Start the game in single player mode. 
-2. If graphics winodw appears the test is succsesful.
+2. Chose host in the first prompt, then press enter in the next one.
+3. If graphics winodw appears the test is succsesful.
 
 Network test:
 1. Launch a host
@@ -66,8 +67,8 @@ Winning test:
 1. Start the game in either single or mutiplayer mode (if using muliplayer make sure there is a host!)
 2. Select a sequence of cards so that you progress towards a flag
 3. Repeat step 2 until you land on a flag
-4. Repeat step 2, but this time towards the flag opposite flag than last time
-5. When you visit the second flag, the game should close and the consol should show the ID of the player along with a congratulation message. In the host's case, it is -230230
+4. Repeat step 2, but this time for a different flag. Repeat until all flags have been landed on.
+5. When you visit the second flag, the game should close and the console should show the ID of the player along with a congratulation message. 
 6. If the game prints this message, the test has passed.
 
 
