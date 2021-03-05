@@ -11,6 +11,7 @@ import inf112.skeleton.app.libgdx.NetworkDataWrapper;
 import inf112.skeleton.app.network.NetworkHost;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
@@ -69,6 +70,9 @@ public class GameHost extends GamePlayer {
     public void registerChosenCards() {
         // Add the cards (prematurely for now) to the discard pile)
         discard.addAll(chosenCards);
+
+        // Remove all nulls, aka drawn cards
+        hand.removeAll(Collections.singleton(null));
         discard.addAll(hand);
 
         //Update the clientCards in host
