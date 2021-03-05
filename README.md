@@ -51,6 +51,12 @@ Player is oriented in correct direction test:
 2. Select cards that change direction of player if available (you have to select a total of five cards, all cards do not have to be rotaional cards, but at least one has to), if no rotainal cards exist; exit the game and start again from step 1. While selecting cards, make a note of what direction the player is supposed to be oriented.
 3 After all cards have been selected, check if the Graphical representaion of your player corresponds with your notes, if it does then the test has passed. 
 
+Winning test:
+1. Start the game in either single or mutiplayer mode (if using muliplayer make sure there is a host!)
+2. Select a sequence of cards so that you progress towards a flag
+3. Repeat step 2 until you land on a flag
+4. Repeat step 2, but this time towards the flag opposite flag than last time
+5. When you visit the second flag, the game should close and the consol should show the ID of the player along with a congratulation message. In the host's case, it is -230230
 
 
 #  User stories
