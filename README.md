@@ -67,8 +67,8 @@ Winning test:
 1. Start the game in either single or mutiplayer mode (if using muliplayer make sure there is a host!)
 2. Select a sequence of cards so that you progress towards a flag
 3. Repeat step 2 until you land on a flag
-4. Repeat step 2, but this time towards the flag opposite flag than last time
-5. When you visit the second flag, the game should close and the consol should show the ID of the player along with a congratulation message. In the host's case, it is -230230
+4. Repeat step 2, but this time for a different flag. Repeat until all flags have been landed on.
+5. When you visit the second flag, the game should close and the console should show the ID of the player along with a congratulation message. 
 6. If the game prints this message, the test has passed.
 
 
