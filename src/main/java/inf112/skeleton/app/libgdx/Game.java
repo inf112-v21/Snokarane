@@ -41,7 +41,7 @@ public class Game extends InputAdapter implements ApplicationListener {
     // Entire map (graphic)
     private TiledMap tiledMap;
 
-    Map mlp;
+    Map map;
 
     // Board dimensions
     public static int BOARD_X = 10;
@@ -75,8 +75,8 @@ public class Game extends InputAdapter implements ApplicationListener {
     // Function called regardless of host or player status, initializes network and asks for host/client role selection
     public void startGame(){
         // Initialize mapLayerWrapper
-        mlp = new Map();
-        mlp.flagList = flagPositions;
+        map = new Map();
+        map.flagList = flagPositions;
 
         // Choose whether to host or connect
         network = Network.choseRole();
@@ -97,13 +97,13 @@ public class Game extends InputAdapter implements ApplicationListener {
         this.network.initConnections();
         // Starts GameHost session using network that was initialized
         gamePlayer = new GameHost((NetworkHost)network);
-        gamePlayer.setMap(mlp);
+        gamePlayer.setMap(map);
         gamePlayer.drawCards();
     }
     // Start game as client
     private void startClient(){
         gamePlayer = new GameClient((NetworkClient)network);
-        gamePlayer.setMap(mlp);
+        gamePlayer.setMap(map);
     }
 
     /**
@@ -309,10 +309,10 @@ public class Game extends InputAdapter implements ApplicationListener {
     private void rotateCellsAccordingToDirection(){
         batch.begin();
         font.getData().setScale(1);
-        for (int x = 0; x<mlp.playerLayer.length; x++){
-            for (int y = 0; y<mlp.playerLayer[x].length; y++){
-                if (mlp.playerLayer[x][y].state != PlayerToken.CHARACTER_STATES.NONE){
-                    switch (mlp.playerLayer[x][y].dir){
+        for (int x = 0; x< map.playerLayer.length; x++){
+            for (int y = 0; y< map.playerLayer[x].length; y++){
+                if (map.playerLayer[x][y].state != PlayerToken.CHARACTER_STATES.NONE){
+                    switch (map.playerLayer[x][y].dir){
                         case NORTH:
                             TiledMapTileLayer.Cell celln = playerLayer.getCell(x, y);
                             celln.setRotation(0);
@@ -344,8 +344,8 @@ public class Game extends InputAdapter implements ApplicationListener {
      * Query for map update in networks, and calls some methods to decode information from map sent over network
      */
     public void updateMap(){
-        if (mlp != null){
-            mlp = gamePlayer.updateMap(null);
+        if (map != null){
+            map = gamePlayer.updateMap(null);
 
             translatePlayerLayer();
             resetCellRotation();
@@ -358,9 +358,9 @@ public class Game extends InputAdapter implements ApplicationListener {
      * Gets player locations and states from map and sets tiledmaplayer cells to correct texture
      */
     public void translatePlayerLayer(){
-        for (int x = 0; x<mlp.playerLayer.length; x++){
-            for (int y = 0; y<mlp.playerLayer[x].length; y++){
-                switch (mlp.playerLayer[x][y].state){
+        for (int x = 0; x< map.playerLayer.length; x++){
+            for (int y = 0; y< map.playerLayer[x].length; y++){
+                switch (map.playerLayer[x][y].state){
                     case PLAYERNORMAL:
                         playerLayer.setCell(x, y, playerNormal);
                         break;

@@ -58,13 +58,13 @@ public class GameClient extends GamePlayer {
     // Get map from network client
     @Override
     public void setMap(Map mlp) {
-        client.mlp = mlp;
+        client.map = mlp;
     }
 
     // Return newest version of Map instance from client
     @Override
     public Map updateMap(Map mlp) {
-        return client.mlp;
+        return client.map;
     }
 
 }

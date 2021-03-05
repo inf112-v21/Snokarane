@@ -14,7 +14,7 @@ public class NetworkClient extends Network {
 
     public Client client;
     protected String IP;
-    public Map mlp;
+    public Map map;
     public GameClient gameClient;
 
     @Override
@@ -40,11 +40,11 @@ public class NetworkClient extends Network {
                     gameClient.drawCardsFromDeck();
                 }
                 if (object instanceof NetworkDataWrapper){
-                    mlp.loadPlayers((NetworkDataWrapper) object);
+                    map.loadPlayers((NetworkDataWrapper) object);
                 }
 
                 if(object instanceof Integer) {
-                    mlp.setID((Integer) object);
+                    map.setID((Integer) object);
                 }
 
                 if (object instanceof PlayerToken) {

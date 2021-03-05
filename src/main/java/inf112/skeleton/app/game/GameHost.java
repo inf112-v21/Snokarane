@@ -37,7 +37,7 @@ public class GameHost extends GamePlayer {
     }
 
     // Game map
-    private Map mlp;
+    private Map map;
 
     private NetworkHost host;
 
@@ -103,7 +103,7 @@ public class GameHost extends GamePlayer {
      */
     @Override
     public Map updateMap(Map mlp) {
-        return this.mlp;
+        return this.map;
     }
 
     /**
@@ -113,8 +113,8 @@ public class GameHost extends GamePlayer {
      */
     @Override
     public void setMap(Map mlp){
-        this.mlp = mlp;
-        this.mlp.setID(NetworkHost.hostID);
+        this.map = mlp;
+        this.map.setID(NetworkHost.hostID);
         host.sendMapLayerWrapper(wrapper());
         mlp.loadPlayers(wrapper());
     }
@@ -138,10 +138,10 @@ public class GameHost extends GamePlayer {
             }
         }
         // Force local board to update
-        mlp.loadPlayers(wrapper());
+        map.loadPlayers(wrapper());
         List<PlayerToken> playerTokens = new ArrayList<>(clientPlayers.values());
-        mlp.registerFlags(playerTokens);
-        PlayerToken winner = mlp.hasWon(playerTokens);
+        map.registerFlags(playerTokens);
+        PlayerToken winner = map.hasWon(playerTokens);
 
         if(winner != null) {
             host.sendWinner(winner);
