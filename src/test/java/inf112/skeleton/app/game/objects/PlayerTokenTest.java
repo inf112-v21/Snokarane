@@ -20,9 +20,60 @@ public class PlayerTokenTest {
     }
 
     @Test
-    public void PlayerIsInitializedAtPosition00(){
+    public void playerIsInitializedAtPosition00(){
         assertEquals(player.getX(), 0);
         assertEquals(player.getY(), 0);
+    }
+
+    @Test
+    public void playerMovesInTheCorrectDirection() {
+        player.move(PlayerToken.Direction.EAST);
+        assertEquals(1,player.getX());
+        assertEquals(0, player.getY());
+
+        player.move(PlayerToken.Direction.NORTH);
+        assertEquals(1,player.getX());
+        assertEquals(1, player.getY());
+
+        player.move(PlayerToken.Direction.WEST);
+        assertEquals(0,player.getX());
+        assertEquals(1, player.getY());
+
+        player.move(PlayerToken.Direction.SOUTH);
+        assertEquals(0,player.getX());
+        assertEquals(0, player.getY());
+    }
+
+    @Test
+    public void playerRotatesCorrectly() {
+        // Default is NORTH
+        player.rotate(CardType.TURNRIGHT);
+        assertEquals(PlayerToken.Direction.EAST, player.getDirection());
+
+        player.rotate(CardType.UTURN);
+        assertEquals(PlayerToken.Direction.WEST, player.getDirection());
+
+        player.rotate(CardType.TURNLEFT);
+        assertEquals(PlayerToken.Direction.SOUTH, player.getDirection());
+    }
+
+    @Test
+    public void wouldEndUpDoesNotMeet() {
+        player.wouldEndUp(PlayerToken.Direction.NORTH);
+        assertEquals(0, player.getX());
+        assertEquals(0, player.getY());
+
+        player.wouldEndUp(PlayerToken.Direction.SOUTH);
+        assertEquals(0, player.getX());
+        assertEquals(0, player.getY());
+
+        player.wouldEndUp(PlayerToken.Direction.WEST);
+        assertEquals(0, player.getX());
+        assertEquals(0, player.getY());
+
+        player.wouldEndUp(PlayerToken.Direction.EAST);
+        assertEquals(0, player.getX());
+        assertEquals(0, player.getY());
     }
 
 
