@@ -11,8 +11,7 @@ dømes ved at Audun tok seg av implementeringa av kryonet. Hallvard har som team
  
 ### Prosjektmetodikk, gruppedynamikk og kommunikasjon
  
-Vårt utgangspunkt for prosjektet har vore scrum-møte kvar/annankvar onsdag med felles arbeid på brukerhistorier og ein-/tovekersprinter basert på arbeidsmengda. Her har også arbeidsoppgåver blitt fordelt. Vi hadde også som utgangspunkt å nytte
-mykje parprogrammering og testdreven utvikling, noko som er noko av grunnen til ujamn mengde commits (grunna Audun implementerte kryonet står han også for vesentleg fleire commits enn resten).
+Då vi nyttar scrum, var utgangspunkt for prosjektet har vore scrum-møte kvar/annankvar onsdag med felles arbeid på brukerhistorier og ein-/tovekersprinter basert på arbeidsmengda. Her har også arbeidsoppgåver blitt fordelt. Vi hadde også som utgangspunkt å nytte mykje parprogrammering og testdreven utvikling, noko som er noko av grunnen til ujamn mengde commits (grunna Audun implementerte kryonet står han også for vesentleg fleire commits enn resten).
  
 Denne metoden fungerte fint for oss i første innlevering, men inn mot slutten av andre innlevering opplevde vi at det vart fleire møter og aukande arbeidstempo. Dette kan forklarast delvis av dårleg planlegging og delvis med at prosjektet vart meir komplisert. Vi trur at vi kunne tatt høgde for dette tidlegare i prosjektet, både ved å nytte meir tid til å planlegge i starten og ved å arbeide i eit meir jamt tempo. Vi ser for oss at vi kjem til å ha fleire fysiske møter framover no som det er høve for det og at dette vil bidra positivt då det blir lettere å forklare/visualisere det ein meiner og mindre dødtid.
  
@@ -33,6 +32,6 @@ Dette henge i stor grad saman med forrige punkt, men vil også innebære at vi k
 
 ## Del 2
 
-Alle MVP frå 1-9 er uendra og ferdig implementert. Vi prioriterte nettverksstrukturen spelet vårt, då dette var mest tidkrevande og å lage eit godt rammeverk som forhåpentlegvis vil gjere ting lettere for oss seinere i prosjektet. Sidan forrige gong har vi implementert krav 6-9.
+Alle kriterium i MVP frå 1-9 er uendra og ferdig implementert. Vi prioriterte nettverksstrukturen spelet vårt, då dette var mest tidkrevande og å lage eit godt rammeverk som forhåpentlegvis vil gjere ting lettere for oss seinere i prosjektet. Sidan forrige gong har vi implementert krav 6-9.
 
 
