@@ -19,6 +19,12 @@ A work in progress java implementaion of the board game ["RoboRally"](https://en
   - Host - select "Host" on the role menu and wait for other players to connect. Press ok on the new prompt only when all players are connected. You can see this by waiting until you have a number of "recieved cards" in the consol log equal to the number of clients between each round.
   - Client - select "Client" on the role menu and connect to the host's IP adress
   - The UiB-owl with sparks on it is your character. 
+  - As a host, you need to portforward port 54555 if you are playing multiplayer and you and the clients are on different connections. Guides to do this can be found online. If you are on the same internet connection as the clients, you don't need to portforward, but you need to find your local IP address. If you don't want to portforward, you can use a program such as Hamachi. 
+  - To find your IP address, Google "What's my IP". This is only if you are on different connections than the clients.
+  - To find your local IP address, for when  the client is on the same network, do the following:
+  - On windows, hit Win+R and type cmd. Then write ipconfig. Your local IP address will be the IPv4 Address.
+  - On Linux, open the terminal and type hostname -I. Your Local IP should show up
+  - On macOS, if using wireless, type 'ipconfig getifaddr en1' in the terminal or 'ipconfig getifaddr en0' if you are on Ethernet.
 
 ### 2. Controls
 
@@ -32,19 +38,20 @@ GUI test:
 
 Network test:
 1. Launch a host
-2. Connect to a host IP to test the networking
-
+2. Open a different computer.
+3. Find the hosts IP, using the guide above under "How to play"
+4. Connect to the host IP to test the networking
+5. If the host prints a connection, along with an ID and an IP address, the connection was successfull
+6. The same should happen on the clients PC
 
 Card dealt test:
 1. Start the game in either single or mutiplayer mode (if using muliplayer make sure there is a host!)
 2. If cards appear on screen (as text) the test has passed.
 
-
 Card sequence test:
 1. Start the game in either single or mutiplayer mode (if using muliplayer make sure there is a host!)
 2. Select a sequence of cards and keep a note of which cards you've selected as well as the order.
 3. If the player ends up the same place position in the GUI as predicted by going over your notes, the test has passed.
-
 
 Player is oriented in correct direction test:
 1. Start the game in either single or mutiplayer mode (if using muliplayer make sure there is a host!)
@@ -57,6 +64,7 @@ Winning test:
 3. Repeat step 2 until you land on a flag
 4. Repeat step 2, but this time towards the flag opposite flag than last time
 5. When you visit the second flag, the game should close and the consol should show the ID of the player along with a congratulation message. In the host's case, it is -230230
+6. If the game prints this message, the test has passed.
 
 
 #  User stories
@@ -73,4 +81,4 @@ All other players than you are seemingly turned the wrong direction. This doesn'
 
 If a player disconnects during a session, the whole game has to be restarted.
 
-The players are by default named after the order in which they connect to the host ("1", "2", "3",..) and the host is named "-230230"
+The players are by default named after the order in which they connect to the host ("1", "2", "3",..) and the host is named "-032032"
