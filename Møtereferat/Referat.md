@@ -160,7 +160,7 @@ Fortsette på planlegging av prosjekt og prosjektstruktur
 
 ## **Referat møte fredag 26.02.2021**
 
-**Stad:** Høgteknologisenteret, tid: 1030
+**Stad:** Høgteknologisenteret, tid: 1030-1230
 
 **Agenda:** Teste ut roborally 
 
@@ -176,7 +176,7 @@ Fortsette på planlegging av prosjekt og prosjektstruktur
 
 ## **Referat møte måndag 01.03.2021**
 
-**Stad:** Discord, tid: 1215
+**Stad:** Discord, tid: 1215-1415
 
 **Agenda:** Planlegge og ferdigstille arbeid med oblig2
 
@@ -194,7 +194,7 @@ Fortsette på planlegging av prosjekt og prosjektstruktur
 
 ## **Referat møte tysdag 02.03.2021**
 
-**Stad:** Discord, tid 1215
+**Stad:** Discord, tid 1215-1415
 
 **Agenda:** Planlegge og jobbe med koden i plenum
 
@@ -211,7 +211,7 @@ Fortsette på planlegging av prosjekt og prosjektstruktur
 
 ## **Referat møte torsdag 03.03.2021**
 
-**Stad**: Discord, tid 1215
+**Stad**: Discord, tid 1215-1430
 
 **Agenda:** Planlegge og jobbe med koden i plenum
 
@@ -228,7 +228,7 @@ Fortsette på planlegging av prosjekt og prosjektstruktur
 
 ## **Referat møte torsdag 04.03.2021**
 
-**Stad:** Discord, tid 1215
+**Stad:** Discord, tid: 1215-2200
 
 **Agenda:** Jobbe med kode og dokmentasjon i plenum
 
