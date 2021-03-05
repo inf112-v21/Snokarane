@@ -160,7 +160,7 @@ Fortsette på planlegging av prosjekt og prosjektstruktur
 
 ## **Referat møte fredag 26.02.2021**
 
-**Stad:** Høgteknologisenteret, tid 1030
+**Stad:** Høgteknologisenteret, tid: 1030
 
 **Agenda:** Teste ut roborally 
 
@@ -176,7 +176,7 @@ Fortsette på planlegging av prosjekt og prosjektstruktur
 
 ## **Referat møte måndag 01.03.2021**
 
-**Stad:** Discord
+**Stad:** Discord, tid: 1215
 
 **Agenda:** Planlegge og ferdigstille arbeid med oblig2
 
@@ -194,7 +194,7 @@ Fortsette på planlegging av prosjekt og prosjektstruktur
 
 ## **Referat møte tysdag 02.03.2021**
 
-**Stad:** Discord
+**Stad:** Discord, tid 1215
 
 **Agenda:** Planlegge og jobbe med koden i plenum
 
@@ -211,7 +211,7 @@ Fortsette på planlegging av prosjekt og prosjektstruktur
 
 ## **Referat møte torsdag 03.03.2021**
 
-**Stad: Discord**
+**Stad**: Discord, tid 1215
 
 **Agenda:** Planlegge og jobbe med koden i plenum
 
@@ -226,9 +226,9 @@ Fortsette på planlegging av prosjekt og prosjektstruktur
 
 **Neste møte:** 04.03.2021
 
-## **Referat møte onsdag 04.03.2021**
+## **Referat møte torsdag 04.03.2021**
 
-**Stad:** Discord
+**Stad:** Discord, tid 1215
 
 **Agenda:** Jobbe med kode og dokmentasjon i plenum
 
@@ -246,8 +246,26 @@ Fortsette på planlegging av prosjekt og prosjektstruktur
 - Testa og fekk eit fungerande spel med enkelte bugs, td "back_up"- kortet fungerer ikkje slik det skal
 - Fiksa "back_up"- kortet
 - Skreiv ferdig tekst til obligatorisk2 og la det og  alt av møtereferat inn i md-format 
+- Jørgen var sjuk men haldt ut heile møtet, props til han!
+- Ga oss etter å ha arbeida i 9 timer
 
+**Neste møte:** 05.03.2021
 
+## **Referat møte fredag 05.03.2021**
 
+**Stad:** Discord, tid 1115
 
+**Agenda:** ferdigstille innlevering
+
+**Møtte:** Jørgen Lohne, Hallvard Kobbeltveit, Audun Ljone Henriksen og Peter Augustin Gillow Krooni
+
+**Diskusjon/arbeid:**
+- Jobba med detaljer og småting i koden
+- Fekk trøbbel med å teste spelet då ruteren til Audun sannsynlegvis har restarta ila natta
+- Audun ordna opp i ruteren og vi fekk testa det vi skulle
+- Endra småting i dokumentasjon (innlevering og tekniskproduktoppsett)
+- Gjorde ferdig klassediagram
+- La til logo
+
+**Neste møte:** 08.03.2021, jobbe med presentasjon
 
