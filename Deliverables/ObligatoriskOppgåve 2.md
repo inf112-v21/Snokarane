@@ -19,7 +19,7 @@ Gruppedynamikken og kommunikasjonen har som sagt vore god og vore utslagsgivande
  
 ### Retrospektiv
  
-Vi har fram til no vore delvis suksessfulle med prosjektmetodikken vår. Vi kom i mål med alle MVP ved hjelp av ein solid sprint på slutten, men ser eit stort betringspotensiale. Frå og med neste scrum-møte har vi satt oss to mål for å betre på dette:
+Vi har fram til no vore delvis suksessfulle med prosjektmetodikken vår. Vi kom i mål med alle MVP-kriterium ved hjelp av ein solid sprint på slutten, men ser eit stort betringspotensiale. Frå og med neste scrum-møte har vi satt oss to mål for å betre på dette:
  
 - Grundigere planlegging
 
