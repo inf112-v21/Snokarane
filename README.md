@@ -26,11 +26,30 @@ Use keys 1-9 to select the corresponding card in your deck menu to choose your b
 
 # Manual tests
 
-- start the game to test if the grapchics appear
-- connect to a host IP to test the networking
-- start the game to test if you are dealt cards
-- select a sequence of cards to test if the player ends up on the correct tile
-- select a sequence of cards to test if the player ends up in the correct direction
+GUI test:
+1. Start the game in single player mode. 
+2. If graphics winodw appears the test is succsesful.
+
+Network test:
+1. Launch a host
+2. Connect to a host IP to test the networking
+
+
+Card dealt test:
+1. Start the game in either single or mutiplayer mode (if using muliplayer make sure there is a host!)
+2. If cards appear on screen (as text) the test has passed.
+
+
+Card sequence test:
+1. Start the game in either single or mutiplayer mode (if using muliplayer make sure there is a host!)
+2. Select a sequence of cards and keep a note of which cards you've selected as well as the order.
+3. If the player ends up the same place position in the GUI as predicted by going over your notes, the test has passed.
+
+
+Player is oriented in correct direction test:
+1. Start the game in either single or mutiplayer mode (if using muliplayer make sure there is a host!)
+2. Select cards that change direction of player if available (you have to select a total of five cards, all cards do not have to be rotaional cards, but at least one has to), if no rotainal cards exist; exit the game and start again from step 1. While selecting cards, make a note of what direction the player is supposed to be oriented.
+3 After all cards have been selected, check if the Graphical representaion of your player corresponds with your notes, if it does then the test has passed. 
 
 
 
