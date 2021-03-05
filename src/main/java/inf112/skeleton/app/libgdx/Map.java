@@ -26,7 +26,7 @@ public class Map {
      * Only thing clients needs to render players is state and direction so this is wrapped
      * into this class.
      */
-    static class PlayerRenderInformation{
+    public static class PlayerRenderInformation{
         public PlayerToken.CHARACTER_STATES state = PlayerToken.CHARACTER_STATES.NONE;
         public PlayerToken.Direction dir = PlayerToken.Direction.NORTH;
         public PlayerRenderInformation(){}
@@ -50,6 +50,7 @@ public class Map {
             }
         }
     }
+
     public void registerFlags(List<PlayerToken> players) {
         for (PlayerToken player : players) {
             for (Flag flag : flagList) {
