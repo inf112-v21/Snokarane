@@ -65,6 +65,7 @@ public class NetworkClient extends Network {
 
         catch (IOException e){
             System.out.println("Encountered an exception during connection");
+            System.exit(0);
             return false;
         }
     }
