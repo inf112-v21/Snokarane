@@ -78,6 +78,10 @@ Winning test:
  
  User stories, acceptance criteria, and tasks can be found [here](https://docs.google.com/spreadsheets/d/1A_78OKM1BRXeeG4MR3e6AafYpPxnElqm3xPFjLozlGY/edit?usp=sharing)
 
+# Class diagrams
+
+Class diagramas can be found in the structure directory. Structure -> Class diagrams
+
 # Known bugs
 
 The host has to be the last actor to choose their 5 cards. Otherwise the program crashes.
