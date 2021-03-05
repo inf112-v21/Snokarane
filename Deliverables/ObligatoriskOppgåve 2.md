@@ -33,6 +33,6 @@ Dette henge i stor grad saman med forrige punkt, men vil også innebære at vi k
 
 ## Del 2
 
-Alle MVP frå 1-9 er uendra og ferdig implementert. Vi prioriterte nettverksstrukturen spelet vårt då dette var mest tidkrevande og å lage eit godt rammeverk som forhåpentlegvis vil gjere ting lettere for oss seinere i prosjektet. Sidan forrige gong har vi implementert krav 6-9.
+Alle MVP frå 1-9 er uendra og ferdig implementert. Vi prioriterte nettverksstrukturen spelet vårt, då dette var mest tidkrevande og å lage eit godt rammeverk som forhåpentlegvis vil gjere ting lettere for oss seinere i prosjektet. Sidan forrige gong har vi implementert krav 6-9.
 
 
