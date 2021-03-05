@@ -31,6 +31,7 @@ Vi har fram til no stort sett nytta scrum-møtene til å jobbe med brukerhistori
 Dette henge i stor grad saman med forrige punkt, men vil også innebære at vi kjem til å setje opp minst eitt fysisk møte før neste innlevering. Dette vil hjelpe oss i arbeidet med å jobbe med kodestruktur og identifisere komande utfordringar. Fram til no har vi måtte gjere om på mykje kode utover i prosjektet, men vi tenkjer at når planlegginga er god er det også lettere å arbeide meir metodisk. 
 
 - Kan stadig bli betre på testdreven utvikling
+
 Eit punkt vi hadde på forrige retrospektiv også. Det tar litt tid for oss å omstille då dette er ein annleis måte å jobbe på enn vi er vant med, så her er det mykje betringspotensiale.
 
 ## Del 2
