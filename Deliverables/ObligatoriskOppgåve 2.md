@@ -11,7 +11,7 @@ dømes ved at Audun tok seg av implementeringa av kryonet. Hallvard har som team
  
 ### Prosjektmetodikk, gruppedynamikk og kommunikasjon
  
-Då vi nyttar scrum, var utgangspunkt for prosjektet har vore scrum-møte kvar/annankvar onsdag med felles arbeid på brukerhistorier og ein-/tovekersprinter basert på arbeidsmengda. Her har også arbeidsoppgåver blitt fordelt. Vi hadde også som utgangspunkt å nytte mykje parprogrammering og testdreven utvikling, noko som er noko av grunnen til ujamn mengde commits (grunna Audun implementerte kryonet står han også for vesentleg fleire commits enn resten).
+Då vi nyttar scrum, var utgangspunkt for prosjektet har vore scrum-møte kvar/annankvar onsdag med felles arbeid på brukerhistorier og ein-/tovekersprinter basert på arbeidsmengda. Her har også arbeidsoppgåver blitt fordelt. Vi hadde også som utgangspunkt å nytte mykje parprogrammering og testdreven utvikling, noko som er noko av grunnen til ujamn mengde commits (grunna Audun implementerte kryonet står han også for vesentleg fleire commits enn resten). Noko av grunnen til av vi har nytta mykje parprogrammering er at alle skal henge med på dei meir kompliserte stadiuma av koden.
  
 Denne metoden fungerte fint for oss i første innlevering, men inn mot slutten av andre innlevering opplevde vi at det vart fleire møter og aukande arbeidstempo. Dette kan forklarast delvis av dårleg planlegging og delvis med at prosjektet vart meir komplisert. Vi trur at vi kunne tatt høgde for dette tidlegare i prosjektet, både ved å nytte meir tid til å planlegge i starten og ved å arbeide i eit meir jamt tempo. Vi ser for oss at vi kjem til å ha fleire fysiske møter framover no som det er høve for det og at dette vil bidra positivt då det blir lettere å forklare/visualisere det ein meiner og mindre dødtid.
  
@@ -29,6 +29,9 @@ Vi har fram til no stort sett nytta scrum-møtene til å jobbe med brukerhistori
 - Bli meir metodisk i arbeidet
 
 Dette henge i stor grad saman med forrige punkt, men vil også innebære at vi kjem til å setje opp minst eitt fysisk møte før neste innlevering. Dette vil hjelpe oss i arbeidet med å jobbe med kodestruktur og identifisere komande utfordringar. Fram til no har vi måtte gjere om på mykje kode utover i prosjektet, men vi tenkjer at når planlegginga er god er det også lettere å arbeide meir metodisk. 
+
+- Kan stadig bli betre på testdreven utvikling
+Eit punkt vi hadde på forrige retrospektiv også. Det tar litt tid for oss å omstille då dette er ein annleis måte å jobbe på enn vi er vant med, så her er det mykje betringspotensiale.
 
 ## Del 2
 
