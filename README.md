@@ -1,6 +1,8 @@
 
 
-![Snokarane-1-removebg](https://user-images.githubusercontent.com/21172653/110108681-c5b8c680-7dac-11eb-8087-183c55f8b90b.png)
+<p align="center">
+  <img width="500" height="500" src="https://user-images.githubusercontent.com/21172653/110108681-c5b8c680-7dac-11eb-8087-183c55f8b90b.png">
+</p>
 
 # Description
 
