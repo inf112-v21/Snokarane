@@ -9,15 +9,6 @@ import inf112.skeleton.app.libgdx.RoboGame;
  * Generic interface for UI Screens with menus, buttons, text fields and pictures etc.
  */
 public interface IUiScreen extends Screen {
-    // RoboGame class
-    RoboGame game = new RoboGame();
-    // Stage for UI items
-    Stage stage = new Stage(new ScreenViewport());
-
-    // Screen width + height
-    float gdxW = 0;
-    float gdxH = 0;
-
     /**
      * Set stage, and set game to arg variable
      * Initialize screen width and height,
