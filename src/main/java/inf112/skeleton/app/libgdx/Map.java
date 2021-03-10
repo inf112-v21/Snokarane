@@ -75,6 +75,13 @@ public class Map {
         return null;
     }
 
+    public boolean isHole(int x, int y) {
+        if (holeLayer[x][y] != true) {
+            return false;
+        }
+            return true;
+    }
+
     /**
      * Loads player from network into map
      * @param wrapper The NetworkDataWrapper that contains the players

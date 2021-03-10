@@ -132,6 +132,10 @@ public class GameHost extends GamePlayer {
         // iterator i is same as client connection id
         for (int i = 0; i<cardsProcessedPerRound; i++){
             for (int key : clientPlayers.keySet()){
+                // Check if the player is dead
+                if (clientPlayers.get(key).diedThisTurn == true || clientPlayers.get(key).isDead()){
+                    continue;
+                }
 
                 // Get next card for the given player and pop it so it can be played
                 List<Card> cards = host.playerCards.get(key);
@@ -140,6 +144,9 @@ public class GameHost extends GamePlayer {
                 // Move the clients player token
                 resolveCard(currentCard, clientPlayers.get(key));
             }
+        }
+        for (PlayerToken player: clientPlayers.values()) {
+            player.diedThisTurn = false;
         }
         // Force local board to update
         map.loadPlayers(wrapper());
@@ -208,7 +215,6 @@ public class GameHost extends GamePlayer {
             case UTURN:
                 token.rotate(CardType.UTURN);
                 break;
-
         }
     }
 
@@ -226,6 +232,9 @@ public class GameHost extends GamePlayer {
             if (wouldEndUp.x < 0 || wouldEndUp.x >= Game.BOARD_X || wouldEndUp.y < 0 || wouldEndUp.y >= Game.BOARD_Y) {
                 player.died();
                 break;
+            }
+            else if (map.isHole(wouldEndUp.x, wouldEndUp.y)) {
+                player.died();
             }
             else {
                 player.move(direction);

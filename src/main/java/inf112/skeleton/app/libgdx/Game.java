@@ -33,7 +33,7 @@ import java.util.List;
  * Handles rendering, textures and event handling (key presses)
  * Game(this class) runs client side on each players PC, so only objects and methods necessary to have client side should be used here
  */
-public class Game extends InputAdapter implements ApplicationListener {
+public class    Game extends InputAdapter implements ApplicationListener {
     // For rendering text to screen
     private SpriteBatch batch;
     private BitmapFont font;
@@ -49,6 +49,7 @@ public class Game extends InputAdapter implements ApplicationListener {
 
     // Layers of the map
     private TiledMapTileLayer playerLayer;
+    private TiledMapTileLayer holeLayer;
 
     // Flags on the map are stored here for easy access
     // TODO: this should really only useful in GameHost
@@ -392,6 +393,7 @@ public class Game extends InputAdapter implements ApplicationListener {
     public void loadMapLayers(TiledMap tiledMap){
         // Separate each layer from the tiledMap
         playerLayer = (TiledMapTileLayer) tiledMap.getLayers().get("Player");
+        holeLayer = (TiledMapTileLayer) tiledMap.getLayers().get("Hole");
         TiledMapTileLayer flagLayer = (TiledMapTileLayer) tiledMap.getLayers().get("Flag");
 
         // Sneakily yoink the positions of the flags here, don't tell the OOP police
@@ -414,7 +416,18 @@ public class Game extends InputAdapter implements ApplicationListener {
         }
         flagPositions.addAll(flags);
     }
+    //TODO: FIX THIS TO MAKE IT MORE SEPARATED
+    private void getHolePositionsFromLayer(TiledMapTileLayer holeLayer){
 
+        for (int i = 0; i <= holeLayer.getWidth(); i++){
+            for (int j = 0; j <= holeLayer.getHeight(); j++){
+                // getCell returns null if nothing is found in the current cell in this layer
+                if (holeLayer.getCell(i, j) != null) {
+                        map.holeLayer[i][j] = true;
+                }
+            }
+        }
+    }
     /**
      * These functions are not currently in use, but inherited from superclass
      */
