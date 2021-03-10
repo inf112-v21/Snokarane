@@ -224,6 +224,7 @@ public class GameHost extends GamePlayer {
 
             //TODO: Simple out of bounds check, fix this with some death logic
             if (wouldEndUp.x < 0 || wouldEndUp.x >= Game.BOARD_X || wouldEndUp.y < 0 || wouldEndUp.y >= Game.BOARD_Y) {
+                player.died();
                 break;
             }
             else {

@@ -15,6 +15,11 @@ public class PlayerToken {
 
     public int ID;
 
+    public int hp = 3;
+
+    public boolean diedThisTurn = false;
+
+
     // What texture gets displayed on character
     public enum CHARACTER_STATES{
         PLAYERNORMAL,
@@ -41,6 +46,17 @@ public class PlayerToken {
 
     public int getY() {
         return position.y;
+    }
+
+    public void died() {
+        position.x = 0;
+        position.y = 0;
+        diedThisTurn = true;
+        hp --;
+     }
+
+    public boolean isDead(){
+        return hp < 1;
     }
 
     /**

@@ -20,6 +20,7 @@ public class Map {
      * 2D map like structure contain information about all players in the game.
      */
     public PlayerRenderInformation [][] playerLayer = new PlayerRenderInformation [BOARD_X][BOARD_Y];
+    public boolean [][] holeLayer = new boolean[BOARD_X][BOARD_Y];
 
     /**
      * This is a sort of replacement for tuples that java lack,
