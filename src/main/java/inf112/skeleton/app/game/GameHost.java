@@ -29,6 +29,7 @@ public class GameHost extends GamePlayer {
         // Add cards to deck
         super();
         host = network;
+        host.host = this;
 
         // Give each client a new player token to keep track of player data
         clientPlayers = new HashMap<>();
@@ -77,15 +78,18 @@ public class GameHost extends GamePlayer {
 
         //Update the clientCards in host
         host.playerCards.put(NetworkHost.hostID, chosenCards);
+    }
 
-        //TODO add a way to wait for the clients
-        processCards();
+    public void checkCards(){
+        if (host.playerCards.keySet().size() == host.connections.length+1) {
+            processCards();
 
-        // Reset the chosen cards and the hand
-        chosenCards = new ArrayList<>();
-        hand = new ArrayList<>();
-        host.playerCards.clear();
-        drawCards();
+            // Reset the chosen cards and the hand
+            chosenCards = new ArrayList<>();
+            hand = new ArrayList<>();
+            host.playerCards.clear();
+            drawCards();
+        }
     }
 
     /**

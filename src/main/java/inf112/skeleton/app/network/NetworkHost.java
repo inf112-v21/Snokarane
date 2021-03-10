@@ -3,6 +3,8 @@ package inf112.skeleton.app.network;
 import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
 import com.esotericsoftware.kryonet.Server;
+import inf112.skeleton.app.game.GameClient;
+import inf112.skeleton.app.game.GameHost;
 import inf112.skeleton.app.game.objects.Card;
 import inf112.skeleton.app.game.objects.PlayerToken;
 import inf112.skeleton.app.libgdx.NetworkDataWrapper;
@@ -15,6 +17,7 @@ public class NetworkHost extends Network {
 
     private Server server;
     public Connection[] connections;
+    public GameHost host;
 
     // Map connection ID's to cards players chose
     public HashMap<Integer, List<Card>> playerCards = new HashMap<>();
@@ -36,6 +39,7 @@ public class NetworkHost extends Network {
                 if (object instanceof CardList) {
                     System.out.println("Recieved cards from client number " + c.getID());
                     playerCards.put(c.getID(),((CardList) object).cardList);
+                    host.checkCards();
                 }
             }
         });
