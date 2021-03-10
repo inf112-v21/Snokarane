@@ -86,7 +86,7 @@ public class Map {
                 playerLayer[token.getX()][token.getY()].state = PlayerToken.CHARACTER_STATES.PLAYERSELFNORMAL;
             }
             else {
-                playerLayer[token.getX()][token.getY()].state = token.charState;
+                playerLayer[token.getX()][token.getY()].state = PlayerToken.CHARACTER_STATES.PLAYERSELFNORMAL;
             }
             playerLayer[token.getX()][token.getY()].dir = token.getDirection();
         }
