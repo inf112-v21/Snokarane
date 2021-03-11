@@ -8,6 +8,7 @@ import inf112.skeleton.app.libgdx.Map;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Random;
 
 /**
  * Base class for players
@@ -38,6 +39,7 @@ public abstract class GamePlayer{
      * Give player a stack of cards to deck
      */
     public GamePlayer(){
+        Random random = new Random();
         //Move1, Move2, Move3, Back up, Rotate right, Rotate left, U-turn
         List<Integer> numOfEachCardType = Arrays.asList(new Integer[]{18, 12, 6, 6, 18, 18, 6});
         for(int i = 0; i < numOfEachCardType.size(); i++) {
@@ -45,6 +47,7 @@ public abstract class GamePlayer{
             for (int j = 0; j < numOfEachCardType.get(i); j++) {
                 Card card = new Card();
                 card.setCardType(cardType);
+                card.setPriority(random.nextInt(1000));
                 deck.add(card);
             }
         }

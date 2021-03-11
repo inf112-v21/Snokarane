@@ -78,6 +78,7 @@ public class GameHost extends GamePlayer {
 
         //Update the clientCards in host
         host.playerCards.put(NetworkHost.hostID, chosenCards);
+        checkCards();
     }
 
     public void checkCards(){
@@ -128,23 +129,39 @@ public class GameHost extends GamePlayer {
      */
     private void processCards() {
         int cardsProcessedPerRound = 5;
-
+        HashMap<Card, PlayerToken> cardPlayerTokenMap = new HashMap<>();
         // iterator i is same as client connection id
         for (int i = 0; i<cardsProcessedPerRound; i++){
+            List<Card> cardList = new ArrayList<>();
             for (int key : clientPlayers.keySet()){
                 // Check if the player is dead
                 if (clientPlayers.get(key).diedThisTurn == true || clientPlayers.get(key).isDead()){
                     continue;
                 }
-
                 // Get next card for the given player and pop it so it can be played
                 List<Card> cards = host.playerCards.get(key);
                 Card currentCard = cards.remove(0);
 
+                cardList.add(currentCard);
+                cardPlayerTokenMap.put(currentCard, clientPlayers.get(key));
+            }
+            Collections.sort(cardList, new Card.cardComparator());
+
+            for (Card card : cardList) {
                 // Move the clients player token
-                resolveCard(currentCard, clientPlayers.get(key));
+                resolveCard(card, cardPlayerTokenMap.get(card));
+                try {
+                    Thread.sleep(300);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+
+                map.loadPlayers(wrapper());
+                host.sendMapLayerWrapper(wrapper());
             }
         }
+
+
         for (PlayerToken player: clientPlayers.values()) {
             player.diedThisTurn = false;
         }
@@ -234,10 +251,24 @@ public class GameHost extends GamePlayer {
                 break;
             }
             else if (map.isHole(wouldEndUp.x, wouldEndUp.y)) {
+                System.out.println("Player " + player.ID + " died");
                 player.died();
+                break;
+            }
+            else if (map.playerLayer[wouldEndUp.x][wouldEndUp.y].state != PlayerToken.CHARACTER_STATES.NONE) {
+                // TODO Fix this maybe?
+                for (PlayerToken opponent : clientPlayers.values()) {
+                    if (opponent.position.x == wouldEndUp.x && opponent.position.y == wouldEndUp.y) {
+                        opponent.move(direction);
+                    }
+                }
+                player.move(direction);
+                // Don't think we need this, but better safe than sorry. Future proof!
+                if (player.diedThisTurn) break;
             }
             else {
                 player.move(direction);
+                if (player.diedThisTurn) break;
             }
 
         }
