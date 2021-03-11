@@ -23,10 +23,6 @@ public class MenuScreen extends ScreenAdapter implements IUiScreen{
     float gdxW = Gdx.graphics.getWidth();
     float gdxH = Gdx.graphics.getHeight();
 
-    private Texture logoTexture;
-    private Label title;
-    private TextButton playButton;
-
     public MenuScreen(RoboGame game){
         startScreen(game);
     }
@@ -41,7 +37,7 @@ public class MenuScreen extends ScreenAdapter implements IUiScreen{
     // Load visual UI elements on screen
     public void loadUIVisuals(){
         // Logo
-        logoTexture = new Texture (Gdx.files.internal("snokarane-logo-200.png"));
+        Texture logoTexture = new Texture(Gdx.files.internal("snokarane-logo-200.png"));
         Image logo = new Image(logoTexture);
         float lw = logo.getWidth();
         float lh = logo.getHeight();
@@ -49,11 +45,19 @@ public class MenuScreen extends ScreenAdapter implements IUiScreen{
         logo.setPosition((gdxW/2)-lw/2, (gdxH/logoPositionY)-lh/2);
 
         // Title
-        title = new Label("Rbrlly", game.skin, "big");
+        Label title = new Label("Rbrlly", game.skin, "big");
         title.setAlignment(Align.center);
         title.setY(gdxH*2/3);
         title.setWidth(gdxW);
 
+        // Background image
+        Texture backgroundImage = new Texture(Gdx.files.internal("decorative/roborally-boardgame-irl.jpg"));
+        Image background = new Image(backgroundImage);
+        background.setSize(gdxW, gdxH);
+        background.setPosition(0, 0);
+        background.setColor(1, 1, 1, 0.15f);
+
+        stage.addActor(background);
         stage.addActor(title);
         stage.addActor(logo);
     }
@@ -61,7 +65,7 @@ public class MenuScreen extends ScreenAdapter implements IUiScreen{
     public void loadUIIntractables(){
         // Host/Join game button
         // sets screen to SelectRoleScreen
-        playButton = new TextButton("Host/Join game", game.skin, "small");
+        TextButton playButton = new TextButton("Host/Join game", game.skin, "small");
         float pbw = playButton.getWidth();
         float pbh = playButton.getHeight();
         float playButtonY = 1.8f;

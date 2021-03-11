@@ -3,9 +3,11 @@ package inf112.skeleton.app.libgdx.screens;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.graphics.GL30;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.TextArea;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField;
@@ -25,10 +27,6 @@ public class SelectRoleScreen extends ScreenAdapter implements IUiScreen{
     private boolean roleHost;
     private String IP_address;
 
-    private TextButton startGamebutton;
-    private TextButton hostButton;
-    private TextButton backButton;
-
     private TextArea nameInputField;
     private TextField IPInputField;
 
@@ -45,7 +43,14 @@ public class SelectRoleScreen extends ScreenAdapter implements IUiScreen{
 
     // Load visual UI elements on screen
     public void loadUIVisuals(){
+        // Background image
+        Texture backgroundImage = new Texture(Gdx.files.internal("decorative/roborally-boardgame-irl.jpg"));
+        Image background = new Image(backgroundImage);
+        background.setSize(gdxW, gdxH);
+        background.setPosition(0, 0);
+        background.setColor(1, 1, 1, 0.15f);
 
+        stage.addActor(background);
     }
     // Load intractable UI elements on screen
     public void loadUIIntractables(){
@@ -54,10 +59,10 @@ public class SelectRoleScreen extends ScreenAdapter implements IUiScreen{
     }
 
     private void loadTextButtons(){
-        startGamebutton = new TextButton("Join game", game.skin, "small");
+        TextButton startGamebutton = new TextButton("Join game", game.skin, "small");
         float startGameButtonLocationY = 2.1f;
         startGamebutton.setWidth(150);
-        startGamebutton.setPosition(gdxW/2-startGamebutton.getWidth()/2, gdxH/startGameButtonLocationY-startGamebutton.getHeight()/2);
+        startGamebutton.setPosition(gdxW/2- startGamebutton.getWidth()/2, gdxH/startGameButtonLocationY- startGamebutton.getHeight()/2);
         startGamebutton.addListener(new InputListener(){
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
@@ -68,10 +73,10 @@ public class SelectRoleScreen extends ScreenAdapter implements IUiScreen{
             }
         });
 
-        hostButton = new TextButton("Host Game", game.skin, "small");
+        TextButton hostButton = new TextButton("Host Game", game.skin, "small");
         float hstLocationY = 2.8f;
         hostButton.setWidth(150);
-        hostButton.setPosition(gdxW/2-hostButton.getWidth()/2, gdxH/hstLocationY-hostButton.getHeight()/2);
+        hostButton.setPosition(gdxW/2- hostButton.getWidth()/2, gdxH/hstLocationY- hostButton.getHeight()/2);
         hostButton.addListener(new InputListener(){
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
@@ -81,10 +86,10 @@ public class SelectRoleScreen extends ScreenAdapter implements IUiScreen{
             }
         });
 
-        backButton = new TextButton("Back", game.skin, "small");
+        TextButton backButton = new TextButton("Back", game.skin, "small");
         float backLocationY = 6f;
         backButton.setWidth(100);
-        backButton.setPosition(gdxW/2-backButton.getWidth()/2, gdxH/backLocationY-backButton.getHeight()/2);
+        backButton.setPosition(gdxW/2- backButton.getWidth()/2, gdxH/backLocationY- backButton.getHeight()/2);
         backButton.addListener(new InputListener(){
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
