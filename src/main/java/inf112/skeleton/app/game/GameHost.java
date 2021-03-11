@@ -129,9 +129,10 @@ public class GameHost extends GamePlayer {
      */
     private void processCards() {
         int cardsProcessedPerRound = 5;
-
+        HashMap<Card, PlayerToken> cardPlayerTokenMap = new HashMap<>();
         // iterator i is same as client connection id
         for (int i = 0; i<cardsProcessedPerRound; i++){
+            List<Card> cardList = new ArrayList<>();
             for (int key : clientPlayers.keySet()){
                 // Check if the player is dead
                 if (clientPlayers.get(key).diedThisTurn == true || clientPlayers.get(key).isDead()){
@@ -141,9 +142,14 @@ public class GameHost extends GamePlayer {
                 List<Card> cards = host.playerCards.get(key);
                 Card currentCard = cards.remove(0);
 
-                // Move the clients player token
-                resolveCard(currentCard, clientPlayers.get(key));
+                cardList.add(currentCard);
+                cardPlayerTokenMap.put(currentCard, clientPlayers.get(key));
+            }
+            Collections.sort(cardList, new Card.cardComparator());
 
+            for (Card card : cardList) {
+                // Move the clients player token
+                resolveCard(card, cardPlayerTokenMap.get(card));
                 try {
                     Thread.sleep(300);
                 } catch (InterruptedException e) {
@@ -154,6 +160,8 @@ public class GameHost extends GamePlayer {
                 host.sendMapLayerWrapper(wrapper());
             }
         }
+
+
         for (PlayerToken player: clientPlayers.values()) {
             player.diedThisTurn = false;
         }
