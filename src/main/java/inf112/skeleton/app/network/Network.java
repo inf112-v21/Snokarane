@@ -14,22 +14,10 @@ public abstract class Network {
      * Prompts the user to choose server or client
      * @return A server or client object based on what the user chose. Returns null if the user closes the dialog
      */
-    public static Network choseRole() {
-        Object[] possibilities = {"Host", "Client"};
-        String s = prompt("Which role would you like?", possibilities);
-        if (Objects.isNull(s)) {
-            return null;
-        }
-        else if(s.equals("Host")) {
-            Network server = new NetworkHost();
-            server.isHost = true;
-            return server;
-        }
-        else {
-            Network client = new NetworkClient();
-            client.isHost = false;
-            return client;
-        }
+    public static Network choseRole(boolean isHost) {
+        Network net = isHost ? new NetworkHost() : new NetworkClient();
+        net.isHost = isHost;
+        return net;
     }
 
     /**
