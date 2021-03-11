@@ -53,6 +53,7 @@ public class PlayerToken {
         position.y = 0;
         diedThisTurn = true;
         hp --;
+        playerDirection = Direction.NORTH;
      }
 
     public boolean isDead(){
