@@ -194,9 +194,10 @@ public class GameScreen extends ScreenAdapter {
         // Initialize camera object
         OrthographicCamera camera = new OrthographicCamera();
         // Set camera to orthographic, size board dimensions
-        camera.setToOrtho(false, BOARD_X, BOARD_Y);
+        camera.setToOrtho(false, BOARD_X, BOARD_Y+3);
         // Set camera X-position
         camera.position.x = 5F;
+        camera.position.y = 3.5F;
         camera.update();
 
         // Initialize renderer                                  v--- 300F is tile size

@@ -16,7 +16,7 @@ public class Main {
     public static void main(String[] args) {
         Lwjgl3ApplicationConfiguration cfg = new Lwjgl3ApplicationConfiguration();
         cfg.setTitle("Roborally");
-        cfg.setWindowedMode(1200, 900);
+        cfg.setWindowedMode(1200, 1000);
 
         Object[] possibilities = {"No", "Yes"};
         String s = prompt("Launch with new GUI?", possibilities);
