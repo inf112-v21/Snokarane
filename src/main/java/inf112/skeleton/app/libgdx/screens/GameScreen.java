@@ -77,7 +77,7 @@ public class GameScreen extends ScreenAdapter {
     // Handles all data transfers over internet
     Network network;
 
-    public GameScreen(RoboGame game, boolean isHost, String ip){
+    public GameScreen(RoboGame game, boolean isHost, String ip, String playerName){
         this.game = game;
         stage = new Stage(new ScreenViewport());
 
@@ -97,14 +97,14 @@ public class GameScreen extends ScreenAdapter {
         cardBackground.setSize(Gdx.graphics.getWidth(), 170);
         stage.addActor(cardBackground);
 
-        create(isHost, ip);
+        create(isHost, ip, playerName);
     }
     /**
      * Initialize objects depending on host status
      * These methods are needed to start a game session to other players over network
      */
     // Function called regardless of host or player status, initializes network and asks for host/client role selection
-    public void startGame(boolean isHost, String ip){
+    public void startGame(boolean isHost, String ip, String playerName){
         map.flagList = flagPositions;
 
         // Choose whether to host or connect
@@ -113,26 +113,26 @@ public class GameScreen extends ScreenAdapter {
         this.network.initialize();
 
         if (network.isHost)
-            startHost();
+            startHost(playerName);
         else
-            startClient(ip);
+            startClient(ip, playerName);
 
     }
     // Start game as host
-    private void startHost(){
+    private void startHost(String playerName){
         // Send prompt to all connected clients
         Network.prompt("All players connected.", null);
         // Start connection to current clients. This is to be able to accept data transfers from clients
         this.network.initConnections();
         // Starts GameHost session using network that was initialized
-        gamePlayer = new GameHost((NetworkHost)network, "Sauen Shaun");
+        gamePlayer = new GameHost((NetworkHost)network, playerName);
         gamePlayer.setMap(map);
         gamePlayer.drawCards();
     }
     // Start game as client
-    private void startClient(String ip){
+    private void startClient(String ip, String playerName){
         if (((NetworkClient) network).connectToServer(ip)){
-            gamePlayer = new GameClient((NetworkClient)network, "Den blå bjørn");
+            gamePlayer = new GameClient((NetworkClient)network, playerName);
             gamePlayer.setMap(map);
         } else {
             System.out.println("Failed to start client due to connection error.");
@@ -146,7 +146,7 @@ public class GameScreen extends ScreenAdapter {
      *
      * This function is called on libgdx startup
      */
-    public void create(boolean isHost, String ip) {
+    public void create(boolean isHost, String ip, String playerName) {
         batch = new SpriteBatch();
         font = new BitmapFont();
         font.setColor(Color.RED);
@@ -161,7 +161,7 @@ public class GameScreen extends ScreenAdapter {
         loadPlayerTextures();
 
         // Start game/network objects
-        startGame(isHost, ip);
+        startGame(isHost, ip, playerName);
 
         // Start camera/rendering
         initializeRendering();
