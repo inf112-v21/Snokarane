@@ -42,18 +42,7 @@ public class GameScreen extends ScreenAdapter {
     private RoboGame game;
     private Stage stage;
 
-    // For rendering text to screen
-    private SpriteBatch batch;
-    private BitmapFont font;
-
-    // Entire map (graphic)
-    private TiledMap tiledMap;
-
     Map map = new Map();
-
-    // Board dimensions
-    public static int BOARD_X = 10;
-    public static int BOARD_Y = 10;
 
     // Layers of the map
     private TiledMapTileLayer playerLayer;
@@ -66,8 +55,6 @@ public class GameScreen extends ScreenAdapter {
     // Cells for each player state
     private TiledMapTileLayer.Cell playerNormal;
     private TiledMapTileLayer.Cell playerWon;
-
-    private OrthogonalTiledMapRenderer renderer;
 
     /**
      * Client objects
@@ -147,24 +134,15 @@ public class GameScreen extends ScreenAdapter {
      * This function is called on libgdx startup
      */
     public void create(boolean isHost, String ip, String playerName) {
-        batch = new SpriteBatch();
-        font = new BitmapFont();
-        font.setColor(Color.RED);
-
-        // Load .tmx file from disk
-        tiledMap = loadTileMapFromFile("10x10-testmap.tmx");
 
         // Load the map's layers
-        loadMapLayers(tiledMap);
+        loadMapLayers(game.tiledMap);
 
         // Initialize player textures from .png file
         loadPlayerTextures();
 
         // Start game/network objects
         startGame(isHost, ip, playerName);
-
-        // Start camera/rendering
-        initializeRendering();
     }
     /**
      * @return TiledMap object loaded from path
@@ -191,24 +169,7 @@ public class GameScreen extends ScreenAdapter {
         playerNormal = new TiledMapTileLayer.Cell().setTile(playerNormalStaticTile);
         playerWon = new TiledMapTileLayer.Cell().setTile(playerWonStaticTile);
     }
-    /**
-     * Initialize camera and renderer, sets view/renderer to tiledMap
-     */
-    private void initializeRendering(){
-        // Initialize camera object
-        OrthographicCamera camera = new OrthographicCamera();
-        // Set camera to orthographic, size board dimensions
-        camera.setToOrtho(false, BOARD_X, BOARD_Y+2f); // TODO fix hardcoded y values for card deck visuals
-        // Set camera X-position
-        camera.position.x = 5F;
-        camera.position.y = 4F;
-        camera.update();
 
-        // Initialize renderer                                  v--- 300F is tile size
-        renderer = new OrthogonalTiledMapRenderer(tiledMap, 1F/300F);
-        // Set renderer to view camera
-        renderer.setView(camera);
-    }
     /**
      * This function is called by libgdx when a key is released.
      *
@@ -256,11 +217,12 @@ public class GameScreen extends ScreenAdapter {
         updateMap();
 
         // Render current frame to screen
-        renderer.render();
+        game.renderer.render();
 
         // Draw current deck (has to be called after render to show correctly)
         drawDeck();
     }
+
     /**
      * Draw deck and selected cards on screen
      */
@@ -269,12 +231,12 @@ public class GameScreen extends ScreenAdapter {
         int baseY = 100; // Dont change me to something non divisible by two :)
 
         // Draw hand indicator
-        batch.begin();
-        font.setColor(255, 255, 255, 255);
-        font.getData().setScale(2);
-        font.draw(batch, "Hand:",baseX*5, baseY+50);
-        font.getData().setScale(1);
-        font.setColor(255, 255, 0, 255);
+        game.batch.begin();
+        game.font.setColor(255, 255, 255, 255);
+        game.font.getData().setScale(2);
+        game.font.draw(game.batch, "Hand:",baseX*5, baseY+50);
+        game.font.getData().setScale(1);
+        game.font.setColor(255, 255, 0, 255);
 
         // Initialize some helper variables
         int xPos = baseX;
@@ -285,15 +247,15 @@ public class GameScreen extends ScreenAdapter {
         for (Card c : gamePlayer.hand){
             // If card was removed from hand and added to chosenCards, display them as green
             if (c == null) {
-                font.setColor(0, 255, 0, 255);
-                font.draw(batch, cardNum + ". " + gamePlayer.chosenCards.get(lostCardsShown).getCardType().toString(), xPos, yPos);
-                font.setColor(255, 255, 0, 255);
+                game.font.setColor(0, 255, 0, 255);
+                game.font.draw(game.batch, cardNum + ". " + gamePlayer.chosenCards.get(lostCardsShown).getCardType().toString(), xPos, yPos);
+                game.font.setColor(255, 255, 0, 255);
                 lostCardsShown++;
             }else {
                 // Else display as yellow
-                font.setColor(255, 255, 0, 255);
-                font.draw(batch, cardNum +". " + c.getCardType().toString(), xPos, yPos);
-                font.setColor(255, 255, 0, 255);
+                game.font.setColor(255, 255, 0, 255);
+                game.font.draw(game.batch, cardNum +". " + c.getCardType().toString(), xPos, yPos);
+                game.font.setColor(255, 255, 0, 255);
             }
             // Change positioning for next card
             cardNum++;
@@ -305,18 +267,18 @@ public class GameScreen extends ScreenAdapter {
         }
 
         // Draw how many cards have been chosen so far
-        font.draw(batch, "Deck:", baseX, baseY + baseY/4);
+        game.font.draw(game.batch, "Deck:", baseX, baseY + baseY/4);
 
         if (lostCardsShown>=4){
-            font.getData().setScale(1);
-            font.setColor(0, 100, 200, 255);
-            font.draw(batch, "Last card!", baseX, baseY + baseY/2);
+            game.font.getData().setScale(1);
+            game.font.setColor(0, 100, 200, 255);
+            game.font.draw(game.batch, "Last card!", baseX, baseY + baseY/2);
         }
 
-        font.setColor(255, 0, 0, 255);
-        font.getData().setScale(2);
-        font.draw(batch, Integer.toString(lostCardsShown),baseX*8, baseY+50);
-        batch.end();
+        game.font.setColor(255, 0, 0, 255);
+        game.font.getData().setScale(2);
+        game.font.draw(game.batch, Integer.toString(lostCardsShown),baseX*8, baseY+50);
+        game.batch.end();
     }
     /**
      * Reset cell rotation on all cells in the map to 0
@@ -334,8 +296,8 @@ public class GameScreen extends ScreenAdapter {
      * Rotates cells according to location in map player layer directions
      */
     private void rotateCellsAccordingToDirection(){
-        batch.begin();
-        font.getData().setScale(1);
+        game.batch.begin();
+        game.font.getData().setScale(1);
         for (int x = 0; x< map.playerLayer.length; x++){
             for (int y = 0; y< map.playerLayer[x].length; y++){
                 if (map.playerLayer[x][y].state != PlayerToken.CHARACTER_STATES.NONE){
@@ -364,7 +326,7 @@ public class GameScreen extends ScreenAdapter {
                 }
             }
         }
-        batch.end();
+        game.batch.end();
     }
     /**
      * Query for map update in networks, and calls some methods to decode information from map sent over network
@@ -455,8 +417,8 @@ public class GameScreen extends ScreenAdapter {
      */
     @Override
     public void dispose() {
-        batch.dispose();
-        font.dispose();
+        game.batch.dispose();
+        game.font.dispose();
     }
     @Override
     public void resize(int width, int height) {
