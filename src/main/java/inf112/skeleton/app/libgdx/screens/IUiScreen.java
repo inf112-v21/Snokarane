@@ -8,7 +8,7 @@ import inf112.skeleton.app.libgdx.RoboGame;
 /**
  * Generic interface for UI Screens with menus, buttons, text fields and pictures etc.
  */
-public interface IUiScreen extends Screen {
+public interface IUiScreen {
     /**
      * Set stage, and set game to arg variable
      * Initialize screen width and height,
