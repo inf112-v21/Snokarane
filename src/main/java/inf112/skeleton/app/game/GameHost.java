@@ -254,9 +254,12 @@ public class GameHost extends GamePlayer {
                     }
                 }
                 player.move(direction);
+                // Don't think we need this, but better safe than sorry. Future proof!
+                if (player.diedThisTurn) break;
             }
             else {
                 player.move(direction);
+                if (player.diedThisTurn) break;
             }
 
         }
