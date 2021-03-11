@@ -74,19 +74,20 @@ public class    Game extends InputAdapter implements ApplicationListener {
      * These methods are needed to start a game session to other players over network
      */
     // Function called regardless of host or player status, initializes network and asks for host/client role selection
-    public void startGame(){
+    public void startGame(boolean isHost, String ip){
         // Initialize mapLayerWrapper
+        map = new Map();
         map.flagList = flagPositions;
 
         // Choose whether to host or connect
-        network = Network.choseRole();
+        network = Network.choseRole(isHost);
         // Initializes connections, ports and opens for sending and receiving data
         this.network.initialize();
 
         if (network.isHost)
             startHost();
         else
-            startClient();
+            startClient(ip);
 
     }
     // Start game as host
@@ -101,11 +102,15 @@ public class    Game extends InputAdapter implements ApplicationListener {
         gamePlayer.drawCards();
     }
     // Start game as client
-    private void startClient(){
-        gamePlayer = new GameClient((NetworkClient)network);
-        gamePlayer.setMap(map);
+    private void startClient(String ip){
+        if (((NetworkClient) network).connectToServer(ip)){
+            gamePlayer = new GameClient((NetworkClient)network);
+            gamePlayer.setMap(map);
+        } else {
+            System.out.println("Failed to start client due to connection error.");
+            System.exit(0);
+        }
     }
-
     /**
      * Initialize all libgdx objects:
      *  Batch, font, input processor, textures, map layers, camera and renderer,
@@ -131,8 +136,14 @@ public class    Game extends InputAdapter implements ApplicationListener {
         // Initialize player textures from .png file
         loadPlayerTextures();
 
-        // Start game/network objects
-        startGame();
+        // Start game/network object (this is for backwards compability, this selection is done in the GUI inside new GUI
+        Object[] possibilities = {"Host", "Client"};
+        String s = Network.prompt("Role:", possibilities);
+        if (s.equals("Host")){
+            startGame(true, "");
+        }else {
+            startGame(false, Network.prompt("IP address:", null));
+        }
 
         // Start camera/rendering
         initializeRendering();
