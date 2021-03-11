@@ -244,6 +244,7 @@ public class GameHost extends GamePlayer {
             else if (map.isHole(wouldEndUp.x, wouldEndUp.y)) {
                 System.out.println("Player " + player.ID + " died");
                 player.died();
+                break;
             }
             else if (map.playerLayer[wouldEndUp.x][wouldEndUp.y].state != PlayerToken.CHARACTER_STATES.NONE) {
                 // TODO Fix this maybe?

@@ -1,6 +1,7 @@
 package inf112.skeleton.app.game.objects;
 
 import com.badlogic.gdx.math.GridPoint2;
+import inf112.skeleton.app.libgdx.Game;
 
 import java.util.*;
 
@@ -37,7 +38,13 @@ public class PlayerToken {
      * @param direction The direction you want to move, regardless of the players direction
      */
     public void move(Direction direction) {
-        moveDir(position, direction);
+        GridPoint2 wouldEndUpDirection = wouldEndUp(direction);
+        if (wouldEndUpDirection.x < 0 || wouldEndUpDirection.x >= Game.BOARD_X || wouldEndUpDirection.y < 0 || wouldEndUpDirection.y >= Game.BOARD_Y){
+            died();
+        }
+        else {
+            moveDir(position, direction);
+        }
     }
 
     public int getX() {
@@ -55,6 +62,7 @@ public class PlayerToken {
         hp --;
         playerDirection = Direction.NORTH;
      }
+
 
     public boolean isDead(){
         return hp < 1;
