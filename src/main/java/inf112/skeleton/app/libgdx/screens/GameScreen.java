@@ -104,14 +104,14 @@ public class GameScreen extends ScreenAdapter {
         map.flagList = flagPositions;
 
         // Choose whether to host or connect
-        network = Network.choseRole();
+        network = Network.choseRole(isHost);
         // Initializes connections, ports and opens for sending and receiving data
         this.network.initialize();
 
         if (network.isHost)
             startHost();
         else
-            startClient();
+            startClient(ip);
 
     }
     // Start game as host
@@ -126,9 +126,14 @@ public class GameScreen extends ScreenAdapter {
         gamePlayer.drawCards();
     }
     // Start game as client
-    private void startClient(){
-        gamePlayer = new GameClient((NetworkClient)network);
-        gamePlayer.setMap(map);
+    private void startClient(String ip){
+        if (((NetworkClient) network).connectToServer(ip)){
+            gamePlayer = new GameClient((NetworkClient)network);
+            gamePlayer.setMap(map);
+        } else {
+            System.out.println("Failed to start client due to connection error.");
+            System.exit(0);
+        }
     }
     /**
      * Initialize all libgdx objects:
