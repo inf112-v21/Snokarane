@@ -15,12 +15,13 @@ public class GameClient extends GamePlayer {
     /**
      * @param network client network that has a connection to host
      */
-    public GameClient(NetworkClient network) {
+    public GameClient(NetworkClient network, String name) {
 
         // Add cards to deck
         super();
         network.gameClient = this;
         client = network;
+        client.giveNickname(name);
     }
 
     private NetworkClient client;

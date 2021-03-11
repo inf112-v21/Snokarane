@@ -20,6 +20,8 @@ public class PlayerToken {
 
     public boolean diedThisTurn = false;
 
+    public String name;
+
 
     // What texture gets displayed on character
     public enum CHARACTER_STATES{

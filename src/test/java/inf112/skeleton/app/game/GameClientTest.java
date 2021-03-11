@@ -1,7 +1,6 @@
 package inf112.skeleton.app.game;
 
-import inf112.skeleton.app.game.GameClient;
-import inf112.skeleton.app.game.GamePlayer;
+
 import inf112.skeleton.app.game.objects.Card;
 import inf112.skeleton.app.game.objects.CardType;
 import inf112.skeleton.app.network.NetworkClient;
@@ -19,7 +18,7 @@ public class GameClientTest {
         // Press cancel on the prompt
         //TODO Make an initilizier that just makes a random object purely for testing?
         network.initialize();
-        GamePlayer player = new GameClient(network);
+        GamePlayer player = new GameClient(network, "Mr. testman!");
 
         for (int k = 0; k < 9; k++){
             assertEquals(84-k*9, player.deck.size());
@@ -47,7 +46,7 @@ public class GameClientTest {
         // Press cancel on the prompt
         //TODO Make an initilizier that just makes a random object purely for testing?
         network.initialize();
-        GamePlayer player = new GameClient(network);
+        GamePlayer player = new GameClient(network, "Mr. testman!");
         HashMap<CardType, Integer> cardTypes = new HashMap<>();
 
         for (CardType type : CardType.values()) {

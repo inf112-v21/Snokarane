@@ -28,6 +28,7 @@ public class NetworkData {
         classesToRegister.add(NetworkDataWrapper.class);
         classesToRegister.add(Flag.class);
         classesToRegister.add(PlayerToken.CHARACTER_STATES.class);
+        classesToRegister.add(String.class);
 
         return classesToRegister;
     }

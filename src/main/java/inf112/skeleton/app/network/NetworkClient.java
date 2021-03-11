@@ -48,7 +48,7 @@ public class NetworkClient extends Network {
                 }
 
                 if (object instanceof PlayerToken) {
-                    System.out.println(((PlayerToken) object).ID + " has won! Congratulations to them!");
+                    System.out.println(((PlayerToken) object).name + " has won! Congratulations to them!");
                     System.exit(0);
                 }
             }
@@ -74,5 +74,9 @@ public class NetworkClient extends Network {
             System.exit(0);
             return false;
         }
+    }
+
+    public void giveNickname(String name) {
+        client.sendTCP(name);
     }
 }

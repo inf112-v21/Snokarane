@@ -25,7 +25,7 @@ public class GameHost extends GamePlayer {
     /**
      * @param network connection to be used in game
      */
-    public GameHost(NetworkHost network){
+    public GameHost(NetworkHost network, String name){
         // Add cards to deck
         super();
         host = network;
@@ -34,7 +34,8 @@ public class GameHost extends GamePlayer {
         // Give each client a new player token to keep track of player data
         clientPlayers = new HashMap<>();
 
-        initializePlayerTokens();
+        initializeClientPlayerTokens();
+        initializeHostPlayerToken(name);
     }
 
     // Game map
@@ -43,12 +44,12 @@ public class GameHost extends GamePlayer {
     private NetworkHost host;
 
     // Has all clients (which contain connnection ID's) as well as their tokens
-    private HashMap<Integer, PlayerToken> clientPlayers;
+    public HashMap<Integer, PlayerToken> clientPlayers;
 
     /**
-     * Create tokens for each connected client as well as the host
+     * Create tokens for the host
      */
-    private void initializePlayerTokens(){
+    private void initializeClientPlayerTokens(){
         // Set token character states to normal default and give connection ID to token
         for (Connection c : host.connections){
             PlayerToken token = new PlayerToken();
@@ -56,9 +57,16 @@ public class GameHost extends GamePlayer {
             token.ID = c.getID();
             clientPlayers.put(c.getID(), token);
         }
+
+    }
+    /**
+     * Create token for the host
+     */
+    private void initializeHostPlayerToken(String name) {
         // This is so processCards also includes the host
         PlayerToken token = new PlayerToken();
         token.charState = PlayerToken.CHARACTER_STATES.PLAYERNORMAL;
+        token.name = name;
         token.ID = NetworkHost.hostID;
         clientPlayers.put(NetworkHost.hostID, token);
     }
@@ -248,7 +256,7 @@ public class GameHost extends GamePlayer {
                 break;
             }
             else if (map.isHole(wouldEndUp.x, wouldEndUp.y)) {
-                System.out.println("Player " + player.ID + " died");
+                System.out.println("Player " + player.name + " died");
                 player.died();
                 break;
             }

@@ -125,14 +125,14 @@ public class GameScreen extends ScreenAdapter {
         // Start connection to current clients. This is to be able to accept data transfers from clients
         this.network.initConnections();
         // Starts GameHost session using network that was initialized
-        gamePlayer = new GameHost((NetworkHost)network);
+        gamePlayer = new GameHost((NetworkHost)network, "Sauen Shaun");
         gamePlayer.setMap(map);
         gamePlayer.drawCards();
     }
     // Start game as client
     private void startClient(String ip){
         if (((NetworkClient) network).connectToServer(ip)){
-            gamePlayer = new GameClient((NetworkClient)network);
+            gamePlayer = new GameClient((NetworkClient)network, "Den blå bjørn");
             gamePlayer.setMap(map);
         } else {
             System.out.println("Failed to start client due to connection error.");
