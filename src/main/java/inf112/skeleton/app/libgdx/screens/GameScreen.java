@@ -1,9 +1,6 @@
-package inf112.skeleton.app.libgdx;
+package inf112.skeleton.app.libgdx.screens;
 
-import com.badlogic.gdx.ApplicationListener;
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
-import com.badlogic.gdx.InputAdapter;
+import com.badlogic.gdx.*;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL30;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -16,12 +13,24 @@ import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.maps.tiled.tiles.StaticTiledMapTile;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.InputListener;
+import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Button;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
+import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import inf112.skeleton.app.game.GameClient;
 import inf112.skeleton.app.game.GameHost;
 import inf112.skeleton.app.game.GamePlayer;
 import inf112.skeleton.app.game.objects.Card;
+import inf112.skeleton.app.game.objects.CardType;
 import inf112.skeleton.app.game.objects.Flag;
 import inf112.skeleton.app.game.objects.PlayerToken;
+import inf112.skeleton.app.libgdx.Map;
+import inf112.skeleton.app.libgdx.RoboGame;
 import inf112.skeleton.app.network.Network;
 import inf112.skeleton.app.network.NetworkClient;
 import inf112.skeleton.app.network.NetworkHost;
@@ -29,11 +38,10 @@ import inf112.skeleton.app.network.NetworkHost;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Handles rendering, textures and event handling (key presses)
- * Game(this class) runs client side on each players PC, so only objects and methods necessary to have client side should be used here
- */
-public class    Game extends InputAdapter implements ApplicationListener {
+public class GameScreen extends ScreenAdapter {
+    private RoboGame game;
+    private Stage stage;
+
     // For rendering text to screen
     private SpriteBatch batch;
     private BitmapFont font;
@@ -69,6 +77,22 @@ public class    Game extends InputAdapter implements ApplicationListener {
     // Handles all data transfers over internet
     Network network;
 
+    public GameScreen(RoboGame game, boolean isHost, String ip){
+        this.game = game;
+        stage = new Stage(new ScreenViewport());
+
+        // Backwards capability for Game->GameScreen merge,
+        // enables key press detection for testing other parts of game while cards haven't been implemented yet
+        stage.addListener(new InputListener(){
+            @Override
+            public boolean keyUp(InputEvent event, int keycode) {
+                GameScreen.this.keyUp(keycode);
+                return true;
+            }
+        });
+
+        create(isHost, ip);
+    }
     /**
      * Initialize objects depending on host status
      * These methods are needed to start a game session to other players over network
@@ -118,14 +142,10 @@ public class    Game extends InputAdapter implements ApplicationListener {
      *
      * This function is called on libgdx startup
      */
-    @Override
-    public void create() {
+    public void create(boolean isHost, String ip) {
         batch = new SpriteBatch();
         font = new BitmapFont();
         font.setColor(Color.RED);
-        
-        // Register input processor to handle key presses
-        Gdx.input.setInputProcessor(this);
 
         // Load .tmx file from disk
         tiledMap = loadTileMapFromFile("10x10-testmap.tmx");
@@ -136,19 +156,12 @@ public class    Game extends InputAdapter implements ApplicationListener {
         // Initialize player textures from .png file
         loadPlayerTextures();
 
-        // Start game/network object (this is for backwards compability, this selection is done in the GUI inside new GUI
-        Object[] possibilities = {"Host", "Client"};
-        String s = Network.prompt("Role:", possibilities);
-        if (s.equals("Host")){
-            startGame(true, "");
-        }else {
-            startGame(false, Network.prompt("IP address:", null));
-        }
+        // Start game/network objects
+        startGame(isHost, ip);
 
         // Start camera/rendering
         initializeRendering();
     }
-
     /**
      * @return TiledMap object loaded from path
      * @param path path to .tmx file for map
@@ -156,7 +169,6 @@ public class    Game extends InputAdapter implements ApplicationListener {
     public TiledMap loadTileMapFromFile(String path){
         return new TmxMapLoader().load(path);
     }
-
     /**
      * Load player texture and split into each player state
      */
@@ -175,7 +187,6 @@ public class    Game extends InputAdapter implements ApplicationListener {
         playerNormal = new TiledMapTileLayer.Cell().setTile(playerNormalStaticTile);
         playerWon = new TiledMapTileLayer.Cell().setTile(playerWonStaticTile);
     }
-
     /**
      * Initialize camera and renderer, sets view/renderer to tiledMap
      */
@@ -193,13 +204,11 @@ public class    Game extends InputAdapter implements ApplicationListener {
         // Set renderer to view camera
         renderer.setView(camera);
     }
-
     /**
      * This function is called by libgdx when a key is released.
      *
      * @return true if keyrelease was handled (per libgdx)
      */
-    @Override
     public boolean keyUp (int keyCode){
         if (gamePlayer.state == GamePlayer.PLAYERSTATE.PICKING_CARDS){
             if(keyCode >= Input.Keys.NUM_1 && keyCode <= Input.Keys.NUM_9){
@@ -208,7 +217,6 @@ public class    Game extends InputAdapter implements ApplicationListener {
         }
         return false;
     }
-
     /**
      * Helper function for keyUp to pick cards for player
      *
@@ -224,12 +232,15 @@ public class    Game extends InputAdapter implements ApplicationListener {
         }
         return false;
     }
-
     /**
      * Render all objects and text to the screen
      */
     @Override
-    public void render() {
+    public void show(){
+        Gdx.input.setInputProcessor(stage);
+    }
+    @Override
+    public void render(float v) {
         Gdx.gl.glClearColor(1, 1, 1, 1);
         Gdx.gl.glClear(GL30.GL_COLOR_BUFFER_BIT);
 
@@ -242,7 +253,6 @@ public class    Game extends InputAdapter implements ApplicationListener {
         // Draw current deck (has to be called after render to show correctly)
         drawDeck();
     }
-
     /**
      * Draw deck and selected cards on screen
      */
@@ -300,7 +310,6 @@ public class    Game extends InputAdapter implements ApplicationListener {
         font.draw(batch, Integer.toString(lostCardsShown),baseX+100, baseY*2);
         batch.end();
     }
-
     /**
      * Reset cell rotation on all cells in the map to 0
      */
@@ -313,7 +322,6 @@ public class    Game extends InputAdapter implements ApplicationListener {
             }
         }
     }
-
     /**
      * Rotates cells according to location in map player layer directions
      */
@@ -350,7 +358,6 @@ public class    Game extends InputAdapter implements ApplicationListener {
         }
         batch.end();
     }
-
     /**
      * Query for map update in networks, and calls some methods to decode information from map sent over network
      */
@@ -364,7 +371,6 @@ public class    Game extends InputAdapter implements ApplicationListener {
             // TODO: board and flag layer doesn't change as of this version
         }
     }
-
     /**
      * Gets player locations and states from map and sets tiledmaplayer cells to correct texture
      */
@@ -396,7 +402,6 @@ public class    Game extends InputAdapter implements ApplicationListener {
             }
         }
     }
-
     /**
      * Load all map layers into their own member variable
      */
@@ -410,7 +415,6 @@ public class    Game extends InputAdapter implements ApplicationListener {
         getFlagPositionsFromLayer(flagLayer);
         getHolePositionsFromLayer(holeLayer);
     }
-
     /**
      * Get all flag positions in layer flag layer
      */
@@ -434,7 +438,7 @@ public class    Game extends InputAdapter implements ApplicationListener {
             for (int j = 0; j <= holeLayer.getHeight(); j++){
                 // getCell returns null if nothing is found in the current cell in this layer
                 if (holeLayer.getCell(i, j) != null) {
-                        map.holeLayer[i][j] = true;
+                    map.holeLayer[i][j] = true;
                 }
             }
         }
@@ -447,16 +451,17 @@ public class    Game extends InputAdapter implements ApplicationListener {
         batch.dispose();
         font.dispose();
     }
-
     @Override
     public void resize(int width, int height) {
     }
-
     @Override
     public void pause() {
     }
-
     @Override
     public void resume() {
+    }
+    @Override
+    public void hide() {
+        Gdx.input.setInputProcessor(null);
     }
 }
