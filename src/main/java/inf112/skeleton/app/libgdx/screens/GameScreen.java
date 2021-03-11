@@ -105,8 +105,6 @@ public class GameScreen extends ScreenAdapter {
      */
     // Function called regardless of host or player status, initializes network and asks for host/client role selection
     public void startGame(boolean isHost, String ip){
-        // Initialize mapLayerWrapper
-        map = new Map();
         map.flagList = flagPositions;
 
         // Choose whether to host or connect
@@ -443,7 +441,6 @@ public class GameScreen extends ScreenAdapter {
     }
     //TODO: FIX THIS TO MAKE IT MORE SEPARATED
     private void getHolePositionsFromLayer(TiledMapTileLayer holeLayer){
-
         for (int i = 0; i <= holeLayer.getWidth(); i++){
             for (int j = 0; j <= holeLayer.getHeight(); j++){
                 // getCell returns null if nothing is found in the current cell in this layer

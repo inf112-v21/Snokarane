@@ -97,31 +97,31 @@ public class GameHost extends GamePlayer {
      * Draw cards to deck for both host and clients
      */
     public void drawCards(){
-        host.promptCardDraw();
+        host.promptCardDraw();  // tell clients to draw cards
         drawCardsFromDeck(); // draw host cards
     }
 
     /**
      * Return host's version of map
-     * @param mlp for clients
+     * @param map for clients
      * @return host's map
      */
     @Override
-    public Map updateMap(Map mlp) {
+    public Map updateMap(Map map) {
         return this.map;
     }
 
     /**
      * Updates the map in the host, loads it for both clients and host
      * so that the map is properly loaded when the game starts.
-     * @param mlp map
+     * @param map map
      */
     @Override
-    public void setMap(Map mlp){
-        this.map = mlp;
+    public void setMap(Map map){
+        this.map = map;
         this.map.setID(NetworkHost.hostID);
         host.sendMapLayerWrapper(wrapper());
-        mlp.loadPlayers(wrapper());
+        map.loadPlayers(wrapper());
     }
 
     /**
@@ -148,6 +148,7 @@ public class GameHost extends GamePlayer {
             Collections.sort(cardList, new Card.cardComparator());
 
             for (Card card : cardList) {
+                System.out.println("This card has priority " + card.getPriority());
                 // Move the clients player token
                 resolveCard(card, cardPlayerTokenMap.get(card));
                 try {
@@ -159,25 +160,22 @@ public class GameHost extends GamePlayer {
                 map.loadPlayers(wrapper());
                 host.sendMapLayerWrapper(wrapper());
             }
+            System.out.println();
         }
 
-
+        // Reset which players have died this turn, so that they can keep playing
         for (PlayerToken player: clientPlayers.values()) {
             player.diedThisTurn = false;
         }
-        // Force local board to update
-        map.loadPlayers(wrapper());
         List<PlayerToken> playerTokens = new ArrayList<>(clientPlayers.values());
         map.registerFlags(playerTokens);
+
         PlayerToken winner = map.hasWon(playerTokens);
 
         if(winner != null) {
             host.sendWinner(winner);
 
         }
-
-        // Send new map to clients
-        host.sendMapLayerWrapper(wrapper());
     }
 
     /**
@@ -245,7 +243,6 @@ public class GameHost extends GamePlayer {
         for(int i = 0; i < dist; i++) {
             GridPoint2 wouldEndUp = player.wouldEndUp(direction);
 
-            //TODO: Simple out of bounds check, fix this with some death logic
             if (wouldEndUp.x < 0 || wouldEndUp.x >= Game.BOARD_X || wouldEndUp.y < 0 || wouldEndUp.y >= Game.BOARD_Y) {
                 player.died();
                 break;
