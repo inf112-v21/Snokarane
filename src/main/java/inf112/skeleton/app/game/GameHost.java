@@ -78,6 +78,7 @@ public class GameHost extends GamePlayer {
 
         //Update the clientCards in host
         host.playerCards.put(NetworkHost.hostID, chosenCards);
+        checkCards();
     }
 
     public void checkCards(){
@@ -234,6 +235,7 @@ public class GameHost extends GamePlayer {
                 break;
             }
             else if (map.isHole(wouldEndUp.x, wouldEndUp.y)) {
+                System.out.println("Player " + player.ID + " died");
                 player.died();
             }
             else {

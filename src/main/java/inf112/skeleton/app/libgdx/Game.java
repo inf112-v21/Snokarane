@@ -41,7 +41,7 @@ public class    Game extends InputAdapter implements ApplicationListener {
     // Entire map (graphic)
     private TiledMap tiledMap;
 
-    Map map;
+    Map map = new Map();
 
     // Board dimensions
     public static int BOARD_X = 10;
@@ -76,7 +76,6 @@ public class    Game extends InputAdapter implements ApplicationListener {
     // Function called regardless of host or player status, initializes network and asks for host/client role selection
     public void startGame(){
         // Initialize mapLayerWrapper
-        map = new Map();
         map.flagList = flagPositions;
 
         // Choose whether to host or connect
@@ -398,6 +397,7 @@ public class    Game extends InputAdapter implements ApplicationListener {
 
         // Sneakily yoink the positions of the flags here, don't tell the OOP police
         getFlagPositionsFromLayer(flagLayer);
+        getHolePositionsFromLayer(holeLayer);
     }
 
     /**
