@@ -49,7 +49,7 @@ public class GameScreen extends ScreenAdapter {
     // Entire map (graphic)
     private TiledMap tiledMap;
 
-    Map map;
+    Map map = new Map();
 
     // Board dimensions
     public static int BOARD_X = 10;
@@ -91,14 +91,14 @@ public class GameScreen extends ScreenAdapter {
             }
         });
 
-        create();
+        create(isHost, ip);
     }
     /**
      * Initialize objects depending on host status
      * These methods are needed to start a game session to other players over network
      */
     // Function called regardless of host or player status, initializes network and asks for host/client role selection
-    public void startGame(){
+    public void startGame(boolean isHost, String ip){
         // Initialize mapLayerWrapper
         map = new Map();
         map.flagList = flagPositions;
@@ -137,7 +137,7 @@ public class GameScreen extends ScreenAdapter {
      *
      * This function is called on libgdx startup
      */
-    public void create() {
+    public void create(boolean isHost, String ip) {
         batch = new SpriteBatch();
         font = new BitmapFont();
         font.setColor(Color.RED);
@@ -152,7 +152,7 @@ public class GameScreen extends ScreenAdapter {
         loadPlayerTextures();
 
         // Start game/network objects
-        startGame();
+        startGame(isHost, ip);
 
         // Start camera/rendering
         initializeRendering();
@@ -408,6 +408,7 @@ public class GameScreen extends ScreenAdapter {
 
         // Sneakily yoink the positions of the flags here, don't tell the OOP police
         getFlagPositionsFromLayer(flagLayer);
+        getHolePositionsFromLayer(holeLayer);
     }
     /**
      * Get all flag positions in layer flag layer
