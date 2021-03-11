@@ -137,13 +137,20 @@ public class GameHost extends GamePlayer {
                 if (clientPlayers.get(key).diedThisTurn == true || clientPlayers.get(key).isDead()){
                     continue;
                 }
-
                 // Get next card for the given player and pop it so it can be played
                 List<Card> cards = host.playerCards.get(key);
                 Card currentCard = cards.remove(0);
 
                 // Move the clients player token
                 resolveCard(currentCard, clientPlayers.get(key));
+
+                try {
+                    Thread.sleep(500);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                host.sendMapLayerWrapper(wrapper());
+
             }
         }
         for (PlayerToken player: clientPlayers.values()) {
