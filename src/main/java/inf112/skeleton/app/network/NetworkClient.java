@@ -56,15 +56,21 @@ public class NetworkClient extends Network {
                 System.exit(0);
             }
         }));
+        return true;
+    }
 
+    /**
+     * Connect to server on
+     * @param ip ip
+     * @return true if connect successful
+     */
+    public boolean connectToServer(String ip){
         try {
-            IP = prompt("Please enter the IP-address you wish to connect to", null);
-            client.connect(5000, IP, 54555);
+            client.connect(5000, ip, 54555);
             return true;
         }
-
         catch (IOException e){
-            System.out.println("Encountered an exception during connection");
+            System.out.print("Encountered an exception during connection.");
             System.exit(0);
             return false;
         }
