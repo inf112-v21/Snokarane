@@ -91,6 +91,12 @@ public class GameScreen extends ScreenAdapter {
             }
         });
 
+        Texture cardBackgroundTexture = new Texture(Gdx.files.internal("cards/cards-background.png"));
+        Image cardBackground = new Image(cardBackgroundTexture);
+        cardBackground.setPosition(0, 0);
+        cardBackground.setSize(Gdx.graphics.getWidth(), 170);
+        stage.addActor(cardBackground);
+
         create(isHost, ip);
     }
     /**
@@ -194,10 +200,10 @@ public class GameScreen extends ScreenAdapter {
         // Initialize camera object
         OrthographicCamera camera = new OrthographicCamera();
         // Set camera to orthographic, size board dimensions
-        camera.setToOrtho(false, BOARD_X, BOARD_Y+3);
+        camera.setToOrtho(false, BOARD_X, BOARD_Y+2f); // TODO fix hardcoded y values for card deck visuals
         // Set camera X-position
         camera.position.x = 5F;
-        camera.position.y = 3.5F;
+        camera.position.y = 4F;
         camera.update();
 
         // Initialize renderer                                  v--- 300F is tile size
@@ -245,6 +251,9 @@ public class GameScreen extends ScreenAdapter {
         Gdx.gl.glClearColor(1, 1, 1, 1);
         Gdx.gl.glClear(GL30.GL_COLOR_BUFFER_BIT);
 
+        stage.act();
+        stage.draw();
+
         // Sends map to client of host, updates map in (this) if client
         updateMap();
 
@@ -265,7 +274,7 @@ public class GameScreen extends ScreenAdapter {
         batch.begin();
         font.setColor(255, 255, 255, 255);
         font.getData().setScale(2);
-        font.draw(batch, "Hand:",baseX, baseY*2);
+        font.draw(batch, "Hand:",baseX*5, baseY+50);
         font.getData().setScale(1);
         font.setColor(255, 255, 0, 255);
 
@@ -308,7 +317,7 @@ public class GameScreen extends ScreenAdapter {
 
         font.setColor(255, 0, 0, 255);
         font.getData().setScale(2);
-        font.draw(batch, Integer.toString(lostCardsShown),baseX+100, baseY*2);
+        font.draw(batch, Integer.toString(lostCardsShown),baseX*8, baseY+50);
         batch.end();
     }
     /**
