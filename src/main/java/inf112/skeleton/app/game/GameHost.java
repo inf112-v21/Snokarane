@@ -145,12 +145,13 @@ public class GameHost extends GamePlayer {
                 resolveCard(currentCard, clientPlayers.get(key));
 
                 try {
-                    Thread.sleep(500);
+                    Thread.sleep(300);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-                host.sendMapLayerWrapper(wrapper());
 
+                map.loadPlayers(wrapper());
+                host.sendMapLayerWrapper(wrapper());
             }
         }
         for (PlayerToken player: clientPlayers.values()) {
