@@ -18,7 +18,7 @@ public class Main {
         cfg.setTitle("Roborally");
         cfg.setWindowedMode(1200, 1000);
 
-        Object[] possibilities = {"No", "Yes"};
+        Object[] possibilities = {"Yes", "No"};
         String s = prompt("Launch with new GUI?", possibilities);
         if (Objects.isNull(s)) {
             System.out.print("Could not choose UI Type.");
