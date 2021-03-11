@@ -238,6 +238,15 @@ public class GameHost extends GamePlayer {
                 System.out.println("Player " + player.ID + " died");
                 player.died();
             }
+            else if (map.playerLayer[wouldEndUp.x][wouldEndUp.y].state != PlayerToken.CHARACTER_STATES.NONE) {
+                // TODO Fix this maybe?
+                for (PlayerToken opponent : clientPlayers.values()) {
+                    if (opponent.position.x == wouldEndUp.x && opponent.position.y == wouldEndUp.y) {
+                        opponent.move(direction);
+                    }
+                }
+                player.move(direction);
+            }
             else {
                 player.move(direction);
             }
