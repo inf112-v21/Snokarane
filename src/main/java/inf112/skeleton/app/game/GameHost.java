@@ -41,6 +41,15 @@ public class GameHost extends GamePlayer {
     // Game map
     private Map map;
 
+    public boolean isShowingCards = false;
+    private List<List<Card>> cardsPerPlayerTurn = new ArrayList<>();
+    private List<Card> currentCardListBeingProcessed = new ArrayList<>();
+    private HashMap<Card, PlayerToken> cardPlayerTokenMap = new HashMap<>();
+    private int cardsProcessedPerRound = 5;
+    private int currentCardRound = 1;
+    private long timeSinceLastCardProcessed = System.currentTimeMillis();
+    private long pauseBetweenEachCardProcess = 1000;
+
     private NetworkHost host;
 
     // Has all clients (which contain connnection ID's) as well as their tokens
@@ -136,41 +145,46 @@ public class GameHost extends GamePlayer {
      * Process card selection from all clients and host
      */
     private void processCards() {
-        int cardsProcessedPerRound = 5;
-        HashMap<Card, PlayerToken> cardPlayerTokenMap = new HashMap<>();
+        System.out.println("-------------------------------------");
+        System.out.println("Perparing card selections...");
         // iterator i is same as client connection id
         for (int i = 0; i<cardsProcessedPerRound; i++){
             List<Card> cardList = new ArrayList<>();
             for (int key : clientPlayers.keySet()){
                 // Check if the player is dead
-                if (clientPlayers.get(key).diedThisTurn == true || clientPlayers.get(key).isDead()){
+                if (clientPlayers.get(key).diedThisTurn || clientPlayers.get(key).isDead()){
                     continue;
                 }
                 // Get next card for the given player and pop it so it can be played
                 List<Card> cards = host.playerCards.get(key);
+
+                // get first card from players cards
                 Card currentCard = cards.remove(0);
 
+                // Add card to list of all clients cards
                 cardList.add(currentCard);
+
+                // Map card to client
                 cardPlayerTokenMap.put(currentCard, clientPlayers.get(key));
             }
+            // Sort cards by card priority
             Collections.sort(cardList, new Card.cardComparator());
 
-            for (Card card : cardList) {
-                System.out.println("This card has priority " + card.getPriority());
-                // Move the clients player token
-                resolveCard(card, cardPlayerTokenMap.get(card));
-                try {
-                    Thread.sleep(300);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
+            // Add first card from each players card selections to cardsPerPlayerTurn
+            // This way all cards have now been mapped to each player, but are now saved as which order the cards will be processed
+            // as cards will be processed one at a time per player, then the next card per player etc.
+            cardsPerPlayerTurn.add(cardList);
 
-                map.loadPlayers(wrapper());
-                host.sendMapLayerWrapper(wrapper());
-            }
-            System.out.println();
+            System.out.println(cardsPerPlayerTurn.size()+". card selection ready.");
         }
+        System.out.println("Card selections for this turn ready.");
+        System.out.println("-------------------------------------");
+        // Start processing each card sequentially
+        isShowingCards = true;
+        resetPlayerTokens();
+    }
 
+    private void resetPlayerTokens(){
         // Reset which players have died this turn, so that they can keep playing
         for (PlayerToken player: clientPlayers.values()) {
             player.diedThisTurn = false;
@@ -184,6 +198,78 @@ public class GameHost extends GamePlayer {
             host.sendWinner(winner);
 
         }
+    }
+
+    /**
+     * Handle single selection of a card for all players
+     */
+    public void handleSingleCardRound(){
+        if (System.currentTimeMillis() >= timeSinceLastCardProcessed+pauseBetweenEachCardProcess){
+            // If current Nth card list empty, start next round of cards
+            if (currentCardListBeingProcessed.size() == 0){
+                getNthSelectionFromEachPlayer();
+
+                // Increment N, so next round the card list becomes each N+1-th card selection
+                // e.g. last round was Card 1 for each player, next is card 2 for each player
+                currentCardRound++;
+                // Doesn't execute until time threshold has passed
+            }else {
+                handleSinglePlayerCard(currentCardListBeingProcessed.remove(0));
+            }
+        }
+
+        // Reset card delay variables for next turn
+        if (currentCardRound >= cardsProcessedPerRound){
+            resetCardDelayVariables();
+        }
+    }
+
+    /**
+     * Get Nth selection of cards from each player
+     */
+    private void getNthSelectionFromEachPlayer(){
+        // Get Nth card each player chose, with N being cards per player turn
+        for (List<Card> cl : cardsPerPlayerTurn){
+            // Make sure index isn't out of bounds
+            if (cl.size()>currentCardRound-1){
+                // Get Nth card in each card list for each player
+                    /*
+                    Card 1, 2, 3, 4 <--- Player 1's cards
+                    Card 1, 2, 3, 4 <--- Player 2's cards
+                    currentCardListBeingProcessed will then get:
+                        Card 1 <-- Player 1, Card 1 <--- Player 2
+                    if currentCardRound is 1
+                     */
+                currentCardListBeingProcessed.add(cl.get(currentCardRound-1));
+            }
+        }
+    }
+
+    /**
+     * Resolve single card and reset card process time
+     * @param card card to handle
+     */
+    private void handleSinglePlayerCard(Card card){
+        // Move the clients player token
+        resolveCard(card, cardPlayerTokenMap.get(card));
+
+        System.out.println("-------------------------------------");
+        System.out.println("Processing card selection round nr. "+currentCardRound);
+
+        map.loadPlayers(wrapper());
+        host.sendMapLayerWrapper(wrapper());
+        timeSinceLastCardProcessed = System.currentTimeMillis();
+    }
+
+    /**
+     * Prepare delay variables for next turn by resetting to default values
+     */
+    private void resetCardDelayVariables(){
+        isShowingCards = false;
+        cardsPerPlayerTurn.clear();
+        currentCardListBeingProcessed.clear();
+        cardPlayerTokenMap.clear();
+        currentCardRound = 1;
     }
 
     /**
