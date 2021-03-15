@@ -1,7 +1,11 @@
 package inf112.skeleton.app.libgdx;
 
+import com.badlogic.gdx.math.GridPoint2;
 import inf112.skeleton.app.game.objects.Flag;
 import inf112.skeleton.app.game.objects.PlayerToken;
+
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -21,6 +25,7 @@ public class Map {
      */
     public PlayerRenderInformation [][] playerLayer = new PlayerRenderInformation [BOARD_X][BOARD_Y];
     public boolean [][] holeLayer = new boolean[BOARD_X][BOARD_Y];
+    public List<GridPoint2> spawnPoints = new ArrayList<>();
 
     /**
      * This is a sort of replacement for tuples that java lack,
@@ -76,10 +81,7 @@ public class Map {
     }
 
     public boolean isHole(int x, int y) {
-        if (holeLayer[x][y] != true) {
-            return false;
-        }
-            return true;
+        return holeLayer[x][y] == true;
     }
 
     /**

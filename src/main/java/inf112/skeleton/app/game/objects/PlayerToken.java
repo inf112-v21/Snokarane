@@ -8,7 +8,10 @@ import java.util.*;
 public class PlayerToken {
 
     // Player position initialized at 0, 0
-    public final GridPoint2 position = new GridPoint2(0, 0);
+    public GridPoint2 position;
+
+    // Spawn location
+    public GridPoint2 spawnLoc;
     // All flags visited
     private final List<Flag> flagsVisited = new ArrayList<>();
 
@@ -58,8 +61,8 @@ public class PlayerToken {
     }
 
     public void died() {
-        position.x = 0;
-        position.y = 0;
+        position.x = spawnLoc.x;
+        position.y = spawnLoc.y;
         diedThisTurn = true;
         hp --;
         playerDirection = Direction.NORTH;

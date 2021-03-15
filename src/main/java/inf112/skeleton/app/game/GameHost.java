@@ -25,7 +25,7 @@ public class GameHost extends GamePlayer {
     /**
      * @param network connection to be used in game
      */
-    public GameHost(NetworkHost network, String name){
+    public GameHost(NetworkHost network, String name, List<GridPoint2> spawns){
         // Add cards to deck
         super();
         host = network;
@@ -34,8 +34,8 @@ public class GameHost extends GamePlayer {
         // Give each client a new player token to keep track of player data
         clientPlayers = new HashMap<>();
 
-        initializeClientPlayerTokens();
         initializeHostPlayerToken(name);
+        initializePlayerPos(spawns);
     }
 
     // Game map
@@ -56,17 +56,16 @@ public class GameHost extends GamePlayer {
     public HashMap<Integer, PlayerToken> clientPlayers;
 
     /**
-     * Create tokens for the host
+     * TODO rewrite this to what it actually does now
+     * which is put them at their spawn points
      */
-    private void initializeClientPlayerTokens(){
-        // Set token character states to normal default and give connection ID to token
-        for (Connection c : host.connections){
-            PlayerToken token = new PlayerToken();
-            token.charState = PlayerToken.CHARACTER_STATES.PLAYERNORMAL;
-            token.ID = c.getID();
-            clientPlayers.put(c.getID(), token);
+    private void initializePlayerPos(List<GridPoint2> spawns){
+        for (PlayerToken player : clientPlayers.values()){
+            // We ensure that we map things correctly
+            GridPoint2 pos = spawns.remove(0);
+            player.position = pos;
+            player.spawnLoc = pos;
         }
-
     }
     /**
      * Create token for the host
@@ -164,7 +163,7 @@ public class GameHost extends GamePlayer {
                 cardPlayerTokenMap.put(currentCard, clientPlayers.get(key));
             }
             // Sort cards by card priority
-            Collections.sort(cardList, new Card.cardComparator());
+            cardList.sort(new Card.cardComparator());
 
             // Add first card from each players card selections to cardsPerPlayerTurn
             // This way all cards have now been mapped to each player, but are now saved as which order the cards will be processed

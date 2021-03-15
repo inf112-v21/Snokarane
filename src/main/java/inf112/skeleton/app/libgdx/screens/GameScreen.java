@@ -8,10 +8,12 @@ import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.tiles.StaticTiledMapTile;
+import com.badlogic.gdx.math.GridPoint2;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import inf112.skeleton.app.game.GameClient;
 import inf112.skeleton.app.game.GameHost;
@@ -36,7 +38,6 @@ public class GameScreen extends ScreenAdapter {
 
     // Layers of the map
     private TiledMapTileLayer playerLayer;
-    private TiledMapTileLayer holeLayer;
 
     // Flags on the map are stored here for easy access
     // TODO: this should really only useful in GameHost
@@ -102,7 +103,8 @@ public class GameScreen extends ScreenAdapter {
         // Start connection to current clients. This is to be able to accept data transfers from clients
         this.network.initConnections();
         // Starts GameHost session using network that was initialized
-        gamePlayer = new GameHost((NetworkHost)network, playerName);
+        List<GridPoint2> spawns = getStartPositions((TiledMapTileLayer) game.tiledMap.getLayers().get("Spawn"));
+        gamePlayer = new GameHost((NetworkHost)network, playerName, spawns);
         gamePlayer.setMap(map);
         gamePlayer.drawCards();
     }
@@ -373,12 +375,11 @@ public class GameScreen extends ScreenAdapter {
     public void loadMapLayers(TiledMap tiledMap){
         // Separate each layer from the tiledMap
         playerLayer = (TiledMapTileLayer) tiledMap.getLayers().get("Player");
-        holeLayer = (TiledMapTileLayer) tiledMap.getLayers().get("Hole");
         TiledMapTileLayer flagLayer = (TiledMapTileLayer) tiledMap.getLayers().get("Flag");
 
         // Sneakily yoink the positions of the flags here, don't tell the OOP police
         getFlagPositionsFromLayer(flagLayer);
-        getHolePositionsFromLayer(holeLayer);
+        getHolePositionsFromLayer((TiledMapTileLayer) tiledMap.getLayers().get("Hole"));
     }
     /**
      * Get all flag positions in layer flag layer
@@ -396,6 +397,19 @@ public class GameScreen extends ScreenAdapter {
         }
         flagPositions.addAll(flags);
     }
+    private List<GridPoint2> getStartPositions(TiledMapTileLayer startLayer) {
+        List<GridPoint2> spawns = new ArrayList<>();
+        for (int i = 0; i <= startLayer.getWidth(); i++){
+            for (int j = 0; j <= startLayer.getHeight(); j++){
+                // getCell returns null if nothing is found in the current cell in this layer
+                if (startLayer.getCell(i, j) != null) {
+                    spawns.add(new GridPoint2(i, j));
+                }
+            }
+        }
+        return spawns;
+    }
+
     //TODO: FIX THIS TO MAKE IT MORE SEPARATED
     private void getHolePositionsFromLayer(TiledMapTileLayer holeLayer){
         for (int i = 0; i <= holeLayer.getWidth(); i++){
