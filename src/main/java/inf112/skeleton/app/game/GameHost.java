@@ -48,7 +48,7 @@ public class GameHost extends GamePlayer {
     private int cardsProcessedPerRound = 5;
     private int currentCardRound = 1;
     private long timeSinceLastCardProcessed = System.currentTimeMillis();
-    private long pauseBetweenEachCardProcess = 1000;
+    private long pauseBetweenEachCardProcess = 300;
 
     private NetworkHost host;
 
@@ -196,7 +196,6 @@ public class GameHost extends GamePlayer {
 
         if(winner != null) {
             host.sendWinner(winner);
-
         }
     }
 
@@ -204,10 +203,12 @@ public class GameHost extends GamePlayer {
      * Handle single selection of a card for all players
      */
     public void handleSingleCardRound(){
+
         if (System.currentTimeMillis() >= timeSinceLastCardProcessed+pauseBetweenEachCardProcess){
             // If current Nth card list empty, start next round of cards
             if (currentCardListBeingProcessed.size() == 0){
                 getNthSelectionFromEachPlayer();
+                System.out.println("Number of cards being processed this round...." + currentCardListBeingProcessed.size());
 
                 // Increment N, so next round the card list becomes each N+1-th card selection
                 // e.g. last round was Card 1 for each player, next is card 2 for each player
@@ -219,7 +220,7 @@ public class GameHost extends GamePlayer {
         }
 
         // Reset card delay variables for next turn
-        if (currentCardRound >= cardsProcessedPerRound){
+        if (currentCardRound >= cardsProcessedPerRound+2){
             resetCardDelayVariables();
         }
     }
@@ -228,20 +229,8 @@ public class GameHost extends GamePlayer {
      * Get Nth selection of cards from each player
      */
     private void getNthSelectionFromEachPlayer(){
-        // Get Nth card each player chose, with N being cards per player turn
-        for (List<Card> cl : cardsPerPlayerTurn){
-            // Make sure index isn't out of bounds
-            if (cl.size()>currentCardRound-1){
-                // Get Nth card in each card list for each player
-                    /*
-                    Card 1, 2, 3, 4 <--- Player 1's cards
-                    Card 1, 2, 3, 4 <--- Player 2's cards
-                    currentCardListBeingProcessed will then get:
-                        Card 1 <-- Player 1, Card 1 <--- Player 2
-                    if currentCardRound is 1
-                     */
-                currentCardListBeingProcessed.add(cl.get(currentCardRound-1));
-            }
+        if (cardsPerPlayerTurn.size() > 0) {
+            currentCardListBeingProcessed.addAll(cardsPerPlayerTurn.remove(0));
         }
     }
 
