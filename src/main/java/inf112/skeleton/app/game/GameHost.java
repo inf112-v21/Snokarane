@@ -151,10 +151,6 @@ public class GameHost extends GamePlayer {
         for (int i = 0; i<cardsProcessedPerRound; i++){
             List<Card> cardList = new ArrayList<>();
             for (int key : clientPlayers.keySet()){
-                // Check if the player is dead
-                if (clientPlayers.get(key).diedThisTurn || clientPlayers.get(key).isDead()){
-                    continue;
-                }
                 // Get next card for the given player and pop it so it can be played
                 List<Card> cards = host.playerCards.get(key);
 
@@ -181,7 +177,6 @@ public class GameHost extends GamePlayer {
         System.out.println("-------------------------------------");
         // Start processing each card sequentially
         isShowingCards = true;
-        resetPlayerTokens();
     }
 
     private void resetPlayerTokens(){
@@ -239,8 +234,11 @@ public class GameHost extends GamePlayer {
      * @param card card to handle
      */
     private void handleSinglePlayerCard(Card card){
-        // Move the clients player token
-        resolveCard(card, cardPlayerTokenMap.get(card));
+        // Check if the player is dead
+        if (!cardPlayerTokenMap.get(card).diedThisTurn && !cardPlayerTokenMap.get(card).isDead()){
+            // Move the clients player token
+            resolveCard(card, cardPlayerTokenMap.get(card));
+        }
 
         System.out.println("-------------------------------------");
         System.out.println("Processing card selection round nr. "+currentCardRound);
@@ -259,6 +257,9 @@ public class GameHost extends GamePlayer {
         currentCardListBeingProcessed.clear();
         cardPlayerTokenMap.clear();
         currentCardRound = 1;
+
+        // Should maybe be another place
+        resetPlayerTokens();
     }
 
     /**
