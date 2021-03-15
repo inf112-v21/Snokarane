@@ -11,7 +11,8 @@ import java.util.Collections;
  * This class contains information the client needs to interact with the game
  */
 public class GameClient extends GamePlayer {
-
+    //TODO Maybe do this differently?
+    public String name;
     /**
      * @param network client network that has a connection to host
      */
@@ -21,7 +22,7 @@ public class GameClient extends GamePlayer {
         super();
         network.gameClient = this;
         client = network;
-        client.giveNickname(name);
+        this.name = name;
     }
 
     private NetworkClient client;

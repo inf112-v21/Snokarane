@@ -146,7 +146,7 @@ public class GameHost extends GamePlayer {
      */
     private void processCards() {
         System.out.println("-------------------------------------");
-        System.out.println("Perparing card selections...");
+        System.out.println("Preparing card selections...");
         // iterator i is same as client connection id
         for (int i = 0; i<cardsProcessedPerRound; i++){
             List<Card> cardList = new ArrayList<>();

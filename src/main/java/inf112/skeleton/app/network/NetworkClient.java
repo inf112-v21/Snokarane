@@ -37,7 +37,12 @@ public class NetworkClient extends Network {
         client.addListener(new Listener.ThreadedListener(new Listener() {
             public void received (Connection connection, Object object) {
                 if (object instanceof String) {
-                    gameClient.drawCardsFromDeck();
+                    if (object.equals("Name")) {
+                        giveNickname(gameClient.name);
+                    }
+                    else {
+                        gameClient.drawCardsFromDeck();
+                    }
                 }
                 if (object instanceof NetworkDataWrapper){
                     map.loadPlayers((NetworkDataWrapper) object);

@@ -43,8 +43,11 @@ public class NetworkHost extends Network {
                 }
                 if (object instanceof String) {
                     System.out.println("Recieved the name " + (String) object + " from client number " + c.getID());
-                    host.clientPlayers.get(c.getID()).name = (String) object;
-                    host.checkCards();
+                    PlayerToken token = new PlayerToken();
+                    token.charState = PlayerToken.CHARACTER_STATES.PLAYERNORMAL;
+                    token.ID = c.getID();
+                    token.name = (String) object;
+                    host.clientPlayers.put(c.getID(), token);
                 }
             }
         });
@@ -75,6 +78,11 @@ public class NetworkHost extends Network {
         server.sendToAllTCP("Draw cards!");
     }
 
+    public void promptName() {
+        System.out.println("Asked for client names");
+        server.sendToAllTCP("Name");
+    }
+
     /**
      * Broadcasts the winner so that all the clients and the host can display and handle it
      * @param winner The player who won.
@@ -90,6 +98,7 @@ public class NetworkHost extends Network {
      * It also sends the IDs to the clients.
      */
     public void initConnections() {
+        promptName();
         connections = server.getConnections();
         for (Connection c : connections) {
             server.sendToTCP(c.getID(), c.getID());
