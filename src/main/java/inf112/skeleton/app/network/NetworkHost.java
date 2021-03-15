@@ -42,11 +42,13 @@ public class NetworkHost extends Network {
                     host.checkCards();
                 }
                 if (object instanceof String) {
+                    //TODO Put all this in a public method in gamehost?
                     System.out.println("Recieved the name " + (String) object + " from client number " + c.getID());
                     PlayerToken token = new PlayerToken();
                     token.charState = PlayerToken.CHARACTER_STATES.PLAYERNORMAL;
                     token.ID = c.getID();
                     token.name = (String) object;
+                    token = host.initializePlayerPos(token);
                     host.clientPlayers.put(c.getID(), token);
                 }
             }
@@ -99,6 +101,9 @@ public class NetworkHost extends Network {
      */
     public void initConnections() {
         promptName();
+
+        //Fungerer dette asynkront?
+        sendMapLayerWrapper(host.wrapper());
         connections = server.getConnections();
         for (Connection c : connections) {
             server.sendToTCP(c.getID(), c.getID());

@@ -25,7 +25,7 @@ public class GameHost extends GamePlayer {
     /**
      * @param network connection to be used in game
      */
-    public GameHost(NetworkHost network, String name, List<GridPoint2> spawns){
+    public GameHost(NetworkHost network){
         // Add cards to deck
         super();
         host = network;
@@ -33,9 +33,6 @@ public class GameHost extends GamePlayer {
 
         // Give each client a new player token to keep track of player data
         clientPlayers = new HashMap<>();
-
-        initializeHostPlayerToken(name);
-        initializePlayerPos(spawns);
     }
 
     // Game map
@@ -59,24 +56,32 @@ public class GameHost extends GamePlayer {
      * TODO rewrite this to what it actually does now
      * which is put them at their spawn points
      */
-    private void initializePlayerPos(List<GridPoint2> spawns){
-        for (PlayerToken player : clientPlayers.values()){
-            // We ensure that we map things correctly
-            GridPoint2 pos = spawns.remove(0);
-            player.position = pos;
-            player.spawnLoc = pos;
-        }
+    public PlayerToken initializePlayerPos(PlayerToken player){
+        GridPoint2 pos = map.spawnPoints.remove(0);
+
+        System.out.println("X pos " + pos.x);
+        System.out.println("Y pos " + pos.y);
+
+        player.spawnLoc.x = pos.x;
+        player.spawnLoc.y = pos.y;
+
+        player.position.x = pos.x;
+        player.position.y = pos.y;
+
+        return player;
     }
     /**
      * Create token for the host
      */
-    private void initializeHostPlayerToken(String name) {
+    public void initializeHostPlayerToken(String name) {
         // This is so processCards also includes the host
         PlayerToken token = new PlayerToken();
         token.charState = PlayerToken.CHARACTER_STATES.PLAYERNORMAL;
         token.name = name;
         token.ID = NetworkHost.hostID;
+        token = initializePlayerPos(token);
         clientPlayers.put(NetworkHost.hostID, token);
+
     }
 
     /**
@@ -144,8 +149,8 @@ public class GameHost extends GamePlayer {
      * Process card selection from all clients and host
      */
     private void processCards() {
-        System.out.println("-------------------------------------");
-        System.out.println("Preparing card selections...");
+        //System.out.println("-------------------------------------");
+        //System.out.println("Preparing card selections...");
         // iterator i is same as client connection id
         for (int i = 0; i<cardsProcessedPerRound; i++){
             List<Card> cardList = new ArrayList<>();
@@ -172,8 +177,8 @@ public class GameHost extends GamePlayer {
 
             System.out.println(cardsPerPlayerTurn.size()+". card selection ready.");
         }
-        System.out.println("Card selections for this turn ready.");
-        System.out.println("-------------------------------------");
+        //System.out.println("Card selections for this turn ready.");
+        //System.out.println("-------------------------------------");
         // Start processing each card sequentially
         isShowingCards = true;
     }
@@ -202,7 +207,7 @@ public class GameHost extends GamePlayer {
             // If current Nth card list empty, start next round of cards
             if (currentCardListBeingProcessed.size() == 0){
                 getNthSelectionFromEachPlayer();
-                System.out.println("Number of cards being processed this round...." + currentCardListBeingProcessed.size());
+                //System.out.println("Number of cards being processed this round...." + currentCardListBeingProcessed.size());
 
                 // Increment N, so next round the card list becomes each N+1-th card selection
                 // e.g. last round was Card 1 for each player, next is card 2 for each player
@@ -239,8 +244,8 @@ public class GameHost extends GamePlayer {
             resolveCard(card, cardPlayerTokenMap.get(card));
         }
 
-        System.out.println("-------------------------------------");
-        System.out.println("Processing card selection round nr. "+currentCardRound);
+        //System.out.println("-------------------------------------");
+        //System.out.println("Processing card selection round nr. "+currentCardRound);
 
         map.loadPlayers(wrapper());
         host.sendMapLayerWrapper(wrapper());
@@ -265,7 +270,7 @@ public class GameHost extends GamePlayer {
      * Initialize wrapper and add player tokens to wrapper for transfer
      * @return initialized wrapper
      */
-    private NetworkDataWrapper wrapper() {
+    public NetworkDataWrapper wrapper() {
         NetworkDataWrapper wrapper = new NetworkDataWrapper();
         wrapper.PlayerTokens.addAll(clientPlayers.values());
         return wrapper;

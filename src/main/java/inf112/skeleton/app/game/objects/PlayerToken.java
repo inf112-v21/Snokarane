@@ -8,10 +8,10 @@ import java.util.*;
 public class PlayerToken {
 
     // Player position initialized at 0, 0
-    public GridPoint2 position;
+    public GridPoint2 position = new GridPoint2(0, 0);
 
     // Spawn location
-    public GridPoint2 spawnLoc;
+    public GridPoint2 spawnLoc = new GridPoint2(0, 0);
     // All flags visited
     private final List<Flag> flagsVisited = new ArrayList<>();
 

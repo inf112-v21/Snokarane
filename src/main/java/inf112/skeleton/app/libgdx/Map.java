@@ -25,6 +25,8 @@ public class Map {
      */
     public PlayerRenderInformation [][] playerLayer = new PlayerRenderInformation [BOARD_X][BOARD_Y];
     public boolean [][] holeLayer = new boolean[BOARD_X][BOARD_Y];
+
+    //TODO blir bare mellomlagret her, kanskje en dårlig ide?
     public List<GridPoint2> spawnPoints = new ArrayList<>();
 
     /**
@@ -81,7 +83,10 @@ public class Map {
     }
 
     public boolean isHole(int x, int y) {
-        return holeLayer[x][y] == true;
+        if (holeLayer[x][y] != true) {
+            return false;
+        }
+            return true;
     }
 
     /**
