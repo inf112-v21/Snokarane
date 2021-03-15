@@ -42,8 +42,8 @@ import java.util.List;
  */
 public class Game extends InputAdapter implements ApplicationListener {
 
-    public static int BOARD_X = 10;
-    public static int BOARD_Y = 10;
+    public static int BOARD_X = 12;
+    public static int BOARD_Y = 12;
 
     /**
      * These functions are not currently in use, but inherited from superclass

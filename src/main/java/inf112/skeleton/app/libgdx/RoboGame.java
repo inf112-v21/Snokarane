@@ -37,7 +37,7 @@ public class RoboGame extends Game{
         this.skin = new Skin(Gdx.files.internal("skins/skin/glassy-ui.json"));
 
         // Load .tmx file from disk
-        tiledMap = loadTileMapFromFile("10x10-testmap.tmx");
+        tiledMap = loadTileMapFromFile("hazardous.tmx");
 
         // Start camera/rendering
         initializeRendering();
