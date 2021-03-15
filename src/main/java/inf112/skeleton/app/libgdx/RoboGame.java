@@ -24,8 +24,8 @@ public class RoboGame extends Game{
     public Skin skin;
 
     // Board dimensions
-    public static int BOARD_X = 10;
-    public static int BOARD_Y = 10;
+    public static int BOARD_X = 12;
+    public static int BOARD_Y = 12;
 
     public OrthogonalTiledMapRenderer renderer;
     public TiledMap tiledMap;
@@ -52,11 +52,15 @@ public class RoboGame extends Game{
     private void initializeRendering(){
         // Initialize camera object
         OrthographicCamera camera = new OrthographicCamera();
+
+        // for card deck
+        float cardDeckSize = 1.5f;
+
         // Set camera to orthographic, size board dimensions
-        camera.setToOrtho(false, BOARD_X, BOARD_Y+2f); // TODO fix hardcoded y values for card deck visuals
-        // Set camera X-position
-        camera.position.x = 5F;
-        camera.position.y = 4F;
+        camera.setToOrtho(false, BOARD_X, BOARD_Y +(cardDeckSize)*2); // TODO fix hardcoded y values for card deck visuals
+        // Set camera X-position                                                               TODO ok so i guess i fixed it but
+        camera.position.x = (BOARD_X/2);                                                    // TODO now im even more confused
+        camera.position.y = (BOARD_Y/2)-(cardDeckSize);
         camera.update();
 
         // Initialize renderer                                  v--- 300F is tile size

@@ -71,7 +71,7 @@ public class GameScreen extends ScreenAdapter {
         Texture cardBackgroundTexture = new Texture(Gdx.files.internal("cards/cards-background.png"));
         Image cardBackground = new Image(cardBackgroundTexture);
         cardBackground.setPosition(0, 0);
-        cardBackground.setSize(Gdx.graphics.getWidth(), 170);
+        cardBackground.setSize(Gdx.graphics.getWidth(), 200);
         stage.addActor(cardBackground);
 
         create(isHost, ip, playerName);
