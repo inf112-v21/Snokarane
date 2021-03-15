@@ -269,3 +269,31 @@ Fortsette på planlegging av prosjekt og prosjektstruktur
 
 **Neste møte:** 08.03.2021, jobbe med presentasjon
 
+## **Referat møte måndag 08.03.2021**
+
+**Stad:** Discord, tid 1215
+
+**Agenda:** Jobbe med presentasjon
+
+**Møtte:** Jørgen Lohne, Hallvard Kobbeltveit, Audun Ljone Henriksen og Peter Augustin Gillow Krooni
+
+**Diskusjon/arbeid:**
+- laga powerpoint 
+- vart einige om punkter vi skulle ha med i presentasjon
+
+**Neste møte:** 10.03.2021
+
+## **Referat møte onsdag 10.03.2021**
+
+**Stad:** Discord, tid 1215
+
+**Agenda:** Planlegging av neste innlevering
+
+**Møtte:** Jørgen Lohne, Hallvard Kobbeltveit, Audun Ljone Henriksen og Peter Augustin Gillow Krooni
+
+**Diskusjon/arbeid:**
+- Laga ei liste av ideer som kan implementerast til neste innlevering
+- Separerte lista med å lage ei prioritert liste og ei "kjekt å ha" liste
+- Fordelte arbeidsoppgåver ved at Audun og Hallvard har ansvaret for å implementere ny spel-logikk og Jørgen og Peter har ansvaret for GUI
+
+**Neste møte:** 15.03.2021
