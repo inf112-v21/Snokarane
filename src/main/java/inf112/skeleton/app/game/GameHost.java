@@ -352,7 +352,7 @@ public class GameHost extends GamePlayer {
                 player.died();
                 break;
             }
-            else if (map.isWall(wouldEndUp.x, wouldEndUp.y)){
+            else if (map.isWall(player.position.x, player.position.y, direction) || map.isWall(wouldEndUp.x, wouldEndUp.y, oppositeDir(direction))){
                 break;
             }
             else if (map.playerLayer[wouldEndUp.x][wouldEndUp.y].state != PlayerToken.CHARACTER_STATES.NONE) {
@@ -360,7 +360,7 @@ public class GameHost extends GamePlayer {
                 for (PlayerToken opponent : clientPlayers.values()) {
                     if (opponent.position.x == wouldEndUp.x && opponent.position.y == wouldEndUp.y) {
                         GridPoint2 oppWouldEndUp = opponent.wouldEndUp(direction);
-                        if (map.isWall(oppWouldEndUp.x, oppWouldEndUp.y)){
+                        if (map.isWall(opponent.position.x, opponent.position.y, direction) || map.isWall(oppWouldEndUp.x, oppWouldEndUp.y, oppositeDir(direction))){
                             break;
                         }
                         opponent.move(direction);
