@@ -356,9 +356,13 @@ public class GameHost extends GamePlayer {
                 break;
             }
             else if (map.playerLayer[wouldEndUp.x][wouldEndUp.y].state != PlayerToken.CHARACTER_STATES.NONE) {
-                // TODO Fix this maybe?
+                // TODO Fix this maybe? Also add support for chain-pushing
                 for (PlayerToken opponent : clientPlayers.values()) {
                     if (opponent.position.x == wouldEndUp.x && opponent.position.y == wouldEndUp.y) {
+                        GridPoint2 oppWouldEndUp = opponent.wouldEndUp(direction);
+                        if (map.isWall(oppWouldEndUp.x, oppWouldEndUp.y)){
+                            break;
+                        }
                         opponent.move(direction);
                     }
                 }
