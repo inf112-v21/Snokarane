@@ -427,6 +427,9 @@ public class GameScreen extends ScreenAdapter {
                 if (gearLayer.getCell(i, j) != null && gearLayer.getCell(i, j).getTile().getId() == 54) {
                     map.gearLayer[i][j] = 1;
                 }
+                if (gearLayer.getCell(i, j) != null && gearLayer.getCell(i, j).getTile().getId() == 54) {
+                    map.gearLayer[i][j] = 1;
+                }
                 else if (gearLayer.getCell(i, j) != null && gearLayer.getCell(i, j).getTile().getId() == 53) {
                     map.gearLayer[i][j] = 2;
                 }

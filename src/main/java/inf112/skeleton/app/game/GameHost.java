@@ -146,8 +146,12 @@ public class GameHost extends GamePlayer {
     }
     public void endOfTurn(){
         for (PlayerToken token : clientPlayers.values()){
-            if (map.isGear(token.position.x,  token.position.y)){
-
+            int rotation = map.isGear(token.position.x, token.position.y);
+            if (rotation == 1) {
+                token.rotate(CardType.TURNRIGHT);
+            }
+            if (rotation == 2){
+                token.rotate(CardType.TURNLEFT);
             }
 
         }
@@ -227,6 +231,7 @@ public class GameHost extends GamePlayer {
 
         // Reset card delay variables for next turn
         if (currentCardRound >= cardsProcessedPerRound+2){
+            endOfTurn();
             resetCardDelayVariables();
         }
     }

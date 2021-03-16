@@ -87,8 +87,8 @@ public class Map {
         return holeLayer[x][y];
     }
 
-    public boolean isGear(int x, int y) {
-        return gearLayer[x][y] == 1;
+    public int isGear(int x, int y) {
+        return gearLayer[x][y];
     }
     /**
      * Loads player from network into map
