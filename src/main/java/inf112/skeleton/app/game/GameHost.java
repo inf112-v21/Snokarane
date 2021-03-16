@@ -352,6 +352,7 @@ public class GameHost extends GamePlayer {
             }
             else if (map.isHole(wouldEndUp.x, wouldEndUp.y)) {
                 System.out.println("Player " + player.name + " died");
+                System.out.println("Hole x: " + wouldEndUp.x + " Hole y: " + wouldEndUp.y);
                 player.died();
                 return true;
             }
@@ -360,7 +361,7 @@ public class GameHost extends GamePlayer {
                 // I.e if the player is being pushed into a wall
                 boolean didOppMove = false;
                 for (PlayerToken opponent : clientPlayers.values()) {
-                    if (opponent.position.x == wouldEndUp.x && opponent.position.y == wouldEndUp.y) {
+                    if (opponent != player && opponent.position.x == wouldEndUp.x && opponent.position.y == wouldEndUp.y) {
                         didOppMove = movePlayer(opponent, 1, direction);
                     }
                 }
