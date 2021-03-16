@@ -418,8 +418,9 @@ public class GameScreen extends ScreenAdapter {
     private void getBoardElementPositionsFromLayer(TiledMap tiledMap){
         TiledMapTileLayer holeLayer = (TiledMapTileLayer) tiledMap.getLayers().get("Hole");
         TiledMapTileLayer gearLayer = (TiledMapTileLayer) tiledMap.getLayers().get("Gear");
-        for (int i = 0; i <= holeLayer.getWidth(); i++){
-            for (int j = 0; j <= holeLayer.getHeight(); j++){
+        TiledMapTileLayer wallLayer = (TiledMapTileLayer) tiledMap.getLayers().get("Wall");
+        for (int i = 0; i < holeLayer.getWidth(); i++){
+            for (int j = 0; j < holeLayer.getHeight(); j++){
                 // getCell returns null if nothing is found in the current cell in this layer
                 if (holeLayer.getCell(i, j) != null) {
                     map.holeLayer[i][j] = true;
@@ -427,10 +428,14 @@ public class GameScreen extends ScreenAdapter {
                 if (gearLayer.getCell(i, j) != null && gearLayer.getCell(i, j).getTile().getId() == 54) {
                     map.gearLayer[i][j] = 1;
                 }
+                if (wallLayer.getCell(i, j) != null){
+                    map.wallLayer[i][j] = true;
+                }
                 else if (gearLayer.getCell(i, j) != null && gearLayer.getCell(i, j).getTile().getId() == 189) {
                     map.gearLayer[i][j] = 2;
                 }
                 else map.gearLayer[i][j] = 0;
+
             }
         }
     }

@@ -352,6 +352,9 @@ public class GameHost extends GamePlayer {
                 player.died();
                 break;
             }
+            else if (map.isWall(wouldEndUp.x, wouldEndUp.y)){
+                break;
+            }
             else if (map.playerLayer[wouldEndUp.x][wouldEndUp.y].state != PlayerToken.CHARACTER_STATES.NONE) {
                 // TODO Fix this maybe?
                 for (PlayerToken opponent : clientPlayers.values()) {

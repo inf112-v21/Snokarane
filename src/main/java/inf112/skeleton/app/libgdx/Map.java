@@ -26,6 +26,7 @@ public class Map {
     public PlayerRenderInformation [][] playerLayer = new PlayerRenderInformation [BOARD_X][BOARD_Y];
     public boolean [][] holeLayer = new boolean[BOARD_X][BOARD_Y];
     public int [][] gearLayer = new int[BOARD_X][BOARD_Y];
+    public boolean [][] wallLayer = new boolean[BOARD_X][BOARD_Y];
 
     //TODO blir bare mellomlagret her, kanskje en dårlig ide?
     public List<GridPoint2> spawnPoints = new ArrayList<>();
@@ -89,6 +90,10 @@ public class Map {
 
     public int isGear(int x, int y) {
         return gearLayer[x][y];
+    }
+
+    public boolean isWall(int x, int y){
+        return wallLayer[x][y];
     }
     /**
      * Loads player from network into map
