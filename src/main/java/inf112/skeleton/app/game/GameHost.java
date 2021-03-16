@@ -339,45 +339,41 @@ public class GameHost extends GamePlayer {
      * @param dist the number of steps you want to take
      * @param direction the direction you want to move, usually player.getDirection()
      */
-    private void movePlayer(PlayerToken player, int dist, PlayerToken.Direction direction) {
+    private boolean movePlayer(PlayerToken player, int dist, PlayerToken.Direction direction) {
         for(int i = 0; i < dist; i++) {
             GridPoint2 wouldEndUp = player.wouldEndUp(direction);
 
             if (map.isWall(player.position.x, player.position.y, direction) || (isInBounds(wouldEndUp.x, wouldEndUp.y) && map.isWall(wouldEndUp.x, wouldEndUp.y, oppositeDir(direction)))){
-                break;
+                return false;
             }
-            else if (isInBounds(wouldEndUp.x, wouldEndUp.y)) {
+            else if (!isInBounds(wouldEndUp.x, wouldEndUp.y)) {
                 player.died();
-                break;
+                return true;
             }
             else if (map.isHole(wouldEndUp.x, wouldEndUp.y)) {
                 System.out.println("Player " + player.name + " died");
                 player.died();
-                break;
+                return true;
             }
-
             else if (map.playerLayer[wouldEndUp.x][wouldEndUp.y].state != PlayerToken.CHARACTER_STATES.NONE) {
                 // TODO Fix this maybe? Also add support for chain-pushing. This contains a lot of bugs
                 // I.e if the player is being pushed into a wall
+                boolean didOppMove = false;
                 for (PlayerToken opponent : clientPlayers.values()) {
                     if (opponent.position.x == wouldEndUp.x && opponent.position.y == wouldEndUp.y) {
-                        GridPoint2 oppWouldEndUp = opponent.wouldEndUp(direction);
-                        if (map.isWall(opponent.position.x, opponent.position.y, direction) || map.isWall(oppWouldEndUp.x, oppWouldEndUp.y, oppositeDir(direction))){
-                            break;
-                        }
-                        opponent.move(direction);
+                        didOppMove = movePlayer(opponent, 1, direction);
                     }
                 }
-                player.move(direction);
+                if (didOppMove) player.move(direction);
                 // Don't think we need this, but better safe than sorry. Future proof!
-                if (player.diedThisTurn) break;
+                if (player.diedThisTurn) return didOppMove;
             }
             else {
                 player.move(direction);
-                if (player.diedThisTurn) break;
+                if (player.diedThisTurn) return true;
             }
-
         }
+        return true;
     }
 
     private PlayerToken.Direction oppositeDir(PlayerToken.Direction dir) {
