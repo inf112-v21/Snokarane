@@ -377,4 +377,11 @@ public class GameHost extends GamePlayer {
 
         }
     }
+
+    private PlayerToken.Direction oppositeDir(PlayerToken.Direction dir) {
+        if (dir == PlayerToken.Direction.NORTH) return PlayerToken.Direction.SOUTH;
+        if (dir == PlayerToken.Direction.SOUTH) return PlayerToken.Direction.NORTH;
+        if (dir == PlayerToken.Direction.EAST) return PlayerToken.Direction.WEST;
+        else return PlayerToken.Direction.EAST;
+    }
 }

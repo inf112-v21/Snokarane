@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.GL30;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.tiled.TiledMap;
+import com.badlogic.gdx.maps.tiled.TiledMapTile;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.tiles.StaticTiledMapTile;
@@ -429,7 +430,7 @@ public class GameScreen extends ScreenAdapter {
                     map.gearLayer[i][j] = 1;
                 }
                 if (wallLayer.getCell(i, j) != null){
-                    map.wallLayer[i][j] = true;
+                    setWallDirections(wallLayer.getCell(i, j), i, j);
                 }
                 else if (gearLayer.getCell(i, j) != null && gearLayer.getCell(i, j).getTile().getId() == 189) {
                     map.gearLayer[i][j] = 2;
@@ -438,6 +439,21 @@ public class GameScreen extends ScreenAdapter {
 
             }
         }
+    }
+
+    private void setWallDirections(TiledMapTileLayer.Cell wallCell, int i, int j){
+        //TODO a lot of these are lacking
+
+        // NORTH, EAST, SOUTH, WEST
+        if (wallCell.getTile().getId() == 24) map.wallLayer[i][j] = new boolean[] {true, false, false, true};
+        if (wallCell.getTile().getId() == 31) map.wallLayer[i][j] = new boolean[] {true, false, false, false};
+        if (wallCell.getTile().getId() == 16) map.wallLayer[i][j] = new boolean[] {true, true, false, false};
+        if (wallCell.getTile().getId() == 29) map.wallLayer[i][j] = new boolean[] {false, false, true, false};
+        if (wallCell.getTile().getId() == 30) map.wallLayer[i][j] = new boolean[] {false, false, false, true};
+        if (wallCell.getTile().getId() == 8) map.wallLayer[i][j] = new boolean[] {false, true, true, false};
+        if (wallCell.getTile().getId() == 23) map.wallLayer[i][j] = new boolean[] {true, true, false, false};
+        //if (wallCell.getTile().getId() == 11) map.wallLayer[i][j] = new boolean[] {true, false, false, true};
+
     }
     /**
      * These functions are not currently in use, but inherited from superclass
