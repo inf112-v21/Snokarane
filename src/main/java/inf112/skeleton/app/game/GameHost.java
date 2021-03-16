@@ -357,7 +357,8 @@ public class GameHost extends GamePlayer {
             }
 
             else if (map.playerLayer[wouldEndUp.x][wouldEndUp.y].state != PlayerToken.CHARACTER_STATES.NONE) {
-                // TODO Fix this maybe? Also add support for chain-pushing
+                // TODO Fix this maybe? Also add support for chain-pushing. This contains a lot of bugs
+                // I.e if the player is being pushed into a wall
                 for (PlayerToken opponent : clientPlayers.values()) {
                     if (opponent.position.x == wouldEndUp.x && opponent.position.y == wouldEndUp.y) {
                         GridPoint2 oppWouldEndUp = opponent.wouldEndUp(direction);
@@ -384,5 +385,9 @@ public class GameHost extends GamePlayer {
         if (dir == PlayerToken.Direction.SOUTH) return PlayerToken.Direction.NORTH;
         if (dir == PlayerToken.Direction.EAST) return PlayerToken.Direction.WEST;
         else return PlayerToken.Direction.EAST;
+    }
+
+    private boolean isInBounds(int x, int y) {
+        return !(x < 0 || x >= Game.BOARD_X || y < 0 || y >= Game.BOARD_Y);
     }
 }
