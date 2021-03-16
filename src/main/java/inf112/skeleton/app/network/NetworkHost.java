@@ -43,7 +43,7 @@ public class NetworkHost extends Network {
                 }
                 if (object instanceof String) {
                     //TODO Put all this in a public method in gamehost?
-                    System.out.println("Recieved the name " + (String) object + " from client number " + c.getID());
+                    System.out.println("Recieved the name " + object + " from client number " + c.getID());
                     PlayerToken token = new PlayerToken();
                     token.charState = PlayerToken.CHARACTER_STATES.PLAYERNORMAL;
                     token.ID = c.getID();
@@ -102,8 +102,6 @@ public class NetworkHost extends Network {
     public void initConnections() {
         promptName();
 
-        //Fungerer dette asynkront?
-        sendMapLayerWrapper(host.wrapper());
         connections = server.getConnections();
         for (Connection c : connections) {
             server.sendToTCP(c.getID(), c.getID());

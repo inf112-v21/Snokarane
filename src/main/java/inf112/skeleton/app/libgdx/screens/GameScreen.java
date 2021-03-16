@@ -97,13 +97,16 @@ public class GameScreen extends ScreenAdapter {
     }
     // Start game as host
     private void startHost(String playerName){
+
+        // Starts GameHost session using network that was initialized
+        gamePlayer = new GameHost((NetworkHost)network);
+        gamePlayer.setMap(map);
         // Send prompt to all connected clients
         Network.prompt("All players connected.", null);
         // Start connection to current clients. This is to be able to accept data transfers from clients
         this.network.initConnections();
-        // Starts GameHost session using network that was initialized
-        gamePlayer = new GameHost((NetworkHost)network);
-        gamePlayer.setMap(map);
+
+
         ((GameHost) gamePlayer).initializeHostPlayerToken(playerName);
         gamePlayer.drawCards();
     }
@@ -327,6 +330,9 @@ public class GameScreen extends ScreenAdapter {
             map = gamePlayer.updateMap(null);
             //
             if(network.isHost){
+                // TODO Also maybe fix this
+                ((GameHost)gamePlayer).host.sendMapLayerWrapper(((GameHost)gamePlayer).wrapper());
+                ((GameHost)gamePlayer).map.loadPlayers(((GameHost)gamePlayer).wrapper());
                if (((GameHost)gamePlayer).isShowingCards){
                    ((GameHost)gamePlayer).handleSingleCardRound();
                 }

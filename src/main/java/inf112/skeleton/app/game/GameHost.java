@@ -36,7 +36,7 @@ public class GameHost extends GamePlayer {
     }
 
     // Game map
-    private Map map;
+    public Map map;
 
     public boolean isShowingCards = false;
     private List<List<Card>> cardsPerPlayerTurn = new ArrayList<>();
@@ -47,7 +47,7 @@ public class GameHost extends GamePlayer {
     private long timeSinceLastCardProcessed = System.currentTimeMillis();
     private long pauseBetweenEachCardProcess = 300;
 
-    private NetworkHost host;
+    public NetworkHost host;
 
     // Has all clients (which contain connnection ID's) as well as their tokens
     public HashMap<Integer, PlayerToken> clientPlayers;
