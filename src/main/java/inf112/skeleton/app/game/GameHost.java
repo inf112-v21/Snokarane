@@ -343,7 +343,10 @@ public class GameHost extends GamePlayer {
         for(int i = 0; i < dist; i++) {
             GridPoint2 wouldEndUp = player.wouldEndUp(direction);
 
-            if (wouldEndUp.x < 0 || wouldEndUp.x >= Game.BOARD_X || wouldEndUp.y < 0 || wouldEndUp.y >= Game.BOARD_Y) {
+            if (map.isWall(player.position.x, player.position.y, direction) || (isInBounds(wouldEndUp.x, wouldEndUp.y) && map.isWall(wouldEndUp.x, wouldEndUp.y, oppositeDir(direction)))){
+                break;
+            }
+            else if (isInBounds(wouldEndUp.x, wouldEndUp.y)) {
                 player.died();
                 break;
             }
@@ -352,9 +355,7 @@ public class GameHost extends GamePlayer {
                 player.died();
                 break;
             }
-            else if (map.isWall(player.position.x, player.position.y, direction) || map.isWall(wouldEndUp.x, wouldEndUp.y, oppositeDir(direction))){
-                break;
-            }
+
             else if (map.playerLayer[wouldEndUp.x][wouldEndUp.y].state != PlayerToken.CHARACTER_STATES.NONE) {
                 // TODO Fix this maybe? Also add support for chain-pushing
                 for (PlayerToken opponent : clientPlayers.values()) {
