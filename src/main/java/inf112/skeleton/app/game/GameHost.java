@@ -144,7 +144,14 @@ public class GameHost extends GamePlayer {
         host.sendMapLayerWrapper(wrapper());
         map.loadPlayers(wrapper());
     }
+    public void endOfTurn(){
+        for (PlayerToken token : clientPlayers.values()){
+            if (map.isGear(token.position.x,  token.position.y)){
 
+            }
+
+        }
+    }
     /**
      * Process card selection from all clients and host
      */

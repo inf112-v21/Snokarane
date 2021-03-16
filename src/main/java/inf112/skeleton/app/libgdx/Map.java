@@ -25,6 +25,7 @@ public class Map {
      */
     public PlayerRenderInformation [][] playerLayer = new PlayerRenderInformation [BOARD_X][BOARD_Y];
     public boolean [][] holeLayer = new boolean[BOARD_X][BOARD_Y];
+    public int [][] gearLayer = new int[BOARD_X][BOARD_Y];
 
     //TODO blir bare mellomlagret her, kanskje en dårlig ide?
     public List<GridPoint2> spawnPoints = new ArrayList<>();
@@ -83,12 +84,12 @@ public class Map {
     }
 
     public boolean isHole(int x, int y) {
-        if (holeLayer[x][y] != true) {
-            return false;
-        }
-            return true;
+        return holeLayer[x][y];
     }
 
+    public boolean isGear(int x, int y) {
+        return gearLayer[x][y] == 1;
+    }
     /**
      * Loads player from network into map
      * @param wrapper The NetworkDataWrapper that contains the players

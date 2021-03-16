@@ -384,7 +384,7 @@ public class GameScreen extends ScreenAdapter {
 
         // Sneakily yoink the positions of the flags here, don't tell the OOP police
         getFlagPositionsFromLayer(flagLayer);
-        getHolePositionsFromLayer((TiledMapTileLayer) tiledMap.getLayers().get("Hole"));
+        getBoardElementPositionsFromLayer(tiledMap);
         getStartPositions((TiledMapTileLayer) tiledMap.getLayers().get("Spawn"));
     }
     /**
@@ -415,12 +415,17 @@ public class GameScreen extends ScreenAdapter {
     }
 
     //TODO: FIX THIS TO MAKE IT MORE SEPARATED
-    private void getHolePositionsFromLayer(TiledMapTileLayer holeLayer){
+    private void getBoardElementPositionsFromLayer(TiledMap tiledMap){
+        TiledMapTileLayer holeLayer = (TiledMapTileLayer) tiledMap.getLayers().get("Hole");
+        TiledMapTileLayer gearLayer = (TiledMapTileLayer) tiledMap.getLayers().get("Gear");
         for (int i = 0; i <= holeLayer.getWidth(); i++){
             for (int j = 0; j <= holeLayer.getHeight(); j++){
                 // getCell returns null if nothing is found in the current cell in this layer
                 if (holeLayer.getCell(i, j) != null) {
                     map.holeLayer[i][j] = true;
+                }
+                if (gearLayer.getCell(i, j) != null && gearLayer.getCell(i, j).getTile().getId() == 54) {
+                    map.gearLayer[i][j] = 1;
                 }
                 else if (gearLayer.getCell(i, j) != null && gearLayer.getCell(i, j).getTile().getId() == 53) {
                     map.gearLayer[i][j] = 2;
