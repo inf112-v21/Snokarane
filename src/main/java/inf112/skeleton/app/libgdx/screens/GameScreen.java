@@ -248,13 +248,10 @@ public class GameScreen extends ScreenAdapter {
 
         for (CardType t : duplicates.keySet()){
             int duplicatesCount = duplicates.get(t);
-            System.out.println(duplicatesCount);
 
+            // TODO this doesn't seem to want to render duplicate images no matter what i try...
             for (int i = 0; i<duplicatesCount; i++){
                 Image img = cardTemplates.get(t);
-                if (img == null){
-                    System.out.println("gay cum");
-                }
                 img.setPosition(baseX, baseY);
 
                 baseX += perCardIncrementX;
