@@ -66,6 +66,7 @@ public class PlayerToken {
         diedThisTurn = true;
         hp --;
         playerDirection = Direction.NORTH;
+        System.out.println(name + " died a tragic death");
      }
 
 

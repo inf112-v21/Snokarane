@@ -426,11 +426,11 @@ public class GameScreen extends ScreenAdapter {
                 if (holeLayer.getCell(i, j) != null) {
                     map.holeLayer[i][j] = true;
                 }
-                if (gearLayer.getCell(i, j) != null && gearLayer.getCell(i, j).getTile().getId() == 54) {
-                    map.gearLayer[i][j] = 1;
-                }
                 if (wallLayer.getCell(i, j) != null){
                     setWallDirections(wallLayer.getCell(i, j), i, j);
+                }
+                if (gearLayer.getCell(i, j) != null && gearLayer.getCell(i, j).getTile().getId() == 54) {
+                    map.gearLayer[i][j] = 1;
                 }
                 else if (gearLayer.getCell(i, j) != null && gearLayer.getCell(i, j).getTile().getId() == 189) {
                     map.gearLayer[i][j] = 2;

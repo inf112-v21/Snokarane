@@ -45,7 +45,7 @@ public class GameHost extends GamePlayer {
     private int cardsProcessedPerRound = 5;
     private int currentCardRound = 1;
     private long timeSinceLastCardProcessed = System.currentTimeMillis();
-    private long pauseBetweenEachCardProcess = 300;
+    private long pauseBetweenEachCardProcess = 300 ;
 
     public NetworkHost host;
 
@@ -58,9 +58,6 @@ public class GameHost extends GamePlayer {
      */
     public PlayerToken initializePlayerPos(PlayerToken player){
         GridPoint2 pos = map.spawnPoints.remove(0);
-
-        System.out.println("X pos " + pos.x);
-        System.out.println("Y pos " + pos.y);
 
         player.spawnLoc.x = pos.x;
         player.spawnLoc.y = pos.y;
@@ -145,15 +142,25 @@ public class GameHost extends GamePlayer {
         map.loadPlayers(wrapper());
     }
     public void endOfTurn(){
-        for (PlayerToken token : clientPlayers.values()){
+        List<Integer> playersToKill = new ArrayList<>();
+        for (Integer key : clientPlayers.keySet()){
+            PlayerToken token = clientPlayers.get(key);
+            if (token.isDead()) {
+                playersToKill.add(key);
+            }
             int rotation = map.isGear(token.position.x, token.position.y);
             if (rotation == 1) {
+                System.out.println(token.name + " is on a gear!");
                 token.rotate(CardType.TURNRIGHT);
             }
             if (rotation == 2){
+                System.out.println(token.name + " is on a gear!");
                 token.rotate(CardType.TURNLEFT);
             }
-
+        }
+        for (Integer key: playersToKill) {
+            clientPlayers.remove(clientPlayers.remove(key));
+            host.alivePlayers.remove(key);
         }
     }
     /**
@@ -340,19 +347,19 @@ public class GameHost extends GamePlayer {
      * @param direction the direction you want to move, usually player.getDirection()
      */
     private boolean movePlayer(PlayerToken player, int dist, PlayerToken.Direction direction) {
-        for(int i = 0; i < dist; i++) {
-            GridPoint2 wouldEndUp = player.wouldEndUp(direction);
+        if (dist == 0) {
+            return false;
+        }
+        GridPoint2 wouldEndUp = player.wouldEndUp(direction);
 
-            if (map.isWall(player.position.x, player.position.y, direction) || (isInBounds(wouldEndUp.x, wouldEndUp.y) && map.isWall(wouldEndUp.x, wouldEndUp.y, oppositeDir(direction)))){
-                return false;
-            }
+        if (map.isWall(player.position.x, player.position.y, direction) || (isInBounds(wouldEndUp.x, wouldEndUp.y) && map.isWall(wouldEndUp.x, wouldEndUp.y, oppositeDir(direction)))){
+            return false;
+        }
             else if (!isInBounds(wouldEndUp.x, wouldEndUp.y)) {
                 player.died();
                 return true;
             }
             else if (map.isHole(wouldEndUp.x, wouldEndUp.y)) {
-                System.out.println("Player " + player.name + " died");
-                System.out.println("Hole x: " + wouldEndUp.x + " Hole y: " + wouldEndUp.y);
                 player.died();
                 return true;
             }
@@ -373,7 +380,10 @@ public class GameHost extends GamePlayer {
                 player.move(direction);
                 if (player.diedThisTurn) return true;
             }
-        }
+            // TODO this is shady as heck
+            map.loadPlayers(wrapper());
+            //host.sendMapLayerWrapper(wrapper());
+            movePlayer(player, dist-1, direction);
         return true;
     }
 
