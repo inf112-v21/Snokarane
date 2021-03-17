@@ -10,6 +10,7 @@ import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.tiles.StaticTiledMapTile;
 import com.badlogic.gdx.scenes.scene2d.*;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import inf112.skeleton.app.game.GameClient;
@@ -189,8 +190,8 @@ public class GameScreen extends ScreenAdapter {
     * Helper for card image loading with touchup event
      */
     private Image newClickableCard(CardType cardType, TextureRegion t){
-        int cardW = 125;
-        int cardH = 200;
+        int cardW = 100;
+        int cardH = 170;
 
         Image img = new Image(t);
         img.setSize(cardW, cardH);
@@ -235,10 +236,10 @@ public class GameScreen extends ScreenAdapter {
         // TODO this isn't a very scalable solution. The reason this check is here is because render() calls loadCardDeck when actors reciev
         if (stage.getActors().size>=9)
         duplicates.clear();
-        int baseX = 20;
-        int baseY = 0;
+        int baseX = 15;
+        int baseY = 15;
 
-        int perCardIncrementX = 130;
+        int perCardIncrementX = 105;
 
         getDuplicateCards();
 
@@ -277,6 +278,23 @@ public class GameScreen extends ScreenAdapter {
         }
     }
     /**
+     * Back button
+     */
+    private void loadBackButton(){
+
+        TextButton backButton = new TextButton("Back", game.skin, "small");
+        backButton.setWidth(225);
+        backButton.setPosition(Gdx.graphics.getWidth()-240f, 70);
+        backButton.addListener(new InputListener(){
+            @Override
+            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+                game.setScreen(new MenuScreen(game));
+                return true;
+            }
+        });
+        stage.addActor(backButton);
+    }
+    /**
      * Decorative background for card deck
      */
     private void loadCardBackground(){
@@ -288,6 +306,7 @@ public class GameScreen extends ScreenAdapter {
     }
     private void loadActorsInOrder(){
         loadCardBackground();
+        loadBackButton();
         loadCardDeck(); //TODO this already gets loaded in render. loading this in render is a bad idea, should be done here exclusively but need to find way to load deck at start of game too.
     }
     /**
