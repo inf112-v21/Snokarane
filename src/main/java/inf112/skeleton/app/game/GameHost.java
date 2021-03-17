@@ -100,14 +100,13 @@ public class GameHost extends GamePlayer {
     }
 
     public void checkCards(){
-        if (host.playerCards.keySet().size() == host.connections.length+1) {
+        if (host.playerCards.keySet().size() == host.alivePlayers.size()) {
             processCards();
 
             // Reset the chosen cards and the hand
             chosenCards = new ArrayList<>();
             hand = new ArrayList<>();
             host.playerCards.clear();
-            drawCards();
         }
     }
 
@@ -116,7 +115,6 @@ public class GameHost extends GamePlayer {
      */
     public void drawCards(){
         host.promptCardDraw();  // tell clients to draw cards
-        drawCardsFromDeck(); // draw host cards
     }
 
     /**
@@ -162,6 +160,7 @@ public class GameHost extends GamePlayer {
             clientPlayers.remove(clientPlayers.remove(key));
             host.alivePlayers.remove(key);
         }
+        drawCards();
     }
     /**
      * Process card selection from all clients and host
