@@ -225,7 +225,6 @@ public class GameScreen extends ScreenAdapter {
                         gamePlayer.state = GamePlayer.PLAYERSTATE.SENDING_CARDS;
                         gamePlayer.registerChosenCards();
                         gamePlayer.drawCardsFromDeck();
-                        stage.clear();
                         loadCardDeck();
                     }
 
