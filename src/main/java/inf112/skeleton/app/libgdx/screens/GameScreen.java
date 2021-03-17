@@ -10,6 +10,7 @@ import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.tiles.StaticTiledMapTile;
 import com.badlogic.gdx.scenes.scene2d.*;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import inf112.skeleton.app.game.GameClient;
 import inf112.skeleton.app.game.GameHost;
@@ -27,6 +28,7 @@ import inf112.skeleton.app.network.NetworkHost;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Optional;
 
 public class GameScreen extends ScreenAdapter {
     private RoboGame game;
@@ -50,7 +52,7 @@ public class GameScreen extends ScreenAdapter {
     * In order, index 0 to max is:
     * move 1, move 2, move 3, rotate left, rotate right, backup, uturn
     */
-    private HashMap<CardType, Image> cardTemplates = new HashMap();
+    private HashMap<CardType, Image> cardTemplates = new HashMap<>();
     // Duplicate card types currently in deck (for use in rendering)
     private HashMap<CardType, Integer> duplicates = new HashMap<>();
 
@@ -184,97 +186,56 @@ public class GameScreen extends ScreenAdapter {
 
         TextureRegion[][] splitTextures = TextureRegion.split(allCards, 250, 400);
 
-        Image f1 = new Image(splitTextures[0][0]);
-        f1.addListener(new InputListener() {
-            @Override
-            public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                f1.setColor(1, 1, 1, 0.5f);
-                Card c = new Card();
-                c.setCardType(CardType.FORWARDONE);
-                gamePlayer.chosenCards.add(c);
-            }
-        });
+        cardTemplates.put(CardType.FORWARDONE, newClickableCard(CardType.FORWARDONE, splitTextures[0][0]));
+        cardTemplates.put(CardType.FORWARDTWO, newClickableCard(CardType.FORWARDTWO, splitTextures[0][1]));
+        cardTemplates.put(CardType.FORWARDTHREE, newClickableCard(CardType.FORWARDTHREE, splitTextures[0][2]));
+        cardTemplates.put(CardType.TURNLEFT, newClickableCard(CardType.TURNLEFT, splitTextures[0][3]));
+        cardTemplates.put(CardType.TURNRIGHT, newClickableCard(CardType.TURNRIGHT, splitTextures[0][4]));
+        cardTemplates.put(CardType.BACK_UP, newClickableCard(CardType.BACK_UP, splitTextures[0][5]));
+        cardTemplates.put(CardType.UTURN, newClickableCard(CardType.UTURN, splitTextures[0][6]));
 
-        Image f2 = new Image(splitTextures[0][1]);
-        f2.addListener(new InputListener() {
-            @Override
-            public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                f2.setColor(1, 1, 1, 0.5f);
-                Card c = new Card();
-                c.setCardType(CardType.FORWARDTWO);
-                gamePlayer.chosenCards.add(c);
-            }
-        });
-
-        Image f3= new Image(splitTextures[0][2]);
-        f3.addListener(new InputListener() {
-            @Override
-            public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                f3.setColor(1, 1, 1, 0.5f);
-                Card c = new Card();
-                c.setCardType(CardType.FORWARDTHREE);
-                gamePlayer.chosenCards.add(c);
-            }
-        });
-
-        Image tl= new Image(splitTextures[0][3]);
-        tl.addListener(new InputListener() {
-            @Override
-            public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                tl.setColor(1, 1, 1, 0.5f);
-                Card c = new Card();
-                c.setCardType(CardType.TURNLEFT);
-                gamePlayer.chosenCards.add(c);
-            }
-        });
-
-
-        Image tr= new Image(splitTextures[0][4]);
-        tr.addListener(new InputListener() {
-            @Override
-            public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                tr.setColor(1, 1, 1, 0.5f);
-                Card c = new Card();
-                c.setCardType(CardType.TURNRIGHT);
-                gamePlayer.chosenCards.add(c);
-            }
-        });
-
-        Image bu= new Image(splitTextures[0][5]);
-        bu.addListener(new InputListener() {
-            @Override
-            public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                bu.setColor(1, 1, 1, 0.5f);
-                Card c = new Card();
-                c.setCardType(CardType.BACK_UP);
-                gamePlayer.chosenCards.add(c);
-            }
-        });
-
-        Image ut= new Image(splitTextures[0][6]);
-        ut.addListener(new InputListener() {
-            @Override
-            public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                ut.setColor(1, 1, 1, 0.5f);
-                Card c = new Card();
-                c.setCardType(CardType.UTURN);
-                gamePlayer.chosenCards.add(c);
-            }
-        });
-
-        cardTemplates.put(CardType.FORWARDONE, f1);
-        cardTemplates.put(CardType.FORWARDTWO, f2);
-        cardTemplates.put(CardType.FORWARDTHREE, f3);
-        cardTemplates.put(CardType.TURNLEFT, tl);
-        cardTemplates.put(CardType.TURNRIGHT, tr);
-        cardTemplates.put(CardType.BACK_UP, bu);
-        cardTemplates.put(CardType.UTURN, ut);
-
-        for (Image i : cardTemplates.values()){
-            i.setSize(cardW, cardH);
-        }
+        // Resize cards to cardW cardH
+        cardTemplates.values().forEach( (i) -> { i.setSize(cardW, cardH); } );
     }
 
+    /*
+    * Helper for card image loading with touchup event
+     */
+    private Image newClickableCard(CardType cardType, TextureRegion t){
+        Image img = new Image(t);
+        img.addListener(new ClickListener(){
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                if (gamePlayer.state == GamePlayer.PLAYERSTATE.PICKING_CARDS){
+                    Card c = new Card();
+                    c.setCardType(cardType);
+                    System.out.println("Clicked card with move " + cardType);
+
+                    int handsize = 0;
+                    for (Card carrrrd : gamePlayer.hand){
+                        handsize += (carrrrd.getCardType() != CardType.NONE) ? 1 : 0;
+                    }
+                    System.out.println("Hand size: "+handsize);
+                    System.out.println("Chosen cards size: "+gamePlayer.chosenCards.size());
+
+                    // whoever is trying to understand this line, enjoy
+                    gamePlayer.chooseCards(gamePlayer.hand.indexOf(gamePlayer.hand.stream().anyMatch(card -> (card.getCardType() == cardType)) ? gamePlayer.hand.stream().filter(card -> (card.getCardType() == cardType)).findFirst().get() : new Card()));
+
+                    if (gamePlayer.chosenCards.size() >= 5){
+                        gamePlayer.state = GamePlayer.PLAYERSTATE.SENDING_CARDS;
+                        gamePlayer.registerChosenCards();
+                        gamePlayer.drawCardsFromDeck();
+                        stage.clear();
+                        loadCardDeck();
+                    }
+
+                    // Clear image from screen for now to give feedback that it was clicked TODO
+                    img.remove();
+                }
+            }
+        });
+        return img;
+    }
     /**
      * Clear current stage cards and add new actors to stage
      */
@@ -287,8 +248,14 @@ public class GameScreen extends ScreenAdapter {
         getDuplicateCards();
 
         for (CardType t : duplicates.keySet()){
-            for (int i = 0; i<duplicates.get(t); i++){
+            int duplicatesCount = duplicates.get(t);
+            System.out.println(duplicatesCount);
+
+            for (int i = 0; i<duplicatesCount; i++){
                 Image img = cardTemplates.get(t);
+                if (img == null){
+                    System.out.println("gay cum");
+                }
                 img.setPosition(baseX, baseY);
 
                 baseX += perCardIncrementX;
@@ -314,30 +281,28 @@ public class GameScreen extends ScreenAdapter {
     }
 
     /**
+     * Helper function for keyUp to pick cards for player
+     *  TODO rename me
+     * @param keyCode key pressed
+     */
+    private void pickCardsOnKeyPress(int keyCode) {
+        gamePlayer.chooseCards(keyCode);
+        if(gamePlayer.chosenCards.size() >= 5){
+            gamePlayer.state = GamePlayer.PLAYERSTATE.SENDING_CARDS;
+            gamePlayer.registerChosenCards();
+        }
+    }
+
+    /**
      * This function is called by libgdx when a key is released.
-     *
+     * TODO rework me
      * @return true if keyrelease was handled (per libgdx)
      */
     public boolean keyUp (int keyCode){
         if (gamePlayer.state == GamePlayer.PLAYERSTATE.PICKING_CARDS){
             if(keyCode >= Input.Keys.NUM_1 && keyCode <= Input.Keys.NUM_9){
-                return pickCardsOnKeyPress(keyCode);
+                return true;
             }
-        }
-        return false;
-    }
-    /**
-     * Helper function for keyUp to pick cards for player
-     *
-     * @param keyCode key pressed
-     * @return if key was registered as correct and acted on
-     */
-    private boolean pickCardsOnKeyPress(int keyCode) {
-        gamePlayer.chooseCards(keyCode-8); // Input.Keys.Num_1 starts at 8
-        if(gamePlayer.chosenCards.size() >= 5){
-            gamePlayer.state = GamePlayer.PLAYERSTATE.SENDING_CARDS;
-            gamePlayer.registerChosenCards();
-            return true;
         }
         return false;
     }
@@ -353,6 +318,11 @@ public class GameScreen extends ScreenAdapter {
         Gdx.gl.glClearColor(1, 1, 1, 1);
         Gdx.gl.glClear(GL30.GL_COLOR_BUFFER_BIT);
 
+        if(gamePlayer.newCardsDelivered){
+            loadCardDeck();
+            gamePlayer.newCardsDelivered = false;
+        }
+
         stage.act();
         stage.draw();
 
@@ -361,16 +331,6 @@ public class GameScreen extends ScreenAdapter {
 
         // Render current frame to screen
         game.renderer.render();
-
-        // Draw current deck (has to be called after render to show correctly)
-        drawDeck();
-    }
-
-    /**
-     * Draw deck and selected cards on screen
-     */
-    private void drawDeck(){
-        loadCardDeck();
     }
     /**
      * Reset cell rotation on all cells in the map to 0

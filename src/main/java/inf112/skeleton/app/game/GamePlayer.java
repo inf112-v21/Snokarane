@@ -23,6 +23,9 @@ public abstract class GamePlayer{
         NONE
     }
 
+    // Whether game screen needs to update card deck, is true when all cards recieved for one round
+    public boolean newCardsDelivered = false;
+
     // Current state of gameplay of player
     public PLAYERSTATE state = PLAYERSTATE.NONE;
 
@@ -69,6 +72,7 @@ public abstract class GamePlayer{
             discard = new ArrayList<>();
             drawCardsFromDeck();
         }
+        newCardsDelivered = true;
         state = PLAYERSTATE.PICKING_CARDS;
     }
 
@@ -81,8 +85,10 @@ public abstract class GamePlayer{
     public void chooseCards(int cardSelection){
         if (hand.get(cardSelection) == null) return;
         chosenCards.add(hand.get(cardSelection));
-        //TODO: Should this be null, or should there be a 'null'-equivalent in the CardType enum?
-        hand.set(cardSelection, null);
+        //TODO: Should this be null, or should there be a 'null'-equivalent in the CardType enum? yep it should
+        Card fill = new Card();
+        fill.setCardType(CardType.NONE);
+        hand.set(cardSelection, fill);
     }
 
     // Starts next turn, everyone draws cards.

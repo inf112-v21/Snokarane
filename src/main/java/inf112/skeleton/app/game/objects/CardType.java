@@ -7,5 +7,6 @@ public enum CardType {
     BACK_UP,
     TURNLEFT,
     TURNRIGHT,
-    UTURN
+    UTURN,
+    NONE
 }
