@@ -28,7 +28,6 @@ import inf112.skeleton.app.network.NetworkHost;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Optional;
 
 public class GameScreen extends ScreenAdapter {
     private RoboGame game;
@@ -52,7 +51,7 @@ public class GameScreen extends ScreenAdapter {
     * In order, index 0 to max is:
     * move 1, move 2, move 3, rotate left, rotate right, backup, uturn
     */
-    private HashMap<CardType, Image> cardTemplates = new HashMap<>();
+    private HashMap<CardType, TextureRegion> cardTemplates = new HashMap<>();
     // Duplicate card types currently in deck (for use in rendering)
     private HashMap<CardType, Integer> duplicates = new HashMap<>();
 
@@ -77,13 +76,7 @@ public class GameScreen extends ScreenAdapter {
                 return true;
             }
         });
-
-        Texture cardBackgroundTexture = new Texture(Gdx.files.internal("cards/cards-background.png"));
-        Image cardBackground = new Image(cardBackgroundTexture);
-        cardBackground.setPosition(0, 0);
-        cardBackground.setSize(Gdx.graphics.getWidth(), 200);
-        stage.addActor(cardBackground);
-
+        loadCardBackground();
         create(isHost, ip, playerName);
     }
     /**
@@ -142,7 +135,7 @@ public class GameScreen extends ScreenAdapter {
         loadPlayerTextures();
 
         // Initialize card template textures
-        loadCardImagesWithEvents();
+        loadCardTextures();
 
         // Start game/network objects
         startGame(isHost, ip, playerName);
@@ -178,31 +171,30 @@ public class GameScreen extends ScreenAdapter {
      * --> Event listener only adds a card of the type pressed into gamePlayer's chosenCards
      * Adds cards into hashmap with corresponding card type
      */
-    private void loadCardImagesWithEvents(){
-        int cardW = 125;
-        int cardH = 200;
-
+    private void loadCardTextures(){
         Texture allCards = new Texture("cards/programmingcards.png");
 
         TextureRegion[][] splitTextures = TextureRegion.split(allCards, 250, 400);
 
-        cardTemplates.put(CardType.FORWARDONE, newClickableCard(CardType.FORWARDONE, splitTextures[0][0]));
-        cardTemplates.put(CardType.FORWARDTWO, newClickableCard(CardType.FORWARDTWO, splitTextures[0][1]));
-        cardTemplates.put(CardType.FORWARDTHREE, newClickableCard(CardType.FORWARDTHREE, splitTextures[0][2]));
-        cardTemplates.put(CardType.TURNLEFT, newClickableCard(CardType.TURNLEFT, splitTextures[0][3]));
-        cardTemplates.put(CardType.TURNRIGHT, newClickableCard(CardType.TURNRIGHT, splitTextures[0][4]));
-        cardTemplates.put(CardType.BACK_UP, newClickableCard(CardType.BACK_UP, splitTextures[0][5]));
-        cardTemplates.put(CardType.UTURN, newClickableCard(CardType.UTURN, splitTextures[0][6]));
-
-        // Resize cards to cardW cardH
-        cardTemplates.values().forEach( (i) -> { i.setSize(cardW, cardH); } );
+        cardTemplates.put(CardType.FORWARDONE, splitTextures[0][0]);
+        cardTemplates.put(CardType.FORWARDTWO, splitTextures[0][1]);
+        cardTemplates.put(CardType.FORWARDTHREE,  splitTextures[0][2]);
+        cardTemplates.put(CardType.TURNLEFT,  splitTextures[0][3]);
+        cardTemplates.put(CardType.TURNRIGHT,  splitTextures[0][4]);
+        cardTemplates.put(CardType.BACK_UP, splitTextures[0][5]);
+        cardTemplates.put(CardType.UTURN, splitTextures[0][6]);
     }
 
     /*
     * Helper for card image loading with touchup event
      */
     private Image newClickableCard(CardType cardType, TextureRegion t){
+        int cardW = 125;
+        int cardH = 200;
+
         Image img = new Image(t);
+        img.setSize(cardW, cardH);
+
         img.addListener(new ClickListener(){
             @Override
             public void clicked(InputEvent event, float x, float y) {
@@ -222,10 +214,11 @@ public class GameScreen extends ScreenAdapter {
                     gamePlayer.chooseCards(gamePlayer.hand.indexOf(gamePlayer.hand.stream().anyMatch(card -> (card.getCardType() == cardType)) ? gamePlayer.hand.stream().filter(card -> (card.getCardType() == cardType)).findFirst().get() : new Card()));
 
                     if (gamePlayer.chosenCards.size() >= 5){
+                        System.out.println("Stage size before deck clear: "+ stage.getActors().size);
+                        stage.clear();
                         gamePlayer.state = GamePlayer.PLAYERSTATE.SENDING_CARDS;
                         gamePlayer.registerChosenCards();
                         gamePlayer.drawCardsFromDeck();
-                        loadCardDeck();
                     }
 
                     // Clear image from screen for now to give feedback that it was clicked TODO
@@ -239,6 +232,9 @@ public class GameScreen extends ScreenAdapter {
      * Clear current stage cards and add new actors to stage
      */
     private void loadCardDeck(){
+        // TODO this isn't a very scalable solution. The reason this check is here is because render() calls loadCardDeck when actors reciev
+        if (stage.getActors().size>=9)
+        duplicates.clear();
         int baseX = 20;
         int baseY = 0;
 
@@ -246,24 +242,29 @@ public class GameScreen extends ScreenAdapter {
 
         getDuplicateCards();
 
+
+        List<Image> displayDeck = new ArrayList<>();
+        int cardsTotal = 0;
+
         for (CardType t : duplicates.keySet()){
             int duplicatesCount = duplicates.get(t);
 
             // TODO this doesn't seem to want to render duplicate images no matter what i try...
             for (int i = 0; i<duplicatesCount; i++){
-                Image img = cardTemplates.get(t);
+                Image img = newClickableCard(t, cardTemplates.get(t));
                 img.setPosition(baseX, baseY);
-
+                displayDeck.add(img);
                 baseX += perCardIncrementX;
-                stage.addActor(img);
+                cardsTotal++;
             }
         }
+        System.out.println("Cards being added to stage: "+cardsTotal);
+        displayDeck.forEach( (i) -> { stage.addActor(i); } );
     }
-
     /**
      * finds duplicate cards in deck
      * HashMap used because its O(n) instead of O(n^2)
-      */
+     */
     private void getDuplicateCards(){
         if (!gamePlayer.hand.isEmpty()){
             for (Card c : gamePlayer.hand){
@@ -275,7 +276,20 @@ public class GameScreen extends ScreenAdapter {
             }
         }
     }
-
+    /**
+     * Decorative background for card deck
+     */
+    private void loadCardBackground(){
+        Texture cardBackgroundTexture = new Texture(Gdx.files.internal("cards/cards-background.png"));
+        Image cardBackground = new Image(cardBackgroundTexture);
+        cardBackground.setPosition(0, 0);
+        cardBackground.setSize(Gdx.graphics.getWidth(), 200);
+        stage.addActor(cardBackground);
+    }
+    private void loadActorsInOrder(){
+        loadCardBackground();
+        loadCardDeck(); //TODO this already gets loaded in render. loading this in render is a bad idea, should be done here exclusively but need to find way to load deck at start of game too.
+    }
     /**
      * Helper function for keyUp to pick cards for player
      *  TODO rename me
@@ -288,7 +302,6 @@ public class GameScreen extends ScreenAdapter {
             gamePlayer.registerChosenCards();
         }
     }
-
     /**
      * This function is called by libgdx when a key is released.
      * TODO rework me
@@ -315,7 +328,16 @@ public class GameScreen extends ScreenAdapter {
         Gdx.gl.glClear(GL30.GL_COLOR_BUFFER_BIT);
 
         if(gamePlayer.newCardsDelivered){
-            loadCardDeck();
+            stage.clear();
+
+            System.out.println("Stage size after clearing hand: "+ stage.getActors().size);
+
+            loadActorsInOrder();
+
+            System.out.println("Stage size after loading new hand: "+ stage.getActors().size);
+            for (Card c : gamePlayer.hand){
+                System.out.println(c.getCardType());
+            }
             gamePlayer.newCardsDelivered = false;
         }
 

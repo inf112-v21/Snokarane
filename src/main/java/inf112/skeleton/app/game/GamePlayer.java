@@ -83,7 +83,7 @@ public abstract class GamePlayer{
      * Add selected card from hand to chosenCards
      */
     public void chooseCards(int cardSelection){
-        if (hand.get(cardSelection) == null) return;
+        if (hand.get(cardSelection).getCardType() == CardType.NONE) return;
         chosenCards.add(hand.get(cardSelection));
         //TODO: Should this be null, or should there be a 'null'-equivalent in the CardType enum? yep it should
         Card fill = new Card();
