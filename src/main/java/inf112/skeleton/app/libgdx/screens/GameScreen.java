@@ -1,6 +1,7 @@
 package inf112.skeleton.app.libgdx.screens;
 
 import com.badlogic.gdx.*;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL30;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -199,7 +200,7 @@ public class GameScreen extends ScreenAdapter {
         img.addListener(new ClickListener(){
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                if (gamePlayer.state == GamePlayer.PLAYERSTATE.PICKING_CARDS){
+                if (gamePlayer.state == GamePlayer.PLAYERSTATE.PICKING_CARDS && gamePlayer.chosenCards.size()<5){
                     Card c = new Card();
                     c.setCardType(cardType);
                     System.out.println("Clicked card with move " + cardType);
@@ -214,16 +215,7 @@ public class GameScreen extends ScreenAdapter {
                     // whoever is trying to understand this line, enjoy
                     gamePlayer.chooseCards(gamePlayer.hand.indexOf(gamePlayer.hand.stream().anyMatch(card -> (card.getCardType() == cardType)) ? gamePlayer.hand.stream().filter(card -> (card.getCardType() == cardType)).findFirst().get() : new Card()));
 
-                    if (gamePlayer.chosenCards.size() >= 5){
-                        System.out.println("Stage size before deck clear: "+ stage.getActors().size);
-                        stage.clear();
-                        gamePlayer.state = GamePlayer.PLAYERSTATE.SENDING_CARDS;
-                        gamePlayer.registerChosenCards();
-                        gamePlayer.drawCardsFromDeck();
-                    }
-
-                    // Clear image from screen for now to give feedback that it was clicked TODO
-                    img.remove();
+                    img.setColor(0.5f, 0.7f, 0.5f, 0.5f);
                 }
             }
         });
@@ -233,8 +225,6 @@ public class GameScreen extends ScreenAdapter {
      * Clear current stage cards and add new actors to stage
      */
     private void loadCardDeck(){
-        // TODO this isn't a very scalable solution. The reason this check is here is because render() calls loadCardDeck when actors reciev
-        if (stage.getActors().size>=9)
         duplicates.clear();
         int baseX = 15;
         int baseY = 15;
@@ -284,7 +274,7 @@ public class GameScreen extends ScreenAdapter {
 
         TextButton backButton = new TextButton("Back", game.skin, "small");
         backButton.setWidth(225);
-        backButton.setPosition(Gdx.graphics.getWidth()-240f, 70);
+        backButton.setPosition(Gdx.graphics.getWidth()-240f, 30);
         backButton.addListener(new InputListener(){
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
@@ -293,6 +283,29 @@ public class GameScreen extends ScreenAdapter {
             }
         });
         stage.addActor(backButton);
+    }
+    /**
+     * Send cards button
+     */
+    private void loadSendCardsButton(){
+
+        TextButton sendCardsButton = new TextButton("Send cards", game.skin, "small");
+        sendCardsButton.setWidth(225);
+        sendCardsButton.setPosition(Gdx.graphics.getWidth()-240f, 100);
+        sendCardsButton.addListener(new InputListener(){
+            @Override
+            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+                if (gamePlayer.chosenCards.size() >= 5){
+                    System.out.println("Cards are being sent to processing. Stage size before deck clear: "+ stage.getActors().size);
+                    stage.clear();
+                    gamePlayer.state = GamePlayer.PLAYERSTATE.SENDING_CARDS;
+                    gamePlayer.registerChosenCards();
+                    gamePlayer.drawCardsFromDeck();
+                }
+                return true;
+            }
+        });
+        stage.addActor(sendCardsButton);
     }
     /**
      * Decorative background for card deck
@@ -307,6 +320,7 @@ public class GameScreen extends ScreenAdapter {
     private void loadActorsInOrder(){
         loadCardBackground();
         loadBackButton();
+        loadSendCardsButton();
         loadCardDeck(); //TODO this already gets loaded in render. loading this in render is a bad idea, should be done here exclusively but need to find way to load deck at start of game too.
     }
     /**
@@ -354,9 +368,6 @@ public class GameScreen extends ScreenAdapter {
             loadActorsInOrder();
 
             System.out.println("Stage size after loading new hand: "+ stage.getActors().size);
-            for (Card c : gamePlayer.hand){
-                System.out.println(c.getCardType());
-            }
             gamePlayer.newCardsDelivered = false;
         }
 
