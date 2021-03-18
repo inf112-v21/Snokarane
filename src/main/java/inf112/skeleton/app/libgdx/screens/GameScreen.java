@@ -6,10 +6,15 @@ import com.badlogic.gdx.graphics.GL30;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.tiled.TiledMap;
+import com.badlogic.gdx.maps.tiled.TiledMapTile;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.tiles.StaticTiledMapTile;
 import com.badlogic.gdx.scenes.scene2d.*;
+import com.badlogic.gdx.math.GridPoint2;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.InputListener;
+import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
@@ -39,7 +44,6 @@ public class GameScreen extends ScreenAdapter {
 
     // Layers of the map
     private TiledMapTileLayer playerLayer;
-    private TiledMapTileLayer holeLayer;
 
     // Flags on the map are stored here for easy access
     // TODO: this should really only useful in GameHost
@@ -102,13 +106,17 @@ public class GameScreen extends ScreenAdapter {
     }
     // Start game as host
     private void startHost(String playerName){
+
+        // Starts GameHost session using network that was initialized
+        gamePlayer = new GameHost((NetworkHost)network);
+        gamePlayer.setMap(map);
         // Send prompt to all connected clients
         Network.prompt("All players connected.", null);
         // Start connection to current clients. This is to be able to accept data transfers from clients
         this.network.initConnections();
-        // Starts GameHost session using network that was initialized
-        gamePlayer = new GameHost((NetworkHost)network, playerName);
-        gamePlayer.setMap(map);
+
+
+        ((GameHost) gamePlayer).initializeHostPlayerToken(playerName);
         gamePlayer.drawCards();
     }
     // Start game as client
@@ -436,6 +444,9 @@ public class GameScreen extends ScreenAdapter {
             map = gamePlayer.updateMap(null);
             //
             if(network.isHost){
+                // TODO Also maybe fix this
+                ((GameHost)gamePlayer).host.sendMapLayerWrapper(((GameHost)gamePlayer).wrapper());
+                ((GameHost)gamePlayer).map.loadPlayers(((GameHost)gamePlayer).wrapper());
                if (((GameHost)gamePlayer).isShowingCards){
                    ((GameHost)gamePlayer).handleSingleCardRound();
                 }
@@ -483,12 +494,12 @@ public class GameScreen extends ScreenAdapter {
     public void loadMapLayers(TiledMap tiledMap){
         // Separate each layer from the tiledMap
         playerLayer = (TiledMapTileLayer) tiledMap.getLayers().get("Player");
-        holeLayer = (TiledMapTileLayer) tiledMap.getLayers().get("Hole");
         TiledMapTileLayer flagLayer = (TiledMapTileLayer) tiledMap.getLayers().get("Flag");
 
         // Sneakily yoink the positions of the flags here, don't tell the OOP police
         getFlagPositionsFromLayer(flagLayer);
-        getHolePositionsFromLayer(holeLayer);
+        getBoardElementPositionsFromLayer(tiledMap);
+        getStartPositions((TiledMapTileLayer) tiledMap.getLayers().get("Spawn"));
     }
     /**
      * Get all flag positions in layer flag layer
@@ -506,16 +517,56 @@ public class GameScreen extends ScreenAdapter {
         }
         flagPositions.addAll(flags);
     }
+    private void getStartPositions(TiledMapTileLayer startLayer) {
+        for (int i = 0; i <= startLayer.getWidth(); i++){
+            for (int j = 0; j <= startLayer.getHeight(); j++){
+                // getCell returns null if nothing is found in the current cell in this layer
+                if (startLayer.getCell(i, j) != null) {
+                    map.spawnPoints.add(new GridPoint2(i, j));
+                }
+            }
+        }
+    }
+
     //TODO: FIX THIS TO MAKE IT MORE SEPARATED
-    private void getHolePositionsFromLayer(TiledMapTileLayer holeLayer){
-        for (int i = 0; i <= holeLayer.getWidth(); i++){
-            for (int j = 0; j <= holeLayer.getHeight(); j++){
+    private void getBoardElementPositionsFromLayer(TiledMap tiledMap){
+        TiledMapTileLayer holeLayer = (TiledMapTileLayer) tiledMap.getLayers().get("Hole");
+        TiledMapTileLayer gearLayer = (TiledMapTileLayer) tiledMap.getLayers().get("Gear");
+        TiledMapTileLayer wallLayer = (TiledMapTileLayer) tiledMap.getLayers().get("Wall");
+        for (int i = 0; i < holeLayer.getWidth(); i++){
+            for (int j = 0; j < holeLayer.getHeight(); j++){
                 // getCell returns null if nothing is found in the current cell in this layer
                 if (holeLayer.getCell(i, j) != null) {
                     map.holeLayer[i][j] = true;
                 }
+                if (wallLayer.getCell(i, j) != null){
+                    setWallDirections(wallLayer.getCell(i, j), i, j);
+                }
+                if (gearLayer.getCell(i, j) != null && gearLayer.getCell(i, j).getTile().getId() == 54) {
+                    map.gearLayer[i][j] = 1;
+                }
+                else if (gearLayer.getCell(i, j) != null && gearLayer.getCell(i, j).getTile().getId() == 189) {
+                    map.gearLayer[i][j] = 2;
+                }
+                else map.gearLayer[i][j] = 0;
+
             }
         }
+    }
+
+    private void setWallDirections(TiledMapTileLayer.Cell wallCell, int i, int j){
+        //TODO a lot of these are lacking
+
+        // NORTH, EAST, SOUTH, WEST
+        if (wallCell.getTile().getId() == 24) map.wallLayer[i][j] = new boolean[] {true, false, false, true};
+        if (wallCell.getTile().getId() == 31) map.wallLayer[i][j] = new boolean[] {true, false, false, false};
+        if (wallCell.getTile().getId() == 16) map.wallLayer[i][j] = new boolean[] {true, true, false, false};
+        if (wallCell.getTile().getId() == 29) map.wallLayer[i][j] = new boolean[] {false, false, true, false};
+        if (wallCell.getTile().getId() == 30) map.wallLayer[i][j] = new boolean[] {false, false, false, true};
+        if (wallCell.getTile().getId() == 8) map.wallLayer[i][j] = new boolean[] {false, true, true, false};
+        if (wallCell.getTile().getId() == 23) map.wallLayer[i][j] = new boolean[] {true, true, false, false};
+        //if (wallCell.getTile().getId() == 11) map.wallLayer[i][j] = new boolean[] {true, false, false, true};
+
     }
     /**
      * These functions are not currently in use, but inherited from superclass

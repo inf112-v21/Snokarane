@@ -1,7 +1,11 @@
 package inf112.skeleton.app.libgdx;
 
+import com.badlogic.gdx.math.GridPoint2;
 import inf112.skeleton.app.game.objects.Flag;
 import inf112.skeleton.app.game.objects.PlayerToken;
+
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -21,6 +25,11 @@ public class Map {
      */
     public PlayerRenderInformation [][] playerLayer = new PlayerRenderInformation [BOARD_X][BOARD_Y];
     public boolean [][] holeLayer = new boolean[BOARD_X][BOARD_Y];
+    public int [][] gearLayer = new int[BOARD_X][BOARD_Y];
+    public boolean [][][] wallLayer = new boolean[BOARD_X][BOARD_Y][4];
+
+    //TODO blir bare mellomlagret her, kanskje en dårlig ide?
+    public List<GridPoint2> spawnPoints = new ArrayList<>();
 
     /**
      * This is a sort of replacement for tuples that java lack,
@@ -76,12 +85,27 @@ public class Map {
     }
 
     public boolean isHole(int x, int y) {
-        if (holeLayer[x][y] != true) {
-            return false;
-        }
-            return true;
+        return holeLayer[x][y];
     }
 
+    public int isGear(int x, int y) {
+        return gearLayer[x][y];
+    }
+
+    public boolean isWall(int x, int y, PlayerToken.Direction direction){
+        if (direction == PlayerToken.Direction.NORTH){
+            return wallLayer[x][y][0];
+        }
+        else if (direction == PlayerToken.Direction.EAST) {
+            return wallLayer[x][y][1];
+        }
+        else if (direction == PlayerToken.Direction.SOUTH) {
+            return wallLayer[x][y][2];
+        }
+        else{
+            return wallLayer[x][y][3];
+        }
+    }
     /**
      * Loads player from network into map
      * @param wrapper The NetworkDataWrapper that contains the players

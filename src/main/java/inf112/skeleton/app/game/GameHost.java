@@ -25,7 +25,7 @@ public class GameHost extends GamePlayer {
     /**
      * @param network connection to be used in game
      */
-    public GameHost(NetworkHost network, String name){
+    public GameHost(NetworkHost network){
         // Add cards to deck
         super();
         host = network;
@@ -33,13 +33,10 @@ public class GameHost extends GamePlayer {
 
         // Give each client a new player token to keep track of player data
         clientPlayers = new HashMap<>();
-
-        initializeClientPlayerTokens();
-        initializeHostPlayerToken(name);
     }
 
     // Game map
-    private Map map;
+    public Map map;
 
     public boolean isShowingCards = false;
     private List<List<Card>> cardsPerPlayerTurn = new ArrayList<>();
@@ -48,36 +45,40 @@ public class GameHost extends GamePlayer {
     private int cardsProcessedPerRound = 5;
     private int currentCardRound = 1;
     private long timeSinceLastCardProcessed = System.currentTimeMillis();
-    private long pauseBetweenEachCardProcess = 300;
+    private long pauseBetweenEachCardProcess = 300 ;
 
-    private NetworkHost host;
+    public NetworkHost host;
 
     // Has all clients (which contain connnection ID's) as well as their tokens
     public HashMap<Integer, PlayerToken> clientPlayers;
 
     /**
-     * Create tokens for the host
+     * TODO rewrite this to what it actually does now
+     * which is put them at their spawn points
      */
-    private void initializeClientPlayerTokens(){
-        // Set token character states to normal default and give connection ID to token
-        for (Connection c : host.connections){
-            PlayerToken token = new PlayerToken();
-            token.charState = PlayerToken.CHARACTER_STATES.PLAYERNORMAL;
-            token.ID = c.getID();
-            clientPlayers.put(c.getID(), token);
-        }
+    public PlayerToken initializePlayerPos(PlayerToken player){
+        GridPoint2 pos = map.spawnPoints.remove(0);
 
+        player.spawnLoc.x = pos.x;
+        player.spawnLoc.y = pos.y;
+
+        player.position.x = pos.x;
+        player.position.y = pos.y;
+
+        return player;
     }
     /**
      * Create token for the host
      */
-    private void initializeHostPlayerToken(String name) {
+    public void initializeHostPlayerToken(String name) {
         // This is so processCards also includes the host
         PlayerToken token = new PlayerToken();
         token.charState = PlayerToken.CHARACTER_STATES.PLAYERNORMAL;
         token.name = name;
         token.ID = NetworkHost.hostID;
+        token = initializePlayerPos(token);
         clientPlayers.put(NetworkHost.hostID, token);
+
     }
 
     /**
@@ -99,14 +100,13 @@ public class GameHost extends GamePlayer {
     }
 
     public void checkCards(){
-        if (host.playerCards.keySet().size() == host.connections.length+1) {
+        if (host.playerCards.keySet().size() == host.alivePlayers.size()) {
             processCards();
 
             // Reset the chosen cards and the hand
             chosenCards = new ArrayList<>();
             hand = new ArrayList<>();
             host.playerCards.clear();
-            drawCards();
         }
     }
 
@@ -115,7 +115,6 @@ public class GameHost extends GamePlayer {
      */
     public void drawCards(){
         host.promptCardDraw();  // tell clients to draw cards
-        drawCardsFromDeck(); // draw host cards
     }
 
     /**
@@ -140,21 +139,39 @@ public class GameHost extends GamePlayer {
         host.sendMapLayerWrapper(wrapper());
         map.loadPlayers(wrapper());
     }
-
+    public void endOfTurn(){
+        List<Integer> playersToKill = new ArrayList<>();
+        for (Integer key : clientPlayers.keySet()){
+            PlayerToken token = clientPlayers.get(key);
+            if (token.isDead()) {
+                playersToKill.add(key);
+            }
+            int rotation = map.isGear(token.position.x, token.position.y);
+            if (rotation == 1) {
+                System.out.println(token.name + " is on a gear!");
+                token.rotate(CardType.TURNRIGHT);
+            }
+            if (rotation == 2){
+                System.out.println(token.name + " is on a gear!");
+                token.rotate(CardType.TURNLEFT);
+            }
+        }
+        for (Integer key: playersToKill) {
+            clientPlayers.remove(clientPlayers.remove(key));
+            host.alivePlayers.remove(key);
+        }
+        drawCards();
+    }
     /**
      * Process card selection from all clients and host
      */
     private void processCards() {
-        System.out.println("-------------------------------------");
-        System.out.println("Preparing card selections...");
+        //System.out.println("-------------------------------------");
+        //System.out.println("Preparing card selections...");
         // iterator i is same as client connection id
         for (int i = 0; i<cardsProcessedPerRound; i++){
             List<Card> cardList = new ArrayList<>();
             for (int key : clientPlayers.keySet()){
-                // Check if the player is dead
-                if (clientPlayers.get(key).diedThisTurn || clientPlayers.get(key).isDead()){
-                    continue;
-                }
                 // Get next card for the given player and pop it so it can be played
                 List<Card> cards = host.playerCards.get(key);
 
@@ -168,7 +185,7 @@ public class GameHost extends GamePlayer {
                 cardPlayerTokenMap.put(currentCard, clientPlayers.get(key));
             }
             // Sort cards by card priority
-            Collections.sort(cardList, new Card.cardComparator());
+            cardList.sort(new Card.cardComparator());
 
             // Add first card from each players card selections to cardsPerPlayerTurn
             // This way all cards have now been mapped to each player, but are now saved as which order the cards will be processed
@@ -177,11 +194,10 @@ public class GameHost extends GamePlayer {
 
             System.out.println(cardsPerPlayerTurn.size()+". card selection ready.");
         }
-        System.out.println("Card selections for this turn ready.");
-        System.out.println("-------------------------------------");
+        //System.out.println("Card selections for this turn ready.");
+        //System.out.println("-------------------------------------");
         // Start processing each card sequentially
         isShowingCards = true;
-        resetPlayerTokens();
     }
 
     private void resetPlayerTokens(){
@@ -208,7 +224,7 @@ public class GameHost extends GamePlayer {
             // If current Nth card list empty, start next round of cards
             if (currentCardListBeingProcessed.size() == 0){
                 getNthSelectionFromEachPlayer();
-                System.out.println("Number of cards being processed this round...." + currentCardListBeingProcessed.size());
+                //System.out.println("Number of cards being processed this round...." + currentCardListBeingProcessed.size());
 
                 // Increment N, so next round the card list becomes each N+1-th card selection
                 // e.g. last round was Card 1 for each player, next is card 2 for each player
@@ -221,6 +237,7 @@ public class GameHost extends GamePlayer {
 
         // Reset card delay variables for next turn
         if (currentCardRound >= cardsProcessedPerRound+2){
+            endOfTurn();
             resetCardDelayVariables();
         }
     }
@@ -239,11 +256,14 @@ public class GameHost extends GamePlayer {
      * @param card card to handle
      */
     private void handleSinglePlayerCard(Card card){
-        // Move the clients player token
-        resolveCard(card, cardPlayerTokenMap.get(card));
+        // Check if the player is dead
+        if (!cardPlayerTokenMap.get(card).diedThisTurn && !cardPlayerTokenMap.get(card).isDead()){
+            // Move the clients player token
+            resolveCard(card, cardPlayerTokenMap.get(card));
+        }
 
-        System.out.println("-------------------------------------");
-        System.out.println("Processing card selection round nr. "+currentCardRound);
+        //System.out.println("-------------------------------------");
+        //System.out.println("Processing card selection round nr. "+currentCardRound);
 
         map.loadPlayers(wrapper());
         host.sendMapLayerWrapper(wrapper());
@@ -259,13 +279,16 @@ public class GameHost extends GamePlayer {
         currentCardListBeingProcessed.clear();
         cardPlayerTokenMap.clear();
         currentCardRound = 1;
+
+        // Should maybe be another place
+        resetPlayerTokens();
     }
 
     /**
      * Initialize wrapper and add player tokens to wrapper for transfer
      * @return initialized wrapper
      */
-    private NetworkDataWrapper wrapper() {
+    public NetworkDataWrapper wrapper() {
         NetworkDataWrapper wrapper = new NetworkDataWrapper();
         wrapper.PlayerTokens.addAll(clientPlayers.values());
         return wrapper;
@@ -322,35 +345,55 @@ public class GameHost extends GamePlayer {
      * @param dist the number of steps you want to take
      * @param direction the direction you want to move, usually player.getDirection()
      */
-    private void movePlayer(PlayerToken player, int dist, PlayerToken.Direction direction) {
-        for(int i = 0; i < dist; i++) {
-            GridPoint2 wouldEndUp = player.wouldEndUp(direction);
+    private boolean movePlayer(PlayerToken player, int dist, PlayerToken.Direction direction) {
+        if (dist == 0) {
+            return false;
+        }
+        GridPoint2 wouldEndUp = player.wouldEndUp(direction);
 
-            if (wouldEndUp.x < 0 || wouldEndUp.x >= Game.BOARD_X || wouldEndUp.y < 0 || wouldEndUp.y >= Game.BOARD_Y) {
+        if (map.isWall(player.position.x, player.position.y, direction) || (isInBounds(wouldEndUp.x, wouldEndUp.y) && map.isWall(wouldEndUp.x, wouldEndUp.y, oppositeDir(direction)))){
+            return false;
+        }
+            else if (!isInBounds(wouldEndUp.x, wouldEndUp.y)) {
                 player.died();
-                break;
+                return true;
             }
             else if (map.isHole(wouldEndUp.x, wouldEndUp.y)) {
-                System.out.println("Player " + player.name + " died");
                 player.died();
-                break;
+                return true;
             }
             else if (map.playerLayer[wouldEndUp.x][wouldEndUp.y].state != PlayerToken.CHARACTER_STATES.NONE) {
-                // TODO Fix this maybe?
+                // TODO Fix this maybe? Also add support for chain-pushing. This contains a lot of bugs
+                // I.e if the player is being pushed into a wall
+                boolean didOppMove = false;
                 for (PlayerToken opponent : clientPlayers.values()) {
-                    if (opponent.position.x == wouldEndUp.x && opponent.position.y == wouldEndUp.y) {
-                        opponent.move(direction);
+                    if (opponent != player && opponent.position.x == wouldEndUp.x && opponent.position.y == wouldEndUp.y) {
+                        didOppMove = movePlayer(opponent, 1, direction);
                     }
                 }
-                player.move(direction);
+                if (didOppMove) player.move(direction);
                 // Don't think we need this, but better safe than sorry. Future proof!
-                if (player.diedThisTurn) break;
+                if (player.diedThisTurn) return didOppMove;
             }
             else {
                 player.move(direction);
-                if (player.diedThisTurn) break;
+                if (player.diedThisTurn) return true;
             }
+            // TODO this is shady as heck
+            map.loadPlayers(wrapper());
+            //host.sendMapLayerWrapper(wrapper());
+            movePlayer(player, dist-1, direction);
+        return true;
+    }
 
-        }
+    private PlayerToken.Direction oppositeDir(PlayerToken.Direction dir) {
+        if (dir == PlayerToken.Direction.NORTH) return PlayerToken.Direction.SOUTH;
+        if (dir == PlayerToken.Direction.SOUTH) return PlayerToken.Direction.NORTH;
+        if (dir == PlayerToken.Direction.EAST) return PlayerToken.Direction.WEST;
+        else return PlayerToken.Direction.EAST;
+    }
+
+    private boolean isInBounds(int x, int y) {
+        return !(x < 0 || x >= Game.BOARD_X || y < 0 || y >= Game.BOARD_Y);
     }
 }
