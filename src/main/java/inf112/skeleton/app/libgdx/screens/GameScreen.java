@@ -224,6 +224,9 @@ public class GameScreen extends ScreenAdapter {
                     gamePlayer.chooseCards(gamePlayer.hand.indexOf(gamePlayer.hand.stream().anyMatch(card -> (card.getCardType() == cardType)) ? gamePlayer.hand.stream().filter(card -> (card.getCardType() == cardType)).findFirst().get() : new Card()));
 
                     img.setColor(0.5f, 0.7f, 0.5f, 0.5f);
+
+                    // Clear listener so it can't be clicked again TODO This is temporary solution, should be able to click to remove card from selection
+                    img.getListeners().clear();
                 }
             }
         });
