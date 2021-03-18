@@ -378,6 +378,13 @@ public class GameScreen extends ScreenAdapter {
 
             loadActorsInOrder();
 
+            // Check if any null actors are found, clear them if so
+            try{
+                stage.getActors().forEach( (n) -> { if (n == null) { stage.getActors().removeValue(n, true); }});
+            }catch (Exception e){
+                System.out.println("Not able to remove null value from getActors, exception " + e);
+            }
+
             System.out.println("Stage size after loading new hand: "+ stage.getActors().size);
             gamePlayer.newCardsDelivered = false;
         }
