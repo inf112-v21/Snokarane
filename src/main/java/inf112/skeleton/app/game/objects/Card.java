@@ -7,6 +7,7 @@ public class Card {
     private int priority;
 
     public Card(){
+        setCardType(CardType.NONE);
     }
 
     public void setCardType(CardType cardType) {

@@ -1,6 +1,7 @@
 package inf112.skeleton.app.libgdx.screens;
 
 import com.badlogic.gdx.*;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL30;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -9,16 +10,20 @@ import com.badlogic.gdx.maps.tiled.TiledMapTile;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.tiles.StaticTiledMapTile;
+import com.badlogic.gdx.scenes.scene2d.*;
 import com.badlogic.gdx.math.GridPoint2;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import inf112.skeleton.app.game.GameClient;
 import inf112.skeleton.app.game.GameHost;
 import inf112.skeleton.app.game.GamePlayer;
 import inf112.skeleton.app.game.objects.Card;
+import inf112.skeleton.app.game.objects.CardType;
 import inf112.skeleton.app.game.objects.Flag;
 import inf112.skeleton.app.game.objects.PlayerToken;
 import inf112.skeleton.app.libgdx.Map;
@@ -28,6 +33,7 @@ import inf112.skeleton.app.network.NetworkClient;
 import inf112.skeleton.app.network.NetworkHost;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class GameScreen extends ScreenAdapter {
@@ -46,6 +52,14 @@ public class GameScreen extends ScreenAdapter {
     // Cells for each player state
     private TiledMapTileLayer.Cell playerNormal;
     private TiledMapTileLayer.Cell playerWon;
+
+    /*
+    * In order, index 0 to max is:
+    * move 1, move 2, move 3, rotate left, rotate right, backup, uturn
+    */
+    private HashMap<CardType, TextureRegion> cardTemplates = new HashMap<>();
+    // Duplicate card types currently in deck (for use in rendering)
+    private HashMap<CardType, Integer> duplicates = new HashMap<>();
 
     /**
      * Client objects
@@ -68,13 +82,7 @@ public class GameScreen extends ScreenAdapter {
                 return true;
             }
         });
-
-        Texture cardBackgroundTexture = new Texture(Gdx.files.internal("cards/cards-background.png"));
-        Image cardBackground = new Image(cardBackgroundTexture);
-        cardBackground.setPosition(0, 0);
-        cardBackground.setSize(Gdx.graphics.getWidth(), 200);
-        stage.addActor(cardBackground);
-
+        loadCardBackground();
         create(isHost, ip, playerName);
     }
     /**
@@ -136,6 +144,9 @@ public class GameScreen extends ScreenAdapter {
         // Initialize player textures from .png file
         loadPlayerTextures();
 
+        // Initialize card template textures
+        loadCardTextures();
+
         // Start game/network objects
         startGame(isHost, ip, playerName);
     }
@@ -166,30 +177,182 @@ public class GameScreen extends ScreenAdapter {
     }
 
     /**
+     * Loads card images and adds event listeners.
+     * --> Event listener only adds a card of the type pressed into gamePlayer's chosenCards
+     * Adds cards into hashmap with corresponding card type
+     */
+    private void loadCardTextures(){
+        Texture allCards = new Texture("cards/programmingcards.png");
+
+        TextureRegion[][] splitTextures = TextureRegion.split(allCards, 250, 400);
+
+        cardTemplates.put(CardType.FORWARDONE, splitTextures[0][0]);
+        cardTemplates.put(CardType.FORWARDTWO, splitTextures[0][1]);
+        cardTemplates.put(CardType.FORWARDTHREE,  splitTextures[0][2]);
+        cardTemplates.put(CardType.TURNLEFT,  splitTextures[0][3]);
+        cardTemplates.put(CardType.TURNRIGHT,  splitTextures[0][4]);
+        cardTemplates.put(CardType.BACK_UP, splitTextures[0][5]);
+        cardTemplates.put(CardType.UTURN, splitTextures[0][6]);
+    }
+
+    /*
+    * Helper for card image loading with touchup event
+     */
+    private Image newClickableCard(CardType cardType, TextureRegion t){
+        int cardW = 100;
+        int cardH = 170;
+
+        Image img = new Image(t);
+        img.setSize(cardW, cardH);
+
+        img.addListener(new ClickListener(){
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                if (gamePlayer.state == GamePlayer.PLAYERSTATE.PICKING_CARDS && gamePlayer.chosenCards.size()<5){
+                    Card c = new Card();
+                    c.setCardType(cardType);
+                    System.out.println("Clicked card with move " + cardType);
+
+                    int handsize = 0;
+                    for (Card carrrrd : gamePlayer.hand){
+                        handsize += (carrrrd.getCardType() != CardType.NONE) ? 1 : 0;
+                    }
+                    System.out.println("Hand size: "+handsize);
+                    System.out.println("Chosen cards size: "+gamePlayer.chosenCards.size());
+
+                    // whoever is trying to understand this line, enjoy
+                    gamePlayer.chooseCards(gamePlayer.hand.indexOf(gamePlayer.hand.stream().anyMatch(card -> (card.getCardType() == cardType)) ? gamePlayer.hand.stream().filter(card -> (card.getCardType() == cardType)).findFirst().get() : new Card()));
+
+                    img.setColor(0.5f, 0.7f, 0.5f, 0.5f);
+                }
+            }
+        });
+        return img;
+    }
+    /**
+     * Clear current stage cards and add new actors to stage
+     */
+    private void loadCardDeck(){
+        duplicates.clear();
+        int baseX = 15;
+        int baseY = 15;
+
+        int perCardIncrementX = 105;
+
+        getDuplicateCards();
+
+
+        List<Image> displayDeck = new ArrayList<>();
+        int cardsTotal = 0;
+
+        for (CardType t : duplicates.keySet()){
+            int duplicatesCount = duplicates.get(t);
+
+            // TODO this doesn't seem to want to render duplicate images no matter what i try...
+            for (int i = 0; i<duplicatesCount; i++){
+                Image img = newClickableCard(t, cardTemplates.get(t));
+                img.setPosition(baseX, baseY);
+                displayDeck.add(img);
+                baseX += perCardIncrementX;
+                cardsTotal++;
+            }
+        }
+        System.out.println("Cards being added to stage: "+cardsTotal);
+        displayDeck.forEach( (i) -> { stage.addActor(i); } );
+    }
+    /**
+     * finds duplicate cards in deck
+     * HashMap used because its O(n) instead of O(n^2)
+     */
+    private void getDuplicateCards(){
+        if (!gamePlayer.hand.isEmpty()){
+            for (Card c : gamePlayer.hand){
+                if (!duplicates.containsKey(c.getCardType())){
+                    duplicates.put(c.getCardType(), 1);
+                } else {
+                    duplicates.put(c.getCardType(), duplicates.get(c.getCardType())+1);
+                }
+            }
+        }
+    }
+    /**
+     * Back button
+     */
+    private void loadBackButton(){
+
+        TextButton backButton = new TextButton("Back", game.skin, "small");
+        backButton.setWidth(225);
+        backButton.setPosition(Gdx.graphics.getWidth()-240f, 30);
+        backButton.addListener(new InputListener(){
+            @Override
+            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+                game.setScreen(new MenuScreen(game));
+                return true;
+            }
+        });
+        stage.addActor(backButton);
+    }
+    /**
+     * Send cards button
+     */
+    private void loadSendCardsButton(){
+
+        TextButton sendCardsButton = new TextButton("Send cards", game.skin, "small");
+        sendCardsButton.setWidth(225);
+        sendCardsButton.setPosition(Gdx.graphics.getWidth()-240f, 100);
+        sendCardsButton.addListener(new InputListener(){
+            @Override
+            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+                if (gamePlayer.chosenCards.size() >= 5){
+                    System.out.println("Cards are being sent to processing. Stage size before deck clear: "+ stage.getActors().size);
+                    stage.clear();
+                    gamePlayer.state = GamePlayer.PLAYERSTATE.SENDING_CARDS;
+                    gamePlayer.registerChosenCards();
+                    gamePlayer.drawCardsFromDeck();
+                }
+                return true;
+            }
+        });
+        stage.addActor(sendCardsButton);
+    }
+    /**
+     * Decorative background for card deck
+     */
+    private void loadCardBackground(){
+        Texture cardBackgroundTexture = new Texture(Gdx.files.internal("cards/cards-background.png"));
+        Image cardBackground = new Image(cardBackgroundTexture);
+        cardBackground.setPosition(0, 0);
+        cardBackground.setSize(Gdx.graphics.getWidth(), 200);
+        stage.addActor(cardBackground);
+    }
+    private void loadActorsInOrder(){
+        loadCardBackground();
+        loadBackButton();
+        loadSendCardsButton();
+        loadCardDeck(); //TODO this already gets loaded in render. loading this in render is a bad idea, should be done here exclusively but need to find way to load deck at start of game too.
+    }
+    /**
+     * Helper function for keyUp to pick cards for player
+     *  TODO rename me
+     * @param keyCode key pressed
+     */
+    private void pickCardsOnKeyPress(int keyCode) {
+        gamePlayer.chooseCards(keyCode);
+        if(gamePlayer.chosenCards.size() >= 5){
+            gamePlayer.state = GamePlayer.PLAYERSTATE.SENDING_CARDS;
+            gamePlayer.registerChosenCards();
+        }
+    }
+    /**
      * This function is called by libgdx when a key is released.
-     *
+     * TODO rework me
      * @return true if keyrelease was handled (per libgdx)
      */
     public boolean keyUp (int keyCode){
         if (gamePlayer.state == GamePlayer.PLAYERSTATE.PICKING_CARDS){
             if(keyCode >= Input.Keys.NUM_1 && keyCode <= Input.Keys.NUM_9){
-                return pickCardsOnKeyPress(keyCode);
+                return true;
             }
-        }
-        return false;
-    }
-    /**
-     * Helper function for keyUp to pick cards for player
-     *
-     * @param keyCode key pressed
-     * @return if key was registered as correct and acted on
-     */
-    private boolean pickCardsOnKeyPress(int keyCode) {
-        gamePlayer.chooseCards(keyCode-8); // Input.Keys.Num_1 starts at 8
-        if(gamePlayer.chosenCards.size() >= 5){
-            gamePlayer.state = GamePlayer.PLAYERSTATE.SENDING_CARDS;
-            gamePlayer.registerChosenCards();
-            return true;
         }
         return false;
     }
@@ -205,6 +368,17 @@ public class GameScreen extends ScreenAdapter {
         Gdx.gl.glClearColor(1, 1, 1, 1);
         Gdx.gl.glClear(GL30.GL_COLOR_BUFFER_BIT);
 
+        if(gamePlayer.newCardsDelivered){
+            stage.clear();
+
+            System.out.println("Stage size after clearing hand: "+ stage.getActors().size);
+
+            loadActorsInOrder();
+
+            System.out.println("Stage size after loading new hand: "+ stage.getActors().size);
+            gamePlayer.newCardsDelivered = false;
+        }
+
         stage.act();
         stage.draw();
 
@@ -213,67 +387,6 @@ public class GameScreen extends ScreenAdapter {
 
         // Render current frame to screen
         game.renderer.render();
-
-        // Draw current deck (has to be called after render to show correctly)
-        drawDeck();
-    }
-
-    /**
-     * Draw deck and selected cards on screen
-     */
-    private void drawDeck(){
-        int baseX = 50;
-        int baseY = 100; // Dont change me to something non divisible by two :)
-
-        // Draw hand indicator
-        game.batch.begin();
-        game.font.setColor(255, 255, 255, 255);
-        game.font.getData().setScale(2);
-        game.font.draw(game.batch, "Hand:",baseX*5, baseY+50);
-        game.font.getData().setScale(1);
-        game.font.setColor(255, 255, 0, 255);
-
-        // Initialize some helper variables
-        int xPos = baseX;
-        int yPos = baseY;
-        int cardNum = 1;
-        int lostCardsShown = 0;
-
-        for (Card c : gamePlayer.hand){
-            // If card was removed from hand and added to chosenCards, display them as green
-            if (c == null) {
-                game.font.setColor(0, 255, 0, 255);
-                game.font.draw(game.batch, cardNum + ". " + gamePlayer.chosenCards.get(lostCardsShown).getCardType().toString(), xPos, yPos);
-                game.font.setColor(255, 255, 0, 255);
-                lostCardsShown++;
-            }else {
-                // Else display as yellow
-                game.font.setColor(255, 255, 0, 255);
-                game.font.draw(game.batch, cardNum +". " + c.getCardType().toString(), xPos, yPos);
-                game.font.setColor(255, 255, 0, 255);
-            }
-            // Change positioning for next card
-            cardNum++;
-            xPos += 150;
-            if (xPos >= 500){
-                yPos -= 20;
-                xPos = baseX;
-            }
-        }
-
-        // Draw how many cards have been chosen so far
-        game.font.draw(game.batch, "Deck:", baseX, baseY + baseY/4);
-
-        if (lostCardsShown>=4){
-            game.font.getData().setScale(1);
-            game.font.setColor(0, 100, 200, 255);
-            game.font.draw(game.batch, "Last card!", baseX, baseY + baseY/2);
-        }
-
-        game.font.setColor(255, 0, 0, 255);
-        game.font.getData().setScale(2);
-        game.font.draw(game.batch, Integer.toString(lostCardsShown),baseX*8, baseY+50);
-        game.batch.end();
     }
     /**
      * Reset cell rotation on all cells in the map to 0
