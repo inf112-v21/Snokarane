@@ -307,15 +307,28 @@ public class GameScreen extends ScreenAdapter {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
                 if (gamePlayer.chosenCards.size() >= 5){
-                    System.out.println("Cards are being sent to processing. Stage size before deck clear: "+ stage.getActors().size);
-                    stage.clear();
-                    gamePlayer.state = GamePlayer.PLAYERSTATE.SENDING_CARDS;
-                    gamePlayer.registerChosenCards();
-                    gamePlayer.drawCardsFromDeck();
+                    if (network.isHost){
+                        if(((GameHost)gamePlayer).allCardsReady()){
+                            System.out.println("Cards are being sent to processing. Stage size before deck clear: "+ stage.getActors().size);
+                            stage.clear();
+                            gamePlayer.state = GamePlayer.PLAYERSTATE.SENDING_CARDS;
+                            gamePlayer.registerChosenCards();
+                            gamePlayer.drawCardsFromDeck();
+                        } else {
+                            System.out.println("Not all players have delivered their cards yet! Cannot process cards yet.");
+                        }
+                    }else {
+                        System.out.println("Cards are being sent to processing. Stage size before deck clear: "+ stage.getActors().size);
+                        stage.clear();
+                        gamePlayer.state = GamePlayer.PLAYERSTATE.SENDING_CARDS;
+                        gamePlayer.registerChosenCards();
+                        gamePlayer.drawCardsFromDeck();
+                    }
                 }
                 return true;
             }
         });
+
         stage.addActor(sendCardsButton);
     }
     /**

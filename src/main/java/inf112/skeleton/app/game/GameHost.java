@@ -99,6 +99,10 @@ public class GameHost extends GamePlayer {
         checkCards();
     }
 
+    public boolean allCardsReady(){
+        return host.playerCards.keySet().size() == host.alivePlayers.size()-1; // host doesn't deliver cards until after this check
+    }
+
     public void checkCards(){
         if (host.playerCards.keySet().size() == host.alivePlayers.size()) {
             processCards();
