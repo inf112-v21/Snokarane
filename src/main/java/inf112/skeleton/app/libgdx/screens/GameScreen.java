@@ -543,6 +543,7 @@ public class GameScreen extends ScreenAdapter {
         TiledMapTileLayer holeLayer = (TiledMapTileLayer) tiledMap.getLayers().get("Hole");
         TiledMapTileLayer gearLayer = (TiledMapTileLayer) tiledMap.getLayers().get("Gear");
         TiledMapTileLayer wallLayer = (TiledMapTileLayer) tiledMap.getLayers().get("Wall");
+        TiledMapTileLayer beltLayer = (TiledMapTileLayer) tiledMap.getLayers().get("Belt");
         for (int i = 0; i < holeLayer.getWidth(); i++){
             for (int j = 0; j < holeLayer.getHeight(); j++){
                 // getCell returns null if nothing is found in the current cell in this layer
@@ -551,6 +552,9 @@ public class GameScreen extends ScreenAdapter {
                 }
                 if (wallLayer.getCell(i, j) != null){
                     setWallDirections(wallLayer.getCell(i, j), i, j);
+                }
+                if (beltLayer.getCell(i, j) != null){
+                    setBeltInformation(beltLayer.getCell(i, j), i, j);
                 }
                 if (gearLayer.getCell(i, j) != null && gearLayer.getCell(i, j).getTile().getId() == 54) {
                     map.gearLayer[i][j] = 1;
@@ -577,6 +581,21 @@ public class GameScreen extends ScreenAdapter {
         if (wallCell.getTile().getId() == 23) map.wallLayer[i][j] = new boolean[] {true, true, false, false};
         //if (wallCell.getTile().getId() == 11) map.wallLayer[i][j] = new boolean[] {true, false, false, true};
 
+    }
+
+    private void setBeltInformation(TiledMapTileLayer.Cell beltCell, int i, int j){
+        if (beltCell.getTile().getId() == 50) map.beltLayer[i][j] = new Map.BeltInformation(PlayerToken.Direction.SOUTH, false, 0);
+        if (beltCell.getTile().getId() == 21) map.beltLayer[i][j] = new Map.BeltInformation(PlayerToken.Direction.SOUTH, true, 0);
+        if (beltCell.getTile().getId() == 49) map.beltLayer[i][j] = new Map.BeltInformation(PlayerToken.Direction.NORTH, false, 0);
+        if (beltCell.getTile().getId() == 41) map.beltLayer[i][j] = new Map.BeltInformation(PlayerToken.Direction.EAST, false, -1);
+        if (beltCell.getTile().getId() == 52) map.beltLayer[i][j] = new Map.BeltInformation(PlayerToken.Direction.EAST, false, 0);
+        if (beltCell.getTile().getId() == 86) map.beltLayer[i][j] = new Map.BeltInformation(PlayerToken.Direction.SOUTH, true, 1);
+        if (beltCell.getTile().getId() == 51) map.beltLayer[i][j] = new Map.BeltInformation(PlayerToken.Direction.WEST, false, 0);
+        if (beltCell.getTile().getId() == 22) map.beltLayer[i][j] = new Map.BeltInformation(PlayerToken.Direction.WEST, true, 0);
+        if (beltCell.getTile().getId() == 14) map.beltLayer[i][j] = new Map.BeltInformation(PlayerToken.Direction.EAST, true, 0);
+        if (beltCell.getTile().getId() == 13) map.beltLayer[i][j] = new Map.BeltInformation(PlayerToken.Direction.NORTH, true, 0);
+        if (beltCell.getTile().getId() == 77) map.beltLayer[i][j] = new Map.BeltInformation(PlayerToken.Direction.NORTH, true, 1);
+        if (beltCell.getTile().getId() == 34) map.beltLayer[i][j] = new Map.BeltInformation(PlayerToken.Direction.WEST, false, -1);
     }
     /**
      * These functions are not currently in use, but inherited from superclass

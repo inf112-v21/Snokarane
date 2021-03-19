@@ -24,9 +24,13 @@ public class Map {
      * 2D map like structure contain information about all players in the game.
      */
     public PlayerRenderInformation [][] playerLayer = new PlayerRenderInformation [BOARD_X][BOARD_Y];
+    public BeltInformation [][] beltLayer = new BeltInformation[BOARD_X][BOARD_Y];
     public boolean [][] holeLayer = new boolean[BOARD_X][BOARD_Y];
-    public int [][] gearLayer = new int[BOARD_X][BOARD_Y];
     public boolean [][][] wallLayer = new boolean[BOARD_X][BOARD_Y][4];
+    public int [][] gearLayer = new int[BOARD_X][BOARD_Y];
+
+
+
 
     //TODO blir bare mellomlagret her, kanskje en dårlig ide?
     public List<GridPoint2> spawnPoints = new ArrayList<>();
@@ -40,6 +44,17 @@ public class Map {
         public PlayerToken.CHARACTER_STATES state = PlayerToken.CHARACTER_STATES.NONE;
         public PlayerToken.Direction dir = PlayerToken.Direction.NORTH;
         public PlayerRenderInformation(){}
+    }
+
+    public static class BeltInformation{
+        public PlayerToken.Direction beltDirection = PlayerToken.Direction.NORTH;
+        public boolean isExpress = false;
+        public int beltRotation = 0;
+        public BeltInformation(PlayerToken.Direction direction, boolean isExpress, int beltRotation){
+            beltDirection = direction;
+            this.isExpress = isExpress;
+            this.beltRotation = beltRotation;
+        }
     }
 
     // NOTE! No args constructor required so kryonet can serialize

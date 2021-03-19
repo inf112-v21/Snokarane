@@ -146,6 +146,23 @@ public class GameHost extends GamePlayer {
             if (token.isDead()) {
                 playersToKill.add(key);
             }
+            for (int i = 0; i < 2; i++) {
+                Map.BeltInformation belt = map.beltLayer[token.getX()][token.getY()];
+                if (belt != null) {
+                    if (i == 0 && belt.isExpress) {
+                        movePlayer(token, 1, belt.beltDirection, false);
+                    }
+                    else if(i == 1) {
+                        movePlayer(token, 1, belt.beltDirection, false);
+                    }
+                    if(belt.beltRotation == -1) {
+                        token.rotate(CardType.TURNLEFT);
+                    }
+                    if(belt.beltRotation == 1) {
+                        token.rotate(CardType.TURNRIGHT);
+                    }
+                }
+            }
             int rotation = map.isGear(token.position.x, token.position.y);
             if (rotation == 1) {
                 System.out.println(token.name + " is on a gear!");
@@ -303,13 +320,13 @@ public class GameHost extends GamePlayer {
     private void resolveCard(Card card, PlayerToken token) {
         switch (card.getCardType()) {
             case FORWARDONE:
-                movePlayer(token, 1, token.getDirection());
+                movePlayer(token, 1, token.getDirection(), true);
                 break;
             case FORWARDTWO:
-                movePlayer(token, 2, token.getDirection());
+                movePlayer(token, 2, token.getDirection(), true);
                 break;
             case FORWARDTHREE:
-                movePlayer(token, 3, token.getDirection());
+                movePlayer(token, 3, token.getDirection(), true);
                 break;
             case BACK_UP:
                 switch (token.getDirection()) {
@@ -345,7 +362,7 @@ public class GameHost extends GamePlayer {
      * @param dist the number of steps you want to take
      * @param direction the direction you want to move, usually player.getDirection()
      */
-    private boolean movePlayer(PlayerToken player, int dist, PlayerToken.Direction direction) {
+    private boolean movePlayer(PlayerToken player, int dist, PlayerToken.Direction direction, boolean shouldPush) {
         if (dist == 0) {
             return false;
         }
@@ -366,6 +383,7 @@ public class GameHost extends GamePlayer {
                 // TODO Fix this maybe? Also add support for chain-pushing. This contains a lot of bugs
                 // I.e if the player is being pushed into a wall
                 boolean didOppMove = false;
+
                 for (PlayerToken opponent : clientPlayers.values()) {
                     if (opponent != player && opponent.position.x == wouldEndUp.x && opponent.position.y == wouldEndUp.y) {
                         didOppMove = movePlayer(opponent, 1, direction);
