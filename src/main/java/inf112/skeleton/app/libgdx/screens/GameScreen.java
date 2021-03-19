@@ -543,7 +543,7 @@ public class GameScreen extends ScreenAdapter {
         TiledMapTileLayer holeLayer = (TiledMapTileLayer) tiledMap.getLayers().get("Hole");
         TiledMapTileLayer gearLayer = (TiledMapTileLayer) tiledMap.getLayers().get("Gear");
         TiledMapTileLayer wallLayer = (TiledMapTileLayer) tiledMap.getLayers().get("Wall");
-        TiledMapTileLayer beltLayer = (TiledMapTileLayer) tiledMap.getLayers().get("Belt");
+        TiledMapTileLayer beltLayer = (TiledMapTileLayer) tiledMap.getLayers().get("Belts");
         for (int i = 0; i < holeLayer.getWidth(); i++){
             for (int j = 0; j < holeLayer.getHeight(); j++){
                 // getCell returns null if nothing is found in the current cell in this layer
