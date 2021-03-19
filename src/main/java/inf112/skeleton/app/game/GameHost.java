@@ -331,16 +331,16 @@ public class GameHost extends GamePlayer {
             case BACK_UP:
                 switch (token.getDirection()) {
                     case NORTH:
-                        movePlayer(token, 1, PlayerToken.Direction.SOUTH);
+                        movePlayer(token, 1, PlayerToken.Direction.SOUTH, true);
                         break;
                     case SOUTH:
-                        movePlayer(token, 1, PlayerToken.Direction.NORTH);
+                        movePlayer(token, 1, PlayerToken.Direction.NORTH, true);
                         break;
                     case WEST:
-                        movePlayer(token, 1, PlayerToken.Direction.EAST);
+                        movePlayer(token, 1, PlayerToken.Direction.EAST, true);
                         break;
                     case EAST:
-                        movePlayer(token, 1, PlayerToken.Direction.WEST);
+                        movePlayer(token, 1, PlayerToken.Direction.WEST, true);
                         break;
                 }
                 break;
@@ -380,13 +380,16 @@ public class GameHost extends GamePlayer {
                 return true;
             }
             else if (map.playerLayer[wouldEndUp.x][wouldEndUp.y].state != PlayerToken.CHARACTER_STATES.NONE) {
+                if (shouldPush == false) {
+                    return false;
+                }
                 // TODO Fix this maybe? Also add support for chain-pushing. This contains a lot of bugs
                 // I.e if the player is being pushed into a wall
                 boolean didOppMove = false;
 
                 for (PlayerToken opponent : clientPlayers.values()) {
                     if (opponent != player && opponent.position.x == wouldEndUp.x && opponent.position.y == wouldEndUp.y) {
-                        didOppMove = movePlayer(opponent, 1, direction);
+                        didOppMove = movePlayer(opponent, 1, direction, true);
                     }
                 }
                 if (didOppMove) player.move(direction);
@@ -400,7 +403,7 @@ public class GameHost extends GamePlayer {
             // TODO this is shady as heck
             map.loadPlayers(wrapper());
             //host.sendMapLayerWrapper(wrapper());
-            movePlayer(player, dist-1, direction);
+            movePlayer(player, dist-1, direction, shouldPush);
         return true;
     }
 
