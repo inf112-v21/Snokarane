@@ -579,6 +579,22 @@ public class GameScreen extends ScreenAdapter {
         if (wallCell.getTile().getId() == 30) map.wallLayer[i][j] = new boolean[] {false, false, false, true};
         if (wallCell.getTile().getId() == 8) map.wallLayer[i][j] = new boolean[] {false, true, true, false};
         if (wallCell.getTile().getId() == 23) map.wallLayer[i][j] = new boolean[] {true, true, false, false};
+        if (wallCell.getTile().getId() == 12) {
+            map.wallLayer[i][j] = new boolean[] {false, false, false, true};
+            map.beltLayer[i][j] = new Map.BeltInformation(PlayerToken.Direction.EAST, false, 0);
+        }
+        if (wallCell.getTile().getId() == 11) {
+            map.wallLayer[i][j] = new boolean[] {false, false, true, false};
+            map.beltLayer[i][j] = new Map.BeltInformation(PlayerToken.Direction.NORTH, false, 0);
+        }
+        if (wallCell.getTile().getId() == 10) {
+            map.wallLayer[i][j] = new boolean[] {false, true, false, false};
+            map.beltLayer[i][j] = new Map.BeltInformation(PlayerToken.Direction.WEST, false, 0);
+        }
+        if (wallCell.getTile().getId() == 9) {
+            map.wallLayer[i][j] = new boolean[] {true, false, false, false};
+            map.beltLayer[i][j] = new Map.BeltInformation(PlayerToken.Direction.SOUTH, false, 0);
+        }
         //if (wallCell.getTile().getId() == 11) map.wallLayer[i][j] = new boolean[] {true, false, false, true};
 
     }
