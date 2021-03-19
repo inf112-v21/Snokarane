@@ -8,8 +8,10 @@ import inf112.skeleton.app.game.GameHost;
 import inf112.skeleton.app.game.objects.Card;
 import inf112.skeleton.app.game.objects.PlayerToken;
 import inf112.skeleton.app.libgdx.NetworkDataWrapper;
+import inf112.skeleton.app.ui.chat.Message;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -21,6 +23,9 @@ public class NetworkHost extends Network {
 
     // Map connection ID's to cards players chose
     public HashMap<Integer, List<Card>> playerCards = new HashMap<>();
+
+    // Messages recieved
+    List<Message> messagesRecived = new ArrayList<>();
 
     // Random number, and a poor implementation
     // Just grabbing a random negative number so that it doesn't clash with connection.getID()
@@ -48,6 +53,9 @@ public class NetworkHost extends Network {
                     token.ID = c.getID();
                     token.name = (String) object;
                     host.clientPlayers.put(c.getID(), token);
+                }
+                if (object instanceof Message){
+                    messagesRecived.add((Message) object);
                 }
             }
         });
@@ -103,6 +111,13 @@ public class NetworkHost extends Network {
         for (Connection c : connections) {
             server.sendToTCP(c.getID(), c.getID());
         }
+    }
+
+    /**
+     *
+     */
+    public List<Message> getMessages(){
+        return messagesRecived;
     }
 
 }
