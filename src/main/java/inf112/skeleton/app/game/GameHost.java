@@ -157,11 +157,13 @@ public class GameHost extends GamePlayer {
                     }
                 }
                 Map.BeltInformation nextBelt = map.beltLayer[token.getX()][token.getY()];
-                if(nextBelt.beltRotation == -1) {
-                    token.rotate(CardType.TURNLEFT);
-                }
-                if(nextBelt.beltRotation == 1) {
-                    token.rotate(CardType.TURNRIGHT);
+                if (belt != null) {
+                    if (nextBelt.beltRotation == -1) {
+                        token.rotate(CardType.TURNLEFT);
+                    }
+                    if (nextBelt.beltRotation == 1) {
+                        token.rotate(CardType.TURNRIGHT);
+                    }
                 }
             }
             int rotation = map.isGear(token.position.x, token.position.y);
