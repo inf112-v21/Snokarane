@@ -7,6 +7,26 @@ import com.badlogic.gdx.graphics.Texture;
 
 public class CharacterCustomizer {
 
+
+    /*
+    *
+    *   Instantiate variables bellow in create method
+    *
+    *   //roboPlayerTexture
+    *
+    *   Texture roboPlayerTexture = generatePlayerTexture(playerIsLarge);
+    *   TextureRegion roboPlayerSplitTexture = new TextureRegion(roboPlayerTexture);
+    *
+    *    StaticTiledMapTile playerRoboStaticTile = new StaticTiledMapTile(roboPlayerSplitTexture);
+    *    roboPlayer = new TiledMapTileLayer.Cell().setTile(playerRoboStaticTile);
+    *
+    * */
+
+
+
+
+
+
     /**
      *
      * @param isLarge bool for if using the robo_small or robo_large pngs
