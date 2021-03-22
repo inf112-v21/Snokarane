@@ -24,6 +24,11 @@ import inf112.skeleton.app.libgdx.RoboGame;
 import inf112.skeleton.app.network.Network;
 import inf112.skeleton.app.network.NetworkClient;
 import inf112.skeleton.app.network.NetworkHost;
+import inf112.skeleton.app.ui.chat.backend.ChatFormatter;
+import inf112.skeleton.app.ui.chat.managers.IChatter;
+import inf112.skeleton.app.ui.chat.display.Chat;
+import inf112.skeleton.app.ui.chat.managers.ChatClient;
+import inf112.skeleton.app.ui.chat.managers.ChatManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -53,6 +58,14 @@ public class GameScreen extends ScreenAdapter {
     GamePlayer gamePlayer;
     // Handles all data transfers over internet
     Network network;
+
+    // Send messages over TCP to host
+    IChatter chatBackend;
+    // Formats data to only contain data needed to render message to screen
+    ChatFormatter chatFormatter;
+    // Formats data to libgdx renderable data
+    Chat chat;                  //  IChatter    ChatFormatter      Chat
+    // Chat structure works like: send message -> format -> format to libgdx
 
     public GameScreen(RoboGame game, boolean isHost, String ip, String playerName){
         this.game = game;
@@ -116,6 +129,15 @@ public class GameScreen extends ScreenAdapter {
             System.exit(0);
         }
     }
+
+    // Starts chat depending on client or host
+    private void initializeChatObjects(){
+        chat = new Chat(game.skin);
+        chatFormatter = new ChatFormatter();
+
+        chatBackend = network.isHost ? new ChatManager() : new ChatClient();
+    }
+
     /**
      * Initialize all libgdx objects:
      *  Batch, font, input processor, textures, map layers, camera and renderer,
@@ -133,6 +155,9 @@ public class GameScreen extends ScreenAdapter {
 
         // Start game/network objects
         startGame(isHost, ip, playerName);
+
+        // Start chat depending on if network object is hosting game
+        initializeChatObjects();
     }
     /**
      * @return TiledMap object loaded from path
