@@ -7,7 +7,14 @@ import com.badlogic.gdx.graphics.Texture;
 
 public class CharacterCustomizer {
 
+    /**
+     *
+     * @param isLarge bool for if using the robo_small or robo_large pngs
+     * @return generated player texture
+     */
     public static Texture generatePlayerTexture(Boolean isLarge) { //take in chosen colour as well
+
+        //TODO: edit input textures to be correctly sized with correct color
 
         //Robotexture
         Texture roboTexture;
@@ -61,9 +68,9 @@ public class CharacterCustomizer {
         }
 
 
-        Texture retunTex = new Texture(roboPixmap);
+        Texture returnTexture = new Texture(roboPixmap);
 
-        return retunTex;
+        return returnTexture;
     }
 
 }
