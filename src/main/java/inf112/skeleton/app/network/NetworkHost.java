@@ -10,6 +10,7 @@ import inf112.skeleton.app.game.objects.PlayerToken;
 import inf112.skeleton.app.libgdx.NetworkDataWrapper;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -17,6 +18,7 @@ public class NetworkHost extends Network {
 
     private Server server;
     public Connection[] connections;
+    public List<Integer> alivePlayers = new ArrayList<>();
     public GameHost host;
 
     // Map connection ID's to cards players chose
@@ -42,11 +44,13 @@ public class NetworkHost extends Network {
                     host.checkCards();
                 }
                 if (object instanceof String) {
-                    System.out.println("Recieved the name " + (String) object + " from client number " + c.getID());
+                    //TODO Put all this in a public method in gamehost?
+                    System.out.println("Recieved the name " + object + " from client number " + c.getID());
                     PlayerToken token = new PlayerToken();
                     token.charState = PlayerToken.CHARACTER_STATES.PLAYERNORMAL;
                     token.ID = c.getID();
                     token.name = (String) object;
+                    token = host.initializePlayerPos(token);
                     host.clientPlayers.put(c.getID(), token);
                 }
             }
@@ -75,7 +79,13 @@ public class NetworkHost extends Network {
      */
     public void promptCardDraw() {
         System.out.println("Prompted clients to draw cards.");
-        server.sendToAllTCP("Draw cards!");
+        for (Integer connectionID : alivePlayers) {
+            if (connectionID == hostID) {
+                host.drawCardsFromDeck();
+                return;
+            }
+            server.sendToTCP(connectionID, "Draw cards!");
+        }
     }
 
     public void promptName() {
@@ -100,6 +110,12 @@ public class NetworkHost extends Network {
     public void initConnections() {
         promptName();
         connections = server.getConnections();
+
+        // List of the connections which should get card
+        for (Connection c : connections) {
+            alivePlayers.add(c.getID());
+        }
+        alivePlayers.add(hostID);
         for (Connection c : connections) {
             server.sendToTCP(c.getID(), c.getID());
         }
