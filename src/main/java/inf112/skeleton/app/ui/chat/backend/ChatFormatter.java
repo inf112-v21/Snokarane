@@ -1,0 +1,34 @@
+package inf112.skeleton.app.ui.chat.backend;
+
+import inf112.skeleton.app.ui.chat.backend.Message;
+
+import java.util.HashMap;
+import java.util.List;
+
+/**
+ * Formats internal chat data to filter/sort out data
+ * to contain information that is needed to render the chat.
+ */
+public class ChatFormatter {
+    //              Name    Message
+    public HashMap<String, String> messages = new HashMap<>();
+    //              ID      Name
+    public HashMap<Integer, String> chatters = new HashMap<>();
+
+    /**
+     * Formats messages into two hashmaps that contain message, messenger name and messenger ID
+     */
+    public void formatMessagesToDisplay(List<Message> messages){
+        for (Message m : messages){
+            chatters.put(m.sender.chatterID, m.sender.name);
+            this.messages.put(m.sender.name, m.message);
+        }
+    }
+
+    /**
+     * Returns key value pair of (name, message)
+     */
+    public HashMap<String, String> getNamesWithMessages(){
+        return this.messages;
+    }
+}
