@@ -165,12 +165,15 @@ public class GameHost extends GamePlayer {
                     }
                 }
                 Map.BeltInformation nextBelt = map.beltLayer[token.getX()][token.getY()];
-                if (nextBelt != null && nextBelt.beltRotationDirection != null && nextBelt.beltRotationDirection == belt.beltDirection) {
-                    if (nextBelt.beltRotation == -1) {
-                        token.rotate(CardType.TURNLEFT);
-                    }
-                    if (nextBelt.beltRotation == 1) {
-                        token.rotate(CardType.TURNRIGHT);
+                if (nextBelt != null && nextBelt.beltRotationDirection != null) {
+                    assert belt != null;
+                    if (nextBelt.beltRotationDirection == belt.beltDirection) {
+                        if (nextBelt.beltRotation == -1) {
+                            token.rotate(CardType.TURNLEFT);
+                        }
+                        if (nextBelt.beltRotation == 1) {
+                            token.rotate(CardType.TURNRIGHT);
+                        }
                     }
                 }
             }
