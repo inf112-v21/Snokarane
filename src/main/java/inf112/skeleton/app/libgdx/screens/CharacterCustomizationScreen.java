@@ -55,48 +55,74 @@ public class CharacterCustomizationScreen extends ScreenAdapter implements IUiSc
             }
         });
 
-        // Slider
-        Slider ySlider = new Slider(0f, 1f, 0.01f, false, game.skin);
-        ySlider.setPosition(gdxW / 2 - ySlider.getWidth() / 2, gdxH / 2 - ySlider.getHeight() / 2);
 
-        // Label for slider
-        Label ySlabel = new Label("Yellow", game.skin);
-        ySlabel.setPosition(ySlider.getX()-100, ySlider.getY());
 
-        // Slider event (when slider gets moved this function is called)
-        ySlider.addListener(new ChangeListener() {
+        //Creating sliders for selecting color with rgb
+
+        Slider redSlider = new Slider(0, 255, 1, false, game.skin);
+        redSlider.setPosition(gdxW / 2 - redSlider.getWidth() / 2, gdxH / 2 - redSlider.getHeight() / 2);
+
+        Slider greenSlider = new Slider(0, 255, 1, false, game.skin);
+        greenSlider.setPosition(gdxW/2-greenSlider.getWidth()/2, gdxH/2-greenSlider.getHeight()/2-50);
+
+        Slider blueSlider = new Slider(0, 255, 1, false, game.skin);
+        blueSlider.setPosition(gdxW/2-blueSlider.getWidth()/2, gdxH/2-blueSlider.getHeight()/2-100);
+
+
+        //Adding labels to the sliders
+
+        Label redSliderLabel = new Label("Red", game.skin);
+        redSliderLabel.setPosition(redSlider.getX()-100, redSlider.getY());
+
+        Label greenSliderLabel = new Label("Green", game.skin);
+        greenSliderLabel.setPosition(greenSlider.getX()-100, greenSlider.getY());
+
+        Label blueSliderLabel = new Label("Blue", game.skin);
+        blueSliderLabel.setPosition(blueSlider.getX()-100, blueSlider.getY());
+
+
+
+        //Event handlers for the sliders
+
+        redSlider.addListener(new ChangeListener() {
             @Override
-            public void changed(ChangeEvent changeEvent, Actor actor) {
+            public void changed(ChangeEvent changeEvent, Actor actor) { // Slider event (when slider gets moved this function is called)
                 /*
                 can for example change texture colour here to preview final choice
                  */
-                System.out.println("ySlider moved: " + ySlider.getValue());
+                System.out.println("redSlider moved: " + redSlider.getValue());
             }
         });
 
-        // Slider
-        Slider gSlider = new Slider(0f, 1f, 0.01f, false, game.skin);
-        gSlider.setPosition(gdxW/2-gSlider.getWidth()/2, gdxH/2-gSlider.getHeight()/2-50);
 
-        // Label for slider
-        Label gSlabel = new Label("Green", game.skin);
-        gSlabel.setPosition(gSlider.getX()-100, gSlider.getY());
-
-        // Slider event (when slider gets moved this function is called)
-        gSlider.addListener(new ChangeListener() {
+        greenSlider.addListener(new ChangeListener() {
             @Override
-            public void changed(ChangeEvent changeEvent, Actor actor) {
+            public void changed(ChangeEvent changeEvent, Actor actor) { // Slider event (when slider gets moved this function is called)
                 /*
                 can for example change texture colour here to preview final choice
                  */
-                System.out.println("gSlider moved: " + gSlider.getValue());
+                System.out.println("greenSlider moved: " + greenSlider.getValue());
             }
         });
 
-        stage.addActor(ySlider);
-        stage.addActor(ySlabel);
-        stage.addActor(gSlider);
-        stage.addActor(gSlabel);
+
+        blueSlider.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent changeEvent, Actor actor) { // Slider event (when slider gets moved this function is called)
+                /*
+                can for example change texture colour here to preview final choice
+                 */
+                System.out.println("blueSlider moved: " + blueSlider.getValue());
+            }
+        });
+
+
+        stage.addActor(redSlider);
+        stage.addActor(redSliderLabel);
+        stage.addActor(greenSlider);
+        stage.addActor(greenSliderLabel);
+        stage.addActor(blueSlider);
+        stage.addActor(blueSliderLabel);
         stage.addActor(backButton);
     }
 
@@ -104,6 +130,7 @@ public class CharacterCustomizationScreen extends ScreenAdapter implements IUiSc
     public void show() {
         Gdx.input.setInputProcessor(stage);
     }
+
 
     @Override
     public void render(float v) {
@@ -114,7 +141,9 @@ public class CharacterCustomizationScreen extends ScreenAdapter implements IUiSc
         stage.draw();
     }
 
+
     @Override
     public void hide() {
     }
+
 }
