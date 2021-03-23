@@ -4,6 +4,7 @@ import com.badlogic.gdx.math.GridPoint2;
 import inf112.skeleton.app.game.objects.Flag;
 import inf112.skeleton.app.game.objects.PlayerToken;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -38,6 +39,20 @@ public class Map {
     //TODO blir bare mellomlagret her, kanskje en dårlig ide?
     public List<GridPoint2> spawnPoints = new ArrayList<>();
 
+
+    public static class LaserShooter{
+        public PlayerToken.Direction dir;
+        int laserNum;
+        int x;
+        int y;
+
+        public LaserShooter(PlayerToken.Direction dir, int laserNum, int x, int y) {
+            this.dir = dir;
+            this.laserNum = laserNum;
+            this.x = x;
+            this.y = y;
+        }
+    }
     /**
      * This is a sort of replacement for tuples that java lack,
      * Only thing clients needs to render players is state and direction so this is wrapped
@@ -121,6 +136,21 @@ public class Map {
         return repairLayer [x][y];
     }
 
+    public int isLaser(int x, int y, PlayerToken.Direction direction) {
+        if (direction == PlayerToken.Direction.NORTH){
+            return laserLayer[x][y][0];
+        }
+        else if (direction == PlayerToken.Direction.EAST) {
+            return laserLayer[x][y][1];
+        }
+        else if (direction == PlayerToken.Direction.SOUTH) {
+            return laserLayer[x][y][2];
+        }
+        else{
+            return laserLayer[x][y][3];
+        }
+    }
+
     public boolean isWall(int x, int y, PlayerToken.Direction direction){
         if (direction == PlayerToken.Direction.NORTH){
             return wallLayer[x][y][0];
@@ -135,7 +165,47 @@ public class Map {
             return wallLayer[x][y][3];
         }
     }
+
+    public void shootLasers(NetworkDataWrapper wrapper) {
+        List<LaserShooter> allLasers = new ArrayList<>();
+        allLasers.addAll(laserShooters);
+
+        for (int i = 0; i<wrapper.PlayerTokens.size(); i++) {
+            PlayerToken token = wrapper.PlayerTokens.get(i);
+            allLasers.add(new LaserShooter(token.getDirection(), 1, token.getX(), token.getY()));
+        }
+        for (LaserShooter laser : allLasers) {
+            int x = laser.x;
+            int y = laser.y;
+            if (laser.dir == PlayerToken.Direction.NORTH){
+                for (int i = 0; i < BOARD_X; i++) {
+                    laserLayer[x][y+i][0] = laser.laserNum;
+                    if (isWall(x, y, laser.dir) || playerLayer[x][y].state != PlayerToken.CHARACTER_STATES.NONE || y+i+1 == BOARD_Y) break;
+                }
+            }
+            else if (laser.dir == PlayerToken.Direction.EAST) {
+                for (int i = 0; i < BOARD_X; i++) {
+                    laserLayer[x+i][y][1] = laser.laserNum;
+                    if (isWall(x, y, laser.dir) || playerLayer[x][y].state != PlayerToken.CHARACTER_STATES.NONE || x+i+1 == BOARD_X) break;
+                }
+            }
+            else if (laser.dir == PlayerToken.Direction.SOUTH) {
+                for (int i = 0; i < BOARD_X; i++) {
+                    laserLayer[x][y-i][2] = laser.laserNum;
+                    if (isWall(x, y, laser.dir) || playerLayer[x][y].state != PlayerToken.CHARACTER_STATES.NONE || y-i-1 < 0) break;
+                }
+            }
+            else{
+                for (int i = 0; i < BOARD_X; i++) {
+                    laserLayer[x-i][y][3] = laser.laserNum;
+                    if (isWall(x, y, laser.dir) || playerLayer[x][y].state != PlayerToken.CHARACTER_STATES.NONE || x-i-1 < 0) break;
+                }
+            }
+        }
+    }
+
     /**
+     * //TODO RENAME THIS
      * Loads player from network into map
      * @param wrapper The NetworkDataWrapper that contains the players
      */
@@ -151,5 +221,6 @@ public class Map {
             }
             playerLayer[token.getX()][token.getY()].dir = token.getDirection();
         }
+        shootLasers(wrapper);
     }
 }

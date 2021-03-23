@@ -183,6 +183,17 @@ public class GameHost extends GamePlayer {
                 System.out.println(token.name + " is on a gear!");
                 token.rotate(CardType.TURNLEFT);
             }
+            int lasers = 0;
+            for (int i = 0; i < 4; i++) {
+                lasers += map.laserLayer[token.getX()][token.getY()][i];
+            }
+            token.hp -= lasers;
+
+            if (map.isRepair(token.getX(), token.getY())){
+                token.hp++;
+                System.out.println(token.name + "healed, and now has " + token.hp + " health points");
+            }
+            //TODO ADD FLAG CHECK HERE
         }
         for (Integer key: playersToKill) {
             clientPlayers.remove(clientPlayers.remove(key));

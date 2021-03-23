@@ -23,6 +23,7 @@ import inf112.skeleton.app.game.objects.Card;
 import inf112.skeleton.app.game.objects.CardType;
 import inf112.skeleton.app.game.objects.Flag;
 import inf112.skeleton.app.game.objects.PlayerToken;
+import inf112.skeleton.app.libgdx.Game;
 import inf112.skeleton.app.libgdx.Map;
 import inf112.skeleton.app.libgdx.RoboGame;
 import inf112.skeleton.app.network.Network;
@@ -502,8 +503,46 @@ public class GameScreen extends ScreenAdapter {
             translatePlayerLayer();
             resetCellRotation();
             rotateCellsAccordingToDirection();
+            loadLasers();
             // TODO: board and flag layer doesn't change as of this version
         }
+    }
+
+    public void loadLasers() {
+        for (int x = 0; x < Game.BOARD_X; x++) {
+            for (int y = 0; y < Game.BOARD_Y; y++) {
+                TiledMapTileLayer.Cell laserTile = laserToTile(x, y);
+                if (laserTile != null) {
+                    ((TiledMapTileLayer) game.tiledMap.getLayers().get("Laser")).setCell(x, y, laserTile);
+                }
+            }
+        }
+    }
+
+    public TiledMapTileLayer.Cell laserToTile(int x, int y) {
+        //TODO absolutely needs to be fixed ASAP
+        Texture rawLaserTexture = new Texture("tiles.png");
+
+        // Split player texture into seperate regions
+        TextureRegion[][] splitTextures = TextureRegion.split(rawLaserTexture, 300, 300);
+
+        StaticTiledMapTile singleHorizontal = new StaticTiledMapTile(splitTextures[4][6]);
+        StaticTiledMapTile singleBoth = new StaticTiledMapTile(splitTextures[4][7]);
+        StaticTiledMapTile singleVertical = new StaticTiledMapTile(splitTextures[5][6]);
+        StaticTiledMapTile doubleBoth = new StaticTiledMapTile(splitTextures[12][5]);
+        StaticTiledMapTile doubleVertical = new StaticTiledMapTile(splitTextures[12][6]);
+        StaticTiledMapTile doubleHorizontal = new StaticTiledMapTile(splitTextures[12][7]);
+
+        //TODO FIX THIS SHit
+        if (map.laserLayer[x][y][0] == 1) return new TiledMapTileLayer.Cell().setTile(singleVertical);
+        if (map.laserLayer[x][y][0] == 2) return new TiledMapTileLayer.Cell().setTile(doubleVertical);
+        if (map.laserLayer[x][y][1] == 1) return new TiledMapTileLayer.Cell().setTile(singleHorizontal);
+        if (map.laserLayer[x][y][1] == 2) return new TiledMapTileLayer.Cell().setTile(doubleHorizontal);
+        if (map.laserLayer[x][y][2] == 1) return new TiledMapTileLayer.Cell().setTile(singleVertical);
+        if (map.laserLayer[x][y][2] == 2) return new TiledMapTileLayer.Cell().setTile(doubleVertical);
+        if (map.laserLayer[x][y][3] == 1) return new TiledMapTileLayer.Cell().setTile(singleHorizontal);
+        if (map.laserLayer[x][y][3] == 2) return new TiledMapTileLayer.Cell().setTile(doubleHorizontal);
+        else return null;
     }
     /**
      * Gets player locations and states from map and sets tiledmaplayer cells to correct texture
@@ -583,6 +622,7 @@ public class GameScreen extends ScreenAdapter {
         TiledMapTileLayer wallLayer = (TiledMapTileLayer) tiledMap.getLayers().get("Wall");
         TiledMapTileLayer beltLayer = (TiledMapTileLayer) tiledMap.getLayers().get("Belts");
         TiledMapTileLayer repairLayer = (TiledMapTileLayer) tiledMap.getLayers().get("Repair");
+        TiledMapTileLayer laserLayer = (TiledMapTileLayer) tiledMap.getLayers().get("Laser");
         for (int i = 0; i < holeLayer.getWidth(); i++){
             for (int j = 0; j < holeLayer.getHeight(); j++){
                 // getCell returns null if nothing is found in the current cell in this layer
@@ -604,6 +644,14 @@ public class GameScreen extends ScreenAdapter {
 
             }
         }
+    }
+
+    private void setLaserDirection(TiledMapTileLayer.Cell laserCell, int i, int j) {
+        // NORTH, EAST, SOUTH, WEST
+        if (laserCell.getTile().getId() == 38) map.laserShooters.add(new Map.LaserShooter(PlayerToken.Direction.EAST, 1, i, j));
+        if (laserCell.getTile().getId() == 46) map.laserShooters.add(new Map.LaserShooter(PlayerToken.Direction.WEST, 1, i, j));
+        if (laserCell.getTile().getId() == 95) map.laserShooters.add(new Map.LaserShooter(PlayerToken.Direction.WEST, 2, i, j));
+        if (laserCell.getTile().getId() == 93) map.laserShooters.add(new Map.LaserShooter(PlayerToken.Direction.EAST, 2, i, j));
     }
 
     private void setWallDirections(TiledMapTileLayer.Cell wallCell, int i, int j){
