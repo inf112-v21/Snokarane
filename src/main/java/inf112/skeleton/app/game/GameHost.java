@@ -150,6 +150,10 @@ public class GameHost extends GamePlayer {
             if (token.isDead()) {
                 playersToKill.add(key);
             }
+            if (map.isRepair(token.getX(), token.getY()) == true){
+                token.hp++;
+                System.out.println(token.name + "healed, and now has " + token.hp + " health points");
+            }
             for (int i = 0; i < 2; i++) {
                 Map.BeltInformation belt = map.beltLayer[token.getX()][token.getY()];
                 if (belt != null) {

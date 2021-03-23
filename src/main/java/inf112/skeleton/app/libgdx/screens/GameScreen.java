@@ -557,11 +557,22 @@ public class GameScreen extends ScreenAdapter {
         TiledMapTileLayer gearLayer = (TiledMapTileLayer) tiledMap.getLayers().get("Gear");
         TiledMapTileLayer wallLayer = (TiledMapTileLayer) tiledMap.getLayers().get("Wall");
         TiledMapTileLayer beltLayer = (TiledMapTileLayer) tiledMap.getLayers().get("Belts");
+        TiledMapTileLayer repairLayer = (TiledMapTileLayer) tiledMap.getLayers().get("Repair");
         for (int i = 0; i < holeLayer.getWidth(); i++){
             for (int j = 0; j < holeLayer.getHeight(); j++){
                 // getCell returns null if nothing is found in the current cell in this layer
                 if (holeLayer.getCell(i, j) != null) {
                     map.holeLayer[i][j] = true;
+                }
+                else {
+                    map.holeLayer[i][j] = false;
+
+                }
+                if (repairLayer.getCell(i, j) != null) {
+                    map.repairLayer[i][j] = true;
+                }
+                else {
+                    map.repairLayer[i][j] = false;
                 }
                 if (wallLayer.getCell(i, j) != null){
                     setWallDirections(wallLayer.getCell(i, j), i, j);

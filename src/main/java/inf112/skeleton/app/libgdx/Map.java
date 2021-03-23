@@ -28,6 +28,7 @@ public class Map {
     public boolean [][] holeLayer = new boolean[BOARD_X][BOARD_Y];
     public boolean [][][] wallLayer = new boolean[BOARD_X][BOARD_Y][4];
     public int [][] gearLayer = new int[BOARD_X][BOARD_Y];
+    public boolean [][] repairLayer = new boolean[BOARD_X][BOARD_Y];
 
 
 
@@ -105,6 +106,10 @@ public class Map {
 
     public int isGear(int x, int y) {
         return gearLayer[x][y];
+    }
+
+    public boolean isRepair(int x, int y){
+        return repairLayer [x][y];
     }
 
     public boolean isWall(int x, int y, PlayerToken.Direction direction){
