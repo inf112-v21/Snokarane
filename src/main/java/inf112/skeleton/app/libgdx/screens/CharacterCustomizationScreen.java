@@ -11,6 +11,7 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Slider;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import inf112.skeleton.app.libgdx.RoboGame;
@@ -55,7 +56,11 @@ public class CharacterCustomizationScreen extends ScreenAdapter implements IUiSc
             }
         });
 
-
+        //Offesets for relative positioning and sizing
+        int labelOffset = -100;
+        int texFiledOffset = 150;
+        int textFiledWidth = 50;
+        int textFiledMaxLength = 3;
 
         //Creating sliders for selecting color with rgb
 
@@ -72,14 +77,36 @@ public class CharacterCustomizationScreen extends ScreenAdapter implements IUiSc
         //Adding labels to the sliders
 
         Label redSliderLabel = new Label("Red", game.skin);
-        redSliderLabel.setPosition(redSlider.getX()-100, redSlider.getY());
+        redSliderLabel.setPosition(redSlider.getX() + labelOffset, redSlider.getY());
 
         Label greenSliderLabel = new Label("Green", game.skin);
-        greenSliderLabel.setPosition(greenSlider.getX()-100, greenSlider.getY());
+        greenSliderLabel.setPosition(greenSlider.getX() + labelOffset, greenSlider.getY());
 
         Label blueSliderLabel = new Label("Blue", game.skin);
-        blueSliderLabel.setPosition(blueSlider.getX()-100, blueSlider.getY());
+        blueSliderLabel.setPosition(blueSlider.getX() + labelOffset, blueSlider.getY());
 
+
+        //only allow numbers in text fields
+        TextField.TextFieldFilter digitsOnlyFilter = new TextField.TextFieldFilter.DigitsOnlyFilter();
+
+        //Text fields for displaying and changing color number
+        TextField redTextField= new TextField("0", game.skin);
+        redTextField.setWidth(textFiledWidth);
+        redTextField.setTextFieldFilter(digitsOnlyFilter);
+        redTextField.setMaxLength(textFiledMaxLength);
+        redTextField.setPosition(redSlider.getX() + texFiledOffset, redSlider.getY());
+
+        TextField greenTextField = new TextField("0", game.skin);
+        greenTextField.setWidth(textFiledWidth);
+        greenTextField.setTextFieldFilter(digitsOnlyFilter);
+        greenTextField.setMaxLength(textFiledMaxLength);
+        greenTextField.setPosition(greenSlider.getX() + texFiledOffset, greenSlider.getY());
+
+        TextField blueTextField = new TextField("0", game.skin);
+        blueTextField.setWidth(textFiledWidth);
+        blueTextField.setTextFieldFilter(digitsOnlyFilter);
+        blueTextField.setMaxLength(textFiledMaxLength);
+        blueTextField.setPosition(blueSlider.getX() + texFiledOffset, blueSlider.getY());
 
 
         //Event handlers for the sliders
@@ -90,6 +117,7 @@ public class CharacterCustomizationScreen extends ScreenAdapter implements IUiSc
                 /*
                 can for example change texture colour here to preview final choice
                  */
+                redTextField.setText(String.valueOf(Math.round(redSlider.getValue()))); //sets value of textfiled to be same as slider
                 System.out.println("redSlider moved: " + redSlider.getValue());
             }
         });
@@ -101,6 +129,7 @@ public class CharacterCustomizationScreen extends ScreenAdapter implements IUiSc
                 /*
                 can for example change texture colour here to preview final choice
                  */
+                greenTextField.setText(String.valueOf(Math.round(greenSlider.getValue()))); //sets value of textfiled to be same as slider
                 System.out.println("greenSlider moved: " + greenSlider.getValue());
             }
         });
@@ -112,6 +141,7 @@ public class CharacterCustomizationScreen extends ScreenAdapter implements IUiSc
                 /*
                 can for example change texture colour here to preview final choice
                  */
+                blueTextField.setText(String.valueOf(Math.round(blueSlider.getValue()))); //sets value of textfiled to be same as slider
                 System.out.println("blueSlider moved: " + blueSlider.getValue());
             }
         });
@@ -119,10 +149,13 @@ public class CharacterCustomizationScreen extends ScreenAdapter implements IUiSc
 
         stage.addActor(redSlider);
         stage.addActor(redSliderLabel);
+        stage.addActor(redTextField);
         stage.addActor(greenSlider);
         stage.addActor(greenSliderLabel);
+        stage.addActor(greenTextField);
         stage.addActor(blueSlider);
         stage.addActor(blueSliderLabel);
+        stage.addActor(blueTextField);
         stage.addActor(backButton);
     }
 
