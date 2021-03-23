@@ -48,13 +48,20 @@ public class Map {
     }
 
     public static class BeltInformation{
-        public PlayerToken.Direction beltDirection = PlayerToken.Direction.NORTH;
-        public boolean isExpress = false;
-        public int beltRotation = 0;
+        public PlayerToken.Direction beltRotationDirection = null;
+        public PlayerToken.Direction beltDirection;
+        public boolean isExpress;
+        public int beltRotation;
         public BeltInformation(PlayerToken.Direction direction, boolean isExpress, int beltRotation){
             beltDirection = direction;
             this.isExpress = isExpress;
             this.beltRotation = beltRotation;
+        }
+        public BeltInformation(PlayerToken.Direction direction, boolean isExpress, int beltRotation, PlayerToken.Direction beltRotationDirection){
+            beltDirection = direction;
+            this.isExpress = isExpress;
+            this.beltRotation = beltRotation;
+            this.beltRotationDirection = beltRotationDirection;
         }
     }
 

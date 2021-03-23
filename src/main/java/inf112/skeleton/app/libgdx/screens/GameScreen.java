@@ -1,16 +1,13 @@
 package inf112.skeleton.app.libgdx.screens;
 
 import com.badlogic.gdx.*;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL30;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.tiled.TiledMap;
-import com.badlogic.gdx.maps.tiled.TiledMapTile;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.tiles.StaticTiledMapTile;
-import com.badlogic.gdx.scenes.scene2d.*;
 import com.badlogic.gdx.math.GridPoint2;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
@@ -37,8 +34,8 @@ import java.util.HashMap;
 import java.util.List;
 
 public class GameScreen extends ScreenAdapter {
-    private RoboGame game;
-    private Stage stage;
+    private final RoboGame game;
+    private final Stage stage;
 
     Map map = new Map();
 
@@ -53,13 +50,16 @@ public class GameScreen extends ScreenAdapter {
     private TiledMapTileLayer.Cell playerNormal;
     private TiledMapTileLayer.Cell playerWon;
 
+    private TiledMapTileLayer.Cell laserVert;
+    private TiledMapTileLayer.Cell laserHor;
+
     /*
     * In order, index 0 to max is:
     * move 1, move 2, move 3, rotate left, rotate right, backup, uturn
     */
-    private HashMap<CardType, TextureRegion> cardTemplates = new HashMap<>();
+    private final HashMap<CardType, TextureRegion> cardTemplates = new HashMap<>();
     // Duplicate card types currently in deck (for use in rendering)
-    private HashMap<CardType, Integer> duplicates = new HashMap<>();
+    private final HashMap<CardType, Integer> duplicates = new HashMap<>();
 
     /**
      * Client objects
@@ -629,12 +629,12 @@ public class GameScreen extends ScreenAdapter {
         if (beltCell.getTile().getId() == 49) map.beltLayer[i][j] = new Map.BeltInformation(PlayerToken.Direction.NORTH, false, 0);
         if (beltCell.getTile().getId() == 41) map.beltLayer[i][j] = new Map.BeltInformation(PlayerToken.Direction.EAST, false, -1);
         if (beltCell.getTile().getId() == 52) map.beltLayer[i][j] = new Map.BeltInformation(PlayerToken.Direction.EAST, false, 0);
-        if (beltCell.getTile().getId() == 86) map.beltLayer[i][j] = new Map.BeltInformation(PlayerToken.Direction.SOUTH, true, 1);
+        if (beltCell.getTile().getId() == 86) map.beltLayer[i][j] = new Map.BeltInformation(PlayerToken.Direction.SOUTH, true, 1, PlayerToken.Direction.WEST);
         if (beltCell.getTile().getId() == 51) map.beltLayer[i][j] = new Map.BeltInformation(PlayerToken.Direction.WEST, false, 0);
         if (beltCell.getTile().getId() == 22) map.beltLayer[i][j] = new Map.BeltInformation(PlayerToken.Direction.WEST, true, 0);
         if (beltCell.getTile().getId() == 14) map.beltLayer[i][j] = new Map.BeltInformation(PlayerToken.Direction.EAST, true, 0);
         if (beltCell.getTile().getId() == 13) map.beltLayer[i][j] = new Map.BeltInformation(PlayerToken.Direction.NORTH, true, 0);
-        if (beltCell.getTile().getId() == 77) map.beltLayer[i][j] = new Map.BeltInformation(PlayerToken.Direction.NORTH, true, 1);
+        if (beltCell.getTile().getId() == 77) map.beltLayer[i][j] = new Map.BeltInformation(PlayerToken.Direction.NORTH, true, 1, PlayerToken.Direction.EAST);
         if (beltCell.getTile().getId() == 34) map.beltLayer[i][j] = new Map.BeltInformation(PlayerToken.Direction.WEST, false, -1);
     }
     /**
