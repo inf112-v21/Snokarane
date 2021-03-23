@@ -150,7 +150,7 @@ public class GameHost extends GamePlayer {
             if (token.isDead()) {
                 playersToKill.add(key);
             }
-            if (map.isRepair(token.getX(), token.getY()) == true){
+            if (map.isRepair(token.getX(), token.getY())){
                 token.hp++;
                 System.out.println(token.name + "healed, and now has " + token.hp + " health points");
             }
@@ -165,7 +165,7 @@ public class GameHost extends GamePlayer {
                     }
                 }
                 Map.BeltInformation nextBelt = map.beltLayer[token.getX()][token.getY()];
-                if (nextBelt != null && nextBelt.beltRotationDirection != null && nextBelt.beltRotationDirection == oppositeDir(nextBelt.beltDirection)) {
+                if (nextBelt != null && nextBelt.beltRotationDirection != null && nextBelt.beltRotationDirection == belt.beltDirection) {
                     if (nextBelt.beltRotation == -1) {
                         token.rotate(CardType.TURNLEFT);
                     }
@@ -391,7 +391,7 @@ public class GameHost extends GamePlayer {
                 return true;
             }
             else if (map.playerLayer[wouldEndUp.x][wouldEndUp.y].state != PlayerToken.CHARACTER_STATES.NONE) {
-                if (shouldPush == false) {
+                if (!shouldPush) {
                     return false;
                 }
                 // TODO Fix this maybe? Also add support for chain-pushing. This contains a lot of bugs
