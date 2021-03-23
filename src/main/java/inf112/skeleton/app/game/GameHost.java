@@ -165,7 +165,7 @@ public class GameHost extends GamePlayer {
                     }
                 }
                 Map.BeltInformation nextBelt = map.beltLayer[token.getX()][token.getY()];
-                if (belt != null) {
+                if (nextBelt != null) {
                     if (nextBelt.beltRotation == -1) {
                         token.rotate(CardType.TURNLEFT);
                     }
