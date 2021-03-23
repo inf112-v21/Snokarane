@@ -51,8 +51,12 @@ public class GameScreen extends ScreenAdapter {
     private TiledMapTileLayer.Cell playerNormal;
     private TiledMapTileLayer.Cell playerWon;
 
-    private TiledMapTileLayer.Cell laserVert;
-    private TiledMapTileLayer.Cell laserHor;
+    private TiledMapTileLayer.Cell singleHorizontal;
+    private TiledMapTileLayer.Cell singleBoth;
+    private TiledMapTileLayer.Cell singleVertical;
+    private TiledMapTileLayer.Cell doubleBoth;
+    private TiledMapTileLayer.Cell doubleVertical;
+    private TiledMapTileLayer.Cell doubleHorizontal;
 
     /*
      * In order, index 0 to max is:
@@ -147,7 +151,7 @@ public class GameScreen extends ScreenAdapter {
         loadMapLayers(game.tiledMap);
 
         // Initialize player textures from .png file
-        loadPlayerTextures();
+        loadTextures();
 
         // Initialize card template textures
         loadCardTextures();
@@ -167,20 +171,39 @@ public class GameScreen extends ScreenAdapter {
     /**
      * Load player texture and split into each player state
      */
-    public void loadPlayerTextures() {
+    public void loadTextures() {
         // Load the entire player texture
         Texture rawPlayerTexture = new Texture("player.png");
 
         // Split player texture into seperate regions
-        TextureRegion[][] splitTextures = TextureRegion.split(rawPlayerTexture, 300, 300);
+        TextureRegion[][] splitPlayerTextures = TextureRegion.split(rawPlayerTexture, 300, 300);
 
         // Put the texture regions into seperate tiles
-        StaticTiledMapTile playerNormalStaticTile = new StaticTiledMapTile(splitTextures[0][0]);
-        StaticTiledMapTile playerWonStaticTile = new StaticTiledMapTile(splitTextures[0][2]);
+        StaticTiledMapTile playerNormalStaticTile = new StaticTiledMapTile(splitPlayerTextures[0][0]);
+        StaticTiledMapTile playerWonStaticTile = new StaticTiledMapTile(splitPlayerTextures[0][2]);
 
         // Set player state cells to corresponding tiles
         playerNormal = new TiledMapTileLayer.Cell().setTile(playerNormalStaticTile);
         playerWon = new TiledMapTileLayer.Cell().setTile(playerWonStaticTile);
+
+        Texture rawLaserTexture = new Texture("tiles.png");
+
+        // Split player texture into seperate regions
+        TextureRegion[][] splitLaserTextures = TextureRegion.split(rawLaserTexture, 300, 300);
+
+        StaticTiledMapTile singleHorizontal = new StaticTiledMapTile(splitLaserTextures[4][6]);
+        StaticTiledMapTile singleBoth = new StaticTiledMapTile(splitLaserTextures[4][7]);
+        StaticTiledMapTile singleVertical = new StaticTiledMapTile(splitLaserTextures[5][6]);
+        StaticTiledMapTile doubleBoth = new StaticTiledMapTile(splitLaserTextures[12][5]);
+        StaticTiledMapTile doubleVertical = new StaticTiledMapTile(splitLaserTextures[12][6]);
+        StaticTiledMapTile doubleHorizontal = new StaticTiledMapTile(splitLaserTextures[12][7]);
+
+        this.singleHorizontal = new TiledMapTileLayer.Cell().setTile(singleHorizontal);
+        this.singleBoth = new TiledMapTileLayer.Cell().setTile(singleBoth);
+        this.singleVertical = new TiledMapTileLayer.Cell().setTile(singleVertical);
+        this.doubleBoth = new TiledMapTileLayer.Cell().setTile(doubleBoth);
+        this.doubleVertical = new TiledMapTileLayer.Cell().setTile(doubleVertical);
+        this.doubleHorizontal = new TiledMapTileLayer.Cell().setTile(doubleHorizontal);
     }
 
     /**
@@ -520,28 +543,16 @@ public class GameScreen extends ScreenAdapter {
     }
 
     public TiledMapTileLayer.Cell laserToTile(int x, int y) {
-        //TODO absolutely needs to be fixed ASAP
-        Texture rawLaserTexture = new Texture("tiles.png");
-
-        // Split player texture into seperate regions
-        TextureRegion[][] splitTextures = TextureRegion.split(rawLaserTexture, 300, 300);
-
-        StaticTiledMapTile singleHorizontal = new StaticTiledMapTile(splitTextures[4][6]);
-        StaticTiledMapTile singleBoth = new StaticTiledMapTile(splitTextures[4][7]);
-        StaticTiledMapTile singleVertical = new StaticTiledMapTile(splitTextures[5][6]);
-        StaticTiledMapTile doubleBoth = new StaticTiledMapTile(splitTextures[12][5]);
-        StaticTiledMapTile doubleVertical = new StaticTiledMapTile(splitTextures[12][6]);
-        StaticTiledMapTile doubleHorizontal = new StaticTiledMapTile(splitTextures[12][7]);
 
         //TODO FIX THIS SHit
-        if (map.laserLayer[x][y][0] == 1) return new TiledMapTileLayer.Cell().setTile(singleVertical);
-        if (map.laserLayer[x][y][0] == 2) return new TiledMapTileLayer.Cell().setTile(doubleVertical);
-        if (map.laserLayer[x][y][1] == 1) return new TiledMapTileLayer.Cell().setTile(singleHorizontal);
-        if (map.laserLayer[x][y][1] == 2) return new TiledMapTileLayer.Cell().setTile(doubleHorizontal);
-        if (map.laserLayer[x][y][2] == 1) return new TiledMapTileLayer.Cell().setTile(singleVertical);
-        if (map.laserLayer[x][y][2] == 2) return new TiledMapTileLayer.Cell().setTile(doubleVertical);
-        if (map.laserLayer[x][y][3] == 1) return new TiledMapTileLayer.Cell().setTile(singleHorizontal);
-        if (map.laserLayer[x][y][3] == 2) return new TiledMapTileLayer.Cell().setTile(doubleHorizontal);
+        if (map.laserLayer[x][y][0] == 1) return singleVertical;
+        if (map.laserLayer[x][y][0] == 2) return doubleVertical;
+        if (map.laserLayer[x][y][1] == 1) return singleHorizontal;
+        if (map.laserLayer[x][y][1] == 2) return doubleHorizontal;
+        if (map.laserLayer[x][y][2] == 1) return singleVertical;
+        if (map.laserLayer[x][y][2] == 2) return doubleVertical;
+        if (map.laserLayer[x][y][3] == 1) return singleHorizontal;
+        if (map.laserLayer[x][y][3] == 2) return doubleHorizontal;
         else return null;
     }
     /**

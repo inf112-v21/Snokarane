@@ -165,6 +165,9 @@ public class Map {
             return wallLayer[x][y][3];
         }
     }
+    public void clearLasers() {
+        laserLayer = new int [BOARD_X][BOARD_Y][4];
+    }
 
     public void shootLasers(NetworkDataWrapper wrapper) {
         List<LaserShooter> allLasers = new ArrayList<>();
