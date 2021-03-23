@@ -3,17 +3,17 @@ package inf112.skeleton.app.libgdx.screens;
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.ScreenAdapter;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL30;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.Label;
-import com.badlogic.gdx.scenes.scene2d.ui.Slider;
-import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
-import com.badlogic.gdx.scenes.scene2d.ui.TextField;
+import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
+import inf112.skeleton.app.libgdx.CharacterCustomizer;
 import inf112.skeleton.app.libgdx.RoboGame;
 
 public class CharacterCustomizationScreen extends ScreenAdapter implements IUiScreen  {
@@ -30,6 +30,8 @@ public class CharacterCustomizationScreen extends ScreenAdapter implements IUiSc
         startScreen(game);
     }
 
+
+
     @Override
     public void startScreen(RoboGame game) {
         this.game = game;
@@ -42,12 +44,15 @@ public class CharacterCustomizationScreen extends ScreenAdapter implements IUiSc
 
     }
 
+
     @Override
     public void loadUIIntractables() {
+
         TextButton backButton = new TextButton("Back", game.skin, "small");
         float backLocationY = 6f;
         backButton.setWidth(100);
         backButton.setPosition(gdxW/2- backButton.getWidth()/2, gdxH/backLocationY- backButton.getHeight()/2);
+
         backButton.addListener(new InputListener(){
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
@@ -57,12 +62,15 @@ public class CharacterCustomizationScreen extends ScreenAdapter implements IUiSc
         });
 
 
+
+
         //Offesets for relative positioning and sizing
         int labelOffset = -100;
         int texFiledOffset = 150;
         int textFiledWidth = 50;
         int textFiledMaxLength = 3;
         int possibleColors = 255;
+
 
         //Creating sliders for selecting color with rgb
 
@@ -76,7 +84,7 @@ public class CharacterCustomizationScreen extends ScreenAdapter implements IUiSc
         blueSlider.setPosition(gdxW/2-blueSlider.getWidth()/2, gdxH/2-blueSlider.getHeight()/2-100);
 
 
-        //Adding labels to the sliders
+        //Adding labels to sliders
 
         Label redSliderLabel = new Label("Red", game.skin);
         redSliderLabel.setPosition(redSlider.getX() + labelOffset, redSlider.getY());
@@ -111,6 +119,14 @@ public class CharacterCustomizationScreen extends ScreenAdapter implements IUiSc
         blueTextField.setPosition(blueSlider.getX() + texFiledOffset, blueSlider.getY());
 
 
+        //Character preview
+        //TODO: update character preview within handlers
+
+        Texture playerTexture = CharacterCustomizer.generatePlayerTexture(true, Color.RED); //TODO: perhaps change default color?
+        Image characterPreview = new Image(playerTexture);
+        characterPreview.setPosition(stage.getHeight() / 2,stage.getWidth() / 2); //TODO improve positioning
+
+
         //Event handlers for the sliders
 
         redSlider.addListener(new ChangeListener() {
@@ -119,6 +135,7 @@ public class CharacterCustomizationScreen extends ScreenAdapter implements IUiSc
 
                 redTextField.setText(String.valueOf(Math.round(redSlider.getValue()))); //sets value of textfield to be same as slider
                 redSliderLabel.setColor(redSlider.getValue() / possibleColors, 0,0f, 100f);
+
                 System.out.println("redSlider moved: " + redSlider.getValue());
             }
         });
@@ -152,7 +169,7 @@ public class CharacterCustomizationScreen extends ScreenAdapter implements IUiSc
             @Override
             public void changed(ChangeEvent changeEvent, Actor actor) { // Slider event (when slider gets moved this function is called)
 
-                //TODO: make sure that player can't set value above 255
+                //TODO: make sure that player can't set value above 255?
 
                 try {
                     if(255 >= Float.parseFloat(redTextField.getText()) && Float.parseFloat(redTextField.getText()) >= 0){
@@ -181,9 +198,12 @@ public class CharacterCustomizationScreen extends ScreenAdapter implements IUiSc
                 }
 
                 System.out.println("redSlider moved: " + redTextField.getText());
+
             }
         });
 
+        //TODO: implement event handler for greenTextField
+        //TODO: implement event handler for blueTextField
 
 
         stage.addActor(redSlider);
@@ -195,6 +215,7 @@ public class CharacterCustomizationScreen extends ScreenAdapter implements IUiSc
         stage.addActor(blueSlider);
         stage.addActor(blueSliderLabel);
         stage.addActor(blueTextField);
+        stage.addActor(characterPreview);
         stage.addActor(backButton);
     }
 
