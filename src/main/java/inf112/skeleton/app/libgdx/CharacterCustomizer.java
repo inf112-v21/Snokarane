@@ -29,7 +29,7 @@ public class CharacterCustomizer {
      * @param isLarge bool for if using the robo_small or robo_large pngs
      * @return generated player texture
      */
-    public static Texture generatePlayerTexture(Boolean isLarge) { //TODO: take in chosen color as well
+    public static Texture generatePlayerTexture(Boolean isLarge, Color inputColor) { //TODO: take in chosen color as well
 
         //Robotexture
         Texture roboTexture;
@@ -54,9 +54,9 @@ public class CharacterCustomizer {
 
 
 
-        Color mainColour = Color.CYAN; //TODO: change to take in a players chosen colour value
-        Color detailColour = Color.GREEN; //TODO: change to take in a players chosen colour value
-
+        Color mainColor = inputColor; //TODO: change to take in a players chosen colour value
+        //Color secondaryColor = new Color(255 - mainColor.r,255 - mainColor.g, 255 - mainColor.b,100f); //TODO: generate complementry color from main color?
+        Color secondaryColor = Color.PINK;
 
         //iterates over all pixels in the pixmap
         for (int y = 0; y < roboPixmap.getHeight(); y++) {
@@ -67,11 +67,11 @@ public class CharacterCustomizer {
                 //Checks for colors that should be changed, and changes them based on desired colors
 
                 if(currentPixelColor.toString().equals("ffcc00ff")) { //checks if the color of the pixel is the primary color used in the robot textures
-                    roboPixmap.setColor(mainColour);
+                    roboPixmap.setColor(mainColor);
                     roboPixmap.fillRectangle(x, y,1,1);
                 }
                 else if (currentPixelColor.toString().equals("e7b900ff")) { //checks if the color of the pixel is the secondary color used in the robot textures
-                    roboPixmap.setColor(detailColour);
+                    roboPixmap.setColor(secondaryColor);
                     roboPixmap.fillRectangle(x, y,1,1);
 
                 }
