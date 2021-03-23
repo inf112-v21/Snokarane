@@ -163,7 +163,8 @@ public class GameScreen extends ScreenAdapter {
      */
     public void loadPlayerTextures(){
         // Load the entire player texture
-        Texture rawPlayerTexture = CharacterCustomizer.generatePlayerTexture(false);
+        Color playerColor = Color.RED;
+        Texture rawPlayerTexture = CharacterCustomizer.generatePlayerTexture(false,playerColor);
 
         // Split player texture into seperate regions
         TextureRegion roboPlayerSplitTexture = new TextureRegion(rawPlayerTexture,300, 300);
