@@ -29,7 +29,7 @@ public class CharacterCustomizer {
      * @param isLarge bool for if using the robo_small or robo_large pngs
      * @return generated player texture
      */
-    public static Texture generatePlayerTexture(Boolean isLarge) { //take in chosen colour as well
+    public static Texture generatePlayerTexture(Boolean isLarge) { //TODO: take in chosen color as well
 
         //Robotexture
         Texture roboTexture;
@@ -66,11 +66,11 @@ public class CharacterCustomizer {
 
                 //Checks for colors that should be changed, and changes them based on desired colors
 
-                if(currentPixelColor.toString().equals("ffcc00ff")) { //checks if the color of the pixel is the primary color used in the large robot texture
+                if(currentPixelColor.toString().equals("ffcc00ff")) { //checks if the color of the pixel is the primary color used in the robot textures
                     roboPixmap.setColor(mainColour);
                     roboPixmap.fillRectangle(x, y,1,1);
                 }
-                else if (currentPixelColor.toString().equals("e7b900ff")) { //checks if the color of the pixel is the secondary color used in the large robot texture
+                else if (currentPixelColor.toString().equals("e7b900ff")) { //checks if the color of the pixel is the secondary color used in the robot textures
                     roboPixmap.setColor(detailColour);
                     roboPixmap.fillRectangle(x, y,1,1);
 
