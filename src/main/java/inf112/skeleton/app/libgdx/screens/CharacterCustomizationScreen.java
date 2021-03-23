@@ -56,11 +56,13 @@ public class CharacterCustomizationScreen extends ScreenAdapter implements IUiSc
             }
         });
 
+
         //Offesets for relative positioning and sizing
         int labelOffset = -100;
         int texFiledOffset = 150;
         int textFiledWidth = 50;
         int textFiledMaxLength = 3;
+        int possibleColors = 255;
 
         //Creating sliders for selecting color with rgb
 
@@ -114,10 +116,9 @@ public class CharacterCustomizationScreen extends ScreenAdapter implements IUiSc
         redSlider.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent changeEvent, Actor actor) { // Slider event (when slider gets moved this function is called)
-                /*
-                can for example change texture colour here to preview final choice
-                 */
-                redTextField.setText(String.valueOf(Math.round(redSlider.getValue()))); //sets value of textfiled to be same as slider
+
+                redTextField.setText(String.valueOf(Math.round(redSlider.getValue()))); //sets value of textfield to be same as slider
+                redSliderLabel.setColor(redSlider.getValue() / possibleColors, 0,0f, 100f);
                 System.out.println("redSlider moved: " + redSlider.getValue());
             }
         });
@@ -126,11 +127,10 @@ public class CharacterCustomizationScreen extends ScreenAdapter implements IUiSc
         greenSlider.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent changeEvent, Actor actor) { // Slider event (when slider gets moved this function is called)
-                /*
-                can for example change texture colour here to preview final choice
-                 */
-                greenTextField.setText(String.valueOf(Math.round(greenSlider.getValue()))); //sets value of textfiled to be same as slider
-                System.out.println("greenSlider moved: " + greenSlider.getValue());
+
+                greenTextField.setText(String.valueOf(Math.round(greenSlider.getValue()))); //sets value of textfield to be same as slider
+                greenSliderLabel.setColor(0f, greenSlider.getValue() / possibleColors,0f, 100f);
+                System.out.println("greenslider moved: " + greenSlider.getValue());
             }
         });
 
@@ -138,13 +138,52 @@ public class CharacterCustomizationScreen extends ScreenAdapter implements IUiSc
         blueSlider.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent changeEvent, Actor actor) { // Slider event (when slider gets moved this function is called)
-                /*
-                can for example change texture colour here to preview final choice
-                 */
-                blueTextField.setText(String.valueOf(Math.round(blueSlider.getValue()))); //sets value of textfiled to be same as slider
+
+                blueTextField.setText(String.valueOf(Math.round(blueSlider.getValue()))); //sets value of textfield to be same as slider
+                blueSliderLabel.setColor(0f, 0f,blueSlider.getValue() / possibleColors, 100f);
                 System.out.println("blueSlider moved: " + blueSlider.getValue());
             }
         });
+
+
+        //text field event handlers
+
+        redTextField.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent changeEvent, Actor actor) { // Slider event (when slider gets moved this function is called)
+
+                //TODO: make sure that player can't set value above 255
+
+                try {
+                    if(255 >= Float.parseFloat(redTextField.getText()) && Float.parseFloat(redTextField.getText()) >= 0){
+                        redTextField.setText(redTextField.getText()); //sets value of textfield to be same as slider
+                        redSliderLabel.setColor(Float.parseFloat(redTextField.getText()) / possibleColors, 0,0f, 100f);
+                        redSlider.setValue(Float.parseFloat(redTextField.getText()));
+                    }
+
+                    else if (255 < Float.parseFloat(redTextField.getText())){ //color value can't be more than 255
+                        redTextField.setText("255");
+                        redSliderLabel.setColor(100f, 0,0f, 100f);
+                        redSlider.setValue(255);
+                    }
+
+                    else if (0 > Float.parseFloat(redTextField.getText())){ //color value can't be less than 0
+                        redTextField.setText("0");
+                        redSliderLabel.setColor(0f, 0,0f, 100f);
+                        redSlider.setValue(0);
+                    }
+
+                }
+                catch (Exception e){
+                    redTextField.setText("0");
+                    redSliderLabel.setColor(0f, 0,0f, 100f);
+                    redSlider.setValue(0);
+                }
+
+                System.out.println("redSlider moved: " + redTextField.getText());
+            }
+        });
+
 
 
         stage.addActor(redSlider);
