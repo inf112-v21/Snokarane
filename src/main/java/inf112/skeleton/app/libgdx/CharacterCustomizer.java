@@ -10,7 +10,7 @@ public class CharacterCustomizer {
 
     /*
     *
-    *   Instantiate variables bellow in create method
+    *   Instantiate variables bellow in loadPlayerTexture
     *
     *   //roboPlayerTexture
     *
@@ -24,17 +24,12 @@ public class CharacterCustomizer {
 
 
 
-
-
-
     /**
      *
      * @param isLarge bool for if using the robo_small or robo_large pngs
      * @return generated player texture
      */
     public static Texture generatePlayerTexture(Boolean isLarge) { //take in chosen colour as well
-
-        //TODO: edit input textures to be correctly sized with correct color
 
         //Robotexture
         Texture roboTexture;
@@ -43,10 +38,10 @@ public class CharacterCustomizer {
 
         //this can be moved outside function, and added as a parameter in the function call
         if (!isLarge){
-            roboTexture = new Texture(Gdx.files.internal("src/main/assets/robot_small.png").file().getAbsolutePath());
+            roboTexture = new Texture(Gdx.files.internal("src/main/resources/robot_small.png").file().getAbsolutePath());
         }
         else {
-            roboTexture = new Texture(Gdx.files.internal("src/main/assets/robot_large.png").file().getAbsolutePath());
+            roboTexture = new Texture(Gdx.files.internal("src/main/resources/robot_large.png").file().getAbsolutePath());
         }
 
 
@@ -59,18 +54,17 @@ public class CharacterCustomizer {
 
 
 
-        Color mainColour = Color.BLUE; //TODO: change to take in a players chosen colour value
-        Color detailColour = Color.SKY; //TODO: change to take in a players chosen colour value
+        Color mainColour = Color.CYAN; //TODO: change to take in a players chosen colour value
+        Color detailColour = Color.GREEN; //TODO: change to take in a players chosen colour value
 
 
-
+        //iterates over all pixels in the pixmap
         for (int y = 0; y < roboPixmap.getHeight(); y++) {
             for (int x = 0; x < roboPixmap.getWidth(); x++) {
                 Color currentPixelColor = new Color(roboPixmap.getPixel(x,y));
 
 
-                //Currently only works for the large robot
-
+                //Checks for colors that should be changed, and changes them based on desired colors
 
                 if(currentPixelColor.toString().equals("ffcc00ff")) { //checks if the color of the pixel is the primary color used in the large robot texture
                     roboPixmap.setColor(mainColour);
@@ -87,10 +81,7 @@ public class CharacterCustomizer {
             }
         }
 
-
-        Texture returnTexture = new Texture(roboPixmap);
-
-        return returnTexture;
+        return new Texture(roboPixmap);
     }
 
 }
