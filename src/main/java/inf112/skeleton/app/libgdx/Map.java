@@ -29,6 +29,8 @@ public class Map {
     public boolean [][][] wallLayer = new boolean[BOARD_X][BOARD_Y][4];
     public int [][] gearLayer = new int[BOARD_X][BOARD_Y];
     public boolean [][] repairLayer = new boolean[BOARD_X][BOARD_Y];
+    public int laserLayer [][][] = new int [BOARD_X][BOARD_Y][4];
+    public List<LaserShooter> laserShooters = new ArrayList<>();
 
 
 
