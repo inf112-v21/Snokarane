@@ -182,7 +182,10 @@ public class Map {
             int y = laser.y;
             //If the laser comes from a player, it starts one tile ahead
             int start = (playerLayer[x][y].state != PlayerToken.CHARACTER_STATES.NONE) ? 1 : 0;
+
             if (laser.dir == PlayerToken.Direction.NORTH){
+                //We do this check in case there's a player with a laser directly in front
+                if (isWall(x, y, laser.dir) || y+1 == BOARD_Y || isWall(x, y+1, GameHost.oppositeDir(laser.dir))) return;
                 for (int i = start; i < BOARD_X; i++) {
                     if (y+i >= BOARD_Y) break;
                     laserLayer[x][y+i][0] = laser.laserNum;
@@ -190,6 +193,7 @@ public class Map {
                 }
             }
             else if (laser.dir == PlayerToken.Direction.EAST) {
+                if (isWall(x, y, laser.dir) || x+1 == BOARD_X || isWall(x+1, y, GameHost.oppositeDir(laser.dir))) return;
                 for (int i = start; i < BOARD_Y; i++) {
                     if (x+i >= BOARD_X) break;
                     laserLayer[x+i][y][1] = laser.laserNum;
@@ -197,6 +201,7 @@ public class Map {
                 }
             }
             else if (laser.dir == PlayerToken.Direction.SOUTH) {
+                if (isWall(x, y, laser.dir) || y-1 < 0 || isWall(x, y-1, GameHost.oppositeDir(laser.dir))) return;
                 for (int i = start; i < BOARD_X; i++) {
                     if (y-i < 0) break;
                     laserLayer[x][y-i][2] = laser.laserNum;
@@ -204,7 +209,9 @@ public class Map {
                 }
             }
             else{
+                if (isWall(x, y, laser.dir) || x-1 < 0 || isWall(x-1, y, GameHost.oppositeDir(laser.dir))) return;
                 for (int i = start; i < BOARD_Y; i++) {
+
                     if (x-i < 0) break;
                     laserLayer[x-i][y][3] = laser.laserNum;
                     if (isWall(x-i, y, laser.dir) || x-1-i < 0 || playerLayer[x-((i == 0) ? 1 : i)][y].state != PlayerToken.CHARACTER_STATES.NONE ||isWall(x-i-1, y, GameHost.oppositeDir(laser.dir))) break;
@@ -214,9 +221,8 @@ public class Map {
     }
 
     /**
-     *  //TODO change name
      * Loads player from network into map
-     * @param wrapper The NetworkDataWrapper that contains the players
+     * @param players The list that contains the players
      */
     public void loadPlayers(List<PlayerToken> players) {
         clearPlayerLayer();

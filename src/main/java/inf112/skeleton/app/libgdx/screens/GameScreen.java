@@ -671,7 +671,7 @@ public class GameScreen extends ScreenAdapter {
         if (wallCell.getTile().getId() == 29) map.wallLayer[i][j] = new boolean[] {false, false, true, false};
         if (wallCell.getTile().getId() == 30) map.wallLayer[i][j] = new boolean[] {false, false, false, true};
         if (wallCell.getTile().getId() == 8) map.wallLayer[i][j] = new boolean[] {false, true, true, false};
-        if (wallCell.getTile().getId() == 23) map.wallLayer[i][j] = new boolean[] {true, true, false, false};
+        if (wallCell.getTile().getId() == 23) map.wallLayer[i][j] = new boolean[] {false, true, false, false};
 
         if (wallCell.getTile().getId() == 38) map.wallLayer[i][j] = new boolean[] {false, false, false, true};
         if (wallCell.getTile().getId() == 46) map.wallLayer[i][j] = new boolean[] {false, true, false, false};
