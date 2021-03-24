@@ -292,9 +292,7 @@ public class GameScreen extends ScreenAdapter {
             }
         }
         System.out.println("Cards being added to stage: " + cardsTotal);
-        displayDeck.forEach((i) -> {
-            stage.addActor(i);
-        });
+        displayDeck.forEach(stage::addActor);
     }
 
     /**
@@ -666,7 +664,7 @@ public class GameScreen extends ScreenAdapter {
     private void setWallDirections(TiledMapTileLayer.Cell wallCell, int i, int j){
         //TODO a lot of these are lacking
 
-        // NORTH, EAST, SOUTH, WEST
+        // NORTH, EAST, SOUTH, WEST. These are the direction it blocks, not where the wall is placed
         if (wallCell.getTile().getId() == 24) map.wallLayer[i][j] = new boolean[] {true, false, false, true};
         if (wallCell.getTile().getId() == 31) map.wallLayer[i][j] = new boolean[] {true, false, false, false};
         if (wallCell.getTile().getId() == 16) map.wallLayer[i][j] = new boolean[] {true, true, false, false};
@@ -674,10 +672,11 @@ public class GameScreen extends ScreenAdapter {
         if (wallCell.getTile().getId() == 30) map.wallLayer[i][j] = new boolean[] {false, false, false, true};
         if (wallCell.getTile().getId() == 8) map.wallLayer[i][j] = new boolean[] {false, true, true, false};
         if (wallCell.getTile().getId() == 23) map.wallLayer[i][j] = new boolean[] {true, true, false, false};
-        if (wallCell.getTile().getId() == 38) map.wallLayer[i][j] = new boolean[] {false, true, false, false};
-        if (wallCell.getTile().getId() == 46) map.wallLayer[i][j] = new boolean[] {false, false, false, true};
-        if (wallCell.getTile().getId() == 95) map.wallLayer[i][j] = new boolean[] {false, false, false, true};
-        if (wallCell.getTile().getId() == 93) map.wallLayer[i][j] = new boolean[] {false, true, false, false};
+
+        if (wallCell.getTile().getId() == 38) map.wallLayer[i][j] = new boolean[] {false, false, false, true};
+        if (wallCell.getTile().getId() == 46) map.wallLayer[i][j] = new boolean[] {false, true, false, false};
+        if (wallCell.getTile().getId() == 95) map.wallLayer[i][j] = new boolean[] {false, true, false, false};
+        if (wallCell.getTile().getId() == 93) map.wallLayer[i][j] = new boolean[] {false, false, false, true};
 
         if (wallCell.getTile().getId() == 12) {
             map.wallLayer[i][j] = new boolean[] {false, false, false, true};
