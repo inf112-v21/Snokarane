@@ -1,17 +1,18 @@
 package inf112.skeleton.app.libgdx.screens;
 
-import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL30;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
+import com.badlogic.gdx.scenes.scene2d.utils.SpriteDrawable;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import inf112.skeleton.app.libgdx.CharacterCustomizer;
 import inf112.skeleton.app.libgdx.RoboGame;
@@ -26,11 +27,31 @@ public class CharacterCustomizationScreen extends ScreenAdapter implements IUiSc
     float gdxW = Gdx.graphics.getWidth();
     float gdxH = Gdx.graphics.getHeight();
 
+
+
     public CharacterCustomizationScreen(RoboGame game){
         startScreen(game);
     }
 
+    //sliders
+    Slider redSlider;
+    Slider greenSlider;
+    Slider blueSlider;
 
+
+    //Character preview defaults
+    Image characterPreviewImage;
+    Texture defaultPlayerTexture = CharacterCustomizer.generatePlayerTexture(true, Color.RED); //TODO: perhaps change default color?
+
+
+    private void updatePreviewImage(){
+        //change previewImage
+        Color newColor = new Color(redSlider.getValue() /255f, greenSlider.getValue() /255f, blueSlider.getValue() /255f, 100f);
+        Texture newPlayerTexture = CharacterCustomizer.generatePlayerTexture(true, newColor);
+        characterPreviewImage.setDrawable(new SpriteDrawable(new Sprite(newPlayerTexture)));
+
+
+    }
 
     @Override
     public void startScreen(RoboGame game) {
@@ -41,6 +62,12 @@ public class CharacterCustomizationScreen extends ScreenAdapter implements IUiSc
 
     @Override
     public void loadUIVisuals() {
+
+        //Character preview
+        //TODO: update character preview within handlers
+        characterPreviewImage = new Image(defaultPlayerTexture);
+        characterPreviewImage.setPosition(stage.getHeight() / 2,stage.getWidth() / 2); //TODO improve positioning
+        stage.addActor(characterPreviewImage);
 
     }
 
@@ -63,7 +90,6 @@ public class CharacterCustomizationScreen extends ScreenAdapter implements IUiSc
 
 
 
-
         //Offesets for relative positioning and sizing
         int labelOffset = -100;
         int texFiledOffset = 150;
@@ -74,13 +100,13 @@ public class CharacterCustomizationScreen extends ScreenAdapter implements IUiSc
 
         //Creating sliders for selecting color with rgb
 
-        Slider redSlider = new Slider(0, 255, 1, false, game.skin);
+        redSlider = new Slider(0, 255, 1, false, game.skin);
         redSlider.setPosition(gdxW / 2 - redSlider.getWidth() / 2, gdxH / 2 - redSlider.getHeight() / 2);
 
-        Slider greenSlider = new Slider(0, 255, 1, false, game.skin);
+        greenSlider = new Slider(0, 255, 1, false, game.skin);
         greenSlider.setPosition(gdxW/2-greenSlider.getWidth()/2, gdxH/2-greenSlider.getHeight()/2-50);
 
-        Slider blueSlider = new Slider(0, 255, 1, false, game.skin);
+        blueSlider = new Slider(0, 255, 1, false, game.skin);
         blueSlider.setPosition(gdxW/2-blueSlider.getWidth()/2, gdxH/2-blueSlider.getHeight()/2-100);
 
 
@@ -119,14 +145,6 @@ public class CharacterCustomizationScreen extends ScreenAdapter implements IUiSc
         blueTextField.setPosition(blueSlider.getX() + texFiledOffset, blueSlider.getY());
 
 
-        //Character preview
-        //TODO: update character preview within handlers
-
-        Texture playerTexture = CharacterCustomizer.generatePlayerTexture(true, Color.RED); //TODO: perhaps change default color?
-        Image characterPreview = new Image(playerTexture);
-        characterPreview.setPosition(stage.getHeight() / 2,stage.getWidth() / 2); //TODO improve positioning
-
-
         //Event handlers for the sliders
 
         redSlider.addListener(new ChangeListener() {
@@ -135,8 +153,9 @@ public class CharacterCustomizationScreen extends ScreenAdapter implements IUiSc
 
                 redTextField.setText(String.valueOf(Math.round(redSlider.getValue()))); //sets value of textfield to be same as slider
                 redSliderLabel.setColor(redSlider.getValue() / possibleColors, 0,0f, 100f);
-
                 System.out.println("redSlider moved: " + redSlider.getValue());
+                updatePreviewImage();
+
             }
         });
 
@@ -148,6 +167,7 @@ public class CharacterCustomizationScreen extends ScreenAdapter implements IUiSc
                 greenTextField.setText(String.valueOf(Math.round(greenSlider.getValue()))); //sets value of textfield to be same as slider
                 greenSliderLabel.setColor(0f, greenSlider.getValue() / possibleColors,0f, 100f);
                 System.out.println("greenslider moved: " + greenSlider.getValue());
+                updatePreviewImage();
             }
         });
 
@@ -159,6 +179,7 @@ public class CharacterCustomizationScreen extends ScreenAdapter implements IUiSc
                 blueTextField.setText(String.valueOf(Math.round(blueSlider.getValue()))); //sets value of textfield to be same as slider
                 blueSliderLabel.setColor(0f, 0f,blueSlider.getValue() / possibleColors, 100f);
                 System.out.println("blueSlider moved: " + blueSlider.getValue());
+                updatePreviewImage();
             }
         });
 
@@ -215,7 +236,6 @@ public class CharacterCustomizationScreen extends ScreenAdapter implements IUiSc
         stage.addActor(blueSlider);
         stage.addActor(blueSliderLabel);
         stage.addActor(blueTextField);
-        stage.addActor(characterPreview);
         stage.addActor(backButton);
     }
 
