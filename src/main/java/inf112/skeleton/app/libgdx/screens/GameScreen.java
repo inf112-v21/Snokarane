@@ -75,6 +75,8 @@ public class GameScreen extends ScreenAdapter {
     Network network;
     // Chat handler
     Chatter chat;
+    // To handle updates in the chat received from network
+    int networkChatBacklogSize = 0;
 
     public GameScreen(RoboGame game, boolean isHost, String ip, String playerName){
         this.game = game;
@@ -433,6 +435,13 @@ public class GameScreen extends ScreenAdapter {
     public void render(float v) {
         Gdx.gl.glClearColor(1, 1, 1, 1);
         Gdx.gl.glClear(GL30.GL_COLOR_BUFFER_BIT);
+
+        // force chat to update when receiving new messages in network
+        if (networkChatBacklogSize < network.messagesRecived.size()){
+            stage.clear();
+            loadActorsInOrder();
+            networkChatBacklogSize = network.messagesRecived.size();
+        }
 
         if(gamePlayer.newCardsDelivered){
             stage.clear();
