@@ -57,6 +57,10 @@ public class NetworkClient extends Network {
                     System.out.println(((PlayerToken) object).name + " has won! Congratulations to them!");
                     System.exit(0);
                 }
+
+                if (object instanceof Message){
+                    messagesRecived.add((Message) object);
+                }
             }
             public void disconnected (Connection connection) {
                 System.exit(0);
