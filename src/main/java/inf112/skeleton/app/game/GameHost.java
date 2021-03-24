@@ -141,7 +141,7 @@ public class GameHost extends GamePlayer {
         this.map = map;
         this.map.setID(NetworkHost.hostID);
         host.sendMapLayerWrapper(wrapper());
-        map.loadPlayers(wrapper());
+        map.loadPlayers(wrapper().PlayerTokens);
     }
     public void endOfTurn(){
         List<Integer> playersToKill = new ArrayList<>();
@@ -306,7 +306,7 @@ public class GameHost extends GamePlayer {
         //System.out.println("-------------------------------------");
         //System.out.println("Processing card selection round nr. "+currentCardRound);
 
-        map.loadPlayers(wrapper());
+        map.loadPlayers(wrapper().PlayerTokens);
         host.sendMapLayerWrapper(wrapper());
         timeSinceLastCardProcessed = System.currentTimeMillis();
     }
@@ -332,6 +332,7 @@ public class GameHost extends GamePlayer {
     public NetworkDataWrapper wrapper() {
         NetworkDataWrapper wrapper = new NetworkDataWrapper();
         wrapper.PlayerTokens.addAll(clientPlayers.values());
+        wrapper.laserLayer = map.laserLayer;
         return wrapper;
     }
 
@@ -425,7 +426,7 @@ public class GameHost extends GamePlayer {
                 if (player.diedThisTurn) return true;
             }
             // TODO this is shady as heck
-            map.loadPlayers(wrapper());
+            map.loadPlayers(wrapper().PlayerTokens);
             //host.sendMapLayerWrapper(wrapper());
             movePlayer(player, dist-1, direction, shouldPush);
         return true;

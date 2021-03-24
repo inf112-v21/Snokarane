@@ -180,7 +180,6 @@ public class Map {
         for (LaserShooter laser : allLasers) {
             int x = laser.x;
             int y = laser.y;
-            System.out.println(laser.dir);
             //If the laser comes from a player, it starts one tile ahead
             int start = (playerLayer[x][y].state != PlayerToken.CHARACTER_STATES.NONE) ? 1 : 0;
             if (laser.dir == PlayerToken.Direction.NORTH){
@@ -219,18 +218,15 @@ public class Map {
      * Loads player from network into map
      * @param wrapper The NetworkDataWrapper that contains the players
      */
-    public void loadPlayers(NetworkDataWrapper wrapper) {
+    public void loadPlayers(List<PlayerToken> players) {
         clearPlayerLayer();
-        for (int i = 0; i<wrapper.PlayerTokens.size(); i++){
-            PlayerToken token = wrapper.PlayerTokens.get(i);
+        for (PlayerToken token: players) {
             if (token.ID == this.ID) {
                 playerLayer[token.getX()][token.getY()].state = PlayerToken.CHARACTER_STATES.PLAYERSELFNORMAL;
-            }
-            else {
+            } else {
                 playerLayer[token.getX()][token.getY()].state = token.charState;
             }
             playerLayer[token.getX()][token.getY()].dir = token.getDirection();
         }
-        shootLasers(wrapper);
     }
 }

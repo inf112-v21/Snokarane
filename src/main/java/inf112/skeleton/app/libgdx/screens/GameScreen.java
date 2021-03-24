@@ -516,7 +516,7 @@ public class GameScreen extends ScreenAdapter {
             if (network.isHost) {
                 // TODO Also maybe fix this
                 ((GameHost) gamePlayer).host.sendMapLayerWrapper(((GameHost) gamePlayer).wrapper());
-                ((GameHost) gamePlayer).map.loadPlayers(((GameHost) gamePlayer).wrapper());
+                ((GameHost) gamePlayer).map.loadPlayers(((GameHost) gamePlayer).wrapper().PlayerTokens);
                 if (((GameHost) gamePlayer).isShowingCards) {
                     ((GameHost) gamePlayer).handleSingleCardRound();
                 }
