@@ -64,7 +64,7 @@ public class CharacterCustomizationScreen extends ScreenAdapter implements IUiSc
     public void loadUIVisuals() {
 
         //Character preview
-        //TODO: update character preview within handlers
+        //TODO: update character preview within the textbook handlers
         characterPreviewImage = new Image(defaultPlayerTexture);
         characterPreviewImage.setPosition(stage.getHeight() / 2,stage.getWidth() / 2); //TODO improve positioning
         stage.addActor(characterPreviewImage);
