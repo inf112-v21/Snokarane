@@ -1,6 +1,9 @@
 package inf112.skeleton.app.ui.chat.managers;
 
+import com.badlogic.gdx.graphics.Color;
+import inf112.skeleton.app.libgdx.RoboGame;
 import inf112.skeleton.app.ui.chat.backend.ChatterData;
+
 
 /**
  * Interface for a chat contender (chatter)
@@ -11,16 +14,4 @@ public interface IChatter {
      * Sends message to chat manager
      */
     void sendMessage(String message);
-    /**
-     *  Set name to chatter
-     */
-    void setName(String name);
-    /**
-     * Set id to chatter
-     */
-    void setChatterID(int id);
-    /**
-     * Get Get chatter data
-     */
-    ChatterData getChatterData();
 }

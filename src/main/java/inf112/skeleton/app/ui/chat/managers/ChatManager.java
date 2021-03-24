@@ -1,8 +1,11 @@
 package inf112.skeleton.app.ui.chat.managers;
 
+import com.badlogic.gdx.graphics.Color;
+import inf112.skeleton.app.libgdx.RoboGame;
 import inf112.skeleton.app.network.NetworkHost;
 import inf112.skeleton.app.ui.chat.backend.ChatterData;
 import inf112.skeleton.app.ui.chat.backend.Message;
+import inf112.skeleton.app.ui.chat.display.Chat;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,10 +13,9 @@ import java.util.List;
 /**
  * Chat class for network host
  */
-public class ChatManager implements IChatter {
+public class ChatManager extends Chatter implements IChatter {
 
-    private ChatterData cData = new ChatterData();
-    private String chatterName;
+    private NetworkHost host;
     public List<Message> messages = new ArrayList<>();
 
     /**
@@ -21,7 +23,9 @@ public class ChatManager implements IChatter {
      * class and add empty message to first element of list to avoid
      * indexoutofbounds exceptions
      */
-    public ChatManager(){
+    public ChatManager(NetworkHost host){
+        this.host = host;
+        initializeMessageList();
     }
 
     // initialize first message as welcome message with ID 0
@@ -35,27 +39,12 @@ public class ChatManager implements IChatter {
      * Adds message to messages list
      * @param message message to add
      */
-    @Override
     public void sendMessage(String message) {
         Message m = new Message(message, cData);
         m.assignID(getNextId());
         messages.add(m);
     }
 
-    @Override
-    public void setName(String name) {
-        this.chatterName = name;
-    }
-
-    @Override
-    public void setChatterID(int id) {
-        this.cData.setData(chatterName, id);
-    }
-
-    @Override
-    public ChatterData getChatterData() {
-        return cData;
-    }
 
     /**
      * Get next available ID to assign to a new message
