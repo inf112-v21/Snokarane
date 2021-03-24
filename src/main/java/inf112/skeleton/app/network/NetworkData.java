@@ -31,6 +31,9 @@ public class NetworkData {
         classesToRegister.add(PlayerToken.CHARACTER_STATES.class);
         classesToRegister.add(String.class);
         classesToRegister.add(int[][][].class);
+        classesToRegister.add(int[][].class);
+        classesToRegister.add(int[].class);
+        classesToRegister.add(int.class);
 
         return classesToRegister;
     }
