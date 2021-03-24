@@ -10,7 +10,6 @@ import inf112.skeleton.app.libgdx.NetworkDataWrapper;
 import inf112.skeleton.app.ui.chat.backend.Message;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -22,10 +21,6 @@ public class NetworkHost extends Network {
 
     // Map connection ID's to cards players chose
     public HashMap<Integer, List<Card>> playerCards = new HashMap<>();
-
-    // Messages recieved
-    private List<Message> messagesRecived = new ArrayList<>();
-    int messagesReceivedSize = 0;
 
     // Random number, and a poor implementation
     // Just grabbing a random negative number so that it doesn't clash with connection.getID()
@@ -55,11 +50,7 @@ public class NetworkHost extends Network {
                     host.clientPlayers.put(c.getID(), token);
                 }
                 if (object instanceof Message){
-                    System.out.println("Message recieved from " + ((Message) object).sender.name);
-                    messagesRecived.add((Message) object);
-                    messagesReceivedSize++;
-                    messagesRecived.forEach((m) -> {System.out.println(m.message + " from "+ m.sender.name);});
-                    System.out.println("Amount of messages: " + messagesRecived.size());
+                    sendMessageToAll((Message) object);
                 }
             }
         });
@@ -117,12 +108,8 @@ public class NetworkHost extends Network {
         }
     }
 
-    /**
-     *
-     */
-    public List<Message> getMessages(){
-        System.out.println("Sending " + messagesRecived.size() + " messages.");
-        return messagesRecived;
+    public void sendMessageToAll(Message m){
+        messagesRecived.add(m);
+        server.sendToAllTCP(m);
     }
-
 }
