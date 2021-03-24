@@ -56,13 +56,10 @@ public class RoboGame extends Game{
         // for card deck
         float cardDeckSize = 1.5f;
 
-        // for side menu scaling
-        float sideMenuSize = 1.5f;
-
         // Set camera to orthographic, size board dimensions
-        camera.setToOrtho(false, BOARD_X + (sideMenuSize*2), BOARD_Y +(cardDeckSize)*2);
-        // Set camera X-position
-        camera.position.x = (BOARD_X/2)+(sideMenuSize);
+        camera.setToOrtho(false, BOARD_X, BOARD_Y +(cardDeckSize)*2); // TODO fix hardcoded y values for card deck visuals
+        // Set camera X-position                                                               TODO ok so i guess i fixed it but
+        camera.position.x = (BOARD_X/2);                                                    // TODO now im even more confused
         camera.position.y = (BOARD_Y/2)-(cardDeckSize);
         camera.update();
 
