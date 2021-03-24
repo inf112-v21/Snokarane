@@ -16,7 +16,9 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import inf112.skeleton.app.game.GameClient;
@@ -31,6 +33,9 @@ import inf112.skeleton.app.libgdx.RoboGame;
 import inf112.skeleton.app.network.Network;
 import inf112.skeleton.app.network.NetworkClient;
 import inf112.skeleton.app.network.NetworkHost;
+import inf112.skeleton.app.ui.chat.managers.ChatClient;
+import inf112.skeleton.app.ui.chat.managers.ChatManager;
+import inf112.skeleton.app.ui.chat.managers.Chatter;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -68,6 +73,10 @@ public class GameScreen extends ScreenAdapter {
     GamePlayer gamePlayer;
     // Handles all data transfers over internet
     Network network;
+    // Chat handler
+    Chatter chat;
+    // To handle updates in the chat received from network
+    int networkChatBacklogSize = 0;
 
     public GameScreen(RoboGame game, boolean isHost, String ip, String playerName){
         this.game = game;
@@ -149,6 +158,48 @@ public class GameScreen extends ScreenAdapter {
 
         // Start game/network objects
         startGame(isHost, ip, playerName);
+
+        // Initialize chat variables and objects
+        initializeChatObjects(playerName);
+    }
+    // Starts chat depending on client or host
+    private void initializeChatObjects(String playerName){
+        chat = network.isHost ? new ChatManager((NetworkHost)network) : new ChatClient((NetworkClient)network);
+        Color chatColor = new Color(1f, 1f, 1f, 1);
+
+        int subMenuHeight = 200;
+        int sideMenuWidth = 240; // TODO fix hardcoded values
+
+        chat.initializeChat(game, 0.85f, chatColor, "", sideMenuWidth, Gdx.graphics.getHeight()-subMenuHeight,  Gdx.graphics.getWidth()-sideMenuWidth, subMenuHeight);
+        chat.setName(playerName);
+        updateChat();
+    }
+    /**
+     * Get new messages that have been received from the network, get formatted table and add input box with listener.
+     */
+    private void updateChat(){
+        chat.updateChat(network.messagesRecived);
+        Table chatTable = chat.getChatAsTable();
+
+        Color inputBoxColor = new Color(1f, 1f, 1f, 1);
+
+        TextField inputBox = new TextField("", game.skin);
+        inputBox.setColor(inputBoxColor);
+        inputBox.addListener(new InputListener(){
+            @Override
+            public boolean keyDown(InputEvent event, int keycode) {
+                if (keycode == Input.Keys.ENTER){
+                    chat.sendMessage(inputBox.getText());
+                    updateChat();
+                }
+                return true;
+            }
+        });
+
+        chatTable.add(inputBox).left().width(220).height(30).padTop(20f);
+        chatTable.row();
+
+        stage.addActor(chatTable);
     }
     /**
      * @return TiledMap object loaded from path
@@ -346,6 +397,7 @@ public class GameScreen extends ScreenAdapter {
         loadBackButton();
         loadSendCardsButton();
         loadCardDeck(); //TODO this already gets loaded in render. loading this in render is a bad idea, should be done here exclusively but need to find way to load deck at start of game too.
+        updateChat();
     }
     /**
      * Helper function for keyUp to pick cards for player
@@ -383,6 +435,13 @@ public class GameScreen extends ScreenAdapter {
     public void render(float v) {
         Gdx.gl.glClearColor(1, 1, 1, 1);
         Gdx.gl.glClear(GL30.GL_COLOR_BUFFER_BIT);
+
+        // force chat to update when receiving new messages in network
+        if (networkChatBacklogSize < network.messagesRecived.size()){
+            stage.clear();
+            loadActorsInOrder();
+            networkChatBacklogSize = network.messagesRecived.size();
+        }
 
         if(gamePlayer.newCardsDelivered){
             stage.clear();
