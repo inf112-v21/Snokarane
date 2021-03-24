@@ -14,9 +14,9 @@ public class ChatClient extends Chatter implements IChatter {
 
     private NetworkClient client;
 
-    // No args constructor required for kryo
-    public ChatClient(){  }
-
+    /**
+     * @param client network client that sends messages to host
+     */
     public ChatClient(NetworkClient client){
         this.client = client;
     }
