@@ -98,8 +98,9 @@ public class Chat {
             }
         }
 
-        messages.set(0, (messages.size()==1) ? "Welcome to the chat!" : "");
-
+        if (messages.size()>0){
+            messages.set(0, (messages.size()==1) ? "Welcome to the chat!" : "");
+        }
         for (String s : messages){
             Label mess = new Label(s, chatSkin);
             mess.setFontScale(this.fontSize);
