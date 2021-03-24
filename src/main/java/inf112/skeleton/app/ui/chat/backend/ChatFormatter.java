@@ -2,6 +2,7 @@ package inf112.skeleton.app.ui.chat.backend;
 
 import inf112.skeleton.app.ui.chat.backend.Message;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -12,6 +13,10 @@ import java.util.List;
 public class ChatFormatter {
     //              Name    Message
     public HashMap<String, String> messages = new HashMap<>();
+
+    // TODO should use tuple instead here or something more similar to tuples than this
+    public List<HashMap<String, String>> allMessages = new ArrayList<>();
+
     //              ID      Name
     public HashMap<Integer, String> chatters = new HashMap<>();
 
@@ -21,14 +26,17 @@ public class ChatFormatter {
     public void formatMessagesToDisplay(List<Message> messages){
         for (Message m : messages){
             chatters.put(m.sender.chatterID, m.sender.name);
+
             this.messages.put(m.sender.name, m.message);
+            allMessages.add(this.messages);
+            this.messages = new HashMap<>();
         }
     }
 
     /**
-     * Returns key value pair of (name, message)
+     * Returns list of key value pair of (name, message)
      */
-    public HashMap<String, String> getNamesWithMessages(){
-        return this.messages;
+    public List<HashMap<String, String>> getNamesWithMessages(){
+        return this.allMessages;
     }
 }
