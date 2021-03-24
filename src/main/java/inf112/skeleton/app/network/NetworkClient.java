@@ -7,6 +7,7 @@ import inf112.skeleton.app.game.GameClient;
 import inf112.skeleton.app.game.objects.PlayerToken;
 import inf112.skeleton.app.libgdx.Map;
 import inf112.skeleton.app.libgdx.NetworkDataWrapper;
+import inf112.skeleton.app.ui.chat.backend.Message;
 
 import java.io.IOException;
 
@@ -56,6 +57,10 @@ public class NetworkClient extends Network {
                     System.out.println(((PlayerToken) object).name + " has won! Congratulations to them!");
                     System.exit(0);
                 }
+
+                if (object instanceof Message){
+                    messagesRecived.add((Message) object);
+                }
             }
             public void disconnected (Connection connection) {
                 System.exit(0);
@@ -80,6 +85,8 @@ public class NetworkClient extends Network {
             return false;
         }
     }
+
+    public void sendMessage(Message m){ client.sendTCP(m); }
 
     public void giveNickname(String name) {
         client.sendTCP(name);
