@@ -534,10 +534,7 @@ public class GameScreen extends ScreenAdapter {
     public void loadLasers() {
         for (int x = 0; x < Game.BOARD_X; x++) {
             for (int y = 0; y < Game.BOARD_Y; y++) {
-                TiledMapTileLayer.Cell laserTile = laserToTile(x, y);
-                if (laserTile != null) {
-                    ((TiledMapTileLayer) game.tiledMap.getLayers().get("Laser")).setCell(x, y, laserTile);
-                }
+                ((TiledMapTileLayer) game.tiledMap.getLayers().get("Laser")).setCell(x, y, laserToTile(x, y));
             }
         }
     }
@@ -633,7 +630,6 @@ public class GameScreen extends ScreenAdapter {
         TiledMapTileLayer wallLayer = (TiledMapTileLayer) tiledMap.getLayers().get("Wall");
         TiledMapTileLayer beltLayer = (TiledMapTileLayer) tiledMap.getLayers().get("Belts");
         TiledMapTileLayer repairLayer = (TiledMapTileLayer) tiledMap.getLayers().get("Repair");
-        TiledMapTileLayer laserLayer = (TiledMapTileLayer) tiledMap.getLayers().get("Laser");
         for (int i = 0; i < holeLayer.getWidth(); i++){
             for (int j = 0; j < holeLayer.getHeight(); j++){
                 // getCell returns null if nothing is found in the current cell in this layer
@@ -641,6 +637,8 @@ public class GameScreen extends ScreenAdapter {
                 map.repairLayer[i][j] = repairLayer.getCell(i, j) != null;
                 if (wallLayer.getCell(i, j) != null){
                     setWallDirections(wallLayer.getCell(i, j), i, j);
+                    //The wall layer contains information about laser shooters
+                    setLaserDirection(wallLayer.getCell(i, j), i, j);
                 }
                 if (beltLayer.getCell(i, j) != null){
                     setBeltInformation(beltLayer.getCell(i, j), i, j);
@@ -676,6 +674,11 @@ public class GameScreen extends ScreenAdapter {
         if (wallCell.getTile().getId() == 30) map.wallLayer[i][j] = new boolean[] {false, false, false, true};
         if (wallCell.getTile().getId() == 8) map.wallLayer[i][j] = new boolean[] {false, true, true, false};
         if (wallCell.getTile().getId() == 23) map.wallLayer[i][j] = new boolean[] {true, true, false, false};
+        if (wallCell.getTile().getId() == 38) map.wallLayer[i][j] = new boolean[] {false, true, false, false};
+        if (wallCell.getTile().getId() == 46) map.wallLayer[i][j] = new boolean[] {false, false, false, true};
+        if (wallCell.getTile().getId() == 95) map.wallLayer[i][j] = new boolean[] {false, false, false, true};
+        if (wallCell.getTile().getId() == 93) map.wallLayer[i][j] = new boolean[] {false, true, false, false};
+
         if (wallCell.getTile().getId() == 12) {
             map.wallLayer[i][j] = new boolean[] {false, false, false, true};
             map.beltLayer[i][j] = new Map.BeltInformation(PlayerToken.Direction.EAST, false, 0);

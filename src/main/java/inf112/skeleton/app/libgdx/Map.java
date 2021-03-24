@@ -1,6 +1,7 @@
 package inf112.skeleton.app.libgdx;
 
 import com.badlogic.gdx.math.GridPoint2;
+import inf112.skeleton.app.game.GameHost;
 import inf112.skeleton.app.game.objects.Flag;
 import inf112.skeleton.app.game.objects.PlayerToken;
 
@@ -183,32 +184,32 @@ public class Map {
             if (laser.dir == PlayerToken.Direction.NORTH){
                 for (int i = 0; i < BOARD_X; i++) {
                     laserLayer[x][y+i][0] = laser.laserNum;
-                    if (isWall(x, y, laser.dir) || playerLayer[x][y].state != PlayerToken.CHARACTER_STATES.NONE || y+i+1 == BOARD_Y) break;
+                    if (isWall(x, y, GameHost.oppositeDir(laser.dir)) || playerLayer[x][y+((i == 0) ? 1 : i)].state != PlayerToken.CHARACTER_STATES.NONE || y+i+1 == BOARD_Y || isWall(x, y+1, laser.dir)) break;
                 }
             }
             else if (laser.dir == PlayerToken.Direction.EAST) {
-                for (int i = 0; i < BOARD_X; i++) {
+                for (int i = 0; i < BOARD_Y; i++) {
                     laserLayer[x+i][y][1] = laser.laserNum;
-                    if (isWall(x, y, laser.dir) || playerLayer[x][y].state != PlayerToken.CHARACTER_STATES.NONE || x+i+1 == BOARD_X) break;
+                    if (isWall(x, y, GameHost.oppositeDir(laser.dir)) || playerLayer[x + ((i == 0) ? 1 : i)][y].state != PlayerToken.CHARACTER_STATES.NONE || x+i+1 == BOARD_X || isWall(x+1, y, laser.dir)) break;
                 }
             }
             else if (laser.dir == PlayerToken.Direction.SOUTH) {
                 for (int i = 0; i < BOARD_X; i++) {
                     laserLayer[x][y-i][2] = laser.laserNum;
-                    if (isWall(x, y, laser.dir) || playerLayer[x][y].state != PlayerToken.CHARACTER_STATES.NONE || y-i-1 < 0) break;
+                    if (isWall(x, y, GameHost.oppositeDir(laser.dir)) || playerLayer[x][y-((i == 0) ? 1 : i)].state != PlayerToken.CHARACTER_STATES.NONE || y-i-1 < 0 || isWall(x, y-1, laser.dir)) break;
                 }
             }
             else{
-                for (int i = 0; i < BOARD_X; i++) {
+                for (int i = 0; i < BOARD_Y; i++) {
                     laserLayer[x-i][y][3] = laser.laserNum;
-                    if (isWall(x, y, laser.dir) || playerLayer[x][y].state != PlayerToken.CHARACTER_STATES.NONE || x-i-1 < 0) break;
+                    if (isWall(x, y, GameHost.oppositeDir(laser.dir)) || playerLayer[x-((i == 0) ? 1 : i)][y].state != PlayerToken.CHARACTER_STATES.NONE || x-i-1 < 0 || isWall(x-i, y, laser.dir)) break;
                 }
             }
         }
     }
 
     /**
-     * //TODO RENAME THIS
+     *
      * Loads player from network into map
      * @param wrapper The NetworkDataWrapper that contains the players
      */
@@ -224,6 +225,5 @@ public class Map {
             }
             playerLayer[token.getX()][token.getY()].dir = token.getDirection();
         }
-        shootLasers(wrapper);
     }
 }

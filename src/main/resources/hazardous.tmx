@@ -114,7 +114,7 @@
 123,0,0,0,0,0,0,0,0,0,0,124
 </data>
  </layer>
- <layer id="11" name="Player" width="12" height="12">
+ <layer id="8" name="Player" width="12" height="12">
   <data encoding="csv">
 0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,
@@ -130,7 +130,7 @@
 0,0,0,0,0,0,0,0,0,0,0,0
 </data>
  </layer>
- <layer id="8" name="Laser" width="12" height="12">
+ <layer id="11" name="Laser" width="12" height="12">
   <data encoding="csv">
 0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,

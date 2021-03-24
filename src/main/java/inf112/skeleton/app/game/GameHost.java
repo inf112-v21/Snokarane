@@ -183,10 +183,12 @@ public class GameHost extends GamePlayer {
                 System.out.println(token.name + " is on a gear!");
                 token.rotate(CardType.TURNLEFT);
             }
+            map.shootLasers(wrapper());
             int lasers = 0;
             for (int i = 0; i < 4; i++) {
                 lasers += map.laserLayer[token.getX()][token.getY()][i];
             }
+            System.out.println("Took " + lasers + " damage");
             token.hp -= lasers;
 
             if (map.isRepair(token.getX(), token.getY())){
@@ -429,7 +431,7 @@ public class GameHost extends GamePlayer {
         return true;
     }
 
-    private PlayerToken.Direction oppositeDir(PlayerToken.Direction dir) {
+    public static PlayerToken.Direction oppositeDir(PlayerToken.Direction dir) {
         if (dir == PlayerToken.Direction.NORTH) return PlayerToken.Direction.SOUTH;
         if (dir == PlayerToken.Direction.SOUTH) return PlayerToken.Direction.NORTH;
         if (dir == PlayerToken.Direction.EAST) return PlayerToken.Direction.WEST;
