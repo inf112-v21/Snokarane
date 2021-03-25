@@ -396,7 +396,7 @@ public class GameScreen extends ScreenAdapter {
 
         TextButton backButton = new TextButton("Back", game.skin, "small");
         backButton.setWidth(125);
-        backButton.setPosition(Gdx.graphics.getWidth()-155f, 30);
+        backButton.setPosition(Gdx.graphics.getWidth()-145f, 30);
         backButton.setColor(0.1f, 0, 0, 1);
         backButton.addListener(new InputListener(){
             @Override
@@ -413,7 +413,7 @@ public class GameScreen extends ScreenAdapter {
     private void loadSendCardsButton(){
         TextButton sendCardsButton = new TextButton("Send cards", game.skin, "small");
         sendCardsButton.setWidth(125);
-        sendCardsButton.setPosition(Gdx.graphics.getWidth()-155f, 100);
+        sendCardsButton.setPosition(Gdx.graphics.getWidth()-145f, 100);
         sendCardsButton.setColor(0.1f, 0, 0, 1);
         sendCardsButton.addListener(new InputListener(){
             @Override
