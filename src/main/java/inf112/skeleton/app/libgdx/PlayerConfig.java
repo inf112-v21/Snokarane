@@ -20,6 +20,15 @@ public class PlayerConfig {
     public PlayerConfig() {
     }
 
+    public void setMainColor(Color mainColor) {
+        this.mainColor = mainColor;
+    }
+
+    public Color getMainColor() {
+        return mainColor;
+    }
+
+
     public String getImage() {
         return image;
     }

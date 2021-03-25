@@ -93,24 +93,35 @@ public class CharacterCustomizer {
     //TODO save characterconfig
 
 
-    public static void loadCharacterConfigFromFile(){
+    public static PlayerConfig loadCharacterConfigFromFile(){
 
-        try {
-            ObjectMapper mapper = new ObjectMapper();
-            InputStream inputStream = new FileInputStream(new File("src/main/customisation/playerConfig.json"));
-            TypeReference<PlayerConfig> typeReference = new TypeReference<PlayerConfig>() {};
-            PlayerConfig playerConfig = mapper.readValue(inputStream, typeReference);
-            //System.out.println(inputStream);
-        } catch (FileNotFoundException e) {
+        File configFile = new File("src/main/customisation/playerConfig.json");
+        if(configFile.exists()){
+            try {
+                ObjectMapper mapper = new ObjectMapper();
+                InputStream inputStream = new FileInputStream(new File("src/main/customisation/playerConfig.json"));
+                TypeReference<PlayerConfig> typeReference = new TypeReference<PlayerConfig>() {};
+                PlayerConfig playerConfig = mapper.readValue(inputStream, typeReference);
+                inputStream.close();
+                return playerConfig;
 
-            //create file if it does not exist
-            saveCharacterConfigToFile(Color.BLACK);
-            System.out.println(e);
-            System.out.println("Creating new Player config file");
-        } catch (IOException e) {
-            e.printStackTrace();
+
+            } catch (FileNotFoundException e) {
+
+                //create file if it does not exist
+                saveCharacterConfigToFile(Color.BLACK);
+                System.out.println(e);
+                System.out.println("Creating new Player config file");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+        }
+        else {
+            return new PlayerConfig("robot_small.png", Color.BLACK);
         }
 
+        return new PlayerConfig("robot_small.png", Color.BLACK); //to avoid error
     }
 
     public static void saveCharacterConfigToFile(Color color){
@@ -119,7 +130,9 @@ public class CharacterCustomizer {
 
         try { //try to write to file
             objectMapper.writeValue(new File("src/main/customisation/playerConfig.json"), playerConfig);
+            System.out.println("saved player config");
         } catch (IOException e) { //cant write to file
+            System.out.println("failed to save to player config");
             e.printStackTrace();
         }
 

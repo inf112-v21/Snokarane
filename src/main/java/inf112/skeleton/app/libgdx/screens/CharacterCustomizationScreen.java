@@ -15,9 +15,9 @@ import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.SpriteDrawable;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import inf112.skeleton.app.libgdx.CharacterCustomizer;
+import inf112.skeleton.app.libgdx.PlayerConfig;
 import inf112.skeleton.app.libgdx.RoboGame;
 
-import static inf112.skeleton.app.libgdx.CharacterCustomizer.loadCharacterConfigFromFile;
 import static inf112.skeleton.app.libgdx.CharacterCustomizer.saveCharacterConfigToFile;
 
 public class CharacterCustomizationScreen extends ScreenAdapter implements IUiScreen  {
@@ -52,6 +52,7 @@ public class CharacterCustomizationScreen extends ScreenAdapter implements IUiSc
     Texture defaultPlayerTexture = CharacterCustomizer.generatePlayerTexture(true, Color.RED); //TODO: perhaps change default color?
 
 
+
     private void updatePreviewImage(){
         //change previewImage
         Color newColor = new Color(redSlider.getValue() /255f, greenSlider.getValue() /255f, blueSlider.getValue() /255f, 100f);
@@ -60,6 +61,9 @@ public class CharacterCustomizationScreen extends ScreenAdapter implements IUiSc
 
 
     }
+
+
+
 
     @Override
     public void startScreen(RoboGame game) {
@@ -70,12 +74,6 @@ public class CharacterCustomizationScreen extends ScreenAdapter implements IUiSc
 
     @Override
     public void loadUIVisuals() {
-
-        //Character preview
-        //TODO: update character preview within the textbox handlers
-        characterPreviewImage = new Image(defaultPlayerTexture);
-        characterPreviewImage.setPosition(stage.getHeight() / 2,stage.getWidth() / 2); //TODO improve positioning
-        stage.addActor(characterPreviewImage);
 
     }
 
@@ -97,6 +95,13 @@ public class CharacterCustomizationScreen extends ScreenAdapter implements IUiSc
         });
 
 
+        //Character preview
+        //TODO: update character preview within the textbox handlers
+        characterPreviewImage = new Image(defaultPlayerTexture);
+        characterPreviewImage.setPosition(stage.getHeight() / 2,stage.getWidth() / 2); //TODO improve positioning
+        stage.addActor(characterPreviewImage);
+
+
         //Offsets for relative positioning and sizing
         int labelOffset = -100;
         int texFiledOffset = 150;
@@ -114,7 +119,6 @@ public class CharacterCustomizationScreen extends ScreenAdapter implements IUiSc
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button){
 
-                System.out.println("clicked save");
                 saveCharacterConfigToFile(new Color(redSlider.getValue() /255f,greenSlider.getValue() /255f, blueSlider.getValue() /255f, 100f));
                 return true;
             }
@@ -131,7 +135,6 @@ public class CharacterCustomizationScreen extends ScreenAdapter implements IUiSc
 
         blueSlider = new Slider(0, 255, 1, false, game.skin);
         blueSlider.setPosition(gdxW/2-blueSlider.getWidth()/2, gdxH/2-blueSlider.getHeight()/2-100);
-
 
         //Adding labels to sliders
 
@@ -168,6 +171,28 @@ public class CharacterCustomizationScreen extends ScreenAdapter implements IUiSc
         blueTextField.setPosition(blueSlider.getX() + texFiledOffset, blueSlider.getY());
 
 
+        //sets values of intractable ui elements from config if possible
+        try{
+            PlayerConfig playerConfig = CharacterCustomizer.loadCharacterConfigFromFile();
+            redSlider.setValue(playerConfig.getMainColor().r * possibleColors);
+            greenSlider.setValue(playerConfig.getMainColor().g * possibleColors);
+            blueSlider.setValue(playerConfig.getMainColor().b * possibleColors);
+
+            redSliderLabel.setColor(playerConfig.getMainColor().r,0,0,100f);
+            greenSliderLabel.setColor(0,playerConfig.getMainColor().g,0,100f);
+            blueSliderLabel.setColor(0,0,playerConfig.getMainColor().b,100f);
+
+            redTextField.setText(Integer.toString(Math.round( playerConfig.getMainColor().r * possibleColors)));
+            greenTextField.setText(Integer.toString(Math.round( playerConfig.getMainColor().g * possibleColors)));
+            blueTextField.setText(Integer.toString(Math.round( playerConfig.getMainColor().b * possibleColors)));
+
+            updatePreviewImage();
+
+        } catch (Exception e){
+            System.out.println("Could not load config setting ui elements to defaults");
+        }
+
+
         //Event handlers for the sliders
 
         redSlider.addListener(new ChangeListener() {
@@ -176,7 +201,6 @@ public class CharacterCustomizationScreen extends ScreenAdapter implements IUiSc
 
                 redTextField.setText(String.valueOf(Math.round(redSlider.getValue()))); //sets value of textfield to be same as slider
                 redSliderLabel.setColor(redSlider.getValue() / possibleColors, 0,0f, 100f);
-                System.out.println("redSlider moved: " + redSlider.getValue());
                 updatePreviewImage();
 
             }
@@ -189,7 +213,6 @@ public class CharacterCustomizationScreen extends ScreenAdapter implements IUiSc
 
                 greenTextField.setText(String.valueOf(Math.round(greenSlider.getValue()))); //sets value of textfield to be same as slider
                 greenSliderLabel.setColor(0f, greenSlider.getValue() / possibleColors,0f, 100f);
-                System.out.println("greenslider moved: " + greenSlider.getValue());
                 updatePreviewImage();
             }
         });
@@ -201,7 +224,6 @@ public class CharacterCustomizationScreen extends ScreenAdapter implements IUiSc
 
                 blueTextField.setText(String.valueOf(Math.round(blueSlider.getValue()))); //sets value of textfield to be same as slider
                 blueSliderLabel.setColor(0f, 0f,blueSlider.getValue() / possibleColors, 100f);
-                System.out.println("blueSlider moved: " + blueSlider.getValue());
                 updatePreviewImage();
             }
         });
@@ -241,7 +263,6 @@ public class CharacterCustomizationScreen extends ScreenAdapter implements IUiSc
                     redSlider.setValue(0);
                 }
 
-                System.out.println("redSlider moved: " + redTextField.getText());
 
             }
         });
