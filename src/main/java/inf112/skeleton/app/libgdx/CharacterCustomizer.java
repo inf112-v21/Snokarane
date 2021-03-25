@@ -4,8 +4,19 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import java.io.*;
+import java.util.HashMap;
 
 public class CharacterCustomizer {
+
+
+
+
+
+
 
 
     /*
@@ -29,12 +40,10 @@ public class CharacterCustomizer {
      * @param isLarge bool for if using the robo_small or robo_large pngs
      * @return generated player texture
      */
-    public static Texture generatePlayerTexture(Boolean isLarge, Color inputColor) { //TODO: take in chosen color as well
+    public static Texture generatePlayerTexture(Boolean isLarge, Color inputColor) { //TODO: change isLarge to take in a texture instead?
 
         //Robotexture
         Texture roboTexture;
-
-
 
         //this can be moved outside function, and added as a parameter in the function call
         if (!isLarge){
@@ -54,9 +63,8 @@ public class CharacterCustomizer {
 
 
 
-        Color mainColor = inputColor; //TODO: change to take in a players chosen colour value
-        //Color secondaryColor = new Color(255 - mainColor.r,255 - mainColor.g, 255 - mainColor.b,100f); //TODO: generate complementry color from main color?
-        Color secondaryColor = Color.PINK;
+        Color mainColor = inputColor;
+        Color secondaryColor = Color.PINK; //TODO: change to take in a players chosen colour value?
 
         //iterates over all pixels in the pixmap
         for (int y = 0; y < roboPixmap.getHeight(); y++) {
@@ -76,12 +84,44 @@ public class CharacterCustomizer {
 
                 }
 
-
-
             }
         }
 
         return new Texture(roboPixmap);
     }
+
+    //TODO save characterconfig
+
+
+    public static void loadCharacterConfigFromFile(){
+
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            InputStream inputStream = new FileInputStream(new File("src/main/customisation/playerConfig.json"));
+            TypeReference<PlayerConfig> typeReference = new TypeReference<PlayerConfig>() {};
+            PlayerConfig playerConfig = mapper.readValue(inputStream, typeReference);
+            //System.out.println(inputStream);
+            System.out.println(playerConfig.image);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    public static void saveCharacterConfigToFile(Color color){
+        ObjectMapper objectMapper = new ObjectMapper();
+        PlayerConfig playerConfig = new PlayerConfig("robot_large.png",color);
+
+        try { //try to write to file
+            objectMapper.writeValue(new File("src/main/customisation/playerConfig.json"), playerConfig);
+        } catch (IOException e) { //cant write to file
+            e.printStackTrace();
+        }
+
+
+    }
+
 
 }
