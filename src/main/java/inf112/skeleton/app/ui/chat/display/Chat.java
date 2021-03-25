@@ -80,7 +80,7 @@ public class Chat {
 
         List<String> messages = new ArrayList<>();
 
-        int lineBreakLimit = 30; // TODO fix hardcoded value
+        int lineBreakLimit = 40; // TODO fix hardcoded value
 
         for (HashMap<String, String> hss: chat.getNamesWithMessages()){
             for (String s : hss.keySet()){

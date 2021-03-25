@@ -57,7 +57,7 @@ public class RoboGame extends Game{
         float cardDeckSize = 1.5f;
 
         // for side menu scaling
-        float sideMenuSize = 1.5f;
+        float sideMenuSize = 2f;
 
         // Set camera to orthographic, size board dimensions
         camera.setToOrtho(false, BOARD_X + (sideMenuSize*2), BOARD_Y +(cardDeckSize)*2);
