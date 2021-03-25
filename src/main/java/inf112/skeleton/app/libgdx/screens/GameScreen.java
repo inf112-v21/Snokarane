@@ -28,6 +28,7 @@ import inf112.skeleton.app.game.objects.Flag;
 import inf112.skeleton.app.game.objects.PlayerToken;
 import inf112.skeleton.app.libgdx.CharacterCustomizer;
 import inf112.skeleton.app.libgdx.Map;
+import inf112.skeleton.app.libgdx.PlayerConfig;
 import inf112.skeleton.app.libgdx.RoboGame;
 import inf112.skeleton.app.network.Network;
 import inf112.skeleton.app.network.NetworkClient;
@@ -163,7 +164,12 @@ public class GameScreen extends ScreenAdapter {
      */
     public void loadPlayerTextures(){
         // Load the entire player texture
-        Color playerColor = Color.RED;
+        //Color playerColor = Color.RED;
+
+        //load playercolor from file if possible
+        PlayerConfig config = CharacterCustomizer.loadCharacterConfigFromFile();
+        Color playerColor = config.getMainColor();
+
         Texture rawPlayerTexture = CharacterCustomizer.generatePlayerTexture(false,playerColor);
 
         // Split player texture into seperate regions
