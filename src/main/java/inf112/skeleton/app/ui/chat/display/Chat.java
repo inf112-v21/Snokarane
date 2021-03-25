@@ -28,7 +28,7 @@ public class Chat {
     private ChatFormatter chat = new ChatFormatter();
     private Table chatTable = new Table();
     private TextureRegionDrawable chatBackground;
-    private float fontSize = 1f;
+    private float fontSize = 0.8f;
     private Color chatColor = new Color();
     private Skin chatSkin;
     private float w = 0f, h = 0f, x = 0f, y = 0f;
@@ -99,7 +99,7 @@ public class Chat {
         }
 
         if (messages.size()>0){
-            messages.set(0, (messages.size()==1) ? "Welcome to the chat!" : "");
+            messages.set(0, (messages.size()==1) ? "Welcome to chat! /h for help" : "");
         }
         for (String s : messages){
             Label mess = new Label(s, chatSkin);
