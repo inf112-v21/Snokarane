@@ -18,13 +18,10 @@ import inf112.skeleton.app.libgdx.CharacterCustomizer;
 import inf112.skeleton.app.libgdx.PlayerConfig;
 import inf112.skeleton.app.libgdx.RoboGame;
 
+import static inf112.skeleton.app.libgdx.CharacterCustomizer.loadCharacterConfigFromFile;
 import static inf112.skeleton.app.libgdx.CharacterCustomizer.saveCharacterConfigToFile;
 
 public class CharacterCustomizationScreen extends ScreenAdapter implements IUiScreen  {
-
-    //TODO: add save button
-    //TODO: save chosen colors to a json file when clicking save button?
-
 
     // RoboGame class instance
     private RoboGame game;
@@ -36,7 +33,6 @@ public class CharacterCustomizationScreen extends ScreenAdapter implements IUiSc
     float gdxH = Gdx.graphics.getHeight();
 
 
-
     public CharacterCustomizationScreen(RoboGame game){
         startScreen(game);
     }
@@ -46,23 +42,32 @@ public class CharacterCustomizationScreen extends ScreenAdapter implements IUiSc
     Slider greenSlider;
     Slider blueSlider;
 
-
     //Character preview defaults
     Image characterPreviewImage;
-    Texture defaultPlayerTexture = CharacterCustomizer.generatePlayerTexture(true, Color.RED); //TODO: perhaps change default color?
+    Texture defaultPlayerTexture = CharacterCustomizer.generatePlayerTexture(loadCharacterConfigFromFile().getImage(), loadCharacterConfigFromFile().getMainColor()); //TODO: perhaps change default color?
 
+    //checkBox
+    CheckBox useLargeCheckBox;
 
 
     private void updatePreviewImage(){
         //change previewImage
+        //String playerImage = loadCharacterConfigFromFile().getImage();
+        String playerImage;
+
+        if (useLargeCheckBox.isChecked()){
+            playerImage = "robot_large.png";
+        } else {
+            playerImage = "robot_small.png";
+        }
+
         Color newColor = new Color(redSlider.getValue() /255f, greenSlider.getValue() /255f, blueSlider.getValue() /255f, 100f);
-        Texture newPlayerTexture = CharacterCustomizer.generatePlayerTexture(true, newColor);
+
+        Texture newPlayerTexture = CharacterCustomizer.generatePlayerTexture(playerImage, newColor);
         characterPreviewImage.setDrawable(new SpriteDrawable(new Sprite(newPlayerTexture)));
 
 
     }
-
-
 
 
     @Override
@@ -113,13 +118,24 @@ public class CharacterCustomizationScreen extends ScreenAdapter implements IUiSc
 
         //Button for saving chosen colors
         Button saveButton = new TextButton("save", game.skin, "small");
-        saveButton.setPosition(backButton.getX(), backButton.getY() + saveButtonOffset);  //set position of button relative to backbutton
+        saveButton.setPosition(backButton.getX(), backButton.getY() + saveButtonOffset);  //set position of button relative to backButton
+
+        useLargeCheckBox = new CheckBox("big?", game.skin);
 
         saveButton.addListener(new InputListener(){
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button){
+                String defaultImage = "robot_small.png";
+                String image;
 
-                saveCharacterConfigToFile(new Color(redSlider.getValue() /255f,greenSlider.getValue() /255f, blueSlider.getValue() /255f, 100f));
+                if(useLargeCheckBox.isChecked()){ //large player if checked
+                    image = "robot_large.png";
+                } else {
+                    image = defaultImage;
+                }
+
+                Color chosenColor = new Color(redSlider.getValue() /255f,greenSlider.getValue() /255f, blueSlider.getValue() /255f, 100f);
+                saveCharacterConfigToFile(image, chosenColor);
                 return true;
             }
         });
@@ -170,6 +186,11 @@ public class CharacterCustomizationScreen extends ScreenAdapter implements IUiSc
         blueTextField.setMaxLength(textFiledMaxLength);
         blueTextField.setPosition(blueSlider.getX() + texFiledOffset, blueSlider.getY());
 
+        //for selecting large or small player texture //TODO: add more options? (if so change to something different than checkbox)
+        useLargeCheckBox.setPosition(redSlider.getX(), redSlider.getY() + 100); //random offset //TODO: change offset to variable
+
+
+
 
         //sets values of intractable ui elements from config if possible
         try{
@@ -186,11 +207,27 @@ public class CharacterCustomizationScreen extends ScreenAdapter implements IUiSc
             greenTextField.setText(Integer.toString(Math.round( playerConfig.getMainColor().g * possibleColors)));
             blueTextField.setText(Integer.toString(Math.round( playerConfig.getMainColor().b * possibleColors)));
 
+            if(playerConfig.getImage().equals("robot_large.png")){ //sets checkbox to checked if config says playerIsLarge
+                useLargeCheckBox.setChecked(true);
+            } else {
+                useLargeCheckBox.setChecked(false);
+            }
+
+
             updatePreviewImage();
 
         } catch (Exception e){
             System.out.println("Could not load config setting ui elements to defaults");
         }
+
+
+
+        useLargeCheckBox.addListener(new ChangeListener() { //Event handler for isLargeCheckBox
+            @Override
+            public void changed(ChangeEvent changeEvent, Actor actor) {
+                updatePreviewImage();
+            }
+        });
 
 
         //Event handlers for the sliders
@@ -351,6 +388,7 @@ public class CharacterCustomizationScreen extends ScreenAdapter implements IUiSc
         stage.addActor(blueSlider);
         stage.addActor(blueSliderLabel);
         stage.addActor(blueTextField);
+        stage.addActor(useLargeCheckBox);
         stage.addActor(saveButton);
         stage.addActor(backButton);
     }

@@ -37,31 +37,22 @@ public class CharacterCustomizer {
 
     /**
      *
-     * @param isLarge bool for if using the robo_small or robo_large pngs
+     * @param image the name of a png located in the "resources" directory as string,
      * @return generated player texture
      */
-    public static Texture generatePlayerTexture(Boolean isLarge, Color inputColor) { //TODO: change isLarge to take in a texture instead?
+    public static Texture generatePlayerTexture(String image, Color inputColor) {
 
         //Robotexture
         Texture roboTexture;
 
         //this can be moved outside function, and added as a parameter in the function call
-        if (!isLarge){
-            roboTexture = new Texture(Gdx.files.internal("src/main/resources/robot_small.png").file().getAbsolutePath());
-        }
-        else {
-            roboTexture = new Texture(Gdx.files.internal("src/main/resources/robot_large.png").file().getAbsolutePath());
-        }
-
-
+        roboTexture = new Texture(Gdx.files.internal("src/main/resources/" + image).file().getAbsolutePath());
 
         //preparing texture and converting to a pixmap
         if (!roboTexture.getTextureData().isPrepared()) {
             roboTexture.getTextureData().prepare();
         }
         Pixmap roboPixmap = roboTexture.getTextureData().consumePixmap();
-
-
 
         Color mainColor = inputColor;
         Color secondaryColor = Color.PINK; //TODO: change to take in a players chosen colour value?
@@ -71,14 +62,13 @@ public class CharacterCustomizer {
             for (int x = 0; x < roboPixmap.getWidth(); x++) {
                 Color currentPixelColor = new Color(roboPixmap.getPixel(x,y));
 
-
                 //Checks for colors that should be changed, and changes them based on desired colors
-
-                if(currentPixelColor.toString().equals("ffcc00ff")) { //checks if the color of the pixel is the primary color used in the robot textures
+                //Add else if for each color you wish to change
+                if(currentPixelColor.toString().equals("ffcc00ff")) { //checks if the color of the pixel is the primary color used in the robot textures //TODO: make this a method parameter
                     roboPixmap.setColor(mainColor);
                     roboPixmap.fillRectangle(x, y,1,1);
                 }
-                else if (currentPixelColor.toString().equals("e7b900ff")) { //checks if the color of the pixel is the secondary color used in the robot textures
+                else if (currentPixelColor.toString().equals("e7b900ff")) { //checks if the color of the pixel is the secondary color used in the robot textures //TODO make this a method parameter
                     roboPixmap.setColor(secondaryColor);
                     roboPixmap.fillRectangle(x, y,1,1);
 
@@ -90,10 +80,11 @@ public class CharacterCustomizer {
         return new Texture(roboPixmap);
     }
 
-    //TODO save characterconfig
-
 
     public static PlayerConfig loadCharacterConfigFromFile(){
+
+        String defaultCharacterImage = "robot_large.png";
+        Color defaultColor = Color.BLACK;
 
         File configFile = new File("src/main/customisation/playerConfig.json");
         if(configFile.exists()){
@@ -109,7 +100,7 @@ public class CharacterCustomizer {
             } catch (FileNotFoundException e) {
 
                 //create file if it does not exist
-                saveCharacterConfigToFile(Color.BLACK);
+                saveCharacterConfigToFile(defaultCharacterImage, defaultColor);
                 System.out.println(e);
                 System.out.println("Creating new Player config file");
             } catch (IOException e) {
@@ -118,15 +109,16 @@ public class CharacterCustomizer {
 
         }
         else {
-            return new PlayerConfig("robot_small.png", Color.BLACK);
+            return new PlayerConfig(defaultCharacterImage,defaultColor);
         }
 
-        return new PlayerConfig("robot_small.png", Color.BLACK); //to avoid error
+        return new PlayerConfig(defaultCharacterImage, defaultColor); //to avoid error
     }
 
-    public static void saveCharacterConfigToFile(Color color){
+
+    public static void saveCharacterConfigToFile(String image, Color color){
         ObjectMapper objectMapper = new ObjectMapper();
-        PlayerConfig playerConfig = new PlayerConfig("robot_large.png",color);//TODO: add as parameter instead
+        PlayerConfig playerConfig = new PlayerConfig(image,color);
 
         try { //try to write to file
             objectMapper.writeValue(new File("src/main/customisation/playerConfig.json"), playerConfig);

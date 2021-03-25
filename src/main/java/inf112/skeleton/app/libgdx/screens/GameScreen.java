@@ -169,8 +169,9 @@ public class GameScreen extends ScreenAdapter {
         //load playercolor from file if possible
         PlayerConfig config = CharacterCustomizer.loadCharacterConfigFromFile();
         Color playerColor = config.getMainColor();
+        String playerImage = config.getImage();
 
-        Texture rawPlayerTexture = CharacterCustomizer.generatePlayerTexture(false,playerColor);
+        Texture rawPlayerTexture = CharacterCustomizer.generatePlayerTexture(playerImage, playerColor);
 
         // Split player texture into seperate regions
         TextureRegion roboPlayerSplitTexture = new TextureRegion(rawPlayerTexture,300, 300);
