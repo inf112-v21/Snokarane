@@ -194,9 +194,9 @@ public class GameScreen extends ScreenAdapter {
         StaticTiledMapTile singleHorizontal = new StaticTiledMapTile(splitLaserTextures[4][6]);
         StaticTiledMapTile singleBoth = new StaticTiledMapTile(splitLaserTextures[4][7]);
         StaticTiledMapTile singleVertical = new StaticTiledMapTile(splitLaserTextures[5][6]);
-        StaticTiledMapTile doubleBoth = new StaticTiledMapTile(splitLaserTextures[12][5]);
-        StaticTiledMapTile doubleVertical = new StaticTiledMapTile(splitLaserTextures[12][6]);
-        StaticTiledMapTile doubleHorizontal = new StaticTiledMapTile(splitLaserTextures[12][7]);
+        StaticTiledMapTile doubleBoth = new StaticTiledMapTile(splitLaserTextures[12][4]);
+        StaticTiledMapTile doubleVertical = new StaticTiledMapTile(splitLaserTextures[12][5]);
+        StaticTiledMapTile doubleHorizontal = new StaticTiledMapTile(splitLaserTextures[12][6]);
 
         this.singleHorizontal = new TiledMapTileLayer.Cell().setTile(singleHorizontal);
         this.singleBoth = new TiledMapTileLayer.Cell().setTile(singleBoth);
@@ -539,7 +539,7 @@ public class GameScreen extends ScreenAdapter {
 
     public TiledMapTileLayer.Cell laserToTile(int x, int y) {
 
-        //TODO FIX THIS SHit
+        //TODO FIX THIS SHIT to add support for doubles
         if (map.laserLayer[x][y][0] == 1) return singleVertical;
         if (map.laserLayer[x][y][0] == 2) return doubleVertical;
         if (map.laserLayer[x][y][1] == 1) return singleHorizontal;
@@ -664,7 +664,8 @@ public class GameScreen extends ScreenAdapter {
     private void setWallDirections(TiledMapTileLayer.Cell wallCell, int i, int j){
         //TODO a lot of these are lacking
 
-        // NORTH, EAST, SOUTH, WEST. These are the direction it blocks, not where the wall is placed
+        // NORTH, EAST, SOUTH, WEST. This is where the wall is placed
+        //TODO redo all these?
         if (wallCell.getTile().getId() == 24) map.wallLayer[i][j] = new boolean[] {true, false, false, true};
         if (wallCell.getTile().getId() == 31) map.wallLayer[i][j] = new boolean[] {true, false, false, false};
         if (wallCell.getTile().getId() == 16) map.wallLayer[i][j] = new boolean[] {true, true, false, false};

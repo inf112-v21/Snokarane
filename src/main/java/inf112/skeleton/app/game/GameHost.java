@@ -1,11 +1,9 @@
 package inf112.skeleton.app.game;
 
 import com.badlogic.gdx.math.GridPoint2;
-import com.esotericsoftware.kryonet.Connection;
 import inf112.skeleton.app.game.objects.Card;
 import inf112.skeleton.app.game.objects.CardType;
 import inf112.skeleton.app.game.objects.PlayerToken;
-import inf112.skeleton.app.libgdx.Game;
 import inf112.skeleton.app.libgdx.Map;
 import inf112.skeleton.app.libgdx.NetworkDataWrapper;
 import inf112.skeleton.app.network.NetworkHost;
@@ -393,53 +391,38 @@ public class GameHost extends GamePlayer {
         }
         GridPoint2 wouldEndUp = player.wouldEndUp(direction);
 
-        if (map.isWall(player.position.x, player.position.y, direction) || (isInBounds(wouldEndUp.x, wouldEndUp.y) && map.isWall(wouldEndUp.x, wouldEndUp.y, oppositeDir(direction)))){
+        if (!map.canGo(player.position.x, player.position.y, direction)){
             return false;
         }
-            else if (!isInBounds(wouldEndUp.x, wouldEndUp.y)) {
-                player.died();
-                return true;
+        else if (map.wouldDie(wouldEndUp.x, wouldEndUp.y)) {
+            player.died();
+            return true;
+        }
+        else if (map.hasPlayer(wouldEndUp.x, wouldEndUp.y)) {
+            if (!shouldPush) {
+                return false;
             }
-            else if (map.isHole(wouldEndUp.x, wouldEndUp.y)) {
-                player.died();
-                return true;
+            // I.e if the player is being pushed into a wall
+            boolean didOppMove = false;
+            //Shady way to get a hold of the player on the tile
+            for (PlayerToken opponent : clientPlayers.values()) {
+                if (opponent != player && opponent.position.x == wouldEndUp.x && opponent.position.y == wouldEndUp.y) {
+                    didOppMove = movePlayer(opponent, 1, direction, true);
+                }
             }
-            else if (map.playerLayer[wouldEndUp.x][wouldEndUp.y].state != PlayerToken.CHARACTER_STATES.NONE) {
-                if (!shouldPush) {
-                    return false;
-                }
-                // TODO Fix this maybe? Also add support for chain-pushing. This contains a lot of bugs
-                // I.e if the player is being pushed into a wall
-                boolean didOppMove = false;
-
-                for (PlayerToken opponent : clientPlayers.values()) {
-                    if (opponent != player && opponent.position.x == wouldEndUp.x && opponent.position.y == wouldEndUp.y) {
-                        didOppMove = movePlayer(opponent, 1, direction, true);
-                    }
-                }
-                if (didOppMove) player.move(direction);
+            if (didOppMove) player.move(direction);
                 // Don't think we need this, but better safe than sorry. Future proof!
-                if (player.diedThisTurn) return didOppMove;
-            }
-            else {
-                player.move(direction);
-                if (player.diedThisTurn) return true;
-            }
+            if (player.diedThisTurn) return didOppMove;
+        }
+        else {
+            player.move(direction);
+            if (player.diedThisTurn) return true;
+        }
             // TODO this is shady as heck
-            map.loadPlayers(wrapper().PlayerTokens);
-            //host.sendMapLayerWrapper(wrapper());
-            movePlayer(player, dist-1, direction, shouldPush);
+        map.loadPlayers(wrapper().PlayerTokens);
+        //host.sendMapLayerWrapper(wrapper());
+        movePlayer(player, dist-1, direction, shouldPush);
         return true;
     }
 
-    public static PlayerToken.Direction oppositeDir(PlayerToken.Direction dir) {
-        if (dir == PlayerToken.Direction.NORTH) return PlayerToken.Direction.SOUTH;
-        if (dir == PlayerToken.Direction.SOUTH) return PlayerToken.Direction.NORTH;
-        if (dir == PlayerToken.Direction.EAST) return PlayerToken.Direction.WEST;
-        else return PlayerToken.Direction.EAST;
-    }
-
-    private boolean isInBounds(int x, int y) {
-        return !(x < 0 || x >= Game.BOARD_X || y < 0 || y >= Game.BOARD_Y);
-    }
 }

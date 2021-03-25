@@ -5,9 +5,7 @@ import inf112.skeleton.app.game.GameHost;
 import inf112.skeleton.app.game.objects.Flag;
 import inf112.skeleton.app.game.objects.PlayerToken;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -111,6 +109,15 @@ public class Map {
             }
         }
     }
+
+    public boolean wouldDie(int x, int y) {
+        return (isHole(x, y) || !isInBounds(x, y));
+    }
+
+    public boolean hasPlayer(int x, int y) {
+        return playerLayer[x][y].state != PlayerToken.CHARACTER_STATES.NONE;
+    }
+
     /**
      * Checks if any players have won the current game. If multiple players win
      * only the first one is returned
@@ -137,35 +144,28 @@ public class Map {
         return repairLayer [x][y];
     }
 
-    public int isLaser(int x, int y, PlayerToken.Direction direction) {
+    //TODO Rename to canGo, and change functionality
+    public boolean canGo(int x, int y, PlayerToken.Direction direction){
         if (direction == PlayerToken.Direction.NORTH){
-            return laserLayer[x][y][0];
+            //If the next one is out of bounds, we won't disallow that!
+            if (!isInBounds(x, y, direction) && !wallLayer[x][y][0]) return true;
+            //Check that the next one is in bounds, and if so, that there's no wall on either tile
+            return isInBounds(x, y, direction) && !wallLayer[x][y][0] && !wallLayer[x][y+1][2];
         }
         else if (direction == PlayerToken.Direction.EAST) {
-            return laserLayer[x][y][1];
+            if (!isInBounds(x, y, direction) && !wallLayer[x][y][1]) return true;
+            return isInBounds(x, y, direction) && !wallLayer[x][y][1] && !wallLayer[x+1][y][3];
         }
         else if (direction == PlayerToken.Direction.SOUTH) {
-            return laserLayer[x][y][2];
+            if (!isInBounds(x, y, direction) && !wallLayer[x][y][2]) return true;
+            return isInBounds(x, y, direction) && !wallLayer[x][y][2] && !wallLayer[x][y - 1][0];
         }
         else{
-            return laserLayer[x][y][3];
+            if (!isInBounds(x, y, direction) && !wallLayer[x][y][3]) return true;
+            return isInBounds(x, y, direction) && !wallLayer[x][y][3] && !wallLayer[x-1][y][1];
         }
     }
-
-    public boolean isWall(int x, int y, PlayerToken.Direction direction){
-        if (direction == PlayerToken.Direction.NORTH){
-            return wallLayer[x][y][0];
-        }
-        else if (direction == PlayerToken.Direction.EAST) {
-            return wallLayer[x][y][1];
-        }
-        else if (direction == PlayerToken.Direction.SOUTH) {
-            return wallLayer[x][y][2];
-        }
-        else{
-            return wallLayer[x][y][3];
-        }
-    }
+    //TODO add support for permament lasers?
     public void clearLasers() {
         laserLayer = new int [BOARD_X][BOARD_Y][4];
     }
@@ -177,44 +177,37 @@ public class Map {
             PlayerToken token = wrapper.PlayerTokens.get(i);
             allLasers.add(new LaserShooter(token.getDirection(), 1, token.getX(), token.getY()));
         }
+
         for (LaserShooter laser : allLasers) {
             int x = laser.x;
             int y = laser.y;
             //If the laser comes from a player, it starts one tile ahead
-            int start = (playerLayer[x][y].state != PlayerToken.CHARACTER_STATES.NONE) ? 1 : 0;
+            int start = hasPlayer(x, y) ? 1 : 0;
 
+            //If there is a wall directly in front of a player, or it's immediately out of bounds
+            if (hasPlayer(x, y) && (!canGo(x, y, laser.dir) || !isInBounds(x, y, laser.dir))) continue;
             if (laser.dir == PlayerToken.Direction.NORTH){
-                //We do this check in case there's a player with a laser directly in front
-                if (isWall(x, y, laser.dir) || y+1 == BOARD_Y || isWall(x, y+1, GameHost.oppositeDir(laser.dir))) return;
                 for (int i = start; i < BOARD_X; i++) {
-                    if (y+i >= BOARD_Y) break;
                     laserLayer[x][y+i][0] = laser.laserNum;
-                    if (isWall(x, y+i, laser.dir) || y+1+i == BOARD_Y  || playerLayer[x][y+((i == 0) ? 1 : i)].state != PlayerToken.CHARACTER_STATES.NONE ||  isWall(x, y+1+i, GameHost.oppositeDir(laser.dir))) break;
+                    if (!isInBounds(x, y+i+1) || !canGo(x, y+i, laser.dir) || hasPlayer(x, y + i)) break;
                 }
             }
             else if (laser.dir == PlayerToken.Direction.EAST) {
-                if (isWall(x, y, laser.dir) || x+1 == BOARD_X || isWall(x+1, y, GameHost.oppositeDir(laser.dir))) return;
                 for (int i = start; i < BOARD_Y; i++) {
-                    if (x+i >= BOARD_X) break;
                     laserLayer[x+i][y][1] = laser.laserNum;
-                    if (isWall(x+i, y, laser.dir) || x+1+i == BOARD_X || playerLayer[x + ((i == 0) ? 1 : i)][y].state != PlayerToken.CHARACTER_STATES.NONE  || isWall(x+1+i, y, GameHost.oppositeDir(laser.dir))) break;
+                    if (!isInBounds(x+i+1, y) || !canGo(x+i, y, laser.dir) || hasPlayer(x +i, y)) break;
                 }
             }
             else if (laser.dir == PlayerToken.Direction.SOUTH) {
-                if (isWall(x, y, laser.dir) || y-1 < 0 || isWall(x, y-1, GameHost.oppositeDir(laser.dir))) return;
                 for (int i = start; i < BOARD_X; i++) {
-                    if (y-i < 0) break;
                     laserLayer[x][y-i][2] = laser.laserNum;
-                    if (isWall(x, y-i, laser.dir) || y-1-i < 0 || playerLayer[x][y-((i == 0) ? 1 : i)].state != PlayerToken.CHARACTER_STATES.NONE  || isWall(x, y-1-i, GameHost.oppositeDir(laser.dir))) break;
+                    if (!isInBounds(x, y-i-1) || !canGo(x, y-i, laser.dir) || hasPlayer(x, y-i)) break;
                 }
             }
             else{
-                if (isWall(x, y, laser.dir) || x-1 < 0 || isWall(x-1, y, GameHost.oppositeDir(laser.dir))) return;
                 for (int i = start; i < BOARD_Y; i++) {
-
-                    if (x-i < 0) break;
                     laserLayer[x-i][y][3] = laser.laserNum;
-                    if (isWall(x-i, y, laser.dir) || x-1-i < 0 || playerLayer[x-((i == 0) ? 1 : i)][y].state != PlayerToken.CHARACTER_STATES.NONE ||isWall(x-i-1, y, GameHost.oppositeDir(laser.dir))) break;
+                    if (!isInBounds(x-i-1, y) || !canGo(x-i, y, laser.dir) || hasPlayer(x- i, y)) break;
                 }
             }
         }
@@ -235,4 +228,19 @@ public class Map {
             playerLayer[token.getX()][token.getY()].dir = token.getDirection();
         }
     }
+
+    public static boolean isInBounds(int x, int y) {
+        return !(x < 0 || x >= Game.BOARD_X || y < 0 || y >= Game.BOARD_Y);
+    }
+    public static boolean isInBounds(int x, int y, PlayerToken.Direction dir) {
+        if (dir == PlayerToken.Direction.NORTH)
+            return !(x < 0 || x >= Game.BOARD_X || y+1 < 0 || y+1 >= Game.BOARD_Y);
+        if (dir == PlayerToken.Direction.SOUTH)
+            return !(x < 0 || x >= Game.BOARD_X || y-1 < 0 || y-1 >= Game.BOARD_Y);
+        if (dir == PlayerToken.Direction.EAST)
+            return !(x+1 < 0 || x+1 >= Game.BOARD_X || y < 0 || y >= Game.BOARD_Y);
+        else
+            return !(x-1 < 0 || x-1 >= Game.BOARD_X || y < 0 || y >= Game.BOARD_Y);
+    }
+
 }
