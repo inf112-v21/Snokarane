@@ -33,6 +33,7 @@ import inf112.skeleton.app.libgdx.RoboGame;
 import inf112.skeleton.app.network.Network;
 import inf112.skeleton.app.network.NetworkClient;
 import inf112.skeleton.app.network.NetworkHost;
+import inf112.skeleton.app.ui.chat.CommandParser;
 import inf112.skeleton.app.ui.chat.managers.ChatClient;
 import inf112.skeleton.app.ui.chat.managers.ChatManager;
 import inf112.skeleton.app.ui.chat.managers.Chatter;
@@ -189,7 +190,65 @@ public class GameScreen extends ScreenAdapter {
             @Override
             public boolean keyDown(InputEvent event, int keycode) {
                 if (keycode == Input.Keys.ENTER){
-                    chat.sendMessage(inputBox.getText());
+
+                    // If chat is a command
+                    if (inputBox.getText().substring(0, 2).equals("/c") && inputBox.getText().length()>2){
+                        CommandParser p = new CommandParser();
+                        String commandContent = inputBox.getText().substring(3);
+                        System.out.println("Chat command entered: " + commandContent);
+
+                        // Get what command was input by user
+                        CommandParser.Command command = p.parseCommand(p.getCmd(commandContent));
+
+                            // Perform command
+                            switch (command){
+                                case SETNAME:
+                                    chat.setName(p.getArgs(commandContent));
+                                    break;
+                                case SETCOLOR:
+                                    switch (p.getArgs(commandContent)) {
+                                        case "r":
+                                            Color red = new Color(1, 0, 0, 1);
+                                            chat.chat.setChatColour(red);
+                                            break;
+                                        case "g":
+                                            Color green = new Color(0, 1, 0, 1);
+                                            chat.chat.setChatColour(green);
+                                            break;
+                                        case "b":
+                                            Color blue = new Color(0, 0, 1, 1);
+                                            chat.chat.setChatColour(blue);
+                                            break;
+                                        case "black":
+                                            Color black = new Color(1, 1, 1, 1);
+                                            chat.chat.setChatColour(black);
+                                            break;
+                                        default:
+                                            System.out.println("Invalid colour.");
+                                            break;
+                                    }
+                                    break;
+                                case SETFONTSTCALE:
+                                    float scale = Float.parseFloat(p.getArgs(commandContent));
+                                    chat.chat.setChatFontSize(scale);
+                                    break;
+                                case INVALID:
+                                    chat.sendMessage("Entered invalid command.");
+                                    break;
+                                default:
+                                    break;
+                        }
+                        // Send list of commands available if /h
+                    }else if (inputBox.getText().substring(0, 2).equals("/h")){
+                        chat.sendMessage("Commands:");
+                        chat.sendMessage("/c set-name <name>");
+                        chat.sendMessage("/c chat-color <r, g, b, black>");
+                        chat.sendMessage("/c font-scale <font scale>");
+                    }
+                    // Send message
+                    else {
+                        chat.sendMessage(inputBox.getText());
+                    }
                     updateChat();
                 }
                 return true;
