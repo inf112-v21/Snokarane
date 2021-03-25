@@ -17,7 +17,15 @@ import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import inf112.skeleton.app.libgdx.CharacterCustomizer;
 import inf112.skeleton.app.libgdx.RoboGame;
 
+import static inf112.skeleton.app.libgdx.CharacterCustomizer.loadCharacterConfigFromFile;
+import static inf112.skeleton.app.libgdx.CharacterCustomizer.saveCharacterConfigToFile;
+
 public class CharacterCustomizationScreen extends ScreenAdapter implements IUiScreen  {
+
+    //TODO: add save button
+    //TODO: save chosen colors to a json file when clicking save button?
+
+
     // RoboGame class instance
     private RoboGame game;
     // Stage for UI items
@@ -33,7 +41,7 @@ public class CharacterCustomizationScreen extends ScreenAdapter implements IUiSc
         startScreen(game);
     }
 
-    //sliders
+    //Sliders
     Slider redSlider;
     Slider greenSlider;
     Slider blueSlider;
@@ -64,7 +72,7 @@ public class CharacterCustomizationScreen extends ScreenAdapter implements IUiSc
     public void loadUIVisuals() {
 
         //Character preview
-        //TODO: update character preview within the textbook handlers
+        //TODO: update character preview within the textbox handlers
         characterPreviewImage = new Image(defaultPlayerTexture);
         characterPreviewImage.setPosition(stage.getHeight() / 2,stage.getWidth() / 2); //TODO improve positioning
         stage.addActor(characterPreviewImage);
@@ -89,13 +97,28 @@ public class CharacterCustomizationScreen extends ScreenAdapter implements IUiSc
         });
 
 
-
-        //Offesets for relative positioning and sizing
+        //Offsets for relative positioning and sizing
         int labelOffset = -100;
         int texFiledOffset = 150;
         int textFiledWidth = 50;
         int textFiledMaxLength = 3;
         int possibleColors = 255;
+        int saveButtonOffset = 100;
+
+
+        //Button for saving chosen colors
+        Button saveButton = new TextButton("save", game.skin, "small");
+        saveButton.setPosition(backButton.getX(), backButton.getY() + saveButtonOffset);  //set position of button relative to backbutton
+
+        saveButton.addListener(new InputListener(){
+            @Override
+            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button){
+
+                System.out.println("clicked save");
+                saveCharacterConfigToFile(new Color(redSlider.getValue() /255f,greenSlider.getValue() /255f, blueSlider.getValue() /255f, 100f));
+                return true;
+            }
+        });
 
 
         //Creating sliders for selecting color with rgb
@@ -123,7 +146,7 @@ public class CharacterCustomizationScreen extends ScreenAdapter implements IUiSc
 
 
         //only allow numbers in text fields
-        TextField.TextFieldFilter digitsOnlyFilter = new TextField.TextFieldFilter.DigitsOnlyFilter();
+        TextField.TextFieldFilter digitsOnlyFilter = new TextField.TextFieldFilter.DigitsOnlyFilter(); //TODO: create own filter that prohibits values above 255
 
         //Text fields for displaying and changing color number
         TextField redTextField= new TextField("0", game.skin);
@@ -236,6 +259,7 @@ public class CharacterCustomizationScreen extends ScreenAdapter implements IUiSc
         stage.addActor(blueSlider);
         stage.addActor(blueSliderLabel);
         stage.addActor(blueTextField);
+        stage.addActor(saveButton);
         stage.addActor(backButton);
     }
 
