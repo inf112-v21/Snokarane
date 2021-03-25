@@ -15,11 +15,9 @@ import com.badlogic.gdx.math.GridPoint2;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.Image;
-import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
-import com.badlogic.gdx.scenes.scene2d.ui.TextField;
+import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import inf112.skeleton.app.game.GameClient;
 import inf112.skeleton.app.game.GameHost;
@@ -162,6 +160,9 @@ public class GameScreen extends ScreenAdapter {
 
         // Initialize chat variables and objects
         initializeChatObjects(playerName);
+
+        // load list of players on map
+        loadPlayerList();
     }
     // Starts chat depending on client or host
     private void initializeChatObjects(String playerName){
@@ -310,7 +311,7 @@ public class GameScreen extends ScreenAdapter {
      */
     private Image newClickableCard(CardType cardType, TextureRegion t){
         int cardW = 100;
-        int cardH = 170;
+        int cardH = 135;
 
         Image img = new Image(t);
         img.setSize(cardW, cardH);
@@ -347,10 +348,10 @@ public class GameScreen extends ScreenAdapter {
      */
     private void loadCardDeck(){
         duplicates.clear();
-        int baseX = 15;
-        int baseY = 15;
+        int baseX = 75;
+        int baseY = 30;
 
-        int perCardIncrementX = 105;
+        int perCardIncrementX = 110;
 
         getDuplicateCards();
 
@@ -394,8 +395,9 @@ public class GameScreen extends ScreenAdapter {
     private void loadBackButton(){
 
         TextButton backButton = new TextButton("Back", game.skin, "small");
-        backButton.setWidth(325);
-        backButton.setPosition(Gdx.graphics.getWidth()-355f, 30);
+        backButton.setWidth(125);
+        backButton.setPosition(Gdx.graphics.getWidth()-155f, 30);
+        backButton.setColor(0.1f, 0, 0, 1);
         backButton.addListener(new InputListener(){
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
@@ -409,10 +411,10 @@ public class GameScreen extends ScreenAdapter {
      * Send cards button
      */
     private void loadSendCardsButton(){
-
         TextButton sendCardsButton = new TextButton("Send cards", game.skin, "small");
-        sendCardsButton.setWidth(325);
-        sendCardsButton.setPosition(Gdx.graphics.getWidth()-355f, 100);
+        sendCardsButton.setWidth(125);
+        sendCardsButton.setPosition(Gdx.graphics.getWidth()-155f, 100);
+        sendCardsButton.setColor(0.1f, 0, 0, 1);
         sendCardsButton.addListener(new InputListener(){
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
@@ -442,20 +444,69 @@ public class GameScreen extends ScreenAdapter {
         stage.addActor(sendCardsButton);
     }
     /**
+     * All player positions and directions
+     */
+    private void loadPlayerList(){
+        Table tableList = new Table();
+        tableList.top().left();
+        tableList.setPosition(Gdx.graphics.getWidth()-375, 30);
+        tableList.setWidth(210);
+        tableList.setHeight(160);
+        Label tIndicator = new Label("Player locations:", game.skin);
+        tIndicator.setAlignment(Align.left);
+        tableList.pad(5);
+        tableList.add(tIndicator);
+        tableList.row();
+
+        int playNo = 1;
+        boolean anyPlayers = false;
+        for (int x = 0; x<map.playerLayer.length; x++){
+            for (int y = 0; y<map.playerLayer[x].length; y++){
+                if (map.playerLayer[x][y].state != PlayerToken.CHARACTER_STATES.NONE){
+                    anyPlayers = true;
+                    String str = "Player "+ playNo +" at " + x + ", " + y + " - Facing: " + map.playerLayer[x][y].dir.toString();
+                    Label l = new Label(str, game.skin);
+                    l.setColor(0.7588f, 0.3188f, 0.1960f, 1);
+                    l.setAlignment(Align.left);
+                    l.setFontScale(0.8f);
+                    tableList.add(l);
+                    tableList.row();
+                    playNo++;
+                }
+            }
+        }
+        if (!anyPlayers){
+            String str = "Waiting for first round to start.";
+            Label l = new Label(str, game.skin);
+            l.setColor(0.7588f, 0.3188f, 0.1960f, 1);
+            l.setFontScale(0.8f);
+            tableList.add(l);
+            tableList.row();
+        }
+        stage.addActor(tableList);
+    }
+    /**
      * Decorative background for card deck
      */
     private void loadCardBackground(){
-        Texture cardBackgroundTexture = new Texture(Gdx.files.internal("cards/cards-background.png"));
+        Texture cardBackgroundTexture = new Texture(Gdx.files.internal("cards/bottom-border.png"));
         Image cardBackground = new Image(cardBackgroundTexture);
         cardBackground.setPosition(0, 0);
-        cardBackground.setSize(Gdx.graphics.getWidth(), 200);
+        cardBackground.setSize(Gdx.graphics.getWidth()-375, 200);
         stage.addActor(cardBackground);
+
+        Texture buttonBackgroundTexture = new Texture(Gdx.files.internal("cards/bottom-background-color.png"));
+        Image buttonBackground = new Image(buttonBackgroundTexture);
+        buttonBackground.setPosition(Gdx.graphics.getWidth()-375, 0);
+        buttonBackground.setSize(375, 200);
+        stage.addActor(buttonBackground);
     }
     private void loadActorsInOrder(){
         loadCardBackground();
         loadBackButton();
         loadSendCardsButton();
         loadCardDeck(); //TODO this already gets loaded in render. loading this in render is a bad idea, should be done here exclusively but need to find way to load deck at start of game too.
+        loadPlayerList();
         updateChat();
     }
     /**
