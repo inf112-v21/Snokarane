@@ -267,8 +267,79 @@ public class CharacterCustomizationScreen extends ScreenAdapter implements IUiSc
             }
         });
 
-        //TODO: implement event handler for greenTextField
-        //TODO: implement event handler for blueTextField
+
+        greenTextField.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent changeEvent, Actor actor) { // Slider event (when slider gets moved this function is called)
+
+                //TODO: make sure that player can't set value above 255?
+
+                try {
+                    if(255 >= Float.parseFloat(greenTextField.getText()) && Float.parseFloat(greenTextField.getText()) >= 0){
+                        greenTextField.setText(greenTextField.getText()); //sets value of textfield to be same as slider
+                        greenSliderLabel.setColor(0, Float.parseFloat(greenTextField.getText()) / possibleColors,0f, 100f);
+                        greenSlider.setValue(Float.parseFloat(greenTextField.getText()));
+                    }
+
+                    else if (255 < Float.parseFloat(greenTextField.getText())){ //color value can't be more than 255
+                        greenTextField.setText("255");
+                        greenSliderLabel.setColor(0f, 100f,0f, 100f);
+                        greenSlider.setValue(255);
+                    }
+
+                    else if (0 > Float.parseFloat(greenTextField.getText())){ //color value can't be less than 0
+                        greenTextField.setText("0");
+                        greenSliderLabel.setColor(0f, 0,0f, 100f);
+                        greenSlider.setValue(0);
+                    }
+
+                }
+                catch (Exception e){
+                    greenTextField.setText("0");
+                    greenSliderLabel.setColor(0f, 0,0f, 100f);
+                    greenSlider.setValue(0);
+                }
+
+
+            }
+        });
+
+
+        blueTextField.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent changeEvent, Actor actor) { // Slider event (when slider gets moved this function is called)
+
+                //TODO: make sure that player can't set value above 255?
+
+                try {
+                    if(255 >= Float.parseFloat(blueTextField.getText()) && Float.parseFloat(blueTextField.getText()) >= 0){
+                        blueTextField.setText(blueTextField.getText()); //sets value of textfield to be same as slider
+                        blueSliderLabel.setColor(0f, 0f,Float.parseFloat(blueTextField.getText()) / possibleColors, 100f);
+                        blueSlider.setValue(Float.parseFloat(blueTextField.getText()));
+                    }
+
+                    else if (255 < Float.parseFloat(blueTextField.getText())){ //color value can't be more than 255
+                        blueTextField.setText("255");
+                        blueSliderLabel.setColor(0f, 0f,100f, 100f);
+                        blueSlider.setValue(255);
+                    }
+
+                    else if (0 > Float.parseFloat(blueTextField.getText())){ //color value can't be less than 0
+                        blueTextField.setText("0");
+                        blueSliderLabel.setColor(0f, 0,0f, 100f);
+                        blueSlider.setValue(0);
+                    }
+
+                }
+                catch (Exception e){
+                    blueTextField.setText("0");
+                    blueSliderLabel.setColor(0f, 0,0f, 100f);
+                    blueSlider.setValue(0);
+                }
+
+
+            }
+        });
 
 
         stage.addActor(redSlider);
