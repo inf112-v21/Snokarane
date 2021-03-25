@@ -394,8 +394,8 @@ public class GameScreen extends ScreenAdapter {
     private void loadBackButton(){
 
         TextButton backButton = new TextButton("Back", game.skin, "small");
-        backButton.setWidth(225);
-        backButton.setPosition(Gdx.graphics.getWidth()-240f, 30);
+        backButton.setWidth(325);
+        backButton.setPosition(Gdx.graphics.getWidth()-355f, 30);
         backButton.addListener(new InputListener(){
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
@@ -411,8 +411,8 @@ public class GameScreen extends ScreenAdapter {
     private void loadSendCardsButton(){
 
         TextButton sendCardsButton = new TextButton("Send cards", game.skin, "small");
-        sendCardsButton.setWidth(225);
-        sendCardsButton.setPosition(Gdx.graphics.getWidth()-240f, 100);
+        sendCardsButton.setWidth(325);
+        sendCardsButton.setPosition(Gdx.graphics.getWidth()-355f, 100);
         sendCardsButton.addListener(new InputListener(){
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
