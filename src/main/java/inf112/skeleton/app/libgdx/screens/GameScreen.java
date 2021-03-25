@@ -436,6 +436,22 @@ public class GameScreen extends ScreenAdapter {
         Gdx.gl.glClearColor(1, 1, 1, 1);
         Gdx.gl.glClear(GL30.GL_COLOR_BUFFER_BIT);
 
+        pollUiUpdates();
+
+        stage.act();
+        stage.draw();
+
+        // Sends map to client of host, updates map in (this) if client
+        updateMap();
+
+        // Render current frame to screen
+        game.renderer.render();
+    }
+
+    /**
+     * Poll updates from the network client that needs to be updated to local session in real time
+     */
+    private void pollUiUpdates(){
         // force chat to update when receiving new messages in network
         if (networkChatBacklogSize < network.messagesRecived.size()){
             stage.clear();
@@ -443,6 +459,7 @@ public class GameScreen extends ScreenAdapter {
             networkChatBacklogSize = network.messagesRecived.size();
         }
 
+        // Force cards to update when new cards have been received
         if(gamePlayer.newCardsDelivered){
             stage.clear();
 
@@ -460,15 +477,6 @@ public class GameScreen extends ScreenAdapter {
             System.out.println("Stage size after loading new hand: "+ stage.getActors().size);
             gamePlayer.newCardsDelivered = false;
         }
-
-        stage.act();
-        stage.draw();
-
-        // Sends map to client of host, updates map in (this) if client
-        updateMap();
-
-        // Render current frame to screen
-        game.renderer.render();
     }
     /**
      * Reset cell rotation on all cells in the map to 0
