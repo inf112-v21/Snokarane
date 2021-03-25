@@ -101,9 +101,12 @@ public class CharacterCustomizer {
             TypeReference<PlayerConfig> typeReference = new TypeReference<PlayerConfig>() {};
             PlayerConfig playerConfig = mapper.readValue(inputStream, typeReference);
             //System.out.println(inputStream);
-            System.out.println(playerConfig.image);
         } catch (FileNotFoundException e) {
-            e.printStackTrace();
+
+            //create file if it does not exist
+            saveCharacterConfigToFile(Color.BLACK);
+            System.out.println(e);
+            System.out.println("Creating new Player config file");
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -112,14 +115,13 @@ public class CharacterCustomizer {
 
     public static void saveCharacterConfigToFile(Color color){
         ObjectMapper objectMapper = new ObjectMapper();
-        PlayerConfig playerConfig = new PlayerConfig("robot_large.png",color);
+        PlayerConfig playerConfig = new PlayerConfig("robot_large.png",color);//TODO: add as parameter instead
 
         try { //try to write to file
             objectMapper.writeValue(new File("src/main/customisation/playerConfig.json"), playerConfig);
         } catch (IOException e) { //cant write to file
             e.printStackTrace();
         }
-
 
     }
 
