@@ -169,7 +169,7 @@ public class GameScreen extends ScreenAdapter {
         Color chatColor = new Color(1f, 1f, 1f, 1);
 
         int subMenuHeight = 200;
-        int sideMenuWidth = 240; // TODO fix hardcoded values
+        int sideMenuWidth = 375; // TODO fix hardcoded values
 
         chat.initializeChat(game, 0.85f, chatColor, "", sideMenuWidth, Gdx.graphics.getHeight()-subMenuHeight,  Gdx.graphics.getWidth()-sideMenuWidth, subMenuHeight);
         chat.setName(playerName);
@@ -255,7 +255,7 @@ public class GameScreen extends ScreenAdapter {
             }
         });
 
-        chatTable.add(inputBox).left().width(220).height(30).padTop(20f);
+        chatTable.add(inputBox).left().width(355).height(30).padTop(20f);
         chatTable.row();
 
         stage.addActor(chatTable);
