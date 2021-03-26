@@ -349,10 +349,7 @@ public class GameScreen extends ScreenAdapter {
         int baseY = 30;
         int perCardIncrementX = 110;
 
-        // Display helper for deg
-        CardDisplay cd = new CardDisplay(baseX, baseY, 100, 135);
-
-        cd.getDuplicateCardsInHand(gamePlayer, duplicates);
+        getDuplicateCardsInHand();
 
         List<Image> displayDeck = new ArrayList<>();
 
@@ -361,7 +358,7 @@ public class GameScreen extends ScreenAdapter {
 
             // Place every duplicate image next to each other with perCardIncrementX increments in distance
             for (int i = 0; i<duplicatesCount; i++){
-                Image img = cd.generateClickableCard(t, cardTemplates.get(t), gamePlayer);
+                Image img = generateClickableCard(t, cardTemplates.get(t));
 
                 img.setPosition(baseX, baseY);
                 displayDeck.add(img);
@@ -370,6 +367,39 @@ public class GameScreen extends ScreenAdapter {
         }
         // Add all images to stage
         displayDeck.forEach( (i) -> { stage.addActor(i); } );
+    }
+
+    /*
+     * Helper for card image loading with touchup event
+     */
+    public Image generateClickableCard(CardType cardType, TextureRegion t){
+        int cardW = 100;
+        int cardH = 135;
+
+        Image img = new Image(t);
+        img.setSize(cardW, cardH);
+
+        img.addListener(new ClickListener(){
+            // Assign event handler to handle card choice on click
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                if (gamePlayer.state == GamePlayer.PLAYERSTATE.PICKING_CARDS && gamePlayer.chosenCards.size()<5){
+                    Card c = new Card();
+                    c.setCardType(cardType);
+                    System.out.println("Clicked card with move " + cardType);
+
+                    // intellij complaining about get before ispresent check is incorrect
+                    gamePlayer.chooseCards(gamePlayer.hand.indexOf(gamePlayer.hand.stream().anyMatch(card -> (card.getCardType() == cardType)) ? gamePlayer.hand.stream().filter(card -> (card.getCardType() == cardType)).findFirst().get() : new Card()));
+
+                    // Give some green feedback on click
+                    img.setColor(0.5f, 0.7f, 0.5f, 0.5f);
+
+                    // Clear listener so it can't be clicked again
+                    img.getListeners().clear();
+                }
+            }
+        });
+        return img;
     }
 
     /**
@@ -390,6 +420,22 @@ public class GameScreen extends ScreenAdapter {
         stage.addActor(backButton);
     }
 
+    /**
+     * finds duplicate cards in deck
+     * HashMap used because its O(n) instead of O(n^2)
+     */
+    public void getDuplicateCardsInHand() {
+        duplicates.clear();
+        if (!gamePlayer.hand.isEmpty()) {
+            for (Card c : gamePlayer.hand) {
+                if (!duplicates.containsKey(c.getCardType())) {
+                    duplicates.put(c.getCardType(), 1);
+                } else {
+                    duplicates.put(c.getCardType(), duplicates.get(c.getCardType()) + 1);
+                }
+            }
+        }
+    }
     /**
      * Send cards button
      */
