@@ -279,6 +279,7 @@ public class GameHost extends GamePlayer {
      * Handle single selection of a card for all players
      */
     public void handleSingleCardRound(){
+        map.clearLasers();
         if (System.currentTimeMillis() >= timeSinceLastCardProcessed+pauseBetweenEachCardProcess){
             // If current Nth card list empty, start next round of cards
             if (currentCardListBeingProcessed.size() == 0){
