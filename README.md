@@ -73,7 +73,28 @@ Winning test:
 5. When you visit the second flag, the game should close and the console should show the ID of the player along with a congratulation message. 
 6. If the game prints this message, the test has passed.
 
+Chat test:
+1. Start the game as host
+2. Start another client instance of the game as client on the same host pc
+3. Join on client via "localhost" or empty IP address
+4. Click "ok" on the all players ready prompt when the client is connected
+5. Send a message in the chat in both the client and host instance, if both messages appear 
+		on both screens, the chat is receiving messages correctly
 
+Chat commands test
+1. Start the game as host
+2. When the chat has loaded (the welcome message displays in the chat), enter /h to 
+    see available commands
+3. If the commands pop up, the chat is correctly parsing the message as a command
+4. Write </c set-color r> in the chat (without the '<>' symbols)
+5. If the chat changes color to red, the set-color command is working correctly
+6. Write <c set-name name> in the chat (without the '<>' symbols)
+7. If the name at the beggining of the message changes to name, the set-name command
+    is working correctly
+8. Write <c font-scale 1> in the chat (without the '<>' symbols)
+9. If the chat font has increased in size (default is 0.8), the font-scale command 
+    is working correctly
+    
 #  User stories
  
  User stories, acceptance criteria, and tasks can be found [here](https://docs.google.com/spreadsheets/d/1A_78OKM1BRXeeG4MR3e6AafYpPxnElqm3xPFjLozlGY/edit?usp=sharing)
