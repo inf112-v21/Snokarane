@@ -296,4 +296,56 @@ Fortsette på planlegging av prosjekt og prosjektstruktur
 - Separerte lista med å lage ei prioritert liste og ei "kjekt å ha" liste
 - Fordelte arbeidsoppgåver ved at Audun og Hallvard har ansvaret for å implementere ny spel-logikk og Jørgen og Peter har ansvaret for GUI
 
-**Neste møte:** 15.03.2021
+**Neste møte:** 17.03.2021
+
+## **Referat møte onsdag 17.03.2021**
+
+**Stad:** Discord, tid 1215
+
+**Agenda:** Catch up og planlegging
+
+**Møtte:** Jørgen Lohne, Hallvard Kobbeltveit, Audun Ljone Henriksen og Peter Augustin Gillow Krooni
+
+**Diskusjon/arbeid:**
+- Ting som har blitt implementert sidan forrige gong: vegger, gears og nytt map
+- Testa gears og vegger i plenum - hadde småfeil som vart ordna opp i
+- Peter skal leggje inn kjelde til lasere slik at Hallvard og Audun kan implementere lasere ordentlig
+- Fiksa opp i at push-funksjonen fungerer som den skal
+
+**Neste møte:** 22.03.2021
+
+## **Referat møte måndag 22.03.2021**
+
+**Stad:** Discord, tid 1215
+
+**Agenda:** Catch up og planlegging
+
+**Møtte:** Jørgen Lohne, Hallvard Kobbeltveit, Audun Ljone Henriksen og Peter Augustin Gillow Krooni
+
+**Diskusjon/arbeid:**
+- Jørgen rapporterer at libgdx er lite samarbeidsvilleg, men trur at det går på fram
+- Audun og Hallvard er ferdig med implementering av push-walls sidan forrige gong
+- Audun og Hallvard skal implementere lasere og repair-tiles
+- Peter jobber med implementering av chat
+
+**Neste møte:** 24.03.2021
+
+## **Referat møte onsdag 24.03.2021**
+
+**Stad:** Discord, tid 1215
+
+**Agenda:** Catch up og planlegging
+
+**Møtte:** Jørgen Lohne, Hallvard Kobbeltveit, Audun Ljone Henriksen og Peter Augustin Gillow Krooni
+
+**Diskusjon/arbeid:**
+- Hallvard og Audun har implementert repair tiles og er i gong med lasere - satser å bli ferdig med sistnemnde til fredag
+- Jørgen jobber vidare med custimization av karakter, trur han skal bli ferdig til innlevering
+- Peter tar sikte på å bli ferdig med chatten
+- Felles gjeremål; utbetre speldokumentasjon og gjere ferdig all annan dokumentasjon
+- Audun fann nokre issues og bugs som bør ordnast til innlevering, mellom anna at det går an å gå gjennom enkelte vegger (fekk ordna dette med ein enkel fiks)
+- Testa spelet i plenum - ein del arbeid gjenstår med laserene
+
+**Neste møte:** 26.03.2021
+
+
