@@ -13,6 +13,7 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.SpriteDrawable;
+import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import inf112.skeleton.app.libgdx.CharacterCustomizer;
 import inf112.skeleton.app.libgdx.PlayerConfig;
@@ -65,7 +66,7 @@ public class CharacterCustomizationScreen extends ScreenAdapter implements IUiSc
 
         Texture newPlayerTexture = CharacterCustomizer.generatePlayerTexture(playerImage, newColor);
         characterPreviewImage.setDrawable(new SpriteDrawable(new Sprite(newPlayerTexture)));
-
+        characterPreviewImage.setPosition(gdxW/2 - characterPreviewImage.getWidth()/2, gdxH-450);
 
     }
 
@@ -73,13 +74,27 @@ public class CharacterCustomizationScreen extends ScreenAdapter implements IUiSc
     @Override
     public void startScreen(RoboGame game) {
         this.game = game;
-        loadUIIntractables();
         loadUIVisuals();
+        loadUIIntractables();
     }
 
     @Override
     public void loadUIVisuals() {
 
+        // Background image
+        Texture backgroundImage = new Texture(Gdx.files.internal("decorative/roborally-boardgame-irl.jpg"));
+        Image background = new Image(backgroundImage);
+        background.setSize(gdxW, gdxH);
+        background.setPosition(0, 0);
+        background.setColor(1, 1, 1, 0.045f);
+
+        Label title = new Label("Your Character", game.skin, "big");
+        title.setAlignment(Align.center);
+        title.setY(gdxH-100);
+        title.setWidth(gdxW);
+
+        stage.addActor(background);
+        stage.addActor(title);
     }
 
 
@@ -117,7 +132,7 @@ public class CharacterCustomizationScreen extends ScreenAdapter implements IUiSc
 
         //Button for saving chosen colors
         Button saveButton = new TextButton("save", game.skin, "small");
-        saveButton.setPosition(backButton.getX(), backButton.getY() + saveButtonOffset);  //set position of button relative to backButton
+        saveButton.setPosition(gdxW/2-saveButton.getWidth()/2, backButton.getY() + saveButtonOffset);  //set position of button relative to backButton
 
         useLargeCheckBox = new CheckBox("big?", game.skin);
 
@@ -186,7 +201,7 @@ public class CharacterCustomizationScreen extends ScreenAdapter implements IUiSc
         blueTextField.setPosition(blueSlider.getX() + texFiledOffset, blueSlider.getY());
 
         //for selecting large or small player texture //TODO: add more options? (if so change to something different than checkbox)
-        useLargeCheckBox.setPosition(redSlider.getX(), redSlider.getY() + 100); //random offset //TODO: change offset to variable
+        useLargeCheckBox.setPosition(Gdx.graphics.getWidth()/2-useLargeCheckBox.getWidth()/2, redSlider.getY() + 50); //random offset //TODO: change offset to variable
 
 
 
