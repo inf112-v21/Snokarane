@@ -46,7 +46,8 @@ public class NetworkClient extends Network {
                     }
                 }
                 if (object instanceof NetworkDataWrapper){
-                    map.loadPlayers((NetworkDataWrapper) object);
+                    map.loadPlayers(((NetworkDataWrapper) object).PlayerTokens);
+                    map.laserLayer = ((NetworkDataWrapper) object).laserLayer;
                 }
 
                 if(object instanceof Integer) {

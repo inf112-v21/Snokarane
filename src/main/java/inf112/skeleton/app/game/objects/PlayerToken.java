@@ -19,7 +19,7 @@ public class PlayerToken {
 
     public int ID;
 
-    public int hp = 1;
+    public int hp = 10;
 
     public boolean diedThisTurn = false;
 

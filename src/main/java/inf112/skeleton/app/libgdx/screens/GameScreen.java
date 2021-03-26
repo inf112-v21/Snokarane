@@ -1,16 +1,13 @@
 package inf112.skeleton.app.libgdx.screens;
 
 import com.badlogic.gdx.*;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL30;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.tiled.TiledMap;
-import com.badlogic.gdx.maps.tiled.TiledMapTile;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.tiles.StaticTiledMapTile;
-import com.badlogic.gdx.scenes.scene2d.*;
 import com.badlogic.gdx.math.GridPoint2;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
@@ -26,6 +23,7 @@ import inf112.skeleton.app.game.objects.Card;
 import inf112.skeleton.app.game.objects.CardType;
 import inf112.skeleton.app.game.objects.Flag;
 import inf112.skeleton.app.game.objects.PlayerToken;
+import inf112.skeleton.app.libgdx.Game;
 import inf112.skeleton.app.libgdx.CharacterCustomizer;
 import inf112.skeleton.app.libgdx.Map;
 import inf112.skeleton.app.libgdx.PlayerConfig;
@@ -44,8 +42,8 @@ import java.util.HashMap;
 import java.util.List;
 
 public class GameScreen extends ScreenAdapter {
-    private RoboGame game;
-    private Stage stage;
+    private final RoboGame game;
+    private final Stage stage;
 
     Map map = new Map();
 
@@ -60,13 +58,20 @@ public class GameScreen extends ScreenAdapter {
     private TiledMapTileLayer.Cell playerNormal;
     private TiledMapTileLayer.Cell playerWon;
 
+    private TiledMapTileLayer.Cell singleHorizontal;
+    private TiledMapTileLayer.Cell singleBoth;
+    private TiledMapTileLayer.Cell singleVertical;
+    private TiledMapTileLayer.Cell doubleBoth;
+    private TiledMapTileLayer.Cell doubleVertical;
+    private TiledMapTileLayer.Cell doubleHorizontal;
+
     /*
-    * In order, index 0 to max is:
-    * move 1, move 2, move 3, rotate left, rotate right, backup, uturn
-    */
-    private HashMap<CardType, TextureRegion> cardTemplates = new HashMap<>();
+     * In order, index 0 to max is:
+     * move 1, move 2, move 3, rotate left, rotate right, backup, uturn
+     */
+    private final HashMap<CardType, TextureRegion> cardTemplates = new HashMap<>();
     // Duplicate card types currently in deck (for use in rendering)
-    private HashMap<CardType, Integer> duplicates = new HashMap<>();
+    private final HashMap<CardType, Integer> duplicates = new HashMap<>();
 
     /**
      * Client objects
@@ -80,13 +85,13 @@ public class GameScreen extends ScreenAdapter {
     // To handle updates in the chat received from network
     int networkChatBacklogSize = 0;
 
-    public GameScreen(RoboGame game, boolean isHost, String ip, String playerName){
+    public GameScreen(RoboGame game, boolean isHost, String ip, String playerName) {
         this.game = game;
         stage = new Stage(new ScreenViewport());
 
         // Backwards capability for Game->GameScreen merge,
         // enables key press detection for testing other parts of game while cards haven't been implemented yet
-        stage.addListener(new InputListener(){
+        stage.addListener(new InputListener() {
             @Override
             public boolean keyUp(InputEvent event, int keycode) {
                 GameScreen.this.keyUp(keycode);
@@ -102,7 +107,7 @@ public class GameScreen extends ScreenAdapter {
      * These methods are needed to start a game session to other players over network
      */
     // Function called regardless of host or player status, initializes network and asks for host/client role selection
-    public void startGame(boolean isHost, String ip, String playerName){
+    public void startGame(boolean isHost, String ip, String playerName) {
         map.flagList = flagPositions;
 
         // Choose whether to host or connect
@@ -118,10 +123,10 @@ public class GameScreen extends ScreenAdapter {
     }
 
     // Start game as host
-    private void startHost(String playerName){
+    private void startHost(String playerName) {
 
         // Starts GameHost session using network that was initialized
-        gamePlayer = new GameHost((NetworkHost)network);
+        gamePlayer = new GameHost((NetworkHost) network);
         gamePlayer.setMap(map);
         // Send prompt to all connected clients
         Network.prompt("All players connected.", null);
@@ -134,9 +139,9 @@ public class GameScreen extends ScreenAdapter {
     }
 
     // Start game as client
-    private void startClient(String ip, String playerName){
-        if (((NetworkClient) network).connectToServer(ip)){
-            gamePlayer = new GameClient((NetworkClient)network, playerName);
+    private void startClient(String ip, String playerName) {
+        if (((NetworkClient) network).connectToServer(ip)) {
+            gamePlayer = new GameClient((NetworkClient) network, playerName);
             gamePlayer.setMap(map);
         } else {
             System.out.println("Failed to start client due to connection error.");
@@ -146,9 +151,9 @@ public class GameScreen extends ScreenAdapter {
 
     /**
      * Initialize all libgdx objects:
-     *  Batch, font, input processor, textures, map layers, camera and renderer,
+     * Batch, font, input processor, textures, map layers, camera and renderer,
      * and Fetch flags from flag layer
-     *
+     * <p>
      * This function is called on libgdx startup
      */
     public void create(boolean isHost, String ip, String playerName) {
@@ -157,7 +162,7 @@ public class GameScreen extends ScreenAdapter {
         loadMapLayers(game.tiledMap);
 
         // Initialize player textures from .png file
-        loadPlayerTextures();
+        loadTextures();
 
         // Initialize card template textures
         loadCardTextures();
@@ -274,7 +279,7 @@ public class GameScreen extends ScreenAdapter {
     /**
      * Load player texture and split into each player state
      */
-    public void loadPlayerTextures(){
+    public void loadTextures() {
         // Load the entire player texture
         //Color playerColor = Color.RED;
 
@@ -294,6 +299,25 @@ public class GameScreen extends ScreenAdapter {
         // Set player state cells to corresponding tiles
         playerNormal = new TiledMapTileLayer.Cell().setTile(playerStaticTile);
         playerWon = new TiledMapTileLayer.Cell().setTile(playerStaticTile);
+
+        Texture rawLaserTexture = new Texture("tiles.png");
+
+        // Split player texture into seperate regions
+        TextureRegion[][] splitLaserTextures = TextureRegion.split(rawLaserTexture, 300, 300);
+
+        StaticTiledMapTile singleHorizontal = new StaticTiledMapTile(splitLaserTextures[4][6]);
+        StaticTiledMapTile singleBoth = new StaticTiledMapTile(splitLaserTextures[4][7]);
+        StaticTiledMapTile singleVertical = new StaticTiledMapTile(splitLaserTextures[5][6]);
+        StaticTiledMapTile doubleBoth = new StaticTiledMapTile(splitLaserTextures[12][4]);
+        StaticTiledMapTile doubleVertical = new StaticTiledMapTile(splitLaserTextures[12][5]);
+        StaticTiledMapTile doubleHorizontal = new StaticTiledMapTile(splitLaserTextures[12][6]);
+
+        this.singleHorizontal = new TiledMapTileLayer.Cell().setTile(singleHorizontal);
+        this.singleBoth = new TiledMapTileLayer.Cell().setTile(singleBoth);
+        this.singleVertical = new TiledMapTileLayer.Cell().setTile(singleVertical);
+        this.doubleBoth = new TiledMapTileLayer.Cell().setTile(doubleBoth);
+        this.doubleVertical = new TiledMapTileLayer.Cell().setTile(doubleVertical);
+        this.doubleHorizontal = new TiledMapTileLayer.Cell().setTile(doubleHorizontal);
     }
 
     /**
@@ -301,16 +325,16 @@ public class GameScreen extends ScreenAdapter {
      * --> Event listener only adds a card of the type pressed into gamePlayer's chosenCards
      * Adds cards into hashmap with corresponding card type
      */
-    private void loadCardTextures(){
+    private void loadCardTextures() {
         Texture allCards = new Texture("cards/programmingcards.png");
 
         TextureRegion[][] splitTextures = TextureRegion.split(allCards, 250, 400);
 
         cardTemplates.put(CardType.FORWARDONE, splitTextures[0][0]);
         cardTemplates.put(CardType.FORWARDTWO, splitTextures[0][1]);
-        cardTemplates.put(CardType.FORWARDTHREE,  splitTextures[0][2]);
-        cardTemplates.put(CardType.TURNLEFT,  splitTextures[0][3]);
-        cardTemplates.put(CardType.TURNRIGHT,  splitTextures[0][4]);
+        cardTemplates.put(CardType.FORWARDTHREE, splitTextures[0][2]);
+        cardTemplates.put(CardType.TURNLEFT, splitTextures[0][3]);
+        cardTemplates.put(CardType.TURNRIGHT, splitTextures[0][4]);
         cardTemplates.put(CardType.BACK_UP, splitTextures[0][5]);
         cardTemplates.put(CardType.UTURN, splitTextures[0][6]);
     }
@@ -331,12 +355,13 @@ public class GameScreen extends ScreenAdapter {
 
         List<Image> displayDeck = new ArrayList<>();
 
-        for (CardType t : duplicates.keySet()){
+        for (CardType t : duplicates.keySet()) {
             int duplicatesCount = duplicates.get(t);
 
             // Place every duplicate image next to each other with perCardIncrementX increments in distance
             for (int i = 0; i<duplicatesCount; i++){
                 Image img = cd.generateClickableCard(t, cardTemplates.get(t), gamePlayer);
+
                 img.setPosition(baseX, baseY);
                 displayDeck.add(img);
                 baseX += perCardIncrementX;
@@ -349,8 +374,7 @@ public class GameScreen extends ScreenAdapter {
     /**
      * Back button
      */
-    private void loadBackButton(){
-
+    private void loadBackButton() {
         TextButton backButton = new TextButton("Back", game.skin, "small");
         backButton.setWidth(125);
         backButton.setPosition(Gdx.graphics.getWidth()-145f, 30);
@@ -376,10 +400,10 @@ public class GameScreen extends ScreenAdapter {
         sendCardsButton.addListener(new InputListener(){
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                if (gamePlayer.chosenCards.size() >= 5){
-                    if (network.isHost){
-                        if(((GameHost)gamePlayer).allCardsReady()){
-                            System.out.println("Cards are being sent to processing. Stage size before deck clear: "+ stage.getActors().size);
+                if (gamePlayer.chosenCards.size() >= 5) {
+                    if (network.isHost) {
+                        if (((GameHost) gamePlayer).allCardsReady()) {
+                            System.out.println("Cards are being sent to processing. Stage size before deck clear: " + stage.getActors().size);
                             stage.clear();
                             gamePlayer.state = GamePlayer.PLAYERSTATE.SENDING_CARDS;
                             gamePlayer.registerChosenCards();
@@ -387,8 +411,8 @@ public class GameScreen extends ScreenAdapter {
                         } else {
                             System.out.println("Not all players have delivered their cards yet! Cannot process cards yet.");
                         }
-                    }else {
-                        System.out.println("Cards are being sent to processing. Stage size before deck clear: "+ stage.getActors().size);
+                    } else {
+                        System.out.println("Cards are being sent to processing. Stage size before deck clear: " + stage.getActors().size);
                         stage.clear();
                         gamePlayer.state = GamePlayer.PLAYERSTATE.SENDING_CARDS;
                         gamePlayer.registerChosenCards();
@@ -477,13 +501,12 @@ public class GameScreen extends ScreenAdapter {
     /**
      * This function is called by libgdx when a key is released.
      * TODO rework me
+     *
      * @return true if keyrelease was handled (per libgdx)
      */
-    public boolean keyUp (int keyCode){
-        if (gamePlayer.state == GamePlayer.PLAYERSTATE.PICKING_CARDS){
-            if(keyCode >= Input.Keys.NUM_1 && keyCode <= Input.Keys.NUM_9){
-                return true;
-            }
+    public boolean keyUp(int keyCode) {
+        if (gamePlayer.state == GamePlayer.PLAYERSTATE.PICKING_CARDS) {
+            return keyCode >= Input.Keys.NUM_1 && keyCode <= Input.Keys.NUM_9;
         }
         return false;
     }
@@ -492,7 +515,7 @@ public class GameScreen extends ScreenAdapter {
      * Render all objects and text to the screen
      */
     @Override
-    public void show(){
+    public void show() {
         Gdx.input.setInputProcessor(stage);
     }
 
@@ -528,18 +551,22 @@ public class GameScreen extends ScreenAdapter {
         if(gamePlayer.newCardsDelivered){
             stage.clear();
 
-            System.out.println("Stage size after clearing hand: "+ stage.getActors().size);
+            System.out.println("Stage size after clearing hand: " + stage.getActors().size);
 
             loadActorsInOrder();
 
             // Check if any null actors are found, clear them if so
-            try{
-                stage.getActors().forEach( (n) -> { if (n == null) { stage.getActors().removeValue(n, true); }});
-            }catch (Exception e){
+            try {
+                stage.getActors().forEach((n) -> {
+                    if (n == null) {
+                        stage.getActors().removeValue(n, true);
+                    }
+                });
+            } catch (Exception e) {
                 System.out.println("Not able to remove null value from getActors, exception " + e);
             }
 
-            System.out.println("Stage size after loading new hand: "+ stage.getActors().size);
+            System.out.println("Stage size after loading new hand: " + stage.getActors().size);
             gamePlayer.newCardsDelivered = false;
         }
     }
@@ -547,9 +574,9 @@ public class GameScreen extends ScreenAdapter {
     /**
      * Reset cell rotation on all cells in the map to 0
      */
-    private void resetCellRotation(){
-        for (int x = 0; x<playerLayer.getWidth(); x++){
-            for (int y = 0; y<playerLayer.getHeight(); y++){
+    private void resetCellRotation() {
+        for (int x = 0; x < playerLayer.getWidth(); x++) {
+            for (int y = 0; y < playerLayer.getHeight(); y++) {
                 TiledMapTileLayer.Cell cell = playerLayer.getCell(x, y);
                 cell.setRotation(0);
                 playerLayer.setCell(x, y, cell);
@@ -560,13 +587,13 @@ public class GameScreen extends ScreenAdapter {
     /**
      * Rotates cells according to location in map player layer directions
      */
-    private void rotateCellsAccordingToDirection(){
+    private void rotateCellsAccordingToDirection() {
         game.batch.begin();
         game.font.getData().setScale(1);
-        for (int x = 0; x< map.playerLayer.length; x++){
-            for (int y = 0; y< map.playerLayer[x].length; y++){
-                if (map.playerLayer[x][y].state != PlayerToken.CHARACTER_STATES.NONE){
-                    switch (map.playerLayer[x][y].dir){
+        for (int x = 0; x < map.playerLayer.length; x++) {
+            for (int y = 0; y < map.playerLayer[x].length; y++) {
+                if (map.playerLayer[x][y].state != PlayerToken.CHARACTER_STATES.NONE) {
+                    switch (map.playerLayer[x][y].dir) {
                         case NORTH:
                             TiledMapTileLayer.Cell celln = playerLayer.getCell(x, y);
                             celln.setRotation(0);
@@ -597,23 +624,46 @@ public class GameScreen extends ScreenAdapter {
     /**
      * Query for map update in networks, and calls some methods to decode information from map sent over network
      */
-    public void updateMap(){
-        if (map != null){
+    public void updateMap() {
+        if (map != null) {
             map = gamePlayer.updateMap(null);
             //
-            if(network.isHost){
+            if (network.isHost) {
                 // TODO Also maybe fix this
-                ((GameHost)gamePlayer).host.sendMapLayerWrapper(((GameHost)gamePlayer).wrapper());
-                ((GameHost)gamePlayer).map.loadPlayers(((GameHost)gamePlayer).wrapper());
-               if (((GameHost)gamePlayer).isShowingCards){
-                   ((GameHost)gamePlayer).handleSingleCardRound();
+                ((GameHost) gamePlayer).host.sendMapLayerWrapper(((GameHost) gamePlayer).wrapper());
+                ((GameHost) gamePlayer).map.loadPlayers(((GameHost) gamePlayer).wrapper().PlayerTokens);
+                if (((GameHost) gamePlayer).isShowingCards) {
+                    ((GameHost) gamePlayer).handleSingleCardRound();
                 }
             }
             translatePlayerLayer();
             resetCellRotation();
             rotateCellsAccordingToDirection();
+            loadLasers();
             // TODO: board and flag layer doesn't change as of this version
         }
+    }
+
+    public void loadLasers() {
+        for (int x = 0; x < Game.BOARD_X; x++) {
+            for (int y = 0; y < Game.BOARD_Y; y++) {
+                ((TiledMapTileLayer) game.tiledMap.getLayers().get("Laser")).setCell(x, y, laserToTile(x, y));
+            }
+        }
+    }
+
+    public TiledMapTileLayer.Cell laserToTile(int x, int y) {
+
+        //TODO FIX THIS SHIT to add support for doubles
+        if (map.laserLayer[x][y][0] == 1) return singleVertical;
+        if (map.laserLayer[x][y][0] == 2) return doubleVertical;
+        if (map.laserLayer[x][y][1] == 1) return singleHorizontal;
+        if (map.laserLayer[x][y][1] == 2) return doubleHorizontal;
+        if (map.laserLayer[x][y][2] == 1) return singleVertical;
+        if (map.laserLayer[x][y][2] == 2) return doubleVertical;
+        if (map.laserLayer[x][y][3] == 1) return singleHorizontal;
+        if (map.laserLayer[x][y][3] == 2) return doubleHorizontal;
+        else return null;
     }
 
     /**
@@ -696,14 +746,16 @@ public class GameScreen extends ScreenAdapter {
         TiledMapTileLayer gearLayer = (TiledMapTileLayer) tiledMap.getLayers().get("Gear");
         TiledMapTileLayer wallLayer = (TiledMapTileLayer) tiledMap.getLayers().get("Wall");
         TiledMapTileLayer beltLayer = (TiledMapTileLayer) tiledMap.getLayers().get("Belts");
+        TiledMapTileLayer repairLayer = (TiledMapTileLayer) tiledMap.getLayers().get("Repair");
         for (int i = 0; i < holeLayer.getWidth(); i++){
             for (int j = 0; j < holeLayer.getHeight(); j++){
                 // getCell returns null if nothing is found in the current cell in this layer
-                if (holeLayer.getCell(i, j) != null) {
-                    map.holeLayer[i][j] = true;
-                }
+                map.holeLayer[i][j] = holeLayer.getCell(i, j) != null;
+                map.repairLayer[i][j] = repairLayer.getCell(i, j) != null;
                 if (wallLayer.getCell(i, j) != null){
                     setWallDirections(wallLayer.getCell(i, j), i, j);
+                    //The wall layer contains information about laser shooters
+                    setLaserDirection(wallLayer.getCell(i, j), i, j);
                 }
                 if (beltLayer.getCell(i, j) != null){
                     setBeltInformation(beltLayer.getCell(i, j), i, j);
@@ -720,17 +772,32 @@ public class GameScreen extends ScreenAdapter {
         }
     }
 
+    private void setLaserDirection(TiledMapTileLayer.Cell laserCell, int i, int j) {
+        // NORTH, EAST, SOUTH, WEST
+        if (laserCell.getTile().getId() == 38) map.laserShooters.add(new Map.LaserShooter(PlayerToken.Direction.EAST, 1, i, j));
+        if (laserCell.getTile().getId() == 46) map.laserShooters.add(new Map.LaserShooter(PlayerToken.Direction.WEST, 1, i, j));
+        if (laserCell.getTile().getId() == 95) map.laserShooters.add(new Map.LaserShooter(PlayerToken.Direction.WEST, 2, i, j));
+        if (laserCell.getTile().getId() == 93) map.laserShooters.add(new Map.LaserShooter(PlayerToken.Direction.EAST, 2, i, j));
+    }
+
     private void setWallDirections(TiledMapTileLayer.Cell wallCell, int i, int j){
         //TODO a lot of these are lacking
 
-        // NORTH, EAST, SOUTH, WEST
+        // NORTH, EAST, SOUTH, WEST. This is where the wall is placed
+        //TODO redo all these?
         if (wallCell.getTile().getId() == 24) map.wallLayer[i][j] = new boolean[] {true, false, false, true};
         if (wallCell.getTile().getId() == 31) map.wallLayer[i][j] = new boolean[] {true, false, false, false};
         if (wallCell.getTile().getId() == 16) map.wallLayer[i][j] = new boolean[] {true, true, false, false};
         if (wallCell.getTile().getId() == 29) map.wallLayer[i][j] = new boolean[] {false, false, true, false};
         if (wallCell.getTile().getId() == 30) map.wallLayer[i][j] = new boolean[] {false, false, false, true};
         if (wallCell.getTile().getId() == 8) map.wallLayer[i][j] = new boolean[] {false, true, true, false};
-        if (wallCell.getTile().getId() == 23) map.wallLayer[i][j] = new boolean[] {true, true, false, false};
+        if (wallCell.getTile().getId() == 23) map.wallLayer[i][j] = new boolean[] {false, true, false, false};
+
+        if (wallCell.getTile().getId() == 38) map.wallLayer[i][j] = new boolean[] {false, false, false, true};
+        if (wallCell.getTile().getId() == 46) map.wallLayer[i][j] = new boolean[] {false, true, false, false};
+        if (wallCell.getTile().getId() == 95) map.wallLayer[i][j] = new boolean[] {false, true, false, false};
+        if (wallCell.getTile().getId() == 93) map.wallLayer[i][j] = new boolean[] {false, false, false, true};
+
         if (wallCell.getTile().getId() == 12) {
             map.wallLayer[i][j] = new boolean[] {false, false, false, true};
             map.beltLayer[i][j] = new Map.BeltInformation(PlayerToken.Direction.EAST, false, 0);
@@ -755,15 +822,15 @@ public class GameScreen extends ScreenAdapter {
         if (beltCell.getTile().getId() == 50) map.beltLayer[i][j] = new Map.BeltInformation(PlayerToken.Direction.SOUTH, false, 0);
         if (beltCell.getTile().getId() == 21) map.beltLayer[i][j] = new Map.BeltInformation(PlayerToken.Direction.SOUTH, true, 0);
         if (beltCell.getTile().getId() == 49) map.beltLayer[i][j] = new Map.BeltInformation(PlayerToken.Direction.NORTH, false, 0);
-        if (beltCell.getTile().getId() == 41) map.beltLayer[i][j] = new Map.BeltInformation(PlayerToken.Direction.EAST, false, -1);
+        if (beltCell.getTile().getId() == 41) map.beltLayer[i][j] = new Map.BeltInformation(PlayerToken.Direction.EAST, false, -1, PlayerToken.Direction.NORTH);
         if (beltCell.getTile().getId() == 52) map.beltLayer[i][j] = new Map.BeltInformation(PlayerToken.Direction.EAST, false, 0);
-        if (beltCell.getTile().getId() == 86) map.beltLayer[i][j] = new Map.BeltInformation(PlayerToken.Direction.SOUTH, true, 1);
+        if (beltCell.getTile().getId() == 86) map.beltLayer[i][j] = new Map.BeltInformation(PlayerToken.Direction.SOUTH, true, 1, PlayerToken.Direction.EAST);
         if (beltCell.getTile().getId() == 51) map.beltLayer[i][j] = new Map.BeltInformation(PlayerToken.Direction.WEST, false, 0);
         if (beltCell.getTile().getId() == 22) map.beltLayer[i][j] = new Map.BeltInformation(PlayerToken.Direction.WEST, true, 0);
         if (beltCell.getTile().getId() == 14) map.beltLayer[i][j] = new Map.BeltInformation(PlayerToken.Direction.EAST, true, 0);
         if (beltCell.getTile().getId() == 13) map.beltLayer[i][j] = new Map.BeltInformation(PlayerToken.Direction.NORTH, true, 0);
-        if (beltCell.getTile().getId() == 77) map.beltLayer[i][j] = new Map.BeltInformation(PlayerToken.Direction.NORTH, true, 1);
-        if (beltCell.getTile().getId() == 34) map.beltLayer[i][j] = new Map.BeltInformation(PlayerToken.Direction.WEST, false, -1);
+        if (beltCell.getTile().getId() == 77) map.beltLayer[i][j] = new Map.BeltInformation(PlayerToken.Direction.NORTH, true, 1, PlayerToken.Direction.WEST);
+        if (beltCell.getTile().getId() == 34) map.beltLayer[i][j] = new Map.BeltInformation(PlayerToken.Direction.WEST, false, -1, PlayerToken.Direction.SOUTH);
     }
 
     /**

@@ -1,11 +1,9 @@
 package inf112.skeleton.app.game;
 
 import com.badlogic.gdx.math.GridPoint2;
-import com.esotericsoftware.kryonet.Connection;
 import inf112.skeleton.app.game.objects.Card;
 import inf112.skeleton.app.game.objects.CardType;
 import inf112.skeleton.app.game.objects.PlayerToken;
-import inf112.skeleton.app.libgdx.Game;
 import inf112.skeleton.app.libgdx.Map;
 import inf112.skeleton.app.libgdx.NetworkDataWrapper;
 import inf112.skeleton.app.network.NetworkHost;
@@ -39,13 +37,13 @@ public class GameHost extends GamePlayer {
     public Map map;
 
     public boolean isShowingCards = false;
-    private List<List<Card>> cardsPerPlayerTurn = new ArrayList<>();
-    private List<Card> currentCardListBeingProcessed = new ArrayList<>();
-    private HashMap<Card, PlayerToken> cardPlayerTokenMap = new HashMap<>();
-    private int cardsProcessedPerRound = 5;
+    private final List<List<Card>> cardsPerPlayerTurn = new ArrayList<>();
+    private final List<Card> currentCardListBeingProcessed = new ArrayList<>();
+    private final HashMap<Card, PlayerToken> cardPlayerTokenMap = new HashMap<>();
+    private final int cardsProcessedPerRound = 5;
     private int currentCardRound = 1;
     private long timeSinceLastCardProcessed = System.currentTimeMillis();
-    private long pauseBetweenEachCardProcess = 300 ;
+    private final long pauseBetweenEachCardProcess = 300 ;
 
     public NetworkHost host;
 
@@ -141,7 +139,7 @@ public class GameHost extends GamePlayer {
         this.map = map;
         this.map.setID(NetworkHost.hostID);
         host.sendMapLayerWrapper(wrapper());
-        map.loadPlayers(wrapper());
+        map.loadPlayers(wrapper().PlayerTokens);
     }
     public void endOfTurn(){
         List<Integer> playersToKill = new ArrayList<>();
@@ -150,6 +148,7 @@ public class GameHost extends GamePlayer {
             if (token.isDead()) {
                 playersToKill.add(key);
             }
+
             for (int i = 0; i < 2; i++) {
                 Map.BeltInformation belt = map.beltLayer[token.getX()][token.getY()];
                 if (belt != null) {
@@ -161,12 +160,15 @@ public class GameHost extends GamePlayer {
                     }
                 }
                 Map.BeltInformation nextBelt = map.beltLayer[token.getX()][token.getY()];
-                if (belt != null) {
-                    if (nextBelt.beltRotation == -1) {
-                        token.rotate(CardType.TURNLEFT);
-                    }
-                    if (nextBelt.beltRotation == 1) {
-                        token.rotate(CardType.TURNRIGHT);
+                if (nextBelt != null && nextBelt.beltRotationDirection != null) {
+                    assert belt != null;
+                    if (nextBelt.beltRotationDirection == belt.beltDirection) {
+                        if (nextBelt.beltRotation == -1) {
+                            token.rotate(CardType.TURNLEFT);
+                        }
+                        if (nextBelt.beltRotation == 1) {
+                            token.rotate(CardType.TURNRIGHT);
+                        }
                     }
                 }
             }
@@ -179,6 +181,19 @@ public class GameHost extends GamePlayer {
                 System.out.println(token.name + " is on a gear!");
                 token.rotate(CardType.TURNLEFT);
             }
+            map.shootLasers(wrapper());
+            int lasers = 0;
+            for (int i = 0; i < 4; i++) {
+                lasers += map.laserLayer[token.getX()][token.getY()][i];
+            }
+            System.out.println("Took " + lasers + " damage");
+            token.hp -= lasers;
+
+            if (map.isRepair(token.getX(), token.getY())){
+                token.hp++;
+                System.out.println(token.name + "healed, and now has " + token.hp + " health points");
+            }
+            //TODO ADD FLAG CHECK HERE
         }
         for (Integer key: playersToKill) {
             clientPlayers.remove(clientPlayers.remove(key));
@@ -243,7 +258,7 @@ public class GameHost extends GamePlayer {
      * Handle single selection of a card for all players
      */
     public void handleSingleCardRound(){
-
+        map.clearLasers();
         if (System.currentTimeMillis() >= timeSinceLastCardProcessed+pauseBetweenEachCardProcess){
             // If current Nth card list empty, start next round of cards
             if (currentCardListBeingProcessed.size() == 0){
@@ -289,7 +304,7 @@ public class GameHost extends GamePlayer {
         //System.out.println("-------------------------------------");
         //System.out.println("Processing card selection round nr. "+currentCardRound);
 
-        map.loadPlayers(wrapper());
+        map.loadPlayers(wrapper().PlayerTokens);
         host.sendMapLayerWrapper(wrapper());
         timeSinceLastCardProcessed = System.currentTimeMillis();
     }
@@ -315,6 +330,7 @@ public class GameHost extends GamePlayer {
     public NetworkDataWrapper wrapper() {
         NetworkDataWrapper wrapper = new NetworkDataWrapper();
         wrapper.PlayerTokens.addAll(clientPlayers.values());
+        wrapper.laserLayer = map.laserLayer;
         return wrapper;
     }
 
@@ -375,53 +391,38 @@ public class GameHost extends GamePlayer {
         }
         GridPoint2 wouldEndUp = player.wouldEndUp(direction);
 
-        if (map.isWall(player.position.x, player.position.y, direction) || (isInBounds(wouldEndUp.x, wouldEndUp.y) && map.isWall(wouldEndUp.x, wouldEndUp.y, oppositeDir(direction)))){
+        if (!map.canGo(player.position.x, player.position.y, direction)){
             return false;
         }
-            else if (!isInBounds(wouldEndUp.x, wouldEndUp.y)) {
-                player.died();
-                return true;
+        else if (map.wouldDie(wouldEndUp.x, wouldEndUp.y)) {
+            player.died();
+            return true;
+        }
+        else if (map.hasPlayer(wouldEndUp.x, wouldEndUp.y)) {
+            if (!shouldPush) {
+                return false;
             }
-            else if (map.isHole(wouldEndUp.x, wouldEndUp.y)) {
-                player.died();
-                return true;
+            // I.e if the player is being pushed into a wall
+            boolean didOppMove = false;
+            //Shady way to get a hold of the player on the tile
+            for (PlayerToken opponent : clientPlayers.values()) {
+                if (opponent != player && opponent.position.x == wouldEndUp.x && opponent.position.y == wouldEndUp.y) {
+                    didOppMove = movePlayer(opponent, 1, direction, true);
+                }
             }
-            else if (map.playerLayer[wouldEndUp.x][wouldEndUp.y].state != PlayerToken.CHARACTER_STATES.NONE) {
-                if (shouldPush == false) {
-                    return false;
-                }
-                // TODO Fix this maybe? Also add support for chain-pushing. This contains a lot of bugs
-                // I.e if the player is being pushed into a wall
-                boolean didOppMove = false;
-
-                for (PlayerToken opponent : clientPlayers.values()) {
-                    if (opponent != player && opponent.position.x == wouldEndUp.x && opponent.position.y == wouldEndUp.y) {
-                        didOppMove = movePlayer(opponent, 1, direction, true);
-                    }
-                }
-                if (didOppMove) player.move(direction);
+            if (didOppMove) player.move(direction);
                 // Don't think we need this, but better safe than sorry. Future proof!
-                if (player.diedThisTurn) return didOppMove;
-            }
-            else {
-                player.move(direction);
-                if (player.diedThisTurn) return true;
-            }
+            if (player.diedThisTurn) return didOppMove;
+        }
+        else {
+            player.move(direction);
+            if (player.diedThisTurn) return true;
+        }
             // TODO this is shady as heck
-            map.loadPlayers(wrapper());
-            //host.sendMapLayerWrapper(wrapper());
-            movePlayer(player, dist-1, direction, shouldPush);
+        map.loadPlayers(wrapper().PlayerTokens);
+        //host.sendMapLayerWrapper(wrapper());
+        movePlayer(player, dist-1, direction, shouldPush);
         return true;
     }
 
-    private PlayerToken.Direction oppositeDir(PlayerToken.Direction dir) {
-        if (dir == PlayerToken.Direction.NORTH) return PlayerToken.Direction.SOUTH;
-        if (dir == PlayerToken.Direction.SOUTH) return PlayerToken.Direction.NORTH;
-        if (dir == PlayerToken.Direction.EAST) return PlayerToken.Direction.WEST;
-        else return PlayerToken.Direction.EAST;
-    }
-
-    private boolean isInBounds(int x, int y) {
-        return !(x < 0 || x >= Game.BOARD_X || y < 0 || y >= Game.BOARD_Y);
-    }
 }

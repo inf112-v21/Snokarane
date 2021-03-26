@@ -66,7 +66,7 @@ public class MapTest {
         NetworkDataWrapper wrapper = new NetworkDataWrapper();
         wrapper.PlayerTokens = playerTokenList;
 
-        map.loadPlayers(wrapper);
+        map.loadPlayers(wrapper.PlayerTokens);
 
         assertEquals(playerTokenList.get(0).charState, map.playerLayer[0][0].state);
         assertEquals(playerTokenList.get(1).charState, map.playerLayer[1][1].state);
@@ -86,7 +86,7 @@ public class MapTest {
         NetworkDataWrapper wrapper = new NetworkDataWrapper();
         wrapper.PlayerTokens = playerTokenList;
 
-        map.loadPlayers(wrapper);
+        map.loadPlayers(wrapper.PlayerTokens);
 
         map.clearPlayerLayer();
 
