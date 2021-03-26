@@ -201,10 +201,11 @@ public class GameScreen extends ScreenAdapter {
             @Override
             public boolean keyDown(InputEvent event, int keycode) {
                 if (keycode == Input.Keys.ENTER){
-
+                    boolean isCommand = false;
                     if (inputBox.getText().length()>2){
                         // If chat is a command
                         if (inputBox.getText().substring(0, 2).equals("/c")){
+                            isCommand = true;
                             CommandParser p = new CommandParser();
                             String commandContent = inputBox.getText().substring(3);
                             System.out.println("Chat command entered: " + commandContent);
@@ -252,6 +253,7 @@ public class GameScreen extends ScreenAdapter {
                             }
                             // Send list of commands available if /h
                         }else if (inputBox.getText().substring(0, 2).equals("/h")){
+                            isCommand = true;
                             chat.sendMessage("Commands:");
                             chat.sendMessage("/c set-name <name>");
                             chat.sendMessage("/c chat-color <r, g, b, black>");
@@ -260,7 +262,7 @@ public class GameScreen extends ScreenAdapter {
                     }
 
                     // Send message
-                    else {
+                    if (!isCommand){
                         chat.sendMessage(inputBox.getText());
                     }
                     updateChat();
