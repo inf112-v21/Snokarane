@@ -216,6 +216,7 @@ public class GameHost extends GamePlayer {
             clientPlayers.remove(clientPlayers.remove(key));
             host.alivePlayers.remove(key);
         }
+
         drawCards();
     }
     /**
@@ -335,7 +336,7 @@ public class GameHost extends GamePlayer {
         cardPlayerTokenMap.clear();
         currentCardRound = 1;
 
-        // Should maybe be another place
+        //TODO Should be other places?
         resetPlayerTokens();
     }
 

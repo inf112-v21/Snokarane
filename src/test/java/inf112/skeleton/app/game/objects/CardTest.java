@@ -9,6 +9,8 @@ import static org.junit.Assert.*;
 
 
 public class CardTest {
+
+    //More card tests in GameHostTest
     Card card;
 
     @Before
