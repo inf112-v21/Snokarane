@@ -120,16 +120,23 @@ CharacterCustomisationTest:
 1. Start the game as usual.
 2. Click on the "Customize" button.
 3. Change color values as desiered using the sliders or textboxes next to them (values above 255 are set to 255, blank values is set to 0).
-4. Take a screenshot (using your prefered method) or a take a picture of your screen using a camera (tips: your phones camra is easily accasible if you have a modern smartphone!).
+4. Take a screenshot (using your prefered method) or a take a picture of your screen using a camera (tips: your phones camra is easily accasible if you have a modern smartphone!)
 	3.a Make sure to include the character preview iamge in the picture!
+	
 	3.b Save the picture somewhere you can easily find it and view it.
+	
 5. Click the save button.
 6. Start a new game session.
-	5.a Navigate back to the main menu by pressing the "back" button or by closing and realunching the application.
-	5.b From the main click on the "host/join game" button.
-	5.c Click on the "host game" button
-	5.d A promt with the message "All players connected" should appear. press the "OK" button on the prompot.
+	6.a Navigate back to the main menu by pressing the "back" button or by closing and realunching the application.
+	
+	6.b From the main click on the "host/join game" button.
+	
+	6.c Click on the "host game" button
+	
+	6.d A promt with the message "All players connected" should appear. press the "OK" button on the prompot.
+
 7. Have a look at your charcter in game and compare with the screenshot/picture you took earlier.
+	
 	7.a if the playercharacter in the game matches the sceenshot/picture you took then the test has passed, if not the test has failed.	
 
 8. NOTE that If using the camera method keep in mind that your camra might warp the colors somewhat, if this is the case, use your best judgment to determine if the 		test has passed or not. 
