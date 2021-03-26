@@ -94,6 +94,7 @@ public class GameScreen extends ScreenAdapter {
         loadCardBackground();
         create(isHost, ip, playerName);
     }
+
     /**
      * Initialize objects depending on host status
      * These methods are needed to start a game session to other players over network
@@ -113,6 +114,7 @@ public class GameScreen extends ScreenAdapter {
             startClient(ip, playerName);
 
     }
+
     // Start game as host
     private void startHost(String playerName){
 
@@ -128,6 +130,7 @@ public class GameScreen extends ScreenAdapter {
         ((GameHost) gamePlayer).initializeHostPlayerToken(playerName);
         gamePlayer.drawCards();
     }
+
     // Start game as client
     private void startClient(String ip, String playerName){
         if (((NetworkClient) network).connectToServer(ip)){
@@ -138,6 +141,7 @@ public class GameScreen extends ScreenAdapter {
             System.exit(0);
         }
     }
+
     /**
      * Initialize all libgdx objects:
      *  Batch, font, input processor, textures, map layers, camera and renderer,
@@ -165,6 +169,7 @@ public class GameScreen extends ScreenAdapter {
         // load list of players on map
         loadPlayerList();
     }
+
     // Starts chat depending on client or host
     private void initializeChatObjects(String playerName){
         chat = network.isHost ? new ChatManager((NetworkHost)network) : new ChatClient((NetworkClient)network);
@@ -177,6 +182,7 @@ public class GameScreen extends ScreenAdapter {
         chat.setName(playerName);
         updateChat();
     }
+
     /**
      * Get new messages that have been received from the network, get formatted table and add input box with listener.
      */
@@ -262,13 +268,7 @@ public class GameScreen extends ScreenAdapter {
 
         stage.addActor(chatTable);
     }
-    /**
-     * @return TiledMap object loaded from path
-     * @param path path to .tmx file for map
-     */
-    public TiledMap loadTileMapFromFile(String path){
-        return new TmxMapLoader().load(path);
-    }
+
     /**
      * Load player texture and split into each player state
      */
@@ -356,6 +356,7 @@ public class GameScreen extends ScreenAdapter {
         });
         stage.addActor(backButton);
     }
+
     /**
      * Send cards button
      */
@@ -392,18 +393,16 @@ public class GameScreen extends ScreenAdapter {
 
         stage.addActor(sendCardsButton);
     }
+
     /**
      * All player positions and directions
      */
     private void loadPlayerList(){
         Table tableList = new Table();
-        tableList.top().left();
+        tableList.top().left().pad(5).setSize(210, 145);
         tableList.setPosition(Gdx.graphics.getWidth()-375, 30);
-        tableList.setWidth(210);
-        tableList.setHeight(145);
+
         Label tIndicator = new Label("Player locations:", game.skin);
-        tIndicator.setAlignment(Align.left);
-        tableList.pad(5);
         tableList.add(tIndicator);
         tableList.row();
 
@@ -434,22 +433,30 @@ public class GameScreen extends ScreenAdapter {
         }
         stage.addActor(tableList);
     }
+
     /**
      * Decorative background for card deck
      */
     private void loadCardBackground(){
+        // Simple border around cards
         Texture cardBackgroundTexture = new Texture(Gdx.files.internal("cards/bottom-border.png"));
         Image cardBackground = new Image(cardBackgroundTexture);
         cardBackground.setPosition(0, 0);
         cardBackground.setSize(Gdx.graphics.getWidth()-375, 200);
         stage.addActor(cardBackground);
 
+        // Simple colour texture behind buttons
         Texture buttonBackgroundTexture = new Texture(Gdx.files.internal("cards/bottom-background-color.png"));
         Image buttonBackground = new Image(buttonBackgroundTexture);
         buttonBackground.setPosition(Gdx.graphics.getWidth()-375, 0);
         buttonBackground.setSize(375, 200);
         stage.addActor(buttonBackground);
     }
+
+    /**
+     * Load visual backgrounds first, then render important elements at the end
+     * This needs to be called whenever stage is cleared
+     */
     private void loadActorsInOrder(){
         loadCardBackground();
         loadBackButton();
@@ -458,18 +465,7 @@ public class GameScreen extends ScreenAdapter {
         loadPlayerList();
         updateChat();
     }
-    /**
-     * Helper function for keyUp to pick cards for player
-     *  TODO rename me
-     * @param keyCode key pressed
-     */
-    private void pickCardsOnKeyPress(int keyCode) {
-        gamePlayer.chooseCards(keyCode);
-        if(gamePlayer.chosenCards.size() >= 5){
-            gamePlayer.state = GamePlayer.PLAYERSTATE.SENDING_CARDS;
-            gamePlayer.registerChosenCards();
-        }
-    }
+
     /**
      * This function is called by libgdx when a key is released.
      * TODO rework me
@@ -483,6 +479,7 @@ public class GameScreen extends ScreenAdapter {
         }
         return false;
     }
+
     /**
      * Render all objects and text to the screen
      */
@@ -490,6 +487,7 @@ public class GameScreen extends ScreenAdapter {
     public void show(){
         Gdx.input.setInputProcessor(stage);
     }
+
     @Override
     public void render(float v) {
         Gdx.gl.glClearColor(1, 1, 1, 1);
@@ -537,6 +535,7 @@ public class GameScreen extends ScreenAdapter {
             gamePlayer.newCardsDelivered = false;
         }
     }
+
     /**
      * Reset cell rotation on all cells in the map to 0
      */
@@ -549,6 +548,7 @@ public class GameScreen extends ScreenAdapter {
             }
         }
     }
+
     /**
      * Rotates cells according to location in map player layer directions
      */
@@ -585,6 +585,7 @@ public class GameScreen extends ScreenAdapter {
         }
         game.batch.end();
     }
+
     /**
      * Query for map update in networks, and calls some methods to decode information from map sent over network
      */
@@ -606,6 +607,7 @@ public class GameScreen extends ScreenAdapter {
             // TODO: board and flag layer doesn't change as of this version
         }
     }
+
     /**
      * Gets player locations and states from map and sets tiledmaplayer cells to correct texture
      */
@@ -637,6 +639,7 @@ public class GameScreen extends ScreenAdapter {
             }
         }
     }
+
     /**
      * Load all map layers into their own member variable
      */
@@ -650,6 +653,7 @@ public class GameScreen extends ScreenAdapter {
         getBoardElementPositionsFromLayer(tiledMap);
         getStartPositions((TiledMapTileLayer) tiledMap.getLayers().get("Spawn"));
     }
+
     /**
      * Get all flag positions in layer flag layer
      */
@@ -666,6 +670,7 @@ public class GameScreen extends ScreenAdapter {
         }
         flagPositions.addAll(flags);
     }
+
     private void getStartPositions(TiledMapTileLayer startLayer) {
         for (int i = 0; i <= startLayer.getWidth(); i++){
             for (int j = 0; j <= startLayer.getHeight(); j++){
@@ -752,6 +757,7 @@ public class GameScreen extends ScreenAdapter {
         if (beltCell.getTile().getId() == 77) map.beltLayer[i][j] = new Map.BeltInformation(PlayerToken.Direction.NORTH, true, 1);
         if (beltCell.getTile().getId() == 34) map.beltLayer[i][j] = new Map.BeltInformation(PlayerToken.Direction.WEST, false, -1);
     }
+
     /**
      * These functions are not currently in use, but inherited from superclass
      */
