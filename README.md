@@ -10,10 +10,19 @@ A work in progress java implementaion of the board game ["RoboRally"](https://en
 
 
 # How to run
-0. Install Java 13 or later.
-1. Make sure to have installed Maven
-2. Clone project using Git.
-3. Run Main.java using an IDE such as IntelliJ (recommended) or Eclipse. Alternativly compile and run using your preferred method.
+1. Install Java 13 or later. Java can be found at https://www.oracle.com/java/technologies/javase-downloads.html
+2. Either download an IDE that supports java or use the command line to compile java files
+3. Make sure to have installed Maven in your IDE or command line
+4. Clone project using Git: This can be done using either HTTPS, SSH or GitHub CLI
+	Using HTTPS, write in git bash (or your CLI of choice) command line 'git clone https://github.com/inf112-v21/Snokarane.git'
+	Using SSH, write in git bash (or your CLI of choice) command line 'git@github.com:inf112-v21/Snokarane.git'
+	Using GitHub CLI, git bash (or your CLI of choice) write in command line 'gh repo clone inf112-v21/Snokarane'
+	Alternatively, you can use your IDE's integrated VCS to log into your GitHub and clone from there.
+	You can also download the source files by navigating to the lastest release tag.
+5. If using an IDE (such as Intellij), import maven changes and add a java configuration from Java 13 or later. 
+6. Run Main.java in your IDE, or compile it manually in the command line and run the resulting executable.
+7. When running Main.java the application will appear on the screen, and from there you can use the application.
+
 
 ### 1. How to play
 
