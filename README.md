@@ -27,9 +27,9 @@ A work in progress java implementaion of the board game ["RoboRally"](https://en
 5. If using an IDE (such as Intellij), import maven changes and add a java configuration from Java 13 or later. 
 6. Run Main.java in your IDE, or compile it manually in the command line and run the resulting executable.
 	
-	To compile a Java program in the command line, use the command 'javac <file-name>',
+	To compile a Java program in the command line, use the command 'javac file-name',
 	
-	Then run 'java <file-name>' on the resulting file.
+	Then run 'java file-name' on the resulting file.
 	
 7. When running Main.java the application will appear on the screen, and from there you can use the application.
 
