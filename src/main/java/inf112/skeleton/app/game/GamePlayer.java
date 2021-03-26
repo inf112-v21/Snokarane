@@ -36,7 +36,7 @@ public abstract class GamePlayer{
     // Where cards get selected from
     protected ArrayList<Card> deck = new ArrayList<>();
     // Cards that weren't selected
-    protected ArrayList<Card> discard = new ArrayList<>();
+    public ArrayList<Card> discard = new ArrayList<>();
 
     /**
      * Give player a stack of cards to deck

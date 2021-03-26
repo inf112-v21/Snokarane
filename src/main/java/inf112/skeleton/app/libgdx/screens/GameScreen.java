@@ -480,6 +480,8 @@ public class GameScreen extends ScreenAdapter {
                                     if (c.getCardType() == d.getCardType() && c.picked){
                                         Card fill = new Card();
                                         c.setCardType(CardType.NONE);
+                                    }else {
+                                        gamePlayer.discard.add(c);
                                     }
                                 }
                             }
@@ -497,6 +499,8 @@ public class GameScreen extends ScreenAdapter {
                                 if (c.getCardType() == d.getCardType() && c.picked){
                                     Card fill = new Card();
                                     c.setCardType(CardType.NONE);
+                                }else {
+                                    gamePlayer.discard.add(c);
                                 }
                             }
                         }
