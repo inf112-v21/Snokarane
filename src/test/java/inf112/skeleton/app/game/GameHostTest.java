@@ -1,15 +1,14 @@
 package inf112.skeleton.app.game;
 
 import com.badlogic.gdx.math.GridPoint2;
-import inf112.skeleton.app.game.objects.Card;
-import inf112.skeleton.app.game.objects.CardType;
-import inf112.skeleton.app.game.objects.Direction;
-import inf112.skeleton.app.game.objects.PlayerToken;
+import inf112.skeleton.app.game.objects.*;
 import inf112.skeleton.app.libgdx.Map;
 import inf112.skeleton.app.network.NetworkClient;
 import inf112.skeleton.app.network.NetworkHost;
 import org.junit.Before;
 import org.junit.Test;
+
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import static org.junit.Assert.assertEquals;
@@ -138,6 +137,24 @@ public class GameHostTest {
         host.endOfTurn();
         assertEquals(3, player.getY());
         assertEquals(4, player1.getY());
+    }
+
+    @Test
+    public void playerVisitsFlags(){
+        assertTrue(player.getX() == 0 && player.getY() == 0);
+        host.map.flagList = new ArrayList<>();
+        host.map.flagList.add(new Flag(0, 1));
+        host.map.flagList.add(new Flag(0, 2));
+        host.resolveCard(makeCard(CardType.FORWARDONE), player);
+        //This is exactly what resetPlayerTokens does
+        host.map.registerFlags(host.wrapper().PlayerTokens);
+        assertEquals(1, player.getVisitedFlags().size());
+        assertTrue(host.map.hasWon(host.wrapper().PlayerTokens) == null);
+        host.resolveCard(makeCard(CardType.FORWARDONE), player);
+        //This is exactly what resetPlayerTokens does
+        host.map.registerFlags(host.wrapper().PlayerTokens);
+        assertTrue(host.map.hasWon(host.wrapper().PlayerTokens) == player);
+
     }
 
 

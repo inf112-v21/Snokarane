@@ -8,6 +8,7 @@ import static org.junit.Assert.assertEquals;
 
 public class FlagTest {
 
+    //There are more flag tests under PlayerTokenTest and GameHostTest
 
     @Test
     public void FlagIsInitializedAtZeroZero(){
