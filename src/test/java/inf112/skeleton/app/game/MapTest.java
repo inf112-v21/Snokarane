@@ -10,6 +10,7 @@ import org.junit.Test;
 import inf112.skeleton.app.libgdx.Map;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import static org.junit.Assert.*;
 
@@ -90,5 +91,18 @@ public class MapTest {
         map.laserShooters.add(new Map.LaserShooter(Direction.NORTH, 1, 0, 5));
         map.shootLasers(wrapper);
         assertTrue(map.laserLayer[0][Game.BOARD_Y-1][0] > 0);
+    }
+
+    @Test
+    public void PlayersDontShootThemselves(){
+        List<PlayerToken> players = new ArrayList<>();
+        PlayerToken player = new PlayerToken();
+        players.add(player);
+        NetworkDataWrapper wrapper = new NetworkDataWrapper();
+        wrapper.PlayerTokens = players;
+        map.loadPlayers(players);
+        map.shootLasers(wrapper);
+
+        assertEquals(0, map.laserLayer[0][0][0]);
     }
 }

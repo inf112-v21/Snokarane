@@ -29,7 +29,7 @@ public class Map {
     public boolean [][][] wallLayer = new boolean[BOARD_X][BOARD_Y][4];
     public int [][] gearLayer = new int[BOARD_X][BOARD_Y];
     public boolean [][] repairLayer = new boolean[BOARD_X][BOARD_Y];
-    public int laserLayer [][][] = new int [BOARD_X][BOARD_Y][4];
+    public int[][][] laserLayer = new int [BOARD_X][BOARD_Y][4];
     public List<LaserShooter> laserShooters = new ArrayList<>();
 
 
@@ -38,7 +38,9 @@ public class Map {
     //TODO blir bare mellomlagret her, kanskje en dårlig ide?
     public List<GridPoint2> spawnPoints = new ArrayList<>();
 
-
+    /**
+     * Keeps track of all the information about our laser shooters
+     */
     public static class LaserShooter{
         public Direction dir;
         int laserNum;
@@ -63,8 +65,13 @@ public class Map {
         public PlayerRenderInformation(){}
     }
 
+    /**
+     * Keeps track of all the information needed about a belt
+     */
     public static class BeltInformation{
+        //Which direction you need to enter the belt on in order to rotate
         public Direction beltRotationDirection = null;
+        //Which direction the belt rotates the player, 0, 1, or -1
         public Direction beltDirection;
         public boolean isExpress;
         public int beltRotation;
@@ -110,10 +117,22 @@ public class Map {
         }
     }
 
+    /**
+     *
+     * @param x X position of the player
+     * @param y y position of the player
+     * @return true if the player would die making that move, false otherwise
+     */
     public boolean wouldDie(int x, int y) {
         return (!isInBounds(x, y) || isHole(x, y));
     }
 
+    /**
+     *
+     * @param x X position of the player
+     * @param y y position of the player
+     * @return true if the tile has a player, false otherwise
+     */
     public boolean hasPlayer(int x, int y) {
         return playerLayer[x][y].state != PlayerToken.CHARACTER_STATES.NONE;
     }
@@ -131,20 +150,41 @@ public class Map {
         }
         return null;
     }
-
+    /**
+     *
+     * @param x X position of the tile
+     * @param y y position of the tile
+     * @return true if the tile has a hole, false otherwise
+     */
     public boolean isHole(int x, int y) {
         return holeLayer[x][y];
     }
-
+    /**
+     *
+     * @param x X position of the tile
+     * @param y y position of the tile
+     * @return true if the tile has a gear, false otherwise
+     */
     public int isGear(int x, int y) {
         return gearLayer[x][y];
     }
-
+    /**
+     *
+     * @param x X position of the tile
+     * @param y y position of the tile
+     * @return true if the tile has a wrench, false otherwise
+     */
     public boolean isRepair(int x, int y){
         return repairLayer[x][y];
     }
 
-    //TODO Rename to canGo, and change functionality
+    /**
+     *
+     * @param x x position of the tile
+     * @param y y position of the tile
+     * @param direction the direction you want to check
+     * @return Returns true if it is possible to move to the next tile, i.e there are no walls, and false otherwise
+     */
     public boolean canGo(int x, int y, Direction direction){
         if (direction == Direction.NORTH){
             //If the next one is out of bounds, we won't disallow that!
@@ -165,12 +205,20 @@ public class Map {
             return isInBounds(x, y, direction) && !wallLayer[x][y][3] && !wallLayer[x-1][y][1];
         }
     }
-    //TODO add support for permament lasers?
+    //TODO add support for permamente lasers?
+
+    /**
+     * Clears all the lasers on the map for a new round
+     */
     public void clearLasers() {
         laserLayer = new int [BOARD_X][BOARD_Y][4];
     }
-    //TODO FIX DEATH BUG
-    //ALSO NOT STOPPING AT PLAYERS
+
+    /**
+     * Makes all permanent laser shooters as well as players shoot their lasers. For players, the lasers
+     * start one tile ahead. The laser only stops at walls, players, or out of bounds.
+     * @param wrapper a NetworkDataWrapper containing all the players. //TODO make this a list
+     */
     public void shootLasers(NetworkDataWrapper wrapper) {
         List<LaserShooter> allLasers = new ArrayList<>(laserShooters);
 
@@ -230,9 +278,22 @@ public class Map {
         }
     }
 
+    /**
+     * @param x X position of the tile
+     * @param y Y position of the tile
+     * @return true if the tile is on the map, false otherwise
+     */
     public static boolean isInBounds(int x, int y) {
         return !(x < 0 || x >= Game.BOARD_X || y < 0 || y >= Game.BOARD_Y);
     }
+
+    /**
+     *
+     * @param x the x position of the tile
+     * @param y the y position of the tile
+     * @param dir the direction you wish to check if is in bounds
+     * @return true if the tile in the direction of the x and y is in bounds, false otherwise
+     */
     public static boolean isInBounds(int x, int y, Direction dir) {
         if (dir == Direction.NORTH)
             return !(x < 0 || x >= Game.BOARD_X || y+1 < 0 || y+1 >= Game.BOARD_Y);
