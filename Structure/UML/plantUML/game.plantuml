@@ -5,6 +5,7 @@ title __GAME's Class Diagram__\n
   namespace inf112.skeleton.app {
     namespace game {
       class inf112.skeleton.app.game.GameClient {
+          + name : String
           + GameClient()
           + drawCards()
           + registerChosenCards()
@@ -18,17 +19,34 @@ title __GAME's Class Diagram__\n
   namespace inf112.skeleton.app {
     namespace game {
       class inf112.skeleton.app.game.GameHost {
-          - clientPlayers : HashMap<Integer, PlayerToken>
+          + clientPlayers : HashMap<Integer, PlayerToken>
+          + isShowingCards : boolean
+          - cardPlayerTokenMap : HashMap<Card, PlayerToken>
+          - cardsPerPlayerTurn : List<List<Card>>
+          - cardsProcessedPerRound : int
+          - currentCardListBeingProcessed : List<Card>
+          - currentCardRound : int
+          - pauseBetweenEachCardProcess : long
+          - timeSinceLastCardProcessed : long
           + GameHost()
+          + allCardsReady()
+          + checkCards()
           + drawCards()
+          + endOfTurn()
+          + handleSingleCardRound()
+          + initializeHostPlayerToken()
+          + initializePlayerPos()
           + registerChosenCards()
+          + resolveCard()
           + setMap()
           + updateMap()
-          - initializePlayerTokens()
+          + wrapper()
+          - getNthSelectionFromEachPlayer()
+          - handleSinglePlayerCard()
           - movePlayer()
           - processCards()
-          - resolveCard()
-          - wrapper()
+          - resetCardDelayVariables()
+          - resetPlayerTokens()
       }
     }
   }
@@ -38,9 +56,10 @@ title __GAME's Class Diagram__\n
     namespace game {
       abstract class inf112.skeleton.app.game.GamePlayer {
           + chosenCards : ArrayList<Card>
+          + discard : ArrayList<Card>
           + hand : ArrayList<Card>
+          + newCardsDelivered : boolean
           # deck : ArrayList<Card>
-          # discard : ArrayList<Card>
           + GamePlayer()
           + chooseCards()
           {abstract} + drawCards()
@@ -68,7 +87,7 @@ title __GAME's Class Diagram__\n
   inf112.skeleton.app.game.GameClient o-- inf112.skeleton.app.network.NetworkClient : client
   inf112.skeleton.app.game.GameHost -up-|> inf112.skeleton.app.game.GamePlayer
   inf112.skeleton.app.game.GameHost o-- inf112.skeleton.app.network.NetworkHost : host
-  inf112.skeleton.app.game.GameHost o-- inf112.skeleton.app.libgdx.Map : mlp
+  inf112.skeleton.app.game.GameHost o-- inf112.skeleton.app.libgdx.Map : map
   inf112.skeleton.app.game.GamePlayer o-- inf112.skeleton.app.game.GamePlayer.PLAYERSTATE : state
   inf112.skeleton.app.game.GamePlayer +-down- inf112.skeleton.app.game.GamePlayer.PLAYERSTATE
 
