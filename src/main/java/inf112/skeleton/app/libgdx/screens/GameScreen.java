@@ -413,7 +413,7 @@ public class GameScreen extends ScreenAdapter {
     private void loadSendCardsButton(){
         TextButton sendCardsButton = new TextButton("Send cards", game.skin, "small");
         sendCardsButton.setWidth(125);
-        sendCardsButton.setPosition(Gdx.graphics.getWidth()-145f, 100);
+        sendCardsButton.setPosition(Gdx.graphics.getWidth()-145f, 105);
         sendCardsButton.setColor(0.1f, 0, 0, 1);
         sendCardsButton.addListener(new InputListener(){
             @Override
@@ -451,7 +451,7 @@ public class GameScreen extends ScreenAdapter {
         tableList.top().left();
         tableList.setPosition(Gdx.graphics.getWidth()-375, 30);
         tableList.setWidth(210);
-        tableList.setHeight(160);
+        tableList.setHeight(145);
         Label tIndicator = new Label("Player locations:", game.skin);
         tIndicator.setAlignment(Align.left);
         tableList.pad(5);
