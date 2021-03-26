@@ -3,13 +3,13 @@ package inf112.skeleton.app.game;
 import com.badlogic.gdx.math.GridPoint2;
 import inf112.skeleton.app.game.objects.Card;
 import inf112.skeleton.app.game.objects.CardType;
+import inf112.skeleton.app.game.objects.Direction;
 import inf112.skeleton.app.game.objects.PlayerToken;
 import inf112.skeleton.app.libgdx.Map;
 import inf112.skeleton.app.libgdx.NetworkDataWrapper;
 import inf112.skeleton.app.network.NetworkHost;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
@@ -89,8 +89,9 @@ public class GameHost extends GamePlayer {
         discard.addAll(chosenCards);
 
         // Remove all nulls, aka drawn cards
-        hand.removeAll(Collections.singleton(null));
-        discard.addAll(hand);
+        for (Card card : hand) {
+            if (card.getCardType() != CardType.NONE) discard.add(card);
+        }
 
         //Update the clientCards in host
         host.playerCards.put(NetworkHost.hostID, chosenCards);
@@ -145,9 +146,6 @@ public class GameHost extends GamePlayer {
         List<Integer> playersToKill = new ArrayList<>();
         for (Integer key : clientPlayers.keySet()){
             PlayerToken token = clientPlayers.get(key);
-            if (token.isDead()) {
-                playersToKill.add(key);
-            }
 
             for (int i = 0; i < 2; i++) {
                 Map.BeltInformation belt = map.beltLayer[token.getX()][token.getY()];
@@ -181,6 +179,7 @@ public class GameHost extends GamePlayer {
                 System.out.println(token.name + " is on a gear!");
                 token.rotate(CardType.TURNLEFT);
             }
+
             map.shootLasers(wrapper());
             int lasers = 0;
             for (int i = 0; i < 4; i++) {
@@ -189,10 +188,16 @@ public class GameHost extends GamePlayer {
             System.out.println("Took " + lasers + " damage");
             token.hp -= lasers;
 
+            //Is this the right position?
+            if (token.isDead()) {
+                playersToKill.add(key);
+            }
+
             if (map.isRepair(token.getX(), token.getY())){
                 token.hp++;
                 System.out.println(token.name + "healed, and now has " + token.hp + " health points");
             }
+
             //TODO ADD FLAG CHECK HERE
         }
         for (Integer key: playersToKill) {
@@ -340,7 +345,7 @@ public class GameHost extends GamePlayer {
      * @param card card to resolve
      * @param token token to move
      */
-    private void resolveCard(Card card, PlayerToken token) {
+    public void resolveCard(Card card, PlayerToken token) {
         switch (card.getCardType()) {
             case FORWARDONE:
                 movePlayer(token, 1, token.getDirection(), true);
@@ -354,16 +359,16 @@ public class GameHost extends GamePlayer {
             case BACK_UP:
                 switch (token.getDirection()) {
                     case NORTH:
-                        movePlayer(token, 1, PlayerToken.Direction.SOUTH, true);
+                        movePlayer(token, 1, Direction.SOUTH, true);
                         break;
                     case SOUTH:
-                        movePlayer(token, 1, PlayerToken.Direction.NORTH, true);
+                        movePlayer(token, 1, Direction.NORTH, true);
                         break;
                     case WEST:
-                        movePlayer(token, 1, PlayerToken.Direction.EAST, true);
+                        movePlayer(token, 1, Direction.EAST, true);
                         break;
                     case EAST:
-                        movePlayer(token, 1, PlayerToken.Direction.WEST, true);
+                        movePlayer(token, 1, Direction.WEST, true);
                         break;
                 }
                 break;
@@ -385,7 +390,7 @@ public class GameHost extends GamePlayer {
      * @param dist the number of steps you want to take
      * @param direction the direction you want to move, usually player.getDirection()
      */
-    private boolean movePlayer(PlayerToken player, int dist, PlayerToken.Direction direction, boolean shouldPush) {
+    private boolean movePlayer(PlayerToken player, int dist, Direction direction, boolean shouldPush) {
         if (dist == 0) {
             return false;
         }

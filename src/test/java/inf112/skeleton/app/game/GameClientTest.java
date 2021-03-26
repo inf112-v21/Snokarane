@@ -6,7 +6,9 @@ import inf112.skeleton.app.game.objects.CardType;
 import inf112.skeleton.app.network.NetworkClient;
 import org.junit.Test;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 
@@ -26,12 +28,21 @@ public class GameClientTest {
             assertEquals(9, player.hand.size());
             assertEquals(k*9, player.discard.size());
 
-            for (int i = 0; i < 5; i++)
+            for (int i = 0; i < 5; i++) {
                 player.chooseCards(i);
+            }
+            int choosenCards = 0;
+            //Shady workaround since LIBGDX handles discard for chosen cards
+            List<Card> cardsToDisc = new ArrayList<>();
+            for(Card card: player.hand) {
+                if (card.picked) player.chosenCards.add(card);
+                else cardsToDisc.add(card);
+            }
             assertEquals(5, player.chosenCards.size());
             player.registerChosenCards();
             assertEquals(0, player.hand.size());
             assertEquals(0, player.chosenCards.size());
+            player.discard.addAll(cardsToDisc);
             assertEquals((k+1)*9, player.discard.size());
         }
         player.drawCardsFromDeck();

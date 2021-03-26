@@ -1,7 +1,7 @@
 package inf112.skeleton.app.game.objects;
 
 import com.badlogic.gdx.math.GridPoint2;
-import inf112.skeleton.app.libgdx.Game;
+import inf112.skeleton.app.libgdx.Map;
 
 import java.util.*;
 
@@ -44,7 +44,7 @@ public class PlayerToken {
      */
     public void move(Direction direction) {
         GridPoint2 wouldEndUpDirection = wouldEndUp(direction);
-        if (wouldEndUpDirection.x < 0 || wouldEndUpDirection.x >= Game.BOARD_X || wouldEndUpDirection.y < 0 || wouldEndUpDirection.y >= Game.BOARD_Y){
+        if (!Map.isInBounds(wouldEndUpDirection.x, wouldEndUpDirection.y)){
             died();
         }
         else {
@@ -163,10 +163,4 @@ public class PlayerToken {
         }
     }
 
-    public enum Direction {
-        NORTH,
-        SOUTH,
-        EAST,
-        WEST
-    }
 }

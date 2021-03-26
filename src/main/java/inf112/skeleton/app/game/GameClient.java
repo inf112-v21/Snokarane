@@ -1,5 +1,7 @@
 package inf112.skeleton.app.game;
 
+import inf112.skeleton.app.game.objects.Card;
+import inf112.skeleton.app.game.objects.CardType;
 import inf112.skeleton.app.libgdx.Map;
 import inf112.skeleton.app.network.NetworkClient;
 import inf112.skeleton.app.network.CardList;
@@ -42,10 +44,6 @@ public class GameClient extends GamePlayer {
 
         // Add the cards (prematurely for now) to the discard pile)
         discard.addAll(chosenCards);
-
-        //TODO Fix this is, then you fix the todo in GamePlayer chosecards
-        hand.removeAll(Collections.singleton(null));
-        discard.addAll(hand);
 
         // Reset the chosen cards and the hand
         chosenCards = new ArrayList<>();

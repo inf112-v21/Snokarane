@@ -1,7 +1,5 @@
 package inf112.skeleton.app.game.objects;
 
-import inf112.skeleton.app.game.objects.Flag;
-import inf112.skeleton.app.game.objects.PlayerToken;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -26,20 +24,29 @@ public class PlayerTokenTest {
     }
 
     @Test
+    public void PlayerDiesOutOfBounds(){
+        assertTrue(player.getX() == 0 && player.getY() == 0);
+        player.move(Direction.SOUTH);
+        assertTrue(player.diedThisTurn);
+    }
+
+
+    @Test
     public void playerMovesInTheCorrectDirection() {
-        player.move(PlayerToken.Direction.EAST);
+        assertTrue(player.getX() == 0 && player.getY() == 0);
+        player.move(Direction.EAST);
         assertEquals(1,player.getX());
         assertEquals(0, player.getY());
 
-        player.move(PlayerToken.Direction.NORTH);
+        player.move(Direction.NORTH);
         assertEquals(1,player.getX());
         assertEquals(1, player.getY());
 
-        player.move(PlayerToken.Direction.WEST);
+        player.move(Direction.WEST);
         assertEquals(0,player.getX());
         assertEquals(1, player.getY());
 
-        player.move(PlayerToken.Direction.SOUTH);
+        player.move(Direction.SOUTH);
         assertEquals(0,player.getX());
         assertEquals(0, player.getY());
     }
@@ -48,30 +55,30 @@ public class PlayerTokenTest {
     public void playerRotatesCorrectly() {
         // Default is NORTH
         player.rotate(CardType.TURNRIGHT);
-        assertEquals(PlayerToken.Direction.EAST, player.getDirection());
+        assertEquals(Direction.EAST, player.getDirection());
 
         player.rotate(CardType.UTURN);
-        assertEquals(PlayerToken.Direction.WEST, player.getDirection());
+        assertEquals(Direction.WEST, player.getDirection());
 
         player.rotate(CardType.TURNLEFT);
-        assertEquals(PlayerToken.Direction.SOUTH, player.getDirection());
+        assertEquals(Direction.SOUTH, player.getDirection());
     }
 
     @Test
     public void wouldEndUpDoesNotMeet() {
-        player.wouldEndUp(PlayerToken.Direction.NORTH);
+        player.wouldEndUp(Direction.NORTH);
         assertEquals(0, player.getX());
         assertEquals(0, player.getY());
 
-        player.wouldEndUp(PlayerToken.Direction.SOUTH);
+        player.wouldEndUp(Direction.SOUTH);
         assertEquals(0, player.getX());
         assertEquals(0, player.getY());
 
-        player.wouldEndUp(PlayerToken.Direction.WEST);
+        player.wouldEndUp(Direction.WEST);
         assertEquals(0, player.getX());
         assertEquals(0, player.getY());
 
-        player.wouldEndUp(PlayerToken.Direction.EAST);
+        player.wouldEndUp(Direction.EAST);
         assertEquals(0, player.getX());
         assertEquals(0, player.getY());
     }

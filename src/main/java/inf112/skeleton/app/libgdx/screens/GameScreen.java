@@ -7,7 +7,6 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
-import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.tiles.StaticTiledMapTile;
 import com.badlogic.gdx.math.GridPoint2;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
@@ -20,10 +19,7 @@ import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import inf112.skeleton.app.game.GameClient;
 import inf112.skeleton.app.game.GameHost;
 import inf112.skeleton.app.game.GamePlayer;
-import inf112.skeleton.app.game.objects.Card;
-import inf112.skeleton.app.game.objects.CardType;
-import inf112.skeleton.app.game.objects.Flag;
-import inf112.skeleton.app.game.objects.PlayerToken;
+import inf112.skeleton.app.game.objects.*;
 import inf112.skeleton.app.libgdx.Game;
 import inf112.skeleton.app.libgdx.CharacterCustomizer;
 import inf112.skeleton.app.libgdx.Map;
@@ -32,7 +28,6 @@ import inf112.skeleton.app.libgdx.RoboGame;
 import inf112.skeleton.app.network.Network;
 import inf112.skeleton.app.network.NetworkClient;
 import inf112.skeleton.app.network.NetworkHost;
-import inf112.skeleton.app.ui.cards.CardDisplay;
 import inf112.skeleton.app.ui.chat.CommandParser;
 import inf112.skeleton.app.ui.chat.managers.ChatClient;
 import inf112.skeleton.app.ui.chat.managers.ChatManager;
@@ -864,10 +859,10 @@ public class GameScreen extends ScreenAdapter {
 
     private void setLaserDirection(TiledMapTileLayer.Cell laserCell, int i, int j) {
         // NORTH, EAST, SOUTH, WEST
-        if (laserCell.getTile().getId() == 38) map.laserShooters.add(new Map.LaserShooter(PlayerToken.Direction.EAST, 1, i, j));
-        if (laserCell.getTile().getId() == 46) map.laserShooters.add(new Map.LaserShooter(PlayerToken.Direction.WEST, 1, i, j));
-        if (laserCell.getTile().getId() == 95) map.laserShooters.add(new Map.LaserShooter(PlayerToken.Direction.WEST, 2, i, j));
-        if (laserCell.getTile().getId() == 93) map.laserShooters.add(new Map.LaserShooter(PlayerToken.Direction.EAST, 2, i, j));
+        if (laserCell.getTile().getId() == 38) map.laserShooters.add(new Map.LaserShooter(Direction.EAST, 1, i, j));
+        if (laserCell.getTile().getId() == 46) map.laserShooters.add(new Map.LaserShooter(Direction.WEST, 1, i, j));
+        if (laserCell.getTile().getId() == 95) map.laserShooters.add(new Map.LaserShooter(Direction.WEST, 2, i, j));
+        if (laserCell.getTile().getId() == 93) map.laserShooters.add(new Map.LaserShooter(Direction.EAST, 2, i, j));
     }
 
     private void setWallDirections(TiledMapTileLayer.Cell wallCell, int i, int j){
@@ -890,37 +885,37 @@ public class GameScreen extends ScreenAdapter {
 
         if (wallCell.getTile().getId() == 12) {
             map.wallLayer[i][j] = new boolean[] {false, false, false, true};
-            map.beltLayer[i][j] = new Map.BeltInformation(PlayerToken.Direction.EAST, false, 0);
+            map.beltLayer[i][j] = new Map.BeltInformation(Direction.EAST, false, 0);
         }
         if (wallCell.getTile().getId() == 11) {
             map.wallLayer[i][j] = new boolean[] {false, false, true, false};
-            map.beltLayer[i][j] = new Map.BeltInformation(PlayerToken.Direction.NORTH, false, 0);
+            map.beltLayer[i][j] = new Map.BeltInformation(Direction.NORTH, false, 0);
         }
         if (wallCell.getTile().getId() == 10) {
             map.wallLayer[i][j] = new boolean[] {false, true, false, false};
-            map.beltLayer[i][j] = new Map.BeltInformation(PlayerToken.Direction.WEST, false, 0);
+            map.beltLayer[i][j] = new Map.BeltInformation(Direction.WEST, false, 0);
         }
         if (wallCell.getTile().getId() == 9) {
             map.wallLayer[i][j] = new boolean[] {true, false, false, false};
-            map.beltLayer[i][j] = new Map.BeltInformation(PlayerToken.Direction.SOUTH, false, 0);
+            map.beltLayer[i][j] = new Map.BeltInformation(Direction.SOUTH, false, 0);
         }
         //if (wallCell.getTile().getId() == 11) map.wallLayer[i][j] = new boolean[] {true, false, false, true};
 
     }
 
     private void setBeltInformation(TiledMapTileLayer.Cell beltCell, int i, int j){
-        if (beltCell.getTile().getId() == 50) map.beltLayer[i][j] = new Map.BeltInformation(PlayerToken.Direction.SOUTH, false, 0);
-        if (beltCell.getTile().getId() == 21) map.beltLayer[i][j] = new Map.BeltInformation(PlayerToken.Direction.SOUTH, true, 0);
-        if (beltCell.getTile().getId() == 49) map.beltLayer[i][j] = new Map.BeltInformation(PlayerToken.Direction.NORTH, false, 0);
-        if (beltCell.getTile().getId() == 41) map.beltLayer[i][j] = new Map.BeltInformation(PlayerToken.Direction.EAST, false, -1, PlayerToken.Direction.NORTH);
-        if (beltCell.getTile().getId() == 52) map.beltLayer[i][j] = new Map.BeltInformation(PlayerToken.Direction.EAST, false, 0);
-        if (beltCell.getTile().getId() == 86) map.beltLayer[i][j] = new Map.BeltInformation(PlayerToken.Direction.SOUTH, true, 1, PlayerToken.Direction.EAST);
-        if (beltCell.getTile().getId() == 51) map.beltLayer[i][j] = new Map.BeltInformation(PlayerToken.Direction.WEST, false, 0);
-        if (beltCell.getTile().getId() == 22) map.beltLayer[i][j] = new Map.BeltInformation(PlayerToken.Direction.WEST, true, 0);
-        if (beltCell.getTile().getId() == 14) map.beltLayer[i][j] = new Map.BeltInformation(PlayerToken.Direction.EAST, true, 0);
-        if (beltCell.getTile().getId() == 13) map.beltLayer[i][j] = new Map.BeltInformation(PlayerToken.Direction.NORTH, true, 0);
-        if (beltCell.getTile().getId() == 77) map.beltLayer[i][j] = new Map.BeltInformation(PlayerToken.Direction.NORTH, true, 1, PlayerToken.Direction.WEST);
-        if (beltCell.getTile().getId() == 34) map.beltLayer[i][j] = new Map.BeltInformation(PlayerToken.Direction.WEST, false, -1, PlayerToken.Direction.SOUTH);
+        if (beltCell.getTile().getId() == 50) map.beltLayer[i][j] = new Map.BeltInformation(Direction.SOUTH, false, 0);
+        if (beltCell.getTile().getId() == 21) map.beltLayer[i][j] = new Map.BeltInformation(Direction.SOUTH, true, 0);
+        if (beltCell.getTile().getId() == 49) map.beltLayer[i][j] = new Map.BeltInformation(Direction.NORTH, false, 0);
+        if (beltCell.getTile().getId() == 41) map.beltLayer[i][j] = new Map.BeltInformation(Direction.EAST, false, -1, Direction.NORTH);
+        if (beltCell.getTile().getId() == 52) map.beltLayer[i][j] = new Map.BeltInformation(Direction.EAST, false, 0);
+        if (beltCell.getTile().getId() == 86) map.beltLayer[i][j] = new Map.BeltInformation(Direction.SOUTH, true, 1, Direction.EAST);
+        if (beltCell.getTile().getId() == 51) map.beltLayer[i][j] = new Map.BeltInformation(Direction.WEST, false, 0);
+        if (beltCell.getTile().getId() == 22) map.beltLayer[i][j] = new Map.BeltInformation(Direction.WEST, true, 0);
+        if (beltCell.getTile().getId() == 14) map.beltLayer[i][j] = new Map.BeltInformation(Direction.EAST, true, 0);
+        if (beltCell.getTile().getId() == 13) map.beltLayer[i][j] = new Map.BeltInformation(Direction.NORTH, true, 0);
+        if (beltCell.getTile().getId() == 77) map.beltLayer[i][j] = new Map.BeltInformation(Direction.NORTH, true, 1, Direction.WEST);
+        if (beltCell.getTile().getId() == 34) map.beltLayer[i][j] = new Map.BeltInformation(Direction.WEST, false, -1, Direction.SOUTH);
     }
 
     /**

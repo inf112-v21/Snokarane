@@ -1,15 +1,9 @@
 package inf112.skeleton.app.network;
 
 import com.badlogic.gdx.math.GridPoint2;
-import inf112.skeleton.app.game.objects.Card;
-import inf112.skeleton.app.game.objects.CardType;
-import inf112.skeleton.app.game.objects.Flag;
-import inf112.skeleton.app.game.objects.PlayerToken;
-import inf112.skeleton.app.libgdx.Map;
+import inf112.skeleton.app.game.objects.*;
 import inf112.skeleton.app.libgdx.NetworkDataWrapper;
-import inf112.skeleton.app.ui.chat.managers.ChatClient;
 import inf112.skeleton.app.ui.chat.backend.ChatterData;
-import inf112.skeleton.app.ui.chat.managers.IChatter;
 import inf112.skeleton.app.ui.chat.backend.Message;
 
 import java.util.ArrayList;
@@ -28,7 +22,7 @@ public class NetworkData {
         classesToRegister.add(ArrayList.class);
         classesToRegister.add(CardType.class);
         classesToRegister.add(PlayerToken.class);
-        classesToRegister.add(PlayerToken.Direction.class);
+        classesToRegister.add(Direction.class);
         classesToRegister.add(GridPoint2.class);
         classesToRegister.add(NetworkDataWrapper.class);
         classesToRegister.add(Flag.class);

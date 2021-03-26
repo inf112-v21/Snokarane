@@ -1,6 +1,7 @@
 package inf112.skeleton.app.libgdx;
 
 import com.badlogic.gdx.math.GridPoint2;
+import inf112.skeleton.app.game.objects.Direction;
 import inf112.skeleton.app.game.objects.Flag;
 import inf112.skeleton.app.game.objects.PlayerToken;
 
@@ -39,12 +40,12 @@ public class Map {
 
 
     public static class LaserShooter{
-        public PlayerToken.Direction dir;
+        public Direction dir;
         int laserNum;
         int x;
         int y;
 
-        public LaserShooter(PlayerToken.Direction dir, int laserNum, int x, int y) {
+        public LaserShooter(Direction dir, int laserNum, int x, int y) {
             this.dir = dir;
             this.laserNum = laserNum;
             this.x = x;
@@ -58,21 +59,21 @@ public class Map {
      */
     public static class PlayerRenderInformation{
         public PlayerToken.CHARACTER_STATES state = PlayerToken.CHARACTER_STATES.NONE;
-        public PlayerToken.Direction dir = PlayerToken.Direction.NORTH;
+        public Direction dir = Direction.NORTH;
         public PlayerRenderInformation(){}
     }
 
     public static class BeltInformation{
-        public PlayerToken.Direction beltRotationDirection = null;
-        public PlayerToken.Direction beltDirection;
+        public Direction beltRotationDirection = null;
+        public Direction beltDirection;
         public boolean isExpress;
         public int beltRotation;
-        public BeltInformation(PlayerToken.Direction direction, boolean isExpress, int beltRotation){
+        public BeltInformation(Direction direction, boolean isExpress, int beltRotation){
             beltDirection = direction;
             this.isExpress = isExpress;
             this.beltRotation = beltRotation;
         }
-        public BeltInformation(PlayerToken.Direction direction, boolean isExpress, int beltRotation, PlayerToken.Direction beltRotationDirection){
+        public BeltInformation(Direction direction, boolean isExpress, int beltRotation, Direction beltRotationDirection){
             beltDirection = direction;
             this.isExpress = isExpress;
             this.beltRotation = beltRotation;
@@ -144,18 +145,18 @@ public class Map {
     }
 
     //TODO Rename to canGo, and change functionality
-    public boolean canGo(int x, int y, PlayerToken.Direction direction){
-        if (direction == PlayerToken.Direction.NORTH){
+    public boolean canGo(int x, int y, Direction direction){
+        if (direction == Direction.NORTH){
             //If the next one is out of bounds, we won't disallow that!
             if (!isInBounds(x, y, direction) && !wallLayer[x][y][0]) return true;
             //Check that the next one is in bounds, and if so, that there's no wall on either tile
             return isInBounds(x, y, direction) && !wallLayer[x][y][0] && !wallLayer[x][y+1][2];
         }
-        else if (direction == PlayerToken.Direction.EAST) {
+        else if (direction == Direction.EAST) {
             if (!isInBounds(x, y, direction) && !wallLayer[x][y][1]) return true;
             return isInBounds(x, y, direction) && !wallLayer[x][y][1] && !wallLayer[x+1][y][3];
         }
-        else if (direction == PlayerToken.Direction.SOUTH) {
+        else if (direction == Direction.SOUTH) {
             if (!isInBounds(x, y, direction) && !wallLayer[x][y][2]) return true;
             return isInBounds(x, y, direction) && !wallLayer[x][y][2] && !wallLayer[x][y - 1][0];
         }
@@ -168,7 +169,8 @@ public class Map {
     public void clearLasers() {
         laserLayer = new int [BOARD_X][BOARD_Y][4];
     }
-
+    //TODO FIX DEATH BUG
+    //ALSO NOT STOPPING AT PLAYERS
     public void shootLasers(NetworkDataWrapper wrapper) {
         List<LaserShooter> allLasers = new ArrayList<>(laserShooters);
 
@@ -185,19 +187,19 @@ public class Map {
 
             //If there is a wall directly in front of a player, or it's immediately out of bounds
             if (hasPlayer(x, y) && (!canGo(x, y, laser.dir) || !isInBounds(x, y, laser.dir))) continue;
-            if (laser.dir == PlayerToken.Direction.NORTH){
+            if (laser.dir == Direction.NORTH){
                 for (int i = start; i < BOARD_X; i++) {
                     laserLayer[x][y+i][0] = laser.laserNum;
                     if (!isInBounds(x, y+i+1) || !canGo(x, y+i, laser.dir) || hasPlayer(x, y + i)) break;
                 }
             }
-            else if (laser.dir == PlayerToken.Direction.EAST) {
+            else if (laser.dir == Direction.EAST) {
                 for (int i = start; i < BOARD_Y; i++) {
                     laserLayer[x+i][y][1] = laser.laserNum;
-                    if (!isInBounds(x+i+1, y) || !canGo(x+i, y, laser.dir) || hasPlayer(x +i, y)) break;
+                    if (!isInBounds(x+i+1, y) || !canGo(x+i, y, laser.dir) || hasPlayer(x+i, y)) break;
                 }
             }
-            else if (laser.dir == PlayerToken.Direction.SOUTH) {
+            else if (laser.dir == Direction.SOUTH) {
                 for (int i = start; i < BOARD_X; i++) {
                     laserLayer[x][y-i][2] = laser.laserNum;
                     if (!isInBounds(x, y-i-1) || !canGo(x, y-i, laser.dir) || hasPlayer(x, y-i)) break;
@@ -231,12 +233,12 @@ public class Map {
     public static boolean isInBounds(int x, int y) {
         return !(x < 0 || x >= Game.BOARD_X || y < 0 || y >= Game.BOARD_Y);
     }
-    public static boolean isInBounds(int x, int y, PlayerToken.Direction dir) {
-        if (dir == PlayerToken.Direction.NORTH)
+    public static boolean isInBounds(int x, int y, Direction dir) {
+        if (dir == Direction.NORTH)
             return !(x < 0 || x >= Game.BOARD_X || y+1 < 0 || y+1 >= Game.BOARD_Y);
-        if (dir == PlayerToken.Direction.SOUTH)
+        if (dir == Direction.SOUTH)
             return !(x < 0 || x >= Game.BOARD_X || y-1 < 0 || y-1 >= Game.BOARD_Y);
-        if (dir == PlayerToken.Direction.EAST)
+        if (dir == Direction.EAST)
             return !(x+1 < 0 || x+1 >= Game.BOARD_X || y < 0 || y >= Game.BOARD_Y);
         else
             return !(x-1 < 0 || x-1 >= Game.BOARD_X || y < 0 || y >= Game.BOARD_Y);
