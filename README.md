@@ -100,7 +100,7 @@ Chat test:
 5. Send a message in the chat in both the client and host instance, if both messages appear 
 		on both screens, the chat is receiving messages correctly
 
-Chat commands test
+Chat commands test:
 1. Start the game as host
 2. When the chat has loaded (the welcome message displays in the chat), enter /h to 
     see available commands
@@ -113,7 +113,26 @@ Chat commands test
 8. Write <c font-scale 1> in the chat (without the '<>' symbols)
 9. If the chat font has increased in size (default is 0.8), the font-scale command 
     is working correctly
-    
+
+
+CharacterCustomisationTest:
+Start the game as usual.
+1.Click on the "Customize" button.
+2.Change color values as desiered using the sliders or textboxes next to them (values above 255 are set to 255, blank values is set to 0).
+3.Take a screenshot (using your prefered method) or a take a picture of your screen using a camera (tips: your phones camra is easily accasible if you have a modern smartphone!).
+	3.a make sure to include the character preview iamge in the picture!
+	3.b save the picture somewhere you can easily find it and view it.
+4. Click the save button.
+5. Start a new game session.
+	5.a Navigate back to the main menu by pressing the "back" button or by closing and realunching the application.
+	5.b From the main click on the "host/join game" button.
+	5.c Click on the "host game" button
+	5.d A promt with the message "All players connected" should appear. press the "OK" button on the prompot.
+6. Have a look at your charcter in game and compare with the screenshot/picture you took earlier.
+	6.a if the playercharacter in the game matches the sceenshot/picture you took then the test has passed, if not the test has failed.
+		6.a NOTE If using the camera method keep in mind that your camra might warp the colors somewhat, if this is the case, use your best judgment to determine if the 		test has passed or not. 
+
+
 #  User stories
  
  User stories, acceptance criteria, and tasks can be found [here](https://docs.google.com/spreadsheets/d/1A_78OKM1BRXeeG4MR3e6AafYpPxnElqm3xPFjLozlGY/edit?usp=sharing)
