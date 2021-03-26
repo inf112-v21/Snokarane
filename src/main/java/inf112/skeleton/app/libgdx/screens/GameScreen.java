@@ -361,11 +361,15 @@ public class GameScreen extends ScreenAdapter {
 
             // Place every duplicate image next to each other with perCardIncrementX increments in distance
             for (int i = 0; i<duplicatesCount; i++){
-                Image img = generateClickableCard(t, cardTemplates.get(t));
+                if (cardTemplates.get(t) != null){
+                    Image img = generateClickableCard(t, cardTemplates.get(t));
 
-                img.setPosition(baseX, baseY);
-                displayDeck.add(img);
-                baseX += perCardIncrementX;
+                    img.setPosition(baseX, baseY);
+                    displayDeck.add(img);
+                    baseX += perCardIncrementX;
+                }else {
+                    System.out.println("Could not find type from template. " + " type: " +  t.toString());
+                }
             }
         }
         // Add all images to stage
