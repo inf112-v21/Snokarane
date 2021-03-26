@@ -78,6 +78,20 @@ public class MenuScreen extends ScreenAdapter implements IUiScreen{
             }
         });
 
+        TextButton charCustom = new TextButton("Customize", game.skin, "small");
+        float ccw = charCustom.getWidth();
+        float cch = charCustom.getHeight();
+        float charCustomY = 1.8f;
+        charCustom.setPosition(gdxW/2-ccw/2, gdxH/charCustomY-cch/2-100);
+        charCustom.addListener(new InputListener(){
+            @Override
+            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+                game.setScreen(new CharacterCustomizationScreen(game));
+                return true;
+            }
+        });
+
+        stage.addActor(charCustom);
         stage.addActor(playButton);
     }
 

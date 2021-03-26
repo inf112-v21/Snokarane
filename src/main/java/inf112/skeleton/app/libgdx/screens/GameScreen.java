@@ -26,7 +26,9 @@ import inf112.skeleton.app.game.objects.Card;
 import inf112.skeleton.app.game.objects.CardType;
 import inf112.skeleton.app.game.objects.Flag;
 import inf112.skeleton.app.game.objects.PlayerToken;
+import inf112.skeleton.app.libgdx.CharacterCustomizer;
 import inf112.skeleton.app.libgdx.Map;
+import inf112.skeleton.app.libgdx.PlayerConfig;
 import inf112.skeleton.app.libgdx.RoboGame;
 import inf112.skeleton.app.network.Network;
 import inf112.skeleton.app.network.NetworkClient;
@@ -274,18 +276,24 @@ public class GameScreen extends ScreenAdapter {
      */
     public void loadPlayerTextures(){
         // Load the entire player texture
-        Texture rawPlayerTexture = new Texture("player.png");
+        //Color playerColor = Color.RED;
+
+        //load playercolor from file if possible
+        PlayerConfig config = CharacterCustomizer.loadCharacterConfigFromFile();
+        Color playerColor = config.getMainColor();
+        String playerImage = config.getImage();
+
+        Texture rawPlayerTexture = CharacterCustomizer.generatePlayerTexture(playerImage, playerColor);
 
         // Split player texture into seperate regions
-        TextureRegion[][] splitTextures = TextureRegion.split(rawPlayerTexture,300, 300);
+        TextureRegion roboPlayerSplitTexture = new TextureRegion(rawPlayerTexture,300, 300);
 
-        // Put the texture regions into seperate tiles
-        StaticTiledMapTile playerNormalStaticTile = new StaticTiledMapTile(splitTextures[0][0]);
-        StaticTiledMapTile playerWonStaticTile = new StaticTiledMapTile(splitTextures[0][2]);
+        // Put the texture region into seperate tiles
+        StaticTiledMapTile playerStaticTile = new StaticTiledMapTile(roboPlayerSplitTexture);
 
         // Set player state cells to corresponding tiles
-        playerNormal = new TiledMapTileLayer.Cell().setTile(playerNormalStaticTile);
-        playerWon = new TiledMapTileLayer.Cell().setTile(playerWonStaticTile);
+        playerNormal = new TiledMapTileLayer.Cell().setTile(playerStaticTile);
+        playerWon = new TiledMapTileLayer.Cell().setTile(playerStaticTile);
     }
 
     /**

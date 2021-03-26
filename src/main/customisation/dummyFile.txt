@@ -1,0 +1,2 @@
+customisation directory needs to exist in repo for placement of generated playerCustomisation file,
+it is not possible to add an empty directory in git, thus this dummyfile.
