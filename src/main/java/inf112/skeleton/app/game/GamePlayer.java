@@ -84,11 +84,7 @@ public abstract class GamePlayer{
      */
     public void chooseCards(int cardSelection){
         if (hand.get(cardSelection).getCardType() == CardType.NONE) return;
-        chosenCards.add(hand.get(cardSelection));
-        //TODO: Should this be null, or should there be a 'null'-equivalent in the CardType enum? yep it should
-        Card fill = new Card();
-        fill.setCardType(CardType.NONE);
-        hand.set(cardSelection, fill);
+        hand.get(cardSelection).picked = true;
     }
 
     // Starts next turn, everyone draws cards.

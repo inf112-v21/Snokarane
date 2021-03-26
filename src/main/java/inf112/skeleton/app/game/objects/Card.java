@@ -5,6 +5,7 @@ import java.util.Comparator;
 public class Card {
     private CardType cardType;
     private int priority;
+    public boolean picked = false;
 
     public Card(){
         setCardType(CardType.NONE);

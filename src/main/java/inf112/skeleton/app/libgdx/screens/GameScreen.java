@@ -386,6 +386,12 @@ public class GameScreen extends ScreenAdapter {
         Image img = new Image(t);
         img.setSize(cardW, cardH);
 
+        for (Card c : gamePlayer.hand){
+            if (c.picked){
+                img.setColor(0.5f, 0.7f, 0.5f, 0.5f);
+            }
+        }
+
         img.addListener(new ClickListener(){
             // Assign event handler to handle card choice on click
             @Override
@@ -395,8 +401,18 @@ public class GameScreen extends ScreenAdapter {
                     c.setCardType(cardType);
                     System.out.println("Clicked card with move " + cardType);
 
+                    /*
                     // intellij complaining about get before ispresent check is incorrect
                     gamePlayer.chooseCards(gamePlayer.hand.indexOf(gamePlayer.hand.stream().anyMatch(card -> (card.getCardType() == cardType)) ? gamePlayer.hand.stream().filter(card -> (card.getCardType() == cardType)).findFirst().get() : new Card()));
+                    */
+                    gamePlayer.chooseCards(
+                            gamePlayer.hand.indexOf(
+                                    gamePlayer.hand.stream().anyMatch(
+                                            card -> (card.getCardType() == cardType))
+                                            ? gamePlayer.hand.stream().filter(card -> (card.getCardType() == cardType)).findFirst().get()
+                                            : new Card()));
+                    c.picked = true;
+                    gamePlayer.chosenCards.add(c);
 
                     // Give some green feedback on click
                     img.setColor(0.5f, 0.7f, 0.5f, 0.5f);
@@ -459,6 +475,14 @@ public class GameScreen extends ScreenAdapter {
                         if (((GameHost) gamePlayer).allCardsReady()) {
                             System.out.println("Cards are being sent to processing. Stage size before deck clear: " + stage.getActors().size);
                             stage.clear();
+                            for (Card c : gamePlayer.hand){
+                                for (Card d : gamePlayer.chosenCards){
+                                    if (c.getCardType() == d.getCardType() && c.picked){
+                                        Card fill = new Card();
+                                        c.setCardType(CardType.NONE);
+                                    }
+                                }
+                            }
                             gamePlayer.state = GamePlayer.PLAYERSTATE.SENDING_CARDS;
                             gamePlayer.registerChosenCards();
                             gamePlayer.drawCardsFromDeck();
@@ -468,6 +492,14 @@ public class GameScreen extends ScreenAdapter {
                     } else {
                         System.out.println("Cards are being sent to processing. Stage size before deck clear: " + stage.getActors().size);
                         stage.clear();
+                        for (Card c : gamePlayer.hand){
+                            for (Card d : gamePlayer.chosenCards){
+                                if (c.getCardType() == d.getCardType() && c.picked){
+                                    Card fill = new Card();
+                                    c.setCardType(CardType.NONE);
+                                }
+                            }
+                        }
                         gamePlayer.state = GamePlayer.PLAYERSTATE.SENDING_CARDS;
                         gamePlayer.registerChosenCards();
                         gamePlayer.drawCardsFromDeck();
