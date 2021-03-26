@@ -17,7 +17,7 @@ A work in progress java implementaion of the board game ["RoboRally"](https://en
 	
 	Using HTTPS, write in git bash (or your CLI of choice) command line 'git clone https://github.com/inf112-v21/Snokarane.git'
 	
-	Using SSH, write in git bash (or your CLI of choice) command line 'git@github.com:inf112-v21/Snokarane.git'
+	Using SSH, write in git bash (or your CLI of choice) command line 'git clone git@github.com:inf112-v21/Snokarane.git'
 	
 	Using GitHub CLI, git bash (or your CLI of choice) write in command line 'gh repo clone inf112-v21/Snokarane'
 	
