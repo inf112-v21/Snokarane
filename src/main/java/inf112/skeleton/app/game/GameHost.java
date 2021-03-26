@@ -37,13 +37,13 @@ public class GameHost extends GamePlayer {
     public Map map;
 
     public boolean isShowingCards = false;
-    private List<List<Card>> cardsPerPlayerTurn = new ArrayList<>();
-    private List<Card> currentCardListBeingProcessed = new ArrayList<>();
-    private HashMap<Card, PlayerToken> cardPlayerTokenMap = new HashMap<>();
-    private int cardsProcessedPerRound = 5;
+    private final List<List<Card>> cardsPerPlayerTurn = new ArrayList<>();
+    private final List<Card> currentCardListBeingProcessed = new ArrayList<>();
+    private final HashMap<Card, PlayerToken> cardPlayerTokenMap = new HashMap<>();
+    private final int cardsProcessedPerRound = 5;
     private int currentCardRound = 1;
     private long timeSinceLastCardProcessed = System.currentTimeMillis();
-    private long pauseBetweenEachCardProcess = 300 ;
+    private final long pauseBetweenEachCardProcess = 300 ;
 
     public NetworkHost host;
 

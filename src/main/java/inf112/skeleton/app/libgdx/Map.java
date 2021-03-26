@@ -1,7 +1,6 @@
 package inf112.skeleton.app.libgdx;
 
 import com.badlogic.gdx.math.GridPoint2;
-import inf112.skeleton.app.game.GameHost;
 import inf112.skeleton.app.game.objects.Flag;
 import inf112.skeleton.app.game.objects.PlayerToken;
 
@@ -141,7 +140,7 @@ public class Map {
     }
 
     public boolean isRepair(int x, int y){
-        return repairLayer [x][y];
+        return repairLayer[x][y];
     }
 
     //TODO Rename to canGo, and change functionality
