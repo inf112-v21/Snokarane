@@ -110,7 +110,7 @@ public class Map {
     }
 
     public boolean wouldDie(int x, int y) {
-        return (isHole(x, y) || !isInBounds(x, y));
+        return (!isInBounds(x, y) || isHole(x, y));
     }
 
     public boolean hasPlayer(int x, int y) {
