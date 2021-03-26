@@ -31,6 +31,7 @@ import inf112.skeleton.app.libgdx.RoboGame;
 import inf112.skeleton.app.network.Network;
 import inf112.skeleton.app.network.NetworkClient;
 import inf112.skeleton.app.network.NetworkHost;
+import inf112.skeleton.app.ui.cards.CardDisplay;
 import inf112.skeleton.app.ui.chat.CommandParser;
 import inf112.skeleton.app.ui.chat.managers.ChatClient;
 import inf112.skeleton.app.ui.chat.managers.ChatManager;
@@ -306,89 +307,37 @@ public class GameScreen extends ScreenAdapter {
         cardTemplates.put(CardType.UTURN, splitTextures[0][6]);
     }
 
-    /*
-    * Helper for card image loading with touchup event
-     */
-    private Image newClickableCard(CardType cardType, TextureRegion t){
-        int cardW = 100;
-        int cardH = 135;
-
-        Image img = new Image(t);
-        img.setSize(cardW, cardH);
-
-        img.addListener(new ClickListener(){
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                if (gamePlayer.state == GamePlayer.PLAYERSTATE.PICKING_CARDS && gamePlayer.chosenCards.size()<5){
-                    Card c = new Card();
-                    c.setCardType(cardType);
-                    System.out.println("Clicked card with move " + cardType);
-
-                    int handsize = 0;
-                    for (Card carrrrd : gamePlayer.hand){
-                        handsize += (carrrrd.getCardType() != CardType.NONE) ? 1 : 0;
-                    }
-                    System.out.println("Hand size: "+handsize);
-                    System.out.println("Chosen cards size: "+gamePlayer.chosenCards.size());
-
-                    // whoever is trying to understand this line, enjoy
-                    gamePlayer.chooseCards(gamePlayer.hand.indexOf(gamePlayer.hand.stream().anyMatch(card -> (card.getCardType() == cardType)) ? gamePlayer.hand.stream().filter(card -> (card.getCardType() == cardType)).findFirst().get() : new Card()));
-
-                    img.setColor(0.5f, 0.7f, 0.5f, 0.5f);
-
-                    // Clear listener so it can't be clicked again TODO This is temporary solution, should be able to click to remove card from selection
-                    img.getListeners().clear();
-                }
-            }
-        });
-        return img;
-    }
     /**
      * Clear current stage cards and add new actors to stage
      */
     private void loadCardDeck(){
-        duplicates.clear();
+        // Base for entire hand
         int baseX = 75;
         int baseY = 30;
-
         int perCardIncrementX = 110;
 
-        getDuplicateCards();
+        // Display helper for deg
+        CardDisplay cd = new CardDisplay(baseX, baseY, 100, 135);
 
+        cd.getDuplicateCardsInHand(gamePlayer, duplicates);
 
         List<Image> displayDeck = new ArrayList<>();
-        int cardsTotal = 0;
 
         for (CardType t : duplicates.keySet()){
             int duplicatesCount = duplicates.get(t);
 
-            // TODO this doesn't seem to want to render duplicate images no matter what i try...
+            // Place every duplicate image next to each other with perCardIncrementX increments in distance
             for (int i = 0; i<duplicatesCount; i++){
-                Image img = newClickableCard(t, cardTemplates.get(t));
+                Image img = cd.generateClickableCard(t, cardTemplates.get(t), gamePlayer);
                 img.setPosition(baseX, baseY);
                 displayDeck.add(img);
                 baseX += perCardIncrementX;
-                cardsTotal++;
             }
         }
-        System.out.println("Cards being added to stage: "+cardsTotal);
+        // Add all images to stage
         displayDeck.forEach( (i) -> { stage.addActor(i); } );
     }
-    /**
-     * finds duplicate cards in deck
-     * HashMap used because its O(n) instead of O(n^2)
-     */
-    private void getDuplicateCards(){
-        if (!gamePlayer.hand.isEmpty()){
-            for (Card c : gamePlayer.hand){
-                if (!duplicates.containsKey(c.getCardType())){
-                    duplicates.put(c.getCardType(), 1);
-                } else {
-                    duplicates.put(c.getCardType(), duplicates.get(c.getCardType())+1);
-                }
-            }
-        }
-    }
+
     /**
      * Back button
      */
@@ -505,7 +454,7 @@ public class GameScreen extends ScreenAdapter {
         loadCardBackground();
         loadBackButton();
         loadSendCardsButton();
-        loadCardDeck(); //TODO this already gets loaded in render. loading this in render is a bad idea, should be done here exclusively but need to find way to load deck at start of game too.
+        loadCardDeck();
         loadPlayerList();
         updateChat();
     }
