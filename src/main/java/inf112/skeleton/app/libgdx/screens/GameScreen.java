@@ -729,6 +729,9 @@ public class GameScreen extends ScreenAdapter {
         }
     }
 
+    /**
+     * Loads all the laser textures from the map-class onto the board
+     */
     public void loadLasers() {
         for (int x = 0; x < Game.BOARD_X; x++) {
             for (int y = 0; y < Game.BOARD_Y; y++) {
@@ -737,6 +740,12 @@ public class GameScreen extends ScreenAdapter {
         }
     }
 
+    /**
+     * returns the correct texture for a tile with a laser
+     * @param x the x position of the tile
+     * @param y the y position of the tile
+     * @return the correct texture to put in the tile
+     */
     public TiledMapTileLayer.Cell laserToTile(int x, int y) {
 
         //TODO FIX THIS SHIT to add support for doubles
@@ -814,6 +823,10 @@ public class GameScreen extends ScreenAdapter {
         flagPositions.addAll(flags);
     }
 
+    /**
+     * gets the spawn points from the map and puts them in the map class //TODO move this to getBoardElementPositions
+     * @param startLayer the start layer
+     */
     private void getStartPositions(TiledMapTileLayer startLayer) {
         for (int i = 0; i <= startLayer.getWidth(); i++){
             for (int j = 0; j <= startLayer.getHeight(); j++){
@@ -825,7 +838,10 @@ public class GameScreen extends ScreenAdapter {
         }
     }
 
-    //TODO: FIX THIS TO MAKE IT MORE SEPARATED
+    /**
+     * Loops through all the tiles in the board, and fills up the map class accordingly with all the board elements
+     * @param tiledMap the tiled map you wish to load the board elements from
+     */
     private void getBoardElementPositionsFromLayer(TiledMap tiledMap){
         TiledMapTileLayer holeLayer = (TiledMapTileLayer) tiledMap.getLayers().get("Hole");
         TiledMapTileLayer gearLayer = (TiledMapTileLayer) tiledMap.getLayers().get("Gear");
@@ -857,6 +873,12 @@ public class GameScreen extends ScreenAdapter {
         }
     }
 
+    /**
+     * Adds a permanent laser shooter to the map if there is a laser shooter in the laser cell
+     * @param laserCell the cell you wish to check for lasers
+     * @param i its i position
+     * @param j its j position
+     */
     private void setLaserDirection(TiledMapTileLayer.Cell laserCell, int i, int j) {
         // NORTH, EAST, SOUTH, WEST
         if (laserCell.getTile().getId() == 38) map.laserShooters.add(new Map.LaserShooter(Direction.EAST, 1, i, j));
@@ -865,6 +887,12 @@ public class GameScreen extends ScreenAdapter {
         if (laserCell.getTile().getId() == 93) map.laserShooters.add(new Map.LaserShooter(Direction.EAST, 2, i, j));
     }
 
+    /**
+     * Sets the correct values for the wall in the wall layer in map
+     * @param wallCell the wall cell you wish to check
+     * @param i the x position of the wall cell
+     * @param j the y position of the wall cell
+     */
     private void setWallDirections(TiledMapTileLayer.Cell wallCell, int i, int j){
         //TODO a lot of these are lacking
 
@@ -903,6 +931,12 @@ public class GameScreen extends ScreenAdapter {
 
     }
 
+    /**
+     *  Fills the belt-layer in the map class with the correct belt information
+     * @param beltCell the cell containing the belt
+     * @param i the x position of the cell containing the belt
+     * @param j the y position of the cell containing the belt
+     */
     private void setBeltInformation(TiledMapTileLayer.Cell beltCell, int i, int j){
         if (beltCell.getTile().getId() == 50) map.beltLayer[i][j] = new Map.BeltInformation(Direction.SOUTH, false, 0);
         if (beltCell.getTile().getId() == 21) map.beltLayer[i][j] = new Map.BeltInformation(Direction.SOUTH, true, 0);

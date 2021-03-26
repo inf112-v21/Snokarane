@@ -25,6 +25,7 @@ public class GameHostTest {
         host = new GameHost(network);
         host.map = new Map();
         player = new PlayerToken();
+        host.clientPlayers.put(0, player);
     }
 
     private Card makeCard(CardType type) {
@@ -36,13 +37,13 @@ public class GameHostTest {
     @Test
     public void RotateCardsRotatesPlayerCorrectly(){
         assertTrue(player.getX() == 0 && player.getY() == 0);
-        assertTrue(player.getDirection() == Direction.NORTH);
+        assertSame(player.getDirection(), Direction.NORTH);
         host.resolveCard(makeCard(CardType.TURNLEFT), player);
-        assertTrue(player.getDirection() == Direction.WEST);
+        assertSame(player.getDirection(), Direction.WEST);
         host.resolveCard(makeCard(CardType.UTURN), player);
-        assertTrue(player.getDirection() == Direction.EAST);
+        assertSame(player.getDirection(), Direction.EAST);
         host.resolveCard(makeCard(CardType.TURNRIGHT), player);
-        assertTrue(player.getDirection() == Direction.SOUTH);
+        assertSame(player.getDirection(), Direction.SOUTH);
     }
 
     @Test
@@ -72,7 +73,6 @@ public class GameHostTest {
         assertTrue(player.getDirection() == Direction.NORTH);
         PlayerToken player1 = new PlayerToken();
         player1.position = new GridPoint2(0, 1);
-        host.clientPlayers.put(0, player);
         host.clientPlayers.put(1, player1);
         host.map.loadPlayers(host.wrapper().PlayerTokens);
         host.resolveCard(makeCard(CardType.FORWARDTHREE), player);
@@ -83,6 +83,61 @@ public class GameHostTest {
         host.resolveCard(makeCard(CardType.FORWARDTHREE), player);
         assertEquals(4, player.getY());
         assertEquals(5, player1.getY());
+
+        host.map.wallLayer[0][5] = new boolean[] {false, false, false, false};
+        host.map.holeLayer[0][6] = true;
+        host.resolveCard(makeCard(CardType.FORWARDTHREE), player);
+
+        assertTrue(player.diedThisTurn);
+        assertTrue(player1.diedThisTurn);
+    }
+
+    @Test
+    public void repairTilesRepair(){
+        assertTrue(player.getX() == 0 && player.getY() == 0);
+        int hp = player.hp;
+        host.map.loadPlayers(host.wrapper().PlayerTokens);
+        host.map.repairLayer[0][0] = true;
+        host.endOfTurn();
+        assertEquals(hp+1, player.hp);
+    }
+
+    @Test
+    public void gearTilesRotate(){
+        assertTrue(player.getX() == 0 && player.getY() == 0);
+        assertEquals(Direction.NORTH, player.getDirection());
+
+        host.map.gearLayer[0][0] = 1;
+        host.endOfTurn();
+        assertEquals(Direction.EAST, player.getDirection());
+
+        host.map.gearLayer[0][0] = 2;
+        host.endOfTurn();
+        assertEquals(Direction.NORTH, player.getDirection());
+    }
+
+    @Test
+    public void beltsMovePlayersRotateAndDontPush(){
+        assertTrue(player.getX() == 0 && player.getY() == 0);
+        host.map.beltLayer[0][0] = new Map.BeltInformation(Direction.NORTH, false, 0);
+        host.map.beltLayer[0][1] = new Map.BeltInformation(Direction.NORTH, true, 0);
+        host.map.beltLayer[0][2] = new Map.BeltInformation(Direction.NORTH, true, 1, Direction.NORTH);
+        host.map.beltLayer[0][3] = new Map.BeltInformation(Direction.NORTH, false, 0);
+
+        host.endOfTurn();
+        assertEquals(1, player.getY());
+        assertEquals(Direction.NORTH, player.getDirection());
+        host.endOfTurn();
+        assertEquals(3, player.getY());
+        assertEquals(Direction.EAST, player.getDirection());
+
+        PlayerToken player1 = new PlayerToken();
+        player1.position = new GridPoint2(0, 4);
+        host.clientPlayers.put(1, player1);
+        host.map.loadPlayers(host.wrapper().PlayerTokens);
+        host.endOfTurn();
+        assertEquals(3, player.getY());
+        assertEquals(4, player1.getY());
     }
 
 

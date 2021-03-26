@@ -98,10 +98,17 @@ public class GameHost extends GamePlayer {
         checkCards();
     }
 
+    /**
+     *
+     * @return true if the host can send its card, false otherwise
+     */
     public boolean allCardsReady(){
         return host.playerCards.keySet().size() == host.alivePlayers.size()-1; // host doesn't deliver cards until after this check
     }
 
+    /**
+     * Checks that all players have sent their cards, and if so, processes the cards
+     */
     public void checkCards(){
         if (host.playerCards.keySet().size() == host.alivePlayers.size()) {
             processCards();
@@ -142,6 +149,10 @@ public class GameHost extends GamePlayer {
         host.sendMapLayerWrapper(wrapper());
         map.loadPlayers(wrapper().PlayerTokens);
     }
+
+    /**
+     * Handles end of turn logic. Belt moving, lasers, rotating, repairs, etc.
+     */
     public void endOfTurn(){
         List<Integer> playersToKill = new ArrayList<>();
         for (Integer key : clientPlayers.keySet()){
@@ -157,6 +168,7 @@ public class GameHost extends GamePlayer {
                         movePlayer(token, 1, belt.beltDirection, false);
                     }
                 }
+                //TODO Need to make sure that they do move if one player is on a belt directly in front of another
                 Map.BeltInformation nextBelt = map.beltLayer[token.getX()][token.getY()];
                 if (nextBelt != null && nextBelt.beltRotationDirection != null) {
                     assert belt != null;
@@ -179,7 +191,7 @@ public class GameHost extends GamePlayer {
                 System.out.println(token.name + " is on a gear!");
                 token.rotate(CardType.TURNLEFT);
             }
-
+            map.clearLasers();
             map.shootLasers(wrapper());
             int lasers = 0;
             for (int i = 0; i < 4; i++) {
@@ -244,6 +256,9 @@ public class GameHost extends GamePlayer {
         isShowingCards = true;
     }
 
+    /**
+     * Rests which playertokens died this turn, and checks if anyone won
+     */
     private void resetPlayerTokens(){
         // Reset which players have died this turn, so that they can keep playing
         for (PlayerToken player: clientPlayers.values()) {
@@ -263,7 +278,6 @@ public class GameHost extends GamePlayer {
      * Handle single selection of a card for all players
      */
     public void handleSingleCardRound(){
-        map.clearLasers();
         if (System.currentTimeMillis() >= timeSinceLastCardProcessed+pauseBetweenEachCardProcess){
             // If current Nth card list empty, start next round of cards
             if (currentCardListBeingProcessed.size() == 0){
@@ -305,9 +319,6 @@ public class GameHost extends GamePlayer {
             // Move the clients player token
             resolveCard(card, cardPlayerTokenMap.get(card));
         }
-
-        //System.out.println("-------------------------------------");
-        //System.out.println("Processing card selection round nr. "+currentCardRound);
 
         map.loadPlayers(wrapper().PlayerTokens);
         host.sendMapLayerWrapper(wrapper());
