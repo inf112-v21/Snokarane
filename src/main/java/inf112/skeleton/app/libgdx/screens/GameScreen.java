@@ -12,9 +12,9 @@ import com.badlogic.gdx.math.GridPoint2;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.Image;
-import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import inf112.skeleton.app.game.GameClient;
 import inf112.skeleton.app.game.GameHost;
@@ -24,11 +24,18 @@ import inf112.skeleton.app.game.objects.CardType;
 import inf112.skeleton.app.game.objects.Flag;
 import inf112.skeleton.app.game.objects.PlayerToken;
 import inf112.skeleton.app.libgdx.Game;
+import inf112.skeleton.app.libgdx.CharacterCustomizer;
 import inf112.skeleton.app.libgdx.Map;
+import inf112.skeleton.app.libgdx.PlayerConfig;
 import inf112.skeleton.app.libgdx.RoboGame;
 import inf112.skeleton.app.network.Network;
 import inf112.skeleton.app.network.NetworkClient;
 import inf112.skeleton.app.network.NetworkHost;
+import inf112.skeleton.app.ui.cards.CardDisplay;
+import inf112.skeleton.app.ui.chat.CommandParser;
+import inf112.skeleton.app.ui.chat.managers.ChatClient;
+import inf112.skeleton.app.ui.chat.managers.ChatManager;
+import inf112.skeleton.app.ui.chat.managers.Chatter;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -73,6 +80,10 @@ public class GameScreen extends ScreenAdapter {
     GamePlayer gamePlayer;
     // Handles all data transfers over internet
     Network network;
+    // Chat handler
+    Chatter chat;
+    // To handle updates in the chat received from network
+    int networkChatBacklogSize = 0;
 
     public GameScreen(RoboGame game, boolean isHost, String ip, String playerName) {
         this.game = game;
@@ -158,14 +169,111 @@ public class GameScreen extends ScreenAdapter {
 
         // Start game/network objects
         startGame(isHost, ip, playerName);
+
+        // Initialize chat variables and objects
+        initializeChatObjects(playerName);
+
+        // load list of players on map
+        loadPlayerList();
+    }
+
+    // Starts chat depending on client or host
+    private void initializeChatObjects(String playerName){
+        chat = network.isHost ? new ChatManager((NetworkHost)network) : new ChatClient((NetworkClient)network);
+        Color chatColor = new Color(1f, 1f, 1f, 1);
+
+        int subMenuHeight = 200;
+        int sideMenuWidth = 375; // TODO fix hardcoded values
+
+        chat.initializeChat(game, 0.85f, chatColor, "", sideMenuWidth, Gdx.graphics.getHeight()-subMenuHeight,  Gdx.graphics.getWidth()-sideMenuWidth, subMenuHeight);
+        chat.setName(playerName);
+        updateChat();
     }
 
     /**
-     * @param path path to .tmx file for map
-     * @return TiledMap object loaded from path
+     * Get new messages that have been received from the network, get formatted table and add input box with listener.
      */
-    public TiledMap loadTileMapFromFile(String path) {
-        return new TmxMapLoader().load(path);
+    private void updateChat(){
+        chat.updateChat(network.messagesRecived);
+        Table chatTable = chat.getChatAsTable();
+
+        Color inputBoxColor = new Color(1f, 1f, 1f, 1);
+
+        TextField inputBox = new TextField("", game.skin);
+        inputBox.setColor(inputBoxColor);
+        inputBox.addListener(new InputListener(){
+            @Override
+            public boolean keyDown(InputEvent event, int keycode) {
+                if (keycode == Input.Keys.ENTER){
+
+                    // If chat is a command
+                    if (inputBox.getText().substring(0, 2).equals("/c") && inputBox.getText().length()>2){
+                        CommandParser p = new CommandParser();
+                        String commandContent = inputBox.getText().substring(3);
+                        System.out.println("Chat command entered: " + commandContent);
+
+                        // Get what command was input by user
+                        CommandParser.Command command = p.parseCommand(p.getCmd(commandContent));
+
+                            // Perform command
+                            switch (command){
+                                case SETNAME:
+                                    chat.setName(p.getArgs(commandContent));
+                                    break;
+                                case SETCOLOR:
+                                    switch (p.getArgs(commandContent)) {
+                                        case "r":
+                                            Color red = new Color(1, 0, 0, 1);
+                                            chat.chat.setChatColour(red);
+                                            break;
+                                        case "g":
+                                            Color green = new Color(0, 1, 0, 1);
+                                            chat.chat.setChatColour(green);
+                                            break;
+                                        case "b":
+                                            Color blue = new Color(0, 0, 1, 1);
+                                            chat.chat.setChatColour(blue);
+                                            break;
+                                        case "black":
+                                            Color black = new Color(1, 1, 1, 1);
+                                            chat.chat.setChatColour(black);
+                                            break;
+                                        default:
+                                            System.out.println("Invalid colour.");
+                                            break;
+                                    }
+                                    break;
+                                case SETFONTSTCALE:
+                                    float scale = Float.parseFloat(p.getArgs(commandContent));
+                                    chat.chat.setChatFontSize(scale);
+                                    break;
+                                case INVALID:
+                                    chat.sendMessage("Entered invalid command.");
+                                    break;
+                                default:
+                                    break;
+                        }
+                        // Send list of commands available if /h
+                    }else if (inputBox.getText().substring(0, 2).equals("/h")){
+                        chat.sendMessage("Commands:");
+                        chat.sendMessage("/c set-name <name>");
+                        chat.sendMessage("/c chat-color <r, g, b, black>");
+                        chat.sendMessage("/c font-scale <font scale>");
+                    }
+                    // Send message
+                    else {
+                        chat.sendMessage(inputBox.getText());
+                    }
+                    updateChat();
+                }
+                return true;
+            }
+        });
+
+        chatTable.add(inputBox).left().width(355).height(30).padTop(20f);
+        chatTable.row();
+
+        stage.addActor(chatTable);
     }
 
     /**
@@ -173,18 +281,24 @@ public class GameScreen extends ScreenAdapter {
      */
     public void loadTextures() {
         // Load the entire player texture
-        Texture rawPlayerTexture = new Texture("player.png");
+        //Color playerColor = Color.RED;
+
+        //load playercolor from file if possible
+        PlayerConfig config = CharacterCustomizer.loadCharacterConfigFromFile();
+        Color playerColor = config.getMainColor();
+        String playerImage = config.getImage();
+
+        Texture rawPlayerTexture = CharacterCustomizer.generatePlayerTexture(playerImage, playerColor);
 
         // Split player texture into seperate regions
-        TextureRegion[][] splitPlayerTextures = TextureRegion.split(rawPlayerTexture, 300, 300);
+        TextureRegion roboPlayerSplitTexture = new TextureRegion(rawPlayerTexture,300, 300);
 
-        // Put the texture regions into seperate tiles
-        StaticTiledMapTile playerNormalStaticTile = new StaticTiledMapTile(splitPlayerTextures[0][0]);
-        StaticTiledMapTile playerWonStaticTile = new StaticTiledMapTile(splitPlayerTextures[0][2]);
+        // Put the texture region into seperate tiles
+        StaticTiledMapTile playerStaticTile = new StaticTiledMapTile(roboPlayerSplitTexture);
 
         // Set player state cells to corresponding tiles
-        playerNormal = new TiledMapTileLayer.Cell().setTile(playerNormalStaticTile);
-        playerWon = new TiledMapTileLayer.Cell().setTile(playerWonStaticTile);
+        playerNormal = new TiledMapTileLayer.Cell().setTile(playerStaticTile);
+        playerWon = new TiledMapTileLayer.Cell().setTile(playerStaticTile);
 
         Texture rawLaserTexture = new Texture("tiles.png");
 
@@ -225,101 +339,47 @@ public class GameScreen extends ScreenAdapter {
         cardTemplates.put(CardType.UTURN, splitTextures[0][6]);
     }
 
-    /*
-     * Helper for card image loading with touchup event
-     */
-    private Image newClickableCard(CardType cardType, TextureRegion t) {
-        int cardW = 100;
-        int cardH = 170;
-
-        Image img = new Image(t);
-        img.setSize(cardW, cardH);
-
-        img.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                if (gamePlayer.state == GamePlayer.PLAYERSTATE.PICKING_CARDS && gamePlayer.chosenCards.size() < 5) {
-                    Card c = new Card();
-                    c.setCardType(cardType);
-                    System.out.println("Clicked card with move " + cardType);
-
-                    int handsize = 0;
-                    for (Card carrrrd : gamePlayer.hand) {
-                        handsize += (carrrrd.getCardType() != CardType.NONE) ? 1 : 0;
-                    }
-                    System.out.println("Hand size: " + handsize);
-                    System.out.println("Chosen cards size: " + gamePlayer.chosenCards.size());
-
-                    // whoever is trying to understand this line, enjoy
-                    gamePlayer.chooseCards(gamePlayer.hand.indexOf(gamePlayer.hand.stream().anyMatch(card -> (card.getCardType() == cardType)) ? gamePlayer.hand.stream().filter(card -> (card.getCardType() == cardType)).findFirst().get() : new Card()));
-
-                    img.setColor(0.5f, 0.7f, 0.5f, 0.5f);
-
-                    // Clear listener so it can't be clicked again TODO This is temporary solution, should be able to click to remove card from selection
-                    img.getListeners().clear();
-                }
-            }
-        });
-        return img;
-    }
-
     /**
      * Clear current stage cards and add new actors to stage
      */
-    private void loadCardDeck() {
-        duplicates.clear();
-        int baseX = 15;
-        int baseY = 15;
+    private void loadCardDeck(){
+        // Base for entire hand
+        int baseX = 75;
+        int baseY = 30;
+        int perCardIncrementX = 110;
 
-        int perCardIncrementX = 105;
+        // Display helper for deg
+        CardDisplay cd = new CardDisplay(baseX, baseY, 100, 135);
 
-        getDuplicateCards();
-
+        cd.getDuplicateCardsInHand(gamePlayer, duplicates);
 
         List<Image> displayDeck = new ArrayList<>();
-        int cardsTotal = 0;
 
         for (CardType t : duplicates.keySet()) {
             int duplicatesCount = duplicates.get(t);
 
-            // TODO this doesn't seem to want to render duplicate images no matter what i try...
-            for (int i = 0; i < duplicatesCount; i++) {
-                Image img = newClickableCard(t, cardTemplates.get(t));
+            // Place every duplicate image next to each other with perCardIncrementX increments in distance
+            for (int i = 0; i<duplicatesCount; i++){
+                Image img = cd.generateClickableCard(t, cardTemplates.get(t), gamePlayer);
+
                 img.setPosition(baseX, baseY);
                 displayDeck.add(img);
                 baseX += perCardIncrementX;
-                cardsTotal++;
             }
         }
-        System.out.println("Cards being added to stage: " + cardsTotal);
-        displayDeck.forEach(stage::addActor);
-    }
-
-    /**
-     * finds duplicate cards in deck
-     * HashMap used because its O(n) instead of O(n^2)
-     */
-    private void getDuplicateCards() {
-        if (!gamePlayer.hand.isEmpty()) {
-            for (Card c : gamePlayer.hand) {
-                if (!duplicates.containsKey(c.getCardType())) {
-                    duplicates.put(c.getCardType(), 1);
-                } else {
-                    duplicates.put(c.getCardType(), duplicates.get(c.getCardType()) + 1);
-                }
-            }
-        }
+        // Add all images to stage
+        displayDeck.forEach( (i) -> { stage.addActor(i); } );
     }
 
     /**
      * Back button
      */
     private void loadBackButton() {
-
         TextButton backButton = new TextButton("Back", game.skin, "small");
-        backButton.setWidth(225);
-        backButton.setPosition(Gdx.graphics.getWidth() - 240f, 30);
-        backButton.addListener(new InputListener() {
+        backButton.setWidth(125);
+        backButton.setPosition(Gdx.graphics.getWidth()-145f, 30);
+        backButton.setColor(0.1f, 0, 0, 1);
+        backButton.addListener(new InputListener(){
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
                 game.setScreen(new MenuScreen(game));
@@ -332,12 +392,12 @@ public class GameScreen extends ScreenAdapter {
     /**
      * Send cards button
      */
-    private void loadSendCardsButton() {
-
+    private void loadSendCardsButton(){
         TextButton sendCardsButton = new TextButton("Send cards", game.skin, "small");
-        sendCardsButton.setWidth(225);
-        sendCardsButton.setPosition(Gdx.graphics.getWidth() - 240f, 100);
-        sendCardsButton.addListener(new InputListener() {
+        sendCardsButton.setWidth(125);
+        sendCardsButton.setPosition(Gdx.graphics.getWidth()-145f, 105);
+        sendCardsButton.setColor(0.1f, 0, 0, 1);
+        sendCardsButton.addListener(new InputListener(){
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
                 if (gamePlayer.chosenCards.size() >= 5) {
@@ -367,35 +427,75 @@ public class GameScreen extends ScreenAdapter {
     }
 
     /**
-     * Decorative background for card deck
+     * All player positions and directions
      */
-    private void loadCardBackground() {
-        Texture cardBackgroundTexture = new Texture(Gdx.files.internal("cards/cards-background.png"));
-        Image cardBackground = new Image(cardBackgroundTexture);
-        cardBackground.setPosition(0, 0);
-        cardBackground.setSize(Gdx.graphics.getWidth(), 200);
-        stage.addActor(cardBackground);
-    }
+    private void loadPlayerList(){
+        Table tableList = new Table();
+        tableList.top().left().pad(5).setSize(210, 145);
+        tableList.setPosition(Gdx.graphics.getWidth()-375, 30);
 
-    private void loadActorsInOrder() {
-        loadCardBackground();
-        loadBackButton();
-        loadSendCardsButton();
-        loadCardDeck(); //TODO this already gets loaded in render. loading this in render is a bad idea, should be done here exclusively but need to find way to load deck at start of game too.
+        Label tIndicator = new Label("Player locations:", game.skin);
+        tableList.add(tIndicator);
+        tableList.row();
+
+        int playNo = 1;
+        boolean anyPlayers = false;
+        for (int x = 0; x<map.playerLayer.length; x++){
+            for (int y = 0; y<map.playerLayer[x].length; y++){
+                if (map.playerLayer[x][y].state != PlayerToken.CHARACTER_STATES.NONE){
+                    anyPlayers = true;
+                    String str = "Player "+ playNo +" at " + x + ", " + y + " - Facing: " + map.playerLayer[x][y].dir.toString();
+                    Label l = new Label(str, game.skin);
+                    l.setColor(0.7588f, 0.3188f, 0.1960f, 1);
+                    l.setAlignment(Align.left);
+                    l.setFontScale(0.8f);
+                    tableList.add(l);
+                    tableList.row();
+                    playNo++;
+                }
+            }
+        }
+        if (!anyPlayers){
+            String str = "Waiting for first round to start.";
+            Label l = new Label(str, game.skin);
+            l.setColor(0.7588f, 0.3188f, 0.1960f, 1);
+            l.setFontScale(0.8f);
+            tableList.add(l);
+            tableList.row();
+        }
+        stage.addActor(tableList);
     }
 
     /**
-     * Helper function for keyUp to pick cards for player
-     * TODO rename me
-     *
-     * @param keyCode key pressed
+     * Decorative background for card deck
      */
-    private void pickCardsOnKeyPress(int keyCode) {
-        gamePlayer.chooseCards(keyCode);
-        if (gamePlayer.chosenCards.size() >= 5) {
-            gamePlayer.state = GamePlayer.PLAYERSTATE.SENDING_CARDS;
-            gamePlayer.registerChosenCards();
-        }
+    private void loadCardBackground(){
+        // Simple border around cards
+        Texture cardBackgroundTexture = new Texture(Gdx.files.internal("cards/bottom-border.png"));
+        Image cardBackground = new Image(cardBackgroundTexture);
+        cardBackground.setPosition(0, 0);
+        cardBackground.setSize(Gdx.graphics.getWidth()-375, 200);
+        stage.addActor(cardBackground);
+
+        // Simple colour texture behind buttons
+        Texture buttonBackgroundTexture = new Texture(Gdx.files.internal("cards/bottom-background-color.png"));
+        Image buttonBackground = new Image(buttonBackgroundTexture);
+        buttonBackground.setPosition(Gdx.graphics.getWidth()-375, 0);
+        buttonBackground.setSize(375, 200);
+        stage.addActor(buttonBackground);
+    }
+
+    /**
+     * Load visual backgrounds first, then render important elements at the end
+     * This needs to be called whenever stage is cleared
+     */
+    private void loadActorsInOrder(){
+        loadCardBackground();
+        loadBackButton();
+        loadSendCardsButton();
+        loadCardDeck();
+        loadPlayerList();
+        updateChat();
     }
 
     /**
@@ -424,7 +524,31 @@ public class GameScreen extends ScreenAdapter {
         Gdx.gl.glClearColor(1, 1, 1, 1);
         Gdx.gl.glClear(GL30.GL_COLOR_BUFFER_BIT);
 
-        if (gamePlayer.newCardsDelivered) {
+        pollUiUpdates();
+
+        stage.act();
+        stage.draw();
+
+        // Sends map to client of host, updates map in (this) if client
+        updateMap();
+
+        // Render current frame to screen
+        game.renderer.render();
+    }
+
+    /**
+     * Poll updates from the network client that needs to be updated to local session in real time
+     */
+    private void pollUiUpdates(){
+        // force chat to update when receiving new messages in network
+        if (networkChatBacklogSize < network.messagesRecived.size()){
+            stage.clear();
+            loadActorsInOrder();
+            networkChatBacklogSize = network.messagesRecived.size();
+        }
+
+        // Force cards to update when new cards have been received
+        if(gamePlayer.newCardsDelivered){
             stage.clear();
 
             System.out.println("Stage size after clearing hand: " + stage.getActors().size);
@@ -445,15 +569,6 @@ public class GameScreen extends ScreenAdapter {
             System.out.println("Stage size after loading new hand: " + stage.getActors().size);
             gamePlayer.newCardsDelivered = false;
         }
-
-        stage.act();
-        stage.draw();
-
-        // Sends map to client of host, updates map in (this) if client
-        updateMap();
-
-        // Render current frame to screen
-        game.renderer.render();
     }
 
     /**
@@ -550,6 +665,7 @@ public class GameScreen extends ScreenAdapter {
         if (map.laserLayer[x][y][3] == 2) return doubleHorizontal;
         else return null;
     }
+
     /**
      * Gets player locations and states from map and sets tiledmaplayer cells to correct texture
      */
@@ -581,6 +697,7 @@ public class GameScreen extends ScreenAdapter {
             }
         }
     }
+
     /**
      * Load all map layers into their own member variable
      */
@@ -594,6 +711,7 @@ public class GameScreen extends ScreenAdapter {
         getBoardElementPositionsFromLayer(tiledMap);
         getStartPositions((TiledMapTileLayer) tiledMap.getLayers().get("Spawn"));
     }
+
     /**
      * Get all flag positions in layer flag layer
      */
@@ -610,6 +728,7 @@ public class GameScreen extends ScreenAdapter {
         }
         flagPositions.addAll(flags);
     }
+
     private void getStartPositions(TiledMapTileLayer startLayer) {
         for (int i = 0; i <= startLayer.getWidth(); i++){
             for (int j = 0; j <= startLayer.getHeight(); j++){
@@ -713,6 +832,7 @@ public class GameScreen extends ScreenAdapter {
         if (beltCell.getTile().getId() == 77) map.beltLayer[i][j] = new Map.BeltInformation(PlayerToken.Direction.NORTH, true, 1, PlayerToken.Direction.WEST);
         if (beltCell.getTile().getId() == 34) map.beltLayer[i][j] = new Map.BeltInformation(PlayerToken.Direction.WEST, false, -1, PlayerToken.Direction.SOUTH);
     }
+
     /**
      * These functions are not currently in use, but inherited from superclass
      */

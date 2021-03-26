@@ -3,11 +3,11 @@ package inf112.skeleton.app.network;
 import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
 import com.esotericsoftware.kryonet.Server;
-import inf112.skeleton.app.game.GameClient;
 import inf112.skeleton.app.game.GameHost;
 import inf112.skeleton.app.game.objects.Card;
 import inf112.skeleton.app.game.objects.PlayerToken;
 import inf112.skeleton.app.libgdx.NetworkDataWrapper;
+import inf112.skeleton.app.ui.chat.backend.Message;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -52,6 +52,9 @@ public class NetworkHost extends Network {
                     token.name = (String) object;
                     token = host.initializePlayerPos(token);
                     host.clientPlayers.put(c.getID(), token);
+                }
+                if (object instanceof Message){
+                    sendMessageToAll((Message) object);
                 }
             }
         });
@@ -121,4 +124,8 @@ public class NetworkHost extends Network {
         }
     }
 
+    public void sendMessageToAll(Message m){
+        messagesRecived.add(m);
+        server.sendToAllTCP(m);
+    }
 }

@@ -2,13 +2,19 @@ package inf112.skeleton.app.network;
 
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryonet.EndPoint;
+import inf112.skeleton.app.ui.chat.backend.Message;
 
 import javax.swing.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 public abstract class Network {
 
     public Boolean isHost;
+
+    // Messages recieved
+    public List<Message> messagesRecived = new ArrayList<>();
 
     /**
      * Prompts the user to choose server or client

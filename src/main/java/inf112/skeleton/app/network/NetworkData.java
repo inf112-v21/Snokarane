@@ -7,6 +7,10 @@ import inf112.skeleton.app.game.objects.Flag;
 import inf112.skeleton.app.game.objects.PlayerToken;
 import inf112.skeleton.app.libgdx.Map;
 import inf112.skeleton.app.libgdx.NetworkDataWrapper;
+import inf112.skeleton.app.ui.chat.managers.ChatClient;
+import inf112.skeleton.app.ui.chat.backend.ChatterData;
+import inf112.skeleton.app.ui.chat.managers.IChatter;
+import inf112.skeleton.app.ui.chat.backend.Message;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,6 +38,8 @@ public class NetworkData {
         classesToRegister.add(int[][].class);
         classesToRegister.add(int[].class);
         classesToRegister.add(int.class);
+        classesToRegister.add(Message.class);
+        classesToRegister.add(ChatterData.class);
 
         return classesToRegister;
     }
