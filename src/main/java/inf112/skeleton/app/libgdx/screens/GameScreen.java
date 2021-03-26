@@ -207,14 +207,15 @@ public class GameScreen extends ScreenAdapter {
             public boolean keyDown(InputEvent event, int keycode) {
                 if (keycode == Input.Keys.ENTER){
 
-                    // If chat is a command
-                    if (inputBox.getText().substring(0, 2).equals("/c") && inputBox.getText().length()>2){
-                        CommandParser p = new CommandParser();
-                        String commandContent = inputBox.getText().substring(3);
-                        System.out.println("Chat command entered: " + commandContent);
+                    if (inputBox.getText().length()>2){
+                        // If chat is a command
+                        if (inputBox.getText().substring(0, 2).equals("/c")){
+                            CommandParser p = new CommandParser();
+                            String commandContent = inputBox.getText().substring(3);
+                            System.out.println("Chat command entered: " + commandContent);
 
-                        // Get what command was input by user
-                        CommandParser.Command command = p.parseCommand(p.getCmd(commandContent));
+                            // Get what command was input by user
+                            CommandParser.Command command = p.parseCommand(p.getCmd(commandContent));
 
                             // Perform command
                             switch (command){
@@ -253,14 +254,16 @@ public class GameScreen extends ScreenAdapter {
                                     break;
                                 default:
                                     break;
+                            }
+                            // Send list of commands available if /h
+                        }else if (inputBox.getText().substring(0, 2).equals("/h")){
+                            chat.sendMessage("Commands:");
+                            chat.sendMessage("/c set-name <name>");
+                            chat.sendMessage("/c chat-color <r, g, b, black>");
+                            chat.sendMessage("/c font-scale <font scale>");
                         }
-                        // Send list of commands available if /h
-                    }else if (inputBox.getText().substring(0, 2).equals("/h")){
-                        chat.sendMessage("Commands:");
-                        chat.sendMessage("/c set-name <name>");
-                        chat.sendMessage("/c chat-color <r, g, b, black>");
-                        chat.sendMessage("/c font-scale <font scale>");
                     }
+
                     // Send message
                     else {
                         chat.sendMessage(inputBox.getText());
