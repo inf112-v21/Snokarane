@@ -2,7 +2,7 @@
 
 ### Prosjektroller
 
-Vi har ikkje gjort nokre store endringar i rollefordelinga då vi tykkjer oppsettet vårt har fungert bra. Alle har fortsatt i same spor sidan forrige innlevering med Hallvard som prosjektleiar, Audun som kommunikasjonsansvarleg, Peter som teknisk lead og Jørgen som UX/kvalitetskontrollør.
+Vi har ikkje gjort nokre store endringar i rollefordelinga då vi tykkjer oppsettet vårt har fungert bra. Alle har fortsatt i same spor sidan forrige innlevering med Hallvard som prosjektleiar, Audun som kommunikasjonsansvarleg, Peter som teknisk lead og Jørgen som UX/kvalitetskontrollør. Jørgen har i denne økta satt seg meir inn i rammeverket i libgdx og dermed fått ein høgare forståing.
 
 ### Prosjektmetodikk
 
