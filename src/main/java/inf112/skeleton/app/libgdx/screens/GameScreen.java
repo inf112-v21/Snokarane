@@ -9,6 +9,7 @@ import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.tiles.StaticTiledMapTile;
 import com.badlogic.gdx.math.GridPoint2;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -183,6 +184,9 @@ public class GameScreen extends ScreenAdapter {
 
         chat.initializeChat(game, 0.85f, chatColor, "", sideMenuWidth, Gdx.graphics.getHeight()-subMenuHeight,  Gdx.graphics.getWidth()-sideMenuWidth, subMenuHeight);
         chat.setName(playerName);
+        Table emptyChat = chat.getChatAsTable();
+        emptyChat.setName("chat");
+        stage.addActor(emptyChat);
         updateChat();
     }
 
@@ -190,91 +194,137 @@ public class GameScreen extends ScreenAdapter {
      * Get new messages that have been received from the network, get formatted table and add input box with listener.
      */
     private void updateChat(){
+        /*
+            get stage chat table, clear everything in it, and add new chat from network to table
+         */
+        // Something like this...
+        // stage.getActors().name.equals("chat") = localChat;
+
+        /*
+        PLAN:
+        get new network chat
+        generate chat table from network chat
+        loop through actors in stage, replace new chat table if name is correct
+         */
+
+
+        // Get chat table from network
         chat.updateChat(network.messagesRecived);
-        Table chatTable = chat.getChatAsTable();
 
-        Color inputBoxColor = new Color(1f, 1f, 1f, 1);
-
-        TextField inputBox = new TextField("", game.skin);
-        inputBox.setColor(inputBoxColor);
-        inputBox.addListener(new InputListener(){
-            @Override
-            public boolean keyDown(InputEvent event, int keycode) {
-                if (keycode == Input.Keys.ENTER){
-                    boolean isCommand = false;
-                    if (inputBox.getText().length()>2){
-                        // If chat is a command
-                        if (inputBox.getText().substring(0, 2).equals("/c")){
-                            isCommand = true;
-                            CommandParser p = new CommandParser();
-                            String commandContent = inputBox.getText().substring(3);
-                            System.out.println("Chat command entered: " + commandContent);
-
-                            // Get what command was input by user
-                            CommandParser.Command command = p.parseCommand(p.getCmd(commandContent));
-
-                            // Perform command
-                            switch (command){
-                                case SETNAME:
-                                    chat.setName(p.getArgs(commandContent));
-                                    break;
-                                case SETCOLOR:
-                                    switch (p.getArgs(commandContent)) {
-                                        case "r":
-                                            Color red = new Color(1, 0, 0, 1);
-                                            chat.chat.setChatColour(red);
-                                            break;
-                                        case "g":
-                                            Color green = new Color(0, 1, 0, 1);
-                                            chat.chat.setChatColour(green);
-                                            break;
-                                        case "b":
-                                            Color blue = new Color(0, 0, 1, 1);
-                                            chat.chat.setChatColour(blue);
-                                            break;
-                                        case "black":
-                                            Color black = new Color(1, 1, 1, 1);
-                                            chat.chat.setChatColour(black);
-                                            break;
-                                        default:
-                                            System.out.println("Invalid colour.");
-                                            break;
-                                    }
-                                    break;
-                                case SETFONTSTCALE:
-                                    float scale = Float.parseFloat(p.getArgs(commandContent));
-                                    chat.chat.setChatFontSize(scale);
-                                    break;
-                                case INVALID:
-                                    chat.sendMessage("Entered invalid command.");
-                                    break;
-                                default:
-                                    break;
-                            }
-                            // Send list of commands available if /h
-                        }else if (inputBox.getText().substring(0, 2).equals("/h")){
-                            isCommand = true;
-                            chat.sendMessage("Commands:");
-                            chat.sendMessage("/c set-name <name>");
-                            chat.sendMessage("/c chat-color <r, g, b, black>");
-                            chat.sendMessage("/c font-scale <font scale>");
-                        }
-                    }
-
-                    // Send message
-                    if (!isCommand){
-                        chat.sendMessage(inputBox.getText());
-                    }
-                    updateChat();
+        // Get index of table on stage
+        int index = 0;
+        // Update stage chat
+        for (int i = 0; i<stage.getActors().size; i++){
+            if (stage.getActors().get(i) != null){
+                if (stage.getActors().get(i).getName().equals("chat")){
+                    index = i;
+                    break;
                 }
-                return true;
             }
-        });
+        }
 
-        chatTable.add(inputBox).left().width(355).height(30).padTop(20f);
-        chatTable.row();
+        Table updatedChat = chat.getChatAsTable();
+        updatedChat.setName("chat");
+        // Update stage value chat
+        stage.getActors().set(index, updatedChat);
+    }
 
-        stage.addActor(chatTable);
+    /**
+     * Load chat input box with commands and message events
+     */
+    private void loadChatInputBox(){
+        boolean alreadyInitialized = false;
+        String chatInputName = "chat-input";
+        for (Actor a : stage.getActors()){
+            if (a.getName().equals(chatInputName)){
+                alreadyInitialized = true;
+            }
+        }
+
+        if (!alreadyInitialized){
+            Color inputBoxColor = new Color(1f, 1f, 1f, 1);
+            TextField inputBox = new TextField("", game.skin);
+            inputBox.setColor(inputBoxColor);
+            inputBox.addListener(new InputListener(){
+                @Override
+                public boolean keyDown(InputEvent event, int keycode) {
+                    if (keycode == Input.Keys.ENTER){
+                        boolean isCommand = false;
+                        if (inputBox.getText().length()>2){
+                            // If chat is a command
+                            if (inputBox.getText().substring(0, 2).equals("/c")){
+                                isCommand = true;
+                                CommandParser p = new CommandParser();
+                                String commandContent = inputBox.getText().substring(3);
+                                System.out.println("Chat command entered: " + commandContent);
+
+                                // Get what command was input by user
+                                CommandParser.Command command = p.parseCommand(p.getCmd(commandContent));
+
+                                // Perform command
+                                switch (command){
+                                    case SETNAME:
+                                        chat.setName(p.getArgs(commandContent));
+                                        break;
+                                    case SETCOLOR:
+                                        switch (p.getArgs(commandContent)) {
+                                            case "r":
+                                                Color red = new Color(1, 0, 0, 1);
+                                                chat.chat.setChatColour(red);
+                                                break;
+                                            case "g":
+                                                Color green = new Color(0, 1, 0, 1);
+                                                chat.chat.setChatColour(green);
+                                                break;
+                                            case "b":
+                                                Color blue = new Color(0, 0, 1, 1);
+                                                chat.chat.setChatColour(blue);
+                                                break;
+                                            case "black":
+                                                Color black = new Color(1, 1, 1, 1);
+                                                chat.chat.setChatColour(black);
+                                                break;
+                                            default:
+                                                System.out.println("Invalid colour.");
+                                                break;
+                                        }
+                                        break;
+                                    case SETFONTSTCALE:
+                                        float scale = Float.parseFloat(p.getArgs(commandContent));
+                                        chat.chat.setChatFontSize(scale);
+                                        break;
+                                    case INVALID:
+                                        chat.sendMessage("Entered invalid command.");
+                                        break;
+                                    default:
+                                        break;
+                                }
+                                // Send list of commands available if /h
+                            }else if (inputBox.getText().substring(0, 2).equals("/h")){
+                                isCommand = true;
+                                chat.sendMessage("Commands:");
+                                chat.sendMessage("/c set-name <name>");
+                                chat.sendMessage("/c chat-color <r, g, b, black>");
+                                chat.sendMessage("/c font-scale <font scale>");
+                            }
+                        }
+
+                        // Send message
+                        if (!isCommand){
+                            chat.sendMessage(inputBox.getText());
+                        }
+                        inputBox.setText("");
+                        updateChat();
+                    }
+                    return true;
+                }
+            });
+            // TODO place inputbox at correct position
+            inputBox.setX(Gdx.graphics.getWidth()-inputBox.getWidth());
+            inputBox.setY(200);
+            inputBox.setName(chatInputName);
+            stage.addActor(inputBox);
+        }
     }
 
     /**
@@ -370,7 +420,8 @@ public class GameScreen extends ScreenAdapter {
             }
         }
         // Add all images to stage
-        displayDeck.forEach( (i) -> { stage.addActor(i); } );
+        displayDeck.forEach( (c) -> {c.setName("");});
+        displayDeck.forEach(stage::addActor);
     }
 
     /*
@@ -437,6 +488,7 @@ public class GameScreen extends ScreenAdapter {
                 return true;
             }
         });
+        backButton.setName("back-button");
         stage.addActor(backButton);
     }
 
@@ -471,7 +523,7 @@ public class GameScreen extends ScreenAdapter {
                     if (network.isHost) {
                         if (((GameHost) gamePlayer).allCardsReady()) {
                             System.out.println("Cards are being sent to processing. Stage size before deck clear: " + stage.getActors().size);
-                            stage.clear();
+                            clearNonInteractiveStageElements();
                             for (Card c : gamePlayer.hand){
                                 for (Card d : gamePlayer.chosenCards){
                                     if (c.getCardType() == d.getCardType() && c.picked){
@@ -490,7 +542,7 @@ public class GameScreen extends ScreenAdapter {
                         }
                     } else {
                         System.out.println("Cards are being sent to processing. Stage size before deck clear: " + stage.getActors().size);
-                        stage.clear();
+                        clearNonInteractiveStageElements();
                         for (Card c : gamePlayer.hand){
                             for (Card d : gamePlayer.chosenCards){
                                 if (c.getCardType() == d.getCardType() && c.picked){
@@ -510,6 +562,7 @@ public class GameScreen extends ScreenAdapter {
             }
         });
 
+        sendCardsButton.setName("send-cards-button");
         stage.addActor(sendCardsButton);
     }
 
@@ -550,6 +603,7 @@ public class GameScreen extends ScreenAdapter {
             tableList.add(l);
             tableList.row();
         }
+        tableList.setName("player-list");
         stage.addActor(tableList);
     }
 
@@ -562,6 +616,7 @@ public class GameScreen extends ScreenAdapter {
         Image cardBackground = new Image(cardBackgroundTexture);
         cardBackground.setPosition(0, 0);
         cardBackground.setSize(Gdx.graphics.getWidth()-375, 200);
+        cardBackground.setName("card-background");
         stage.addActor(cardBackground);
 
         // Simple colour texture behind buttons
@@ -569,6 +624,7 @@ public class GameScreen extends ScreenAdapter {
         Image buttonBackground = new Image(buttonBackgroundTexture);
         buttonBackground.setPosition(Gdx.graphics.getWidth()-375, 0);
         buttonBackground.setSize(375, 200);
+        buttonBackground.setName("button-background");
         stage.addActor(buttonBackground);
     }
 
@@ -582,6 +638,7 @@ public class GameScreen extends ScreenAdapter {
         loadSendCardsButton();
         loadCardDeck();
         loadPlayerList();
+        loadChatInputBox();
         updateChat();
     }
 
@@ -624,21 +681,38 @@ public class GameScreen extends ScreenAdapter {
     }
 
     /**
+     * Clears all stage elements that are not interactive
+     * When the stage clears, the chat input box clears, and the text you write disappears if you haven't sent t yet
+     * Does not clear things like chat input box, as stage clears happens without user interaction and clearing the message all the time would be annoying
+     */
+    private void clearNonInteractiveStageElements(){
+        List<String> itemsNotToClear = new ArrayList<>();
+        itemsNotToClear.add("chat-input");
+
+        stage.getActors().forEach( (a) -> {
+                    for (String s : itemsNotToClear){
+                        if (!a.getName().equals(s)){
+                            a.clear();
+                        }
+                    }
+                }
+        );
+    }
+
+    /**
      * Poll updates from the network client that needs to be updated to local session in real time
      */
     private void pollUiUpdates(){
         // force chat to update when receiving new messages in network
         if (networkChatBacklogSize < network.messagesRecived.size()){
-            stage.clear();
+            clearNonInteractiveStageElements();
             loadActorsInOrder();
             networkChatBacklogSize = network.messagesRecived.size();
         }
 
         // Force cards to update when new cards have been received
         if(gamePlayer.newCardsDelivered){
-            stage.clear();
-
-            System.out.println("Stage size after clearing hand: " + stage.getActors().size);
+            clearNonInteractiveStageElements();
 
             loadActorsInOrder();
 
@@ -652,8 +726,6 @@ public class GameScreen extends ScreenAdapter {
             } catch (Exception e) {
                 System.out.println("Not able to remove null value from getActors, exception " + e);
             }
-
-            System.out.println("Stage size after loading new hand: " + stage.getActors().size);
             gamePlayer.newCardsDelivered = false;
         }
     }
