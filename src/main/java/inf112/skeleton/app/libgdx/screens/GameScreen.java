@@ -69,6 +69,8 @@ public class GameScreen extends ScreenAdapter {
     private final HashMap<CardType, TextureRegion> cardTemplates = new HashMap<>();
     // Duplicate card types currently in deck (for use in rendering)
     private final HashMap<CardType, Integer> duplicates = new HashMap<>();
+    // Maps card types to priority
+    private final List<HashMap<CardType, Integer>> cardPriorityMap = new ArrayList<>();
 
     /**
      * Client objects
@@ -86,15 +88,6 @@ public class GameScreen extends ScreenAdapter {
         this.game = game;
         stage = new Stage(new ScreenViewport());
 
-        // Backwards capability for Game->GameScreen merge,
-        // enables key press detection for testing other parts of game while cards haven't been implemented yet
-        stage.addListener(new InputListener() {
-            @Override
-            public boolean keyUp(InputEvent event, int keycode) {
-                GameScreen.this.keyUp(keycode);
-                return true;
-            }
-        });
         loadCardBackground();
         create(isHost, ip, playerName);
     }
@@ -300,7 +293,11 @@ public class GameScreen extends ScreenAdapter {
                                         break;
                                 }
                                 // Send list of commands available if /h
-                            }else if (inputBox.getText().substring(0, 2).equals("/h")){
+                            }
+
+                        }
+                        if (inputBox.getText().length()>1){
+                            if (inputBox.getText().substring(0, 2).equals("/h")){
                                 isCommand = true;
                                 chat.sendMessage("Commands:");
                                 chat.sendMessage("/c set-name <name>");
@@ -325,6 +322,55 @@ public class GameScreen extends ScreenAdapter {
             inputBox.setName(chatInputName);
             stage.addActor(inputBox);
         }
+    }
+
+    /*
+     * Helper for card image loading with touchup event
+     */
+    public Image generateClickableCard(CardType cardType, TextureRegion t){
+        int cardW = 100;
+        int cardH = 135;
+
+        Image img = new Image(t);
+        img.setSize(cardW, cardH);
+
+        for (Card c : gamePlayer.hand){
+            if (c.picked){
+                img.setColor(0.5f, 0.7f, 0.5f, 0.5f);
+            }
+        }
+
+        img.addListener(new ClickListener(){
+            // Assign event handler to handle card choice on click
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                if (gamePlayer.state == GamePlayer.PLAYERSTATE.PICKING_CARDS && gamePlayer.chosenCards.size()<5){
+                    Card c = new Card();
+                    c.setCardType(cardType);
+                    System.out.println("Clicked card with move " + cardType);
+
+                    /*
+                    // intellij complaining about get before ispresent check is incorrect
+                    gamePlayer.chooseCards(gamePlayer.hand.indexOf(gamePlayer.hand.stream().anyMatch(card -> (card.getCardType() == cardType)) ? gamePlayer.hand.stream().filter(card -> (card.getCardType() == cardType)).findFirst().get() : new Card()));
+                    */
+                    gamePlayer.chooseCards(
+                            gamePlayer.hand.indexOf(
+                                    gamePlayer.hand.stream().anyMatch(
+                                            card -> (card.getCardType() == cardType))
+                                            ? gamePlayer.hand.stream().filter(card -> (card.getCardType() == cardType)).findFirst().get()
+                                            : new Card()));
+                    c.picked = true;
+                    gamePlayer.chosenCards.add(c);
+
+                    // Give some green feedback on click
+                    img.setColor(0.5f, 0.7f, 0.5f, 0.5f);
+
+                    // Clear listener so it can't be clicked again
+                    img.getListeners().clear();
+                }
+            }
+        });
+        return img;
     }
 
     /**
@@ -401,76 +447,26 @@ public class GameScreen extends ScreenAdapter {
 
         getDuplicateCardsInHand();
 
+        game.batch.begin();
+        game.font.setColor(0.5f, 0.5f, 1, 1);
+        game.font.getData().setScale(2);
+        List<Card> cardsToDisplay = gamePlayer.hand;
+        cardsToDisplay.sort(new Card.cardComparator());
         List<Image> displayDeck = new ArrayList<>();
 
-        for (CardType t : duplicates.keySet()) {
-            int duplicatesCount = duplicates.get(t);
-
-            // Place every duplicate image next to each other with perCardIncrementX increments in distance
-            for (int i = 0; i<duplicatesCount; i++){
-                if (cardTemplates.get(t) != null){
-                    Image img = generateClickableCard(t, cardTemplates.get(t));
-
-                    img.setPosition(baseX, baseY);
-                    displayDeck.add(img);
-                    baseX += perCardIncrementX;
-                }else {
-                    System.out.println("Could not find type from template. " + " type: " +  t.toString());
-                }
-            }
+        for (Card c : cardsToDisplay){
+            Image img = generateClickableCard(c.getCardType(), cardTemplates.get(c.getCardType()));
+            img.setPosition(baseX, baseY);
+            displayDeck.add(img);
+            String prioText = "Priority: " + c.getPriority();
+            game.font.draw(game.batch, prioText, (float)baseX, (float)baseY-20);
+            baseX += perCardIncrementX;
         }
+        game.font.draw(game.batch, "WEEE", 0, 0);
+        game.batch.end();
         // Add all images to stage
         displayDeck.forEach( (c) -> {c.setName("");});
         displayDeck.forEach(stage::addActor);
-    }
-
-    /*
-     * Helper for card image loading with touchup event
-     */
-    public Image generateClickableCard(CardType cardType, TextureRegion t){
-        int cardW = 100;
-        int cardH = 135;
-
-        Image img = new Image(t);
-        img.setSize(cardW, cardH);
-
-        for (Card c : gamePlayer.hand){
-            if (c.picked){
-                img.setColor(0.5f, 0.7f, 0.5f, 0.5f);
-            }
-        }
-
-        img.addListener(new ClickListener(){
-            // Assign event handler to handle card choice on click
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                if (gamePlayer.state == GamePlayer.PLAYERSTATE.PICKING_CARDS && gamePlayer.chosenCards.size()<5){
-                    Card c = new Card();
-                    c.setCardType(cardType);
-                    System.out.println("Clicked card with move " + cardType);
-
-                    /*
-                    // intellij complaining about get before ispresent check is incorrect
-                    gamePlayer.chooseCards(gamePlayer.hand.indexOf(gamePlayer.hand.stream().anyMatch(card -> (card.getCardType() == cardType)) ? gamePlayer.hand.stream().filter(card -> (card.getCardType() == cardType)).findFirst().get() : new Card()));
-                    */
-                    gamePlayer.chooseCards(
-                            gamePlayer.hand.indexOf(
-                                    gamePlayer.hand.stream().anyMatch(
-                                            card -> (card.getCardType() == cardType))
-                                            ? gamePlayer.hand.stream().filter(card -> (card.getCardType() == cardType)).findFirst().get()
-                                            : new Card()));
-                    c.picked = true;
-                    gamePlayer.chosenCards.add(c);
-
-                    // Give some green feedback on click
-                    img.setColor(0.5f, 0.7f, 0.5f, 0.5f);
-
-                    // Clear listener so it can't be clicked again
-                    img.getListeners().clear();
-                }
-            }
-        });
-        return img;
     }
 
     /**
@@ -640,19 +636,6 @@ public class GameScreen extends ScreenAdapter {
         loadPlayerList();
         loadChatInputBox();
         updateChat();
-    }
-
-    /**
-     * This function is called by libgdx when a key is released.
-     * TODO rework me
-     *
-     * @return true if keyrelease was handled (per libgdx)
-     */
-    public boolean keyUp(int keyCode) {
-        if (gamePlayer.state == GamePlayer.PLAYERSTATE.PICKING_CARDS) {
-            return keyCode >= Input.Keys.NUM_1 && keyCode <= Input.Keys.NUM_9;
-        }
-        return false;
     }
 
     /**
