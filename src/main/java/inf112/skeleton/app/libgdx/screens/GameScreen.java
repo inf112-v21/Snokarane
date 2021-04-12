@@ -42,19 +42,24 @@ public class GameScreen extends ScreenAdapter {
     private final RoboGame game;
     private final Stage stage;
 
+
+    //--------- ------------------ ------------------ ------------------ ---------
+    //--------- ------------------  Internal map vars ------------------ ---------
+    //--------- ------------------ ------------------ ------------------ ---------
     Map map = new Map();
-
-    // Layers of the map
-    private TiledMapTileLayer playerLayer;
-
     // Flags on the map are stored here for easy access
     // TODO: this should really only useful in GameHost
     public List<Flag> flagPositions = new ArrayList<>();
 
+
+    //--------- ------------------ ------------------ ------------------ ---------
+    //--------- ------------------  Tiled map info    ------------------ ---------
+    //--------- ------------------ ------------------ ------------------ ---------
+    // Layers of the map
+    private TiledMapTileLayer playerLayer;
     // Cells for each player state
     private TiledMapTileLayer.Cell playerNormal;
     private TiledMapTileLayer.Cell playerWon;
-
     private TiledMapTileLayer.Cell singleHorizontal;
     private TiledMapTileLayer.Cell singleBoth;
     private TiledMapTileLayer.Cell singleVertical;
@@ -62,6 +67,10 @@ public class GameScreen extends ScreenAdapter {
     private TiledMapTileLayer.Cell doubleVertical;
     private TiledMapTileLayer.Cell doubleHorizontal;
 
+
+    //--------- ------------------ ------------------ ------------------ ---------
+    //--------- ------------------   Card helpers     ------------------ ---------
+    //--------- ------------------ ------------------ ------------------ ---------
     /*
      * In order, index 0 to max is:
      * move 1, move 2, move 3, rotate left, rotate right, backup, uturn
@@ -72,9 +81,11 @@ public class GameScreen extends ScreenAdapter {
     // Maps card types to priority
     private final List<HashMap<CardType, Integer>> cardPriorityMap = new ArrayList<>();
 
-    /**
-     * Client objects
-     */
+
+
+    //--------- ------------------ ------------------ ------------------ ---------
+    //--------- ------------------Client-host helpers ------------------ ---------
+    //--------- ------------------ ------------------ ------------------ ---------
     // Handles all player based actions (picking cards, decks to send over network etc.)
     GamePlayer gamePlayer;
     // Handles all data transfers over internet
@@ -92,11 +103,20 @@ public class GameScreen extends ScreenAdapter {
         create(isHost, ip, playerName);
     }
 
+
+
+
+
+    /*
+    --------- ------------------ ------------------ ------------------ ---------
+    --------- ------------------ Class setup methods--------- ------------------
+    --------- ------------------ ------------------ ------------------ ---------
+     */
     /**
      * Initialize objects depending on host status
      * These methods are needed to start a game session to other players over network
+     * Function called regardless of host or player status, initializes network and asks for host/client role selection
      */
-    // Function called regardless of host or player status, initializes network and asks for host/client role selection
     public void startGame(boolean isHost, String ip, String playerName) {
         map.flagList = flagPositions;
 
@@ -111,8 +131,10 @@ public class GameScreen extends ScreenAdapter {
             startClient(ip, playerName);
 
     }
-
-    // Start game as host
+    /**
+     * Start game as host
+     * @param playerName player name ID to identify player in game
+     */
     private void startHost(String playerName) {
 
         // Starts GameHost session using network that was initialized
@@ -127,8 +149,11 @@ public class GameScreen extends ScreenAdapter {
         ((GameHost) gamePlayer).initializeHostPlayerToken(playerName);
         gamePlayer.drawCards();
     }
-
-    // Start game as client
+    /**
+     *
+     * @param ip IP to connect to
+     * @param playerName player name ID to identify player in game
+     */
     private void startClient(String ip, String playerName) {
         if (((NetworkClient) network).connectToServer(ip)) {
             gamePlayer = new GameClient((NetworkClient) network, playerName);
@@ -138,7 +163,6 @@ public class GameScreen extends ScreenAdapter {
             System.exit(0);
         }
     }
-
     /**
      * Initialize all libgdx objects:
      * Batch, font, input processor, textures, map layers, camera and renderer,
@@ -166,8 +190,10 @@ public class GameScreen extends ScreenAdapter {
         // load list of players on map
         loadPlayerList();
     }
-
-    // Starts chat depending on client or host
+    /**
+     * Starts chat depending on client or host
+     * @param playerName player name used in chat, prepends every message with name
+     */
     private void initializeChatObjects(String playerName){
         chat = network.isHost ? new ChatManager((NetworkHost)network) : new ChatClient((NetworkClient)network);
         Color chatColor = new Color(1f, 1f, 1f, 1);
@@ -182,149 +208,108 @@ public class GameScreen extends ScreenAdapter {
         stage.addActor(emptyChat);
         updateChat();
     }
-
     /**
-     * Get new messages that have been received from the network, get formatted table and add input box with listener.
+     * Load all map layers into their own member variable
      */
-    private void updateChat(){
-        /*
-            get stage chat table, clear everything in it, and add new chat from network to table
-         */
-        // Something like this...
-        // stage.getActors().name.equals("chat") = localChat;
+    public void loadMapLayers(TiledMap tiledMap){
+        // Separate each layer from the tiledMap
+        playerLayer = (TiledMapTileLayer) tiledMap.getLayers().get("Player");
+        TiledMapTileLayer flagLayer = (TiledMapTileLayer) tiledMap.getLayers().get("Flag");
 
-        /*
-        PLAN:
-        get new network chat
-        generate chat table from network chat
-        loop through actors in stage, replace new chat table if name is correct
-         */
+        // Sneakily yoink the positions of the flags here, don't tell the OOP police
+        getFlagPositionsFromLayer(flagLayer);
+        getBoardElementPositionsFromLayer(tiledMap);
+        getStartPositions((TiledMapTileLayer) tiledMap.getLayers().get("Spawn"));
+    }
+    /**
+     * Get all flag positions in layer flag layer
+     */
+    private void getFlagPositionsFromLayer(TiledMapTileLayer flagLayer){
+        List<Flag> flags = new ArrayList<>();
 
-
-        // Get chat table from network
-        chat.updateChat(network.messagesRecived);
-
-        // Get index of table on stage
-        int index = 0;
-        // Update stage chat
-        for (int i = 0; i<stage.getActors().size; i++){
-            if (stage.getActors().get(i) != null){
-                if (stage.getActors().get(i).getName().equals("chat")){
-                    index = i;
-                    break;
+        for (int i = 0; i <= flagLayer.getWidth(); i++){
+            for (int j = 0; j <= flagLayer.getHeight(); j++){
+                // getCell returns null if nothing is found in the current cell in this layer
+                if (flagLayer.getCell(i, j) != null){
+                    flags.add(new Flag(i, j));
                 }
             }
         }
-
-        Table updatedChat = chat.getChatAsTable();
-        updatedChat.setName("chat");
-        // Update stage value chat
-        stage.getActors().set(index, updatedChat);
+        flagPositions.addAll(flags);
     }
 
-    /**
-     * Load chat input box with commands and message events
-     */
-    private void loadChatInputBox(){
-        boolean alreadyInitialized = false;
-        String chatInputName = "chat-input";
-        for (Actor a : stage.getActors()){
-            if (a.getName().equals(chatInputName)){
-                alreadyInitialized = true;
-            }
-        }
 
-        if (!alreadyInitialized){
-            Color inputBoxColor = new Color(1f, 1f, 1f, 1);
-            TextField inputBox = new TextField("", game.skin);
-            inputBox.setColor(inputBoxColor);
-            inputBox.addListener(new InputListener(){
-                @Override
-                public boolean keyDown(InputEvent event, int keycode) {
-                    if (keycode == Input.Keys.ENTER){
-                        boolean isCommand = false;
-                        if (inputBox.getText().length()>2){
-                            // If chat is a command
-                            if (inputBox.getText().substring(0, 2).equals("/c")){
-                                isCommand = true;
-                                CommandParser p = new CommandParser();
-                                String commandContent = inputBox.getText().substring(3);
-                                System.out.println("Chat command entered: " + commandContent);
 
-                                // Get what command was input by user
-                                CommandParser.Command command = p.parseCommand(p.getCmd(commandContent));
 
-                                // Perform command
-                                switch (command){
-                                    case SETNAME:
-                                        chat.setName(p.getArgs(commandContent));
-                                        break;
-                                    case SETCOLOR:
-                                        switch (p.getArgs(commandContent)) {
-                                            case "r":
-                                                Color red = new Color(1, 0, 0, 1);
-                                                chat.chat.setChatColour(red);
-                                                break;
-                                            case "g":
-                                                Color green = new Color(0, 1, 0, 1);
-                                                chat.chat.setChatColour(green);
-                                                break;
-                                            case "b":
-                                                Color blue = new Color(0, 0, 1, 1);
-                                                chat.chat.setChatColour(blue);
-                                                break;
-                                            case "black":
-                                                Color black = new Color(1, 1, 1, 1);
-                                                chat.chat.setChatColour(black);
-                                                break;
-                                            default:
-                                                System.out.println("Invalid colour.");
-                                                break;
-                                        }
-                                        break;
-                                    case SETFONTSTCALE:
-                                        float scale = Float.parseFloat(p.getArgs(commandContent));
-                                        chat.chat.setChatFontSize(scale);
-                                        break;
-                                    case INVALID:
-                                        chat.sendMessage("Entered invalid command.");
-                                        break;
-                                    default:
-                                        break;
-                                }
-                                // Send list of commands available if /h
-                            }
 
-                        }
-                        if (inputBox.getText().length()>1){
-                            if (inputBox.getText().substring(0, 2).equals("/h")){
-                                isCommand = true;
-                                chat.sendMessage("Commands:");
-                                chat.sendMessage("/c set-name <name>");
-                                chat.sendMessage("/c chat-color <r, g, b, black>");
-                                chat.sendMessage("/c font-scale <font scale>");
-                            }
-                        }
-
-                        // Send message
-                        if (!isCommand){
-                            chat.sendMessage(inputBox.getText());
-                        }
-                        inputBox.setText("");
-                        updateChat();
-                    }
-                    return true;
-                }
-            });
-            // TODO place inputbox at correct position
-            inputBox.setX(Gdx.graphics.getWidth()-inputBox.getWidth());
-            inputBox.setY(200);
-            inputBox.setName(chatInputName);
-            stage.addActor(inputBox);
-        }
-    }
 
     /*
+    --------- ------------------ ------------------ ------------------ ---------
+    --------- ------------------   Texture handling --------- ------------------
+    --------- ------------------ ------------------ ------------------ ---------
+    */
+    /**
+     * Load player texture and split into each player state
+     */
+    public void loadTextures() {
+        // Load the entire player texture
+        //Color playerColor = Color.RED;
+
+        //load playercolor from file if possible
+        PlayerConfig config = CharacterCustomizer.loadCharacterConfigFromFile();
+        Color playerColor = config.getMainColor();
+        String playerImage = config.getImage();
+
+        Texture rawPlayerTexture = CharacterCustomizer.generatePlayerTexture(playerImage, playerColor);
+
+        // Split player texture into seperate regions
+        TextureRegion roboPlayerSplitTexture = new TextureRegion(rawPlayerTexture,300, 300);
+
+        // Put the texture region into seperate tiles
+        StaticTiledMapTile playerStaticTile = new StaticTiledMapTile(roboPlayerSplitTexture);
+
+        // Set player state cells to corresponding tiles
+        playerNormal = new TiledMapTileLayer.Cell().setTile(playerStaticTile);
+        playerWon = new TiledMapTileLayer.Cell().setTile(playerStaticTile);
+
+        Texture rawLaserTexture = new Texture("tiles.png");
+
+        // Split player texture into seperate regions
+        TextureRegion[][] splitLaserTextures = TextureRegion.split(rawLaserTexture, 300, 300);
+
+        StaticTiledMapTile singleHorizontal = new StaticTiledMapTile(splitLaserTextures[4][6]);
+        StaticTiledMapTile singleBoth = new StaticTiledMapTile(splitLaserTextures[4][7]);
+        StaticTiledMapTile singleVertical = new StaticTiledMapTile(splitLaserTextures[5][6]);
+        StaticTiledMapTile doubleBoth = new StaticTiledMapTile(splitLaserTextures[12][4]);
+        StaticTiledMapTile doubleVertical = new StaticTiledMapTile(splitLaserTextures[12][5]);
+        StaticTiledMapTile doubleHorizontal = new StaticTiledMapTile(splitLaserTextures[12][6]);
+
+        this.singleHorizontal = new TiledMapTileLayer.Cell().setTile(singleHorizontal);
+        this.singleBoth = new TiledMapTileLayer.Cell().setTile(singleBoth);
+        this.singleVertical = new TiledMapTileLayer.Cell().setTile(singleVertical);
+        this.doubleBoth = new TiledMapTileLayer.Cell().setTile(doubleBoth);
+        this.doubleVertical = new TiledMapTileLayer.Cell().setTile(doubleVertical);
+        this.doubleHorizontal = new TiledMapTileLayer.Cell().setTile(doubleHorizontal);
+    }
+    /**
+     * Loads card images and adds event listeners.
+     * --> Event listener only adds a card of the type pressed into gamePlayer's chosenCards
+     * Adds cards into hashmap with corresponding card type
+     */
+    private void loadCardTextures() {
+        Texture allCards = new Texture("cards/programmingcards.png");
+
+        TextureRegion[][] splitTextures = TextureRegion.split(allCards, 250, 400);
+
+        cardTemplates.put(CardType.FORWARDONE, splitTextures[0][0]);
+        cardTemplates.put(CardType.FORWARDTWO, splitTextures[0][1]);
+        cardTemplates.put(CardType.FORWARDTHREE, splitTextures[0][2]);
+        cardTemplates.put(CardType.TURNLEFT, splitTextures[0][3]);
+        cardTemplates.put(CardType.TURNRIGHT, splitTextures[0][4]);
+        cardTemplates.put(CardType.BACK_UP, splitTextures[0][5]);
+        cardTemplates.put(CardType.UTURN, splitTextures[0][6]);
+    }
+    /**
      * Helper for card image loading with touchup event
      */
     public Image generateClickableCard(CardType cardType, TextureRegion t){
@@ -373,257 +358,16 @@ public class GameScreen extends ScreenAdapter {
         return img;
     }
 
-    /**
-     * Load player texture and split into each player state
+
+
+
+
+
+    /*
+    --------- ------------------ ------------------ ------------------ ---------
+    --------- ------------------   Stage loading    --------- ------------------
+    --------- ------------------ ------------------ ------------------ ---------
      */
-    public void loadTextures() {
-        // Load the entire player texture
-        //Color playerColor = Color.RED;
-
-        //load playercolor from file if possible
-        PlayerConfig config = CharacterCustomizer.loadCharacterConfigFromFile();
-        Color playerColor = config.getMainColor();
-        String playerImage = config.getImage();
-
-        Texture rawPlayerTexture = CharacterCustomizer.generatePlayerTexture(playerImage, playerColor);
-
-        // Split player texture into seperate regions
-        TextureRegion roboPlayerSplitTexture = new TextureRegion(rawPlayerTexture,300, 300);
-
-        // Put the texture region into seperate tiles
-        StaticTiledMapTile playerStaticTile = new StaticTiledMapTile(roboPlayerSplitTexture);
-
-        // Set player state cells to corresponding tiles
-        playerNormal = new TiledMapTileLayer.Cell().setTile(playerStaticTile);
-        playerWon = new TiledMapTileLayer.Cell().setTile(playerStaticTile);
-
-        Texture rawLaserTexture = new Texture("tiles.png");
-
-        // Split player texture into seperate regions
-        TextureRegion[][] splitLaserTextures = TextureRegion.split(rawLaserTexture, 300, 300);
-
-        StaticTiledMapTile singleHorizontal = new StaticTiledMapTile(splitLaserTextures[4][6]);
-        StaticTiledMapTile singleBoth = new StaticTiledMapTile(splitLaserTextures[4][7]);
-        StaticTiledMapTile singleVertical = new StaticTiledMapTile(splitLaserTextures[5][6]);
-        StaticTiledMapTile doubleBoth = new StaticTiledMapTile(splitLaserTextures[12][4]);
-        StaticTiledMapTile doubleVertical = new StaticTiledMapTile(splitLaserTextures[12][5]);
-        StaticTiledMapTile doubleHorizontal = new StaticTiledMapTile(splitLaserTextures[12][6]);
-
-        this.singleHorizontal = new TiledMapTileLayer.Cell().setTile(singleHorizontal);
-        this.singleBoth = new TiledMapTileLayer.Cell().setTile(singleBoth);
-        this.singleVertical = new TiledMapTileLayer.Cell().setTile(singleVertical);
-        this.doubleBoth = new TiledMapTileLayer.Cell().setTile(doubleBoth);
-        this.doubleVertical = new TiledMapTileLayer.Cell().setTile(doubleVertical);
-        this.doubleHorizontal = new TiledMapTileLayer.Cell().setTile(doubleHorizontal);
-    }
-
-    /**
-     * Loads card images and adds event listeners.
-     * --> Event listener only adds a card of the type pressed into gamePlayer's chosenCards
-     * Adds cards into hashmap with corresponding card type
-     */
-    private void loadCardTextures() {
-        Texture allCards = new Texture("cards/programmingcards.png");
-
-        TextureRegion[][] splitTextures = TextureRegion.split(allCards, 250, 400);
-
-        cardTemplates.put(CardType.FORWARDONE, splitTextures[0][0]);
-        cardTemplates.put(CardType.FORWARDTWO, splitTextures[0][1]);
-        cardTemplates.put(CardType.FORWARDTHREE, splitTextures[0][2]);
-        cardTemplates.put(CardType.TURNLEFT, splitTextures[0][3]);
-        cardTemplates.put(CardType.TURNRIGHT, splitTextures[0][4]);
-        cardTemplates.put(CardType.BACK_UP, splitTextures[0][5]);
-        cardTemplates.put(CardType.UTURN, splitTextures[0][6]);
-    }
-
-    /**
-     * Clear current stage cards and add new actors to stage
-     */
-    private void loadCardDeck(){
-        // Base for entire hand
-        int baseX = 75;
-        int baseY = 30;
-        int perCardIncrementX = 110;
-
-        getDuplicateCardsInHand();
-
-        game.batch.begin();
-        game.font.setColor(0.5f, 0.5f, 1, 1);
-        game.font.getData().setScale(2);
-        List<Card> cardsToDisplay = gamePlayer.hand;
-        cardsToDisplay.sort(new Card.cardComparator());
-        List<Image> displayDeck = new ArrayList<>();
-
-        for (Card c : cardsToDisplay){
-            Image img = generateClickableCard(c.getCardType(), cardTemplates.get(c.getCardType()));
-            img.setPosition(baseX, baseY);
-            displayDeck.add(img);
-            String prioText = "Priority: " + c.getPriority();
-            game.font.draw(game.batch, prioText, (float)baseX, (float)baseY-20);
-            baseX += perCardIncrementX;
-        }
-        game.font.draw(game.batch, "WEEE", 0, 0);
-        game.batch.end();
-        // Add all images to stage
-        displayDeck.forEach( (c) -> {c.setName("");});
-        displayDeck.forEach(stage::addActor);
-    }
-
-    /**
-     * Back button
-     */
-    private void loadBackButton() {
-        TextButton backButton = new TextButton("Back", game.skin, "small");
-        backButton.setWidth(125);
-        backButton.setPosition(Gdx.graphics.getWidth()-145f, 30);
-        backButton.setColor(0.1f, 0, 0, 1);
-        backButton.addListener(new InputListener(){
-            @Override
-            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                game.setScreen(new MenuScreen(game));
-                return true;
-            }
-        });
-        backButton.setName("back-button");
-        stage.addActor(backButton);
-    }
-
-    /**
-     * finds duplicate cards in deck
-     * HashMap used because its O(n) instead of O(n^2)
-     */
-    public void getDuplicateCardsInHand() {
-        duplicates.clear();
-        if (!gamePlayer.hand.isEmpty()) {
-            for (Card c : gamePlayer.hand) {
-                if (!duplicates.containsKey(c.getCardType())) {
-                    duplicates.put(c.getCardType(), 1);
-                } else {
-                    duplicates.put(c.getCardType(), duplicates.get(c.getCardType()) + 1);
-                }
-            }
-        }
-    }
-    /**
-     * Send cards button
-     */
-    private void loadSendCardsButton(){
-        TextButton sendCardsButton = new TextButton("Send cards", game.skin, "small");
-        sendCardsButton.setWidth(125);
-        sendCardsButton.setPosition(Gdx.graphics.getWidth()-145f, 105);
-        sendCardsButton.setColor(0.1f, 0, 0, 1);
-        sendCardsButton.addListener(new InputListener(){
-            @Override
-            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                if (gamePlayer.chosenCards.size() >= 5) {
-                    if (network.isHost) {
-                        if (((GameHost) gamePlayer).allCardsReady()) {
-                            System.out.println("Cards are being sent to processing. Stage size before deck clear: " + stage.getActors().size);
-                            clearNonInteractiveStageElements();
-                            for (Card c : gamePlayer.hand){
-                                for (Card d : gamePlayer.chosenCards){
-                                    if (c.getCardType() == d.getCardType() && c.picked){
-                                        Card fill = new Card();
-                                        c.setCardType(CardType.NONE);
-                                    }else {
-                                        gamePlayer.discard.add(c);
-                                    }
-                                }
-                            }
-                            gamePlayer.state = GamePlayer.PLAYERSTATE.SENDING_CARDS;
-                            gamePlayer.registerChosenCards();
-                            gamePlayer.drawCardsFromDeck();
-                        } else {
-                            System.out.println("Not all players have delivered their cards yet! Cannot process cards yet.");
-                        }
-                    } else {
-                        System.out.println("Cards are being sent to processing. Stage size before deck clear: " + stage.getActors().size);
-                        clearNonInteractiveStageElements();
-                        for (Card c : gamePlayer.hand){
-                            for (Card d : gamePlayer.chosenCards){
-                                if (c.getCardType() == d.getCardType() && c.picked){
-                                    Card fill = new Card();
-                                    c.setCardType(CardType.NONE);
-                                }else {
-                                    gamePlayer.discard.add(c);
-                                }
-                            }
-                        }
-                        gamePlayer.state = GamePlayer.PLAYERSTATE.SENDING_CARDS;
-                        gamePlayer.registerChosenCards();
-                        gamePlayer.drawCardsFromDeck();
-                    }
-                }
-                return true;
-            }
-        });
-
-        sendCardsButton.setName("send-cards-button");
-        stage.addActor(sendCardsButton);
-    }
-
-    /**
-     * All player positions and directions
-     */
-    private void loadPlayerList(){
-        Table tableList = new Table();
-        tableList.top().left().pad(5).setSize(210, 145);
-        tableList.setPosition(Gdx.graphics.getWidth()-375, 30);
-
-        Label tIndicator = new Label("Player locations:", game.skin);
-        tableList.add(tIndicator);
-        tableList.row();
-
-        int playNo = 1;
-        boolean anyPlayers = false;
-        for (int x = 0; x<map.playerLayer.length; x++){
-            for (int y = 0; y<map.playerLayer[x].length; y++){
-                if (map.playerLayer[x][y].state != PlayerToken.CHARACTER_STATES.NONE){
-                    anyPlayers = true;
-                    String str = "Player "+ playNo +" at " + x + ", " + y + " - Facing: " + map.playerLayer[x][y].dir.toString();
-                    Label l = new Label(str, game.skin);
-                    l.setColor(0.7588f, 0.3188f, 0.1960f, 1);
-                    l.setAlignment(Align.left);
-                    l.setFontScale(0.8f);
-                    tableList.add(l);
-                    tableList.row();
-                    playNo++;
-                }
-            }
-        }
-        if (!anyPlayers){
-            String str = "Waiting for first round to start.";
-            Label l = new Label(str, game.skin);
-            l.setColor(0.7588f, 0.3188f, 0.1960f, 1);
-            l.setFontScale(0.8f);
-            tableList.add(l);
-            tableList.row();
-        }
-        tableList.setName("player-list");
-        stage.addActor(tableList);
-    }
-
-    /**
-     * Decorative background for card deck
-     */
-    private void loadCardBackground(){
-        // Simple border around cards
-        Texture cardBackgroundTexture = new Texture(Gdx.files.internal("cards/bottom-border.png"));
-        Image cardBackground = new Image(cardBackgroundTexture);
-        cardBackground.setPosition(0, 0);
-        cardBackground.setSize(Gdx.graphics.getWidth()-375, 200);
-        cardBackground.setName("card-background");
-        stage.addActor(cardBackground);
-
-        // Simple colour texture behind buttons
-        Texture buttonBackgroundTexture = new Texture(Gdx.files.internal("cards/bottom-background-color.png"));
-        Image buttonBackground = new Image(buttonBackgroundTexture);
-        buttonBackground.setPosition(Gdx.graphics.getWidth()-375, 0);
-        buttonBackground.setSize(375, 200);
-        buttonBackground.setName("button-background");
-        stage.addActor(buttonBackground);
-    }
-
     /**
      * Load visual backgrounds first, then render important elements at the end
      * This needs to be called whenever stage is cleared
@@ -637,7 +381,323 @@ public class GameScreen extends ScreenAdapter {
         loadChatInputBox();
         updateChat();
     }
+            /**
+             * Decorative background for card deck
+             */
+            private void loadCardBackground(){
+                // Simple border around cards
+                Texture cardBackgroundTexture = new Texture(Gdx.files.internal("cards/bottom-border.png"));
+                Image cardBackground = new Image(cardBackgroundTexture);
+                cardBackground.setPosition(0, 0);
+                cardBackground.setSize(Gdx.graphics.getWidth()-375, 200);
+                cardBackground.setName("card-background");
+                stage.addActor(cardBackground);
 
+                // Simple colour texture behind buttons
+                Texture buttonBackgroundTexture = new Texture(Gdx.files.internal("cards/bottom-background-color.png"));
+                Image buttonBackground = new Image(buttonBackgroundTexture);
+                buttonBackground.setPosition(Gdx.graphics.getWidth()-375, 0);
+                buttonBackground.setSize(375, 200);
+                buttonBackground.setName("button-background");
+                stage.addActor(buttonBackground);
+            }
+            /**
+             * Back button
+             */
+            private void loadBackButton() {
+                TextButton backButton = new TextButton("Back", game.skin, "small");
+                backButton.setWidth(125);
+                backButton.setPosition(Gdx.graphics.getWidth()-145f, 30);
+                backButton.setColor(0.1f, 0, 0, 1);
+                backButton.addListener(new InputListener(){
+                    @Override
+                    public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+                        game.setScreen(new MenuScreen(game));
+                        return true;
+                    }
+                });
+                backButton.setName("back-button");
+                stage.addActor(backButton);
+            }
+            /**
+             * Send cards button
+             */
+            private void loadSendCardsButton(){
+                TextButton sendCardsButton = new TextButton("Send cards", game.skin, "small");
+                sendCardsButton.setWidth(125);
+                sendCardsButton.setPosition(Gdx.graphics.getWidth()-145f, 105);
+                sendCardsButton.setColor(0.1f, 0, 0, 1);
+                sendCardsButton.addListener(new InputListener(){
+                    @Override
+                    public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+                        if (gamePlayer.chosenCards.size() >= 5) {
+                            if (network.isHost) {
+                                if (((GameHost) gamePlayer).allCardsReady()) {
+                                    System.out.println("Cards are being sent to processing. Stage size before deck clear: " + stage.getActors().size);
+                                    clearNonInteractiveStageElements();
+                                    for (Card c : gamePlayer.hand){
+                                        for (Card d : gamePlayer.chosenCards){
+                                            if (c.getCardType() == d.getCardType() && c.picked){
+                                                Card fill = new Card();
+                                                c.setCardType(CardType.NONE);
+                                            }else {
+                                                gamePlayer.discard.add(c);
+                                            }
+                                        }
+                                    }
+                                    gamePlayer.state = GamePlayer.PLAYERSTATE.SENDING_CARDS;
+                                    gamePlayer.registerChosenCards();
+                                    gamePlayer.drawCardsFromDeck();
+                                } else {
+                                    System.out.println("Not all players have delivered their cards yet! Cannot process cards yet.");
+                                }
+                            } else {
+                                System.out.println("Cards are being sent to processing. Stage size before deck clear: " + stage.getActors().size);
+                                clearNonInteractiveStageElements();
+                                for (Card c : gamePlayer.hand){
+                                    for (Card d : gamePlayer.chosenCards){
+                                        if (c.getCardType() == d.getCardType() && c.picked){
+                                            Card fill = new Card();
+                                            c.setCardType(CardType.NONE);
+                                        }else {
+                                            gamePlayer.discard.add(c);
+                                        }
+                                    }
+                                }
+                                gamePlayer.state = GamePlayer.PLAYERSTATE.SENDING_CARDS;
+                                gamePlayer.registerChosenCards();
+                                gamePlayer.drawCardsFromDeck();
+                            }
+                        }
+                        return true;
+                    }
+                });
+
+                sendCardsButton.setName("send-cards-button");
+                stage.addActor(sendCardsButton);
+            }
+            /**
+             * Clear current stage cards and add new actors to stage
+             */
+            private void loadCardDeck(){
+                // Base for entire hand
+                int baseX = 75;
+                int baseY = 30;
+                int perCardIncrementX = 110;
+
+                getDuplicateCardsInHand();
+
+                game.batch.begin();
+                game.font.setColor(0.5f, 0.5f, 1, 1);
+                game.font.getData().setScale(2);
+                List<Card> cardsToDisplay = gamePlayer.hand;
+                cardsToDisplay.sort(new Card.cardComparator());
+                List<Image> displayDeck = new ArrayList<>();
+
+                for (Card c : cardsToDisplay){
+                    Image img = generateClickableCard(c.getCardType(), cardTemplates.get(c.getCardType()));
+                    img.setPosition(baseX, baseY);
+                    displayDeck.add(img);
+                    String prioText = "Priority: " + c.getPriority();
+                    game.font.draw(game.batch, prioText, (float)baseX, (float)baseY-20);
+                    baseX += perCardIncrementX;
+                }
+                game.font.draw(game.batch, "WEEE", 0, 0);
+                game.batch.end();
+                // Add all images to stage
+                displayDeck.forEach( (c) -> {c.setName("");});
+                displayDeck.forEach(stage::addActor);
+            }
+            /**
+             * All player positions and directions
+             */
+            private void loadPlayerList(){
+                Table tableList = new Table();
+                tableList.top().left().pad(5).setSize(210, 145);
+                tableList.setPosition(Gdx.graphics.getWidth()-375, 30);
+
+                Label tIndicator = new Label("Player locations:", game.skin);
+                tableList.add(tIndicator);
+                tableList.row();
+
+                int playNo = 1;
+                boolean anyPlayers = false;
+                for (int x = 0; x<map.playerLayer.length; x++){
+                    for (int y = 0; y<map.playerLayer[x].length; y++){
+                        if (map.playerLayer[x][y].state != PlayerToken.CHARACTER_STATES.NONE){
+                            anyPlayers = true;
+                            String str = "Player "+ playNo +" at " + x + ", " + y + " - Facing: " + map.playerLayer[x][y].dir.toString();
+                            Label l = new Label(str, game.skin);
+                            l.setColor(0.7588f, 0.3188f, 0.1960f, 1);
+                            l.setAlignment(Align.left);
+                            l.setFontScale(0.8f);
+                            tableList.add(l);
+                            tableList.row();
+                            playNo++;
+                        }
+                    }
+                }
+                if (!anyPlayers){
+                    String str = "Waiting for first round to start.";
+                    Label l = new Label(str, game.skin);
+                    l.setColor(0.7588f, 0.3188f, 0.1960f, 1);
+                    l.setFontScale(0.8f);
+                    tableList.add(l);
+                    tableList.row();
+                }
+                tableList.setName("player-list");
+                stage.addActor(tableList);
+            }
+            /**
+             * Load chat input box with commands and message events
+             */
+            private void loadChatInputBox(){
+                boolean alreadyInitialized = false;
+                String chatInputName = "chat-input";
+                for (Actor a : stage.getActors()){
+                    if (a.getName().equals(chatInputName)){
+                        alreadyInitialized = true;
+                    }
+                }
+
+                if (!alreadyInitialized){
+                    Color inputBoxColor = new Color(1f, 1f, 1f, 1);
+                    TextField inputBox = new TextField("", game.skin);
+                    inputBox.setColor(inputBoxColor);
+                    inputBox.addListener(new InputListener(){
+                        @Override
+                        public boolean keyDown(InputEvent event, int keycode) {
+                            if (keycode == Input.Keys.ENTER){
+                                boolean isCommand = false;
+                                if (inputBox.getText().length()>2){
+                                    // If chat is a command
+                                    if (inputBox.getText().substring(0, 2).equals("/c")){
+                                        isCommand = true;
+                                        CommandParser p = new CommandParser();
+                                        String commandContent = inputBox.getText().substring(3);
+                                        System.out.println("Chat command entered: " + commandContent);
+
+                                        // Get what command was input by user
+                                        CommandParser.Command command = p.parseCommand(p.getCmd(commandContent));
+
+                                        // Perform command
+                                        switch (command){
+                                            case SETNAME:
+                                                chat.setName(p.getArgs(commandContent));
+                                                break;
+                                            case SETCOLOR:
+                                                switch (p.getArgs(commandContent)) {
+                                                    case "r":
+                                                        Color red = new Color(1, 0, 0, 1);
+                                                        chat.chat.setChatColour(red);
+                                                        break;
+                                                    case "g":
+                                                        Color green = new Color(0, 1, 0, 1);
+                                                        chat.chat.setChatColour(green);
+                                                        break;
+                                                    case "b":
+                                                        Color blue = new Color(0, 0, 1, 1);
+                                                        chat.chat.setChatColour(blue);
+                                                        break;
+                                                    case "black":
+                                                        Color black = new Color(1, 1, 1, 1);
+                                                        chat.chat.setChatColour(black);
+                                                        break;
+                                                    default:
+                                                        System.out.println("Invalid colour.");
+                                                        break;
+                                                }
+                                                break;
+                                            case SETFONTSTCALE:
+                                                float scale = Float.parseFloat(p.getArgs(commandContent));
+                                                chat.chat.setChatFontSize(scale);
+                                                break;
+                                            case INVALID:
+                                                chat.sendMessage("Entered invalid command.");
+                                                break;
+                                            default:
+                                                break;
+                                        }
+                                        // Send list of commands available if /h
+                                    }
+
+                                }
+                                if (inputBox.getText().length()>1){
+                                    if (inputBox.getText().substring(0, 2).equals("/h")){
+                                        isCommand = true;
+                                        chat.sendInternalMessage("Commands:");
+                                        chat.sendInternalMessage("/c set-name <name>");
+                                        chat.sendInternalMessage("/c chat-color <r, g, b, black>");
+                                        chat.sendInternalMessage("/c font-scale <font scale>");
+                                    }
+                                }
+
+                                // Send message
+                                if (!isCommand){
+                                    chat.sendMessage(inputBox.getText());
+                                }
+                                inputBox.setText("");
+                                updateChat();
+                            }
+                            return true;
+                        }
+                    });
+                    // TODO place inputbox at correct position
+                    inputBox.setX(Gdx.graphics.getWidth()-inputBox.getWidth());
+                    inputBox.setY(200);
+                    inputBox.setName(chatInputName);
+                    stage.addActor(inputBox);
+                }
+            }
+            /**
+             * Get new messages that have been received from the network, get formatted table and add input box with listener.
+             */
+            private void updateChat(){
+                /*
+                    get stage chat table, clear everything in it, and add new chat from network to table
+                 */
+                // Something like this...
+                // stage.getActors().name.equals("chat") = localChat;
+
+                /*
+                PLAN:
+                get new network chat
+                generate chat table from network chat
+                loop through actors in stage, replace new chat table if name is correct
+                 */
+
+
+                // Get chat table from network
+                chat.updateChat(network.messagesRecived);
+
+                // Get index of table on stage
+                int index = 0;
+                // Update stage chat
+                for (int i = 0; i<stage.getActors().size; i++){
+                    if (stage.getActors().get(i) != null){
+                        if (stage.getActors().get(i).getName().equals("chat")){
+                            index = i;
+                            break;
+                        }
+                    }
+                }
+
+                Table updatedChat = chat.getChatAsTable();
+                updatedChat.setName("chat");
+                // Update stage value chat
+                stage.getActors().set(index, updatedChat);
+            }
+
+
+
+
+
+
+    /*
+    --------- ------------------ ------------------ ------------------ ---------
+    --------- ------------------   Libgdx methods   --------- ------------------
+    --------- ------------------ ------------------ ------------------ ---------
+     */
     /**
      * Render all objects and text to the screen
      */
@@ -645,7 +705,6 @@ public class GameScreen extends ScreenAdapter {
     public void show() {
         Gdx.input.setInputProcessor(stage);
     }
-
     @Override
     public void render(float v) {
         Gdx.gl.glClearColor(1, 1, 1, 1);
@@ -662,57 +721,38 @@ public class GameScreen extends ScreenAdapter {
         // Render current frame to screen
         game.renderer.render();
     }
-
     /**
-     * Clears all stage elements that are not interactive
-     * When the stage clears, the chat input box clears, and the text you write disappears if you haven't sent t yet
-     * Does not clear things like chat input box, as stage clears happens without user interaction and clearing the message all the time would be annoying
+     * These functions are not currently in use, but inherited from superclass
      */
-    private void clearNonInteractiveStageElements(){
-        List<String> itemsNotToClear = new ArrayList<>();
-        itemsNotToClear.add("chat-input");
-
-        stage.getActors().forEach( (a) -> {
-                    for (String s : itemsNotToClear){
-                        if (!a.getName().equals(s)){
-                            a.clear();
-                        }
-                    }
-                }
-        );
+    @Override
+    public void dispose() {
+        game.batch.dispose();
+        game.font.dispose();
+    }
+    @Override
+    public void resize(int width, int height) {
+    }
+    @Override
+    public void pause() {
+    }
+    @Override
+    public void resume() {
+    }
+    @Override
+    public void hide() {
+        Gdx.input.setInputProcessor(null);
     }
 
-    /**
-     * Poll updates from the network client that needs to be updated to local session in real time
+
+
+
+
+
+    /*
+    --------- ------------------ ------------------ ------------------ ---------
+    --------- ------------------ Map display methods--------- ------------------
+    --------- ------------------ ------------------ ------------------ ---------
      */
-    private void pollUiUpdates(){
-        // force chat to update when receiving new messages in network
-        if (networkChatBacklogSize < network.messagesRecived.size()){
-            clearNonInteractiveStageElements();
-            loadActorsInOrder();
-            networkChatBacklogSize = network.messagesRecived.size();
-        }
-
-        // Force cards to update when new cards have been received
-        if(gamePlayer.newCardsDelivered){
-            clearNonInteractiveStageElements();
-
-            loadActorsInOrder();
-
-            // Check if any null actors are found, clear them if so
-            try {
-                stage.getActors().forEach((n) -> {
-                    if (n == null) {
-                        stage.getActors().removeValue(n, true);
-                    }
-                });
-            } catch (Exception e) {
-                System.out.println("Not able to remove null value from getActors, exception " + e);
-            }
-            gamePlayer.newCardsDelivered = false;
-        }
-    }
-
     /**
      * Reset cell rotation on all cells in the map to 0
      */
@@ -725,7 +765,6 @@ public class GameScreen extends ScreenAdapter {
             }
         }
     }
-
     /**
      * Rotates cells according to location in map player layer directions
      */
@@ -762,7 +801,6 @@ public class GameScreen extends ScreenAdapter {
         }
         game.batch.end();
     }
-
     /**
      * Query for map update in networks, and calls some methods to decode information from map sent over network
      */
@@ -785,7 +823,6 @@ public class GameScreen extends ScreenAdapter {
             // TODO: board and flag layer doesn't change as of this version
         }
     }
-
     /**
      * Loads all the laser textures from the map-class onto the board
      */
@@ -796,27 +833,6 @@ public class GameScreen extends ScreenAdapter {
             }
         }
     }
-
-    /**
-     * returns the correct texture for a tile with a laser
-     * @param x the x position of the tile
-     * @param y the y position of the tile
-     * @return the correct texture to put in the tile
-     */
-    public TiledMapTileLayer.Cell laserToTile(int x, int y) {
-
-        //TODO FIX THIS SHIT to add support for doubles
-        if (map.laserLayer[x][y][0] == 1) return singleVertical;
-        if (map.laserLayer[x][y][0] == 2) return doubleVertical;
-        if (map.laserLayer[x][y][1] == 1) return singleHorizontal;
-        if (map.laserLayer[x][y][1] == 2) return doubleHorizontal;
-        if (map.laserLayer[x][y][2] == 1) return singleVertical;
-        if (map.laserLayer[x][y][2] == 2) return doubleVertical;
-        if (map.laserLayer[x][y][3] == 1) return singleHorizontal;
-        if (map.laserLayer[x][y][3] == 2) return doubleHorizontal;
-        else return null;
-    }
-
     /**
      * Gets player locations and states from map and sets tiledmaplayer cells to correct texture
      */
@@ -849,87 +865,94 @@ public class GameScreen extends ScreenAdapter {
         }
     }
 
-    /**
-     * Load all map layers into their own member variable
+
+
+
+
+
+    /*
+    --------- ------------------ ------------------ ------------------ ---------
+    --------- ------------------     UI methods     --------- ------------------
+    --------- ------------------ ------------------ ------------------ ---------
      */
-    public void loadMapLayers(TiledMap tiledMap){
-        // Separate each layer from the tiledMap
-        playerLayer = (TiledMapTileLayer) tiledMap.getLayers().get("Player");
-        TiledMapTileLayer flagLayer = (TiledMapTileLayer) tiledMap.getLayers().get("Flag");
-
-        // Sneakily yoink the positions of the flags here, don't tell the OOP police
-        getFlagPositionsFromLayer(flagLayer);
-        getBoardElementPositionsFromLayer(tiledMap);
-        getStartPositions((TiledMapTileLayer) tiledMap.getLayers().get("Spawn"));
-    }
-
     /**
-     * Get all flag positions in layer flag layer
+     * Clears all stage elements that are not interactive
+     * When the stage clears, the chat input box clears, and the text you write disappears if you haven't sent t yet
+     * Does not clear things like chat input box, as stage clears happens without user interaction and clearing the message all the time would be annoying
      */
-    private void getFlagPositionsFromLayer(TiledMapTileLayer flagLayer){
-        List<Flag> flags = new ArrayList<>();
+    private void clearNonInteractiveStageElements(){
+        List<String> itemsNotToClear = new ArrayList<>();
+        itemsNotToClear.add("chat-input");
 
-        for (int i = 0; i <= flagLayer.getWidth(); i++){
-            for (int j = 0; j <= flagLayer.getHeight(); j++){
-                // getCell returns null if nothing is found in the current cell in this layer
-                if (flagLayer.getCell(i, j) != null){
-                    flags.add(new Flag(i, j));
+        stage.getActors().forEach( (a) -> {
+                    for (String s : itemsNotToClear){
+                        if (!a.getName().equals(s)){
+                            a.clear();
+                        }
+                    }
                 }
-            }
+        );
+    }
+    /**
+     * Poll updates from the network client that needs to be updated to local session in real time
+     */
+    private void pollUiUpdates(){
+        // force chat to update when receiving new messages in network
+        if (networkChatBacklogSize < network.messagesRecived.size()){
+            clearNonInteractiveStageElements();
+            loadActorsInOrder();
+            networkChatBacklogSize = network.messagesRecived.size();
         }
-        flagPositions.addAll(flags);
-    }
 
-    /**
-     * gets the spawn points from the map and puts them in the map class //TODO move this to getBoardElementPositions
-     * @param startLayer the start layer
-     */
-    private void getStartPositions(TiledMapTileLayer startLayer) {
-        for (int i = 0; i <= startLayer.getWidth(); i++){
-            for (int j = 0; j <= startLayer.getHeight(); j++){
-                // getCell returns null if nothing is found in the current cell in this layer
-                if (startLayer.getCell(i, j) != null) {
-                    map.spawnPoints.add(new GridPoint2(i, j));
-                }
+        // Force cards to update when new cards have been received
+        if(gamePlayer.newCardsDelivered){
+            clearNonInteractiveStageElements();
+
+            loadActorsInOrder();
+
+            // Check if any null actors are found, clear them if so
+            try {
+                stage.getActors().forEach((n) -> {
+                    if (n == null) {
+                        stage.getActors().removeValue(n, true);
+                    }
+                });
+            } catch (Exception e) {
+                System.out.println("Not able to remove null value from getActors, exception " + e);
             }
-        }
-    }
-
-    /**
-     * Loops through all the tiles in the board, and fills up the map class accordingly with all the board elements
-     * @param tiledMap the tiled map you wish to load the board elements from
-     */
-    private void getBoardElementPositionsFromLayer(TiledMap tiledMap){
-        TiledMapTileLayer holeLayer = (TiledMapTileLayer) tiledMap.getLayers().get("Hole");
-        TiledMapTileLayer gearLayer = (TiledMapTileLayer) tiledMap.getLayers().get("Gear");
-        TiledMapTileLayer wallLayer = (TiledMapTileLayer) tiledMap.getLayers().get("Wall");
-        TiledMapTileLayer beltLayer = (TiledMapTileLayer) tiledMap.getLayers().get("Belts");
-        TiledMapTileLayer repairLayer = (TiledMapTileLayer) tiledMap.getLayers().get("Repair");
-        for (int i = 0; i < holeLayer.getWidth(); i++){
-            for (int j = 0; j < holeLayer.getHeight(); j++){
-                // getCell returns null if nothing is found in the current cell in this layer
-                map.holeLayer[i][j] = holeLayer.getCell(i, j) != null;
-                map.repairLayer[i][j] = repairLayer.getCell(i, j) != null;
-                if (wallLayer.getCell(i, j) != null){
-                    setWallDirections(wallLayer.getCell(i, j), i, j);
-                    //The wall layer contains information about laser shooters
-                    setLaserDirection(wallLayer.getCell(i, j), i, j);
-                }
-                if (beltLayer.getCell(i, j) != null){
-                    setBeltInformation(beltLayer.getCell(i, j), i, j);
-                }
-                if (gearLayer.getCell(i, j) != null && gearLayer.getCell(i, j).getTile().getId() == 54) {
-                    map.gearLayer[i][j] = 1;
-                }
-                else if (gearLayer.getCell(i, j) != null && gearLayer.getCell(i, j).getTile().getId() == 189) {
-                    map.gearLayer[i][j] = 2;
-                }
-                else map.gearLayer[i][j] = 0;
-
-            }
+            gamePlayer.newCardsDelivered = false;
         }
     }
 
+
+
+
+
+
+    /*
+    --------- ------------------ ------------------ ------------------ ---------
+    --------- ------------------Map internal methods--------- ------------------
+    --------- ------------------ ------------------ ------------------ ---------
+     */
+    /**
+     * returns the correct texture for a tile with a laser
+     * @param x the x position of the tile
+     * @param y the y position of the tile
+     * @return the correct texture to put in the tile
+     */
+    public TiledMapTileLayer.Cell laserToTile(int x, int y) {
+
+        //TODO FIX THIS SHIT to add support for doubles
+        if (map.laserLayer[x][y][0] == 1) return singleVertical;
+        if (map.laserLayer[x][y][0] == 2) return doubleVertical;
+        if (map.laserLayer[x][y][1] == 1) return singleHorizontal;
+        if (map.laserLayer[x][y][1] == 2) return doubleHorizontal;
+        if (map.laserLayer[x][y][2] == 1) return singleVertical;
+        if (map.laserLayer[x][y][2] == 2) return doubleVertical;
+        if (map.laserLayer[x][y][3] == 1) return singleHorizontal;
+        if (map.laserLayer[x][y][3] == 2) return doubleHorizontal;
+        else return null;
+    }
     /**
      * Adds a permanent laser shooter to the map if there is a laser shooter in the laser cell
      * @param laserCell the cell you wish to check for lasers
@@ -943,7 +966,6 @@ public class GameScreen extends ScreenAdapter {
         if (laserCell.getTile().getId() == 95) map.laserShooters.add(new Map.LaserShooter(Direction.WEST, 2, i, j));
         if (laserCell.getTile().getId() == 93) map.laserShooters.add(new Map.LaserShooter(Direction.EAST, 2, i, j));
     }
-
     /**
      * Sets the correct values for the wall in the wall layer in map
      * @param wallCell the wall cell you wish to check
@@ -987,7 +1009,6 @@ public class GameScreen extends ScreenAdapter {
         //if (wallCell.getTile().getId() == 11) map.wallLayer[i][j] = new boolean[] {true, false, false, true};
 
     }
-
     /**
      *  Fills the belt-layer in the map class with the correct belt information
      * @param beltCell the cell containing the belt
@@ -1009,25 +1030,78 @@ public class GameScreen extends ScreenAdapter {
         if (beltCell.getTile().getId() == 34) map.beltLayer[i][j] = new Map.BeltInformation(Direction.WEST, false, -1, Direction.SOUTH);
     }
 
-    /**
-     * These functions are not currently in use, but inherited from superclass
+
+
+
+
+
+    /*
+    --------- ------------------ ------------------ ------------------ ---------
+    --------- ----------  Random getters/unspecified   ------------------
+    --------- ------------------ ------------------ ------------------ ---------
      */
-    @Override
-    public void dispose() {
-        game.batch.dispose();
-        game.font.dispose();
+    /**
+     * gets the spawn points from the map and puts them in the map class //TODO move this to getBoardElementPositions
+     * @param startLayer the start layer
+     */
+    private void getStartPositions(TiledMapTileLayer startLayer) {
+        for (int i = 0; i <= startLayer.getWidth(); i++){
+            for (int j = 0; j <= startLayer.getHeight(); j++){
+                // getCell returns null if nothing is found in the current cell in this layer
+                if (startLayer.getCell(i, j) != null) {
+                    map.spawnPoints.add(new GridPoint2(i, j));
+                }
+            }
+        }
     }
-    @Override
-    public void resize(int width, int height) {
+    /**
+     * Loops through all the tiles in the board, and fills up the map class accordingly with all the board elements
+     * @param tiledMap the tiled map you wish to load the board elements from
+     */
+    private void getBoardElementPositionsFromLayer(TiledMap tiledMap){
+        TiledMapTileLayer holeLayer = (TiledMapTileLayer) tiledMap.getLayers().get("Hole");
+        TiledMapTileLayer gearLayer = (TiledMapTileLayer) tiledMap.getLayers().get("Gear");
+        TiledMapTileLayer wallLayer = (TiledMapTileLayer) tiledMap.getLayers().get("Wall");
+        TiledMapTileLayer beltLayer = (TiledMapTileLayer) tiledMap.getLayers().get("Belts");
+        TiledMapTileLayer repairLayer = (TiledMapTileLayer) tiledMap.getLayers().get("Repair");
+        for (int i = 0; i < holeLayer.getWidth(); i++){
+            for (int j = 0; j < holeLayer.getHeight(); j++){
+                // getCell returns null if nothing is found in the current cell in this layer
+                map.holeLayer[i][j] = holeLayer.getCell(i, j) != null;
+                map.repairLayer[i][j] = repairLayer.getCell(i, j) != null;
+                if (wallLayer.getCell(i, j) != null){
+                    setWallDirections(wallLayer.getCell(i, j), i, j);
+                    //The wall layer contains information about laser shooters
+                    setLaserDirection(wallLayer.getCell(i, j), i, j);
+                }
+                if (beltLayer.getCell(i, j) != null){
+                    setBeltInformation(beltLayer.getCell(i, j), i, j);
+                }
+                if (gearLayer.getCell(i, j) != null && gearLayer.getCell(i, j).getTile().getId() == 54) {
+                    map.gearLayer[i][j] = 1;
+                }
+                else if (gearLayer.getCell(i, j) != null && gearLayer.getCell(i, j).getTile().getId() == 189) {
+                    map.gearLayer[i][j] = 2;
+                }
+                else map.gearLayer[i][j] = 0;
+
+            }
+        }
     }
-    @Override
-    public void pause() {
-    }
-    @Override
-    public void resume() {
-    }
-    @Override
-    public void hide() {
-        Gdx.input.setInputProcessor(null);
+    /**
+     * finds duplicate cards in deck
+     * HashMap used because its O(n) instead of O(n^2)
+     */
+    public void getDuplicateCardsInHand() {
+        duplicates.clear();
+        if (!gamePlayer.hand.isEmpty()) {
+            for (Card c : gamePlayer.hand) {
+                if (!duplicates.containsKey(c.getCardType())) {
+                    duplicates.put(c.getCardType(), 1);
+                } else {
+                    duplicates.put(c.getCardType(), duplicates.get(c.getCardType()) + 1);
+                }
+            }
+        }
     }
 }
