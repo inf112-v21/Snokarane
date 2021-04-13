@@ -21,7 +21,7 @@ public class PlayerToken {
 
     public int hp = 3;
 
-    public int damage = 0;
+    public int damage = 1;
 
     public boolean diedThisTurn = false;
 
@@ -67,12 +67,13 @@ public class PlayerToken {
         position.y = -100; //spawnLoc.y;
         diedThisTurn = true;
         hp--;
+        damage = 0;
         playerDirection = Direction.NORTH;
         System.out.println(name + " died a tragic death");
      }
 
 
-    public boolean isDead(){
+    public boolean isPermanentlyDestroyed(){
         return hp < 1;
     }
 

@@ -440,7 +440,7 @@ public class GameScreen extends ScreenAdapter {
             // Assign event handler to handle card choice on click
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                if (gamePlayer.state == GamePlayer.PLAYERSTATE.PICKING_CARDS && gamePlayer.chosenCards.size()<5){
+                if (gamePlayer.state == GamePlayer.PLAYERSTATE.PICKING_CARDS && gamePlayer.chosenCards.size()<Math.min(5, 9-gamePlayer.damageCounters)){
                     Card c = new Card();
                     c.setCardType(cardType);
                     System.out.println("Clicked card with move " + cardType);
@@ -515,7 +515,7 @@ public class GameScreen extends ScreenAdapter {
         sendCardsButton.addListener(new InputListener(){
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                if (gamePlayer.chosenCards.size() >= 5) {
+                if (gamePlayer.chosenCards.size() >= Math.min(5, 9- gamePlayer.damageCounters)) {
                     if (network.isHost) {
                         if (((GameHost) gamePlayer).allCardsReady()) {
                             System.out.println("Cards are being sent to processing. Stage size before deck clear: " + stage.getActors().size);
@@ -532,7 +532,6 @@ public class GameScreen extends ScreenAdapter {
                             }
                             gamePlayer.state = GamePlayer.PLAYERSTATE.SENDING_CARDS;
                             gamePlayer.registerChosenCards();
-                            //gamePlayer.drawCardsFromDeck();
                         } else {
                             System.out.println("Not all players have delivered their cards yet! Cannot process cards yet.");
                         }
@@ -551,7 +550,6 @@ public class GameScreen extends ScreenAdapter {
                         }
                         gamePlayer.state = GamePlayer.PLAYERSTATE.SENDING_CARDS;
                         gamePlayer.registerChosenCards();
-                        //gamePlayer.drawCardsFromDeck();
                     }
                 }
                 return true;

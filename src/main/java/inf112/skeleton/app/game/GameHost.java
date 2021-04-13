@@ -168,7 +168,10 @@ public class GameHost extends GamePlayer {
                         movePlayer(token, 1, belt.beltDirection, false);
                     }
                 }
+                if (token.diedThisTurn) break;
                 //TODO Need to make sure that they do move if one player is on a belt directly in front of another
+
+                //TODO There's a bug here, when you're pushed off the map
                 Map.BeltInformation nextBelt = map.beltLayer[token.getX()][token.getY()];
                 if (nextBelt != null && nextBelt.beltRotationDirection != null) {
                     assert belt != null;
@@ -182,6 +185,8 @@ public class GameHost extends GamePlayer {
                     }
                 }
             }
+            //These are really ugly //TODO FIX
+            if (token.diedThisTurn) break;
             int rotation = map.isGear(token.position.x, token.position.y);
             if (rotation == 1) {
                 System.out.println(token.name + " is on a gear!");
@@ -191,8 +196,16 @@ public class GameHost extends GamePlayer {
                 System.out.println(token.name + " is on a gear!");
                 token.rotate(CardType.TURNLEFT);
             }
-            map.clearLasers();
-            map.shootLasers(wrapper());
+        }
+        map.clearLasers();
+        map.shootLasers(wrapper());
+        //TODO Does this make sense
+        for (Integer key : clientPlayers.keySet()){
+            PlayerToken token = clientPlayers.get(key);
+            if (token.diedThisTurn) {
+                continue;
+            }
+
             int lasers = 0;
 
             for (int i = 0; i < 4; i++) {
@@ -200,24 +213,26 @@ public class GameHost extends GamePlayer {
             }
             System.out.println("Took " + lasers + " damage");
             token.damage += lasers;
-
-            //Is this the right position?
-            if (token.isDead()) {
-                playersToKill.add(key);
+            if (token.damage > 9) {
+                token.died();
+                continue;
             }
 
             if (map.isRepair(token.getX(), token.getY())){
+                System.out.println(token.name + " has " + token.damage + " damage tokens");
                 token.damage--;
-                System.out.println(token.name + "healed, and now has " + token.damage + " damage tokens");
+                System.out.println(token.name + " healed, and now has " + token.damage + " damage tokens");
             }
 
             //TODO ADD FLAG CHECK HERE
         }
-        for (Integer key: playersToKill) {
-            clientPlayers.remove(clientPlayers.remove(key));
-            host.alivePlayers.remove(key);
-        }
 
+        for (Integer key : clientPlayers.keySet()) {
+            if (clientPlayers.get(key).isPermanentlyDestroyed()) {
+                clientPlayers.remove(clientPlayers.remove(key));
+                host.alivePlayers.remove(key);
+            }
+        }
         drawCards();
     }
     /**
@@ -347,7 +362,7 @@ public class GameHost extends GamePlayer {
      */
     private void handleSinglePlayerCard(Card card){
         // Check if the player is dead
-        if (!cardPlayerTokenMap.get(card).diedThisTurn && !cardPlayerTokenMap.get(card).isDead()){
+        if (!cardPlayerTokenMap.get(card).diedThisTurn && !cardPlayerTokenMap.get(card).isPermanentlyDestroyed()){
             // Move the clients player token
             resolveCard(card, cardPlayerTokenMap.get(card));
         }
