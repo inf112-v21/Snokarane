@@ -30,6 +30,8 @@ import inf112.skeleton.app.network.Network;
 import inf112.skeleton.app.network.NetworkClient;
 import inf112.skeleton.app.network.NetworkHost;
 import inf112.skeleton.app.ui.chat.CommandParser;
+import inf112.skeleton.app.ui.chat.backend.Message;
+import inf112.skeleton.app.ui.chat.backend.Uwufier;
 import inf112.skeleton.app.ui.chat.managers.ChatClient;
 import inf112.skeleton.app.ui.chat.managers.ChatManager;
 import inf112.skeleton.app.ui.chat.managers.Chatter;
@@ -632,6 +634,9 @@ public class GameScreen extends ScreenAdapter {
                                             case INVALID:
                                                 chat.sendInternalMessage("Entered invalid command.", network);
                                                 break;
+                                            case UWU:
+                                                Uwufier uwu = new Uwufier(network.messagesRecived); // TODO need to add non uwu backlog in network so can be reverted
+                                                network.messagesRecived = uwu.postUwudMessages;
                                             default:
                                                 break;
                                         }
@@ -646,6 +651,7 @@ public class GameScreen extends ScreenAdapter {
                                         chat.sendInternalMessage("/c set-name <name>", network);
                                         chat.sendInternalMessage("/c chat-color <r, g, b, black>", network);
                                         chat.sendInternalMessage("/c font-scale <font scale>", network);
+                                        chat.sendInternalMessage("/c uwufy", network);
                                     }
                                 }
 
