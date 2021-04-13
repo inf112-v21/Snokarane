@@ -264,20 +264,20 @@ public class GameHost extends GamePlayer {
         int y = player.spawnLoc.y;
         int i = 0;
         while (map.hasPlayer(x, y)) {
-            if (!map.hasPlayer(x-i, y)) {
+            if (Map.isInBounds(x-i, y) && !map.hasPlayer(x-i, y)) {
                 x = x-i;
                 break;
             }
-            if (!map.hasPlayer(x+i, y)) {
+            if (Map.isInBounds(x+i, y) && !map.hasPlayer(x+i, y)) {
                 x = x+i;
                 break;
             }
-            if (!map.hasPlayer(x, y+i)) {
+            if (Map.isInBounds(x, y+i) && !map.hasPlayer(x, y+i)) {
                 y = y+i;
                 break;
             }
 
-            if (!map.hasPlayer(x, y-i)) {
+            if (Map.isInBounds(x, y-i) && !map.hasPlayer(x, y-i)) {
                 y = y-i;
                 break;
             }
@@ -293,7 +293,7 @@ public class GameHost extends GamePlayer {
     private void resetPlayerTokens(){
         // Reset which players have died this turn, so that they can keep playing
         for (PlayerToken player: clientPlayers.values()) {
-            findPlayerRespawnLocation(player);
+            if (player.diedThisTurn) findPlayerRespawnLocation(player);
             player.diedThisTurn = false;
         }
         List<PlayerToken> playerTokens = new ArrayList<>(clientPlayers.values());
