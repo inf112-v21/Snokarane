@@ -76,7 +76,6 @@ public class GameHost extends GamePlayer {
         token.ID = NetworkHost.hostID;
         token = initializePlayerPos(token);
         clientPlayers.put(NetworkHost.hostID, token);
-
     }
 
     /**
@@ -200,7 +199,7 @@ public class GameHost extends GamePlayer {
                 lasers += map.laserLayer[token.getX()][token.getY()][i];
             }
             System.out.println("Took " + lasers + " damage");
-            token.damage -= lasers;
+            token.damage += lasers;
 
             //Is this the right position?
             if (token.isDead()) {
@@ -208,8 +207,8 @@ public class GameHost extends GamePlayer {
             }
 
             if (map.isRepair(token.getX(), token.getY())){
-                token.damage++;
-                System.out.println(token.name + "healed, and now has " + token.damage + " health points");
+                token.damage--;
+                System.out.println(token.name + "healed, and now has " + token.damage + " damage tokens");
             }
 
             //TODO ADD FLAG CHECK HERE

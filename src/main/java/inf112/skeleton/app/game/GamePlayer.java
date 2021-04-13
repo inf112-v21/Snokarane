@@ -64,14 +64,29 @@ public abstract class GamePlayer{
      */
     public void drawCardsFromDeck(){
         int cardsToAdd = Math.min(9-damageCounters-hand.size(), deck.size()-hand.size());
+        /*
+        System.out.println("Card to add: " + cardsToAdd);
+        System.out.println("Should be: " + (9-damageCounters-hand.size()));
+        System.out.println("Other: " + (deck.size()-hand.size()));
+        System.out.println("Damage counters before: " + damageCounters);
+        System.out.println("Hand size: " + hand.size());
+        */
 
         for (int i = 0; i<cardsToAdd; i++){
             hand.add(deck.remove(0));
         }
-        if (hand.size() != 9-damageCounters) {
+
+        //TODO Is < correct here?
+        if (hand.size() < 9-damageCounters) {
             deck.addAll(discard);
             Collections.shuffle(deck);
             discard = new ArrayList<>();
+
+            /*
+            System.out.println("Hand size: " + hand.size());
+            System.out.println("Damage counters: " + damageCounters);
+            System.out.println("Deck size: " + deck.size());
+            */
             drawCardsFromDeck();
         }
         newCardsDelivered = true;

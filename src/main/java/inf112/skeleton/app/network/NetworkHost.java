@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 public class NetworkHost extends Network {
 
@@ -88,6 +89,7 @@ public class NetworkHost extends Network {
                 host.drawCardsFromDeck();
                 return;
             }
+            System.out.println(host.clientPlayers);
             server.sendToTCP(connectionID, host.clientPlayers.get(connectionID));
         }
     }
@@ -111,8 +113,14 @@ public class NetworkHost extends Network {
      * Initializes the connections for the server. Call this only when all users are connected.
      * It also sends the IDs to the clients.
      */
-    public void initConnections() {
+    public void initConnections(){
         promptName();
+        try {
+            TimeUnit.MILLISECONDS.sleep(400);
+        }
+        catch (InterruptedException e) {
+            System.out.println("Caught exception:" + e);
+        }
         connections = server.getConnections();
 
         // List of the connections which should get card

@@ -532,7 +532,7 @@ public class GameScreen extends ScreenAdapter {
                             }
                             gamePlayer.state = GamePlayer.PLAYERSTATE.SENDING_CARDS;
                             gamePlayer.registerChosenCards();
-                            gamePlayer.drawCardsFromDeck();
+                            //gamePlayer.drawCardsFromDeck();
                         } else {
                             System.out.println("Not all players have delivered their cards yet! Cannot process cards yet.");
                         }
@@ -551,7 +551,7 @@ public class GameScreen extends ScreenAdapter {
                         }
                         gamePlayer.state = GamePlayer.PLAYERSTATE.SENDING_CARDS;
                         gamePlayer.registerChosenCards();
-                        gamePlayer.drawCardsFromDeck();
+                        //gamePlayer.drawCardsFromDeck();
                     }
                 }
                 return true;

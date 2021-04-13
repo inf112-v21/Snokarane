@@ -19,7 +19,7 @@ public class ChatTest {
     NetworkHost nHost;
 
     @Before
-    public void setUp()  {
+    public void setUp() throws InterruptedException {
         nClient = new NetworkClient();
         nHost = new NetworkHost();
         nHost.isHost = true;
