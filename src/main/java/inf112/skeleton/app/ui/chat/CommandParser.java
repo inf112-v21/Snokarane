@@ -8,6 +8,7 @@ public class CommandParser {
         UWU,
         CLEAR,
         SENDINTERNAL,
+        EXAMPLEMESSAGES,
         INVALID
     }
 
@@ -55,6 +56,8 @@ public class CommandParser {
                 return Command.CLEAR;
             case "show":
                 return Command.SENDINTERNAL;
+            case "example-messages":
+                return Command.EXAMPLEMESSAGES;
             default:
                 break;
         }

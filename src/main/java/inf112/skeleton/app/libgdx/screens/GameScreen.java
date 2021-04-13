@@ -671,6 +671,22 @@ public class GameScreen extends ScreenAdapter {
                                             case SENDINTERNAL:
                                                 chat.sendInternalMessage(p.getArgs(commandContent), network);
                                                 break;
+                                            case EXAMPLEMESSAGES:
+                                                if (p.getArgs(commandContent).equals("all")){
+                                                    chat.sendMessage("Hello! This is a message.");
+                                                    chat.sendMessage("I am playing roborally. ");
+                                                    chat.sendMessage("This is alot of fun!");
+                                                    chat.sendMessage("This game is impressive. Good job!");
+                                                    chat.sendInternalMessage("Sent example messages.", network);
+                                                }else {
+                                                    chat.sendInternalMessage("Hello! This is a message.", network);
+                                                    chat.sendInternalMessage("I am playing roborally. ", network);
+                                                    chat.sendInternalMessage("This is alot of fun!", network);
+                                                    chat.sendInternalMessage("This game is impressive. Good job!", network);
+                                                    chat.sendInternalMessage("Sent example messages.", network);
+                                                }
+
+                                                break;
                                             default:
                                                 break;
                                         }
@@ -687,7 +703,9 @@ public class GameScreen extends ScreenAdapter {
                                         chat.sendInternalMessage("/h shows this dialogue.", network);
                                         chat.sendInternalMessage("/c clear", network);
                                         chat.sendInternalMessage("/c set-name <name>", network);
-                                        chat.sendInternalMessage("/c show <message>\n", network);
+                                        chat.sendInternalMessage("/c show <message>", network);
+                                        chat.sendInternalMessage("/c example-messages <all>", network);
+                                        chat.sendInternalMessage("leave empty for local ^\n", network);
                                         chat.sendInternalMessage("\t VISUAL", network);
                                         chat.sendInternalMessage("/c chat-color <r, g, b, black>", network);
                                         chat.sendInternalMessage("/c font-scale <font scale>", network);
