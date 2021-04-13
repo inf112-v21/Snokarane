@@ -82,7 +82,7 @@ public class Chat {
         chatTable.setPosition(x, y);
         chatTable.setColor(chatColor);
         chatTable.padLeft(5);
-        chatTable.padBottom(5);
+        chatTable.padBottom(55);
         chatTable.bottom().left();
 
         List<HashMap<String, ChatOutputColors>> messages = new ArrayList<>();

@@ -601,6 +601,7 @@ public class GameScreen extends ScreenAdapter {
                 if (!alreadyInitialized){
                     Color inputBoxColor = new Color(1f, 1f, 1f, 1);
                     TextField inputBox = new TextField("", game.skin);
+                    inputBox.setWidth(375f);
                     inputBox.setColor(inputBoxColor);
                     inputBox.addListener(new InputListener(){
                         @Override
@@ -705,7 +706,7 @@ public class GameScreen extends ScreenAdapter {
                                         chat.sendInternalMessage("/c set-name <name>", network);
                                         chat.sendInternalMessage("/c show <message>", network);
                                         chat.sendInternalMessage("/c example-messages <all>", network);
-                                        chat.sendInternalMessage("leave empty for local ^\n", network);
+                                        chat.sendInternalMessage("leave empty for local  ^\n", network);
                                         chat.sendInternalMessage("\t VISUAL", network);
                                         chat.sendInternalMessage("/c chat-color <r, g, b, black>", network);
                                         chat.sendInternalMessage("/c font-scale <font scale>", network);
