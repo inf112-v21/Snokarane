@@ -9,6 +9,10 @@ public class CommandParser {
         CLEAR,
         SENDINTERNAL,
         EXAMPLEMESSAGES,
+        CONNECT,
+        SELECTCARD,
+        SENDCARDS,
+        RESETCARDS,
         INVALID
     }
 
@@ -58,10 +62,17 @@ public class CommandParser {
                 return Command.SENDINTERNAL;
             case "example-messages":
                 return Command.EXAMPLEMESSAGES;
+            case "connect":
+                return Command.CONNECT;
+            case "select-card":
+                return Command.SELECTCARD;
+            case "send-cards":
+                return Command.SENDCARDS;
+            case "reset-cards":
+                return Command.RESETCARDS;
             default:
                 break;
         }
-
         return command;
     }
 }

@@ -468,45 +468,7 @@ public class GameScreen extends ScreenAdapter {
                 sendCardsButton.addListener(new InputListener(){
                     @Override
                     public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                        if (gamePlayer.chosenCards.size() >= 5) {
-                            if (network.isHost) {
-                                if (((GameHost) gamePlayer).allCardsReady()) {
-                                    System.out.println("Cards are being sent to processing. Stage size before deck clear: " + stage.getActors().size);
-                                    clearNonInteractiveStageElements();
-                                    for (Card c : gamePlayer.hand){
-                                        for (Card d : gamePlayer.chosenCards){
-                                            if (c.getCardType() == d.getCardType() && c.picked){
-                                                Card fill = new Card();
-                                                c.setCardType(CardType.NONE);
-                                            }else {
-                                                gamePlayer.discard.add(c);
-                                            }
-                                        }
-                                    }
-                                    gamePlayer.state = GamePlayer.PLAYERSTATE.SENDING_CARDS;
-                                    gamePlayer.registerChosenCards();
-                                    gamePlayer.drawCardsFromDeck();
-                                } else {
-                                    System.out.println("Not all players have delivered their cards yet! Cannot process cards yet.");
-                                }
-                            } else {
-                                System.out.println("Cards are being sent to processing. Stage size before deck clear: " + stage.getActors().size);
-                                clearNonInteractiveStageElements();
-                                for (Card c : gamePlayer.hand){
-                                    for (Card d : gamePlayer.chosenCards){
-                                        if (c.getCardType() == d.getCardType() && c.picked){
-                                            Card fill = new Card();
-                                            c.setCardType(CardType.NONE);
-                                        }else {
-                                            gamePlayer.discard.add(c);
-                                        }
-                                    }
-                                }
-                                gamePlayer.state = GamePlayer.PLAYERSTATE.SENDING_CARDS;
-                                gamePlayer.registerChosenCards();
-                                gamePlayer.drawCardsFromDeck();
-                            }
-                        }
+                        sendCardsIfPossible();
                         return true;
                     }
                 });
@@ -686,7 +648,45 @@ public class GameScreen extends ScreenAdapter {
                                                     chat.sendInternalMessage("This game is impressive. Good job!", network);
                                                     chat.sendInternalMessage("Sent example messages.", network);
                                                 }
-
+                                                break;
+                                            case CONNECT:
+                                                String ip = p.getArgs(commandContent);
+                                                if (ip.contains(" ")){
+                                                    chat.sendInternalMessage("IP cannot contain spaces.", network);
+                                                }else {
+                                                    game.setScreen(new GameScreen(game, false, ip, chat.cData.name));
+                                                }
+                                            case SENDCARDS:
+                                                if (sendCardsIfPossible()){
+                                                    chat.sendInternalMessage("Cards sent!", network);
+                                                }else{
+                                                    chat.sendInternalMessage("Could not send cards.", network);
+                                                    chat.sendInternalMessage("Remember to select 5 cards.", network);
+                                                }
+                                                break;
+                                            case RESETCARDS:
+                                                resetCardChoices();
+                                                chat.sendInternalMessage("Card selection reset.", network);
+                                                break;
+                                            case SELECTCARD:
+                                                /*  this is buggy and doesn't work right now
+                                                if (gamePlayer.state == GamePlayer.PLAYERSTATE.PICKING_CARDS && gamePlayer.chosenCards.size()<5){
+                                                    int index = Integer.parseInt(p.getArgs(commandContent))-1;
+                                                    if (index < 0 || index > 8){
+                                                        chat.sendInternalMessage("Can only select cards 1-9.", network);
+                                                    }else {
+                                                        Card c = new Card();
+                                                        c.setCardType(gamePlayer.hand.get(index).getCardType());
+                                                        gamePlayer.chooseCards(index);
+                                                        gamePlayer.chosenCards.add(c);
+                                                        c.picked = true;
+                                                        clearNonInteractiveStageElements();
+                                                        loadActorsInOrder();
+                                                    }
+                                                }else{
+                                                    chat.sendInternalMessage("Cannot pick cards right now.", network);
+                                                }*/
+                                                chat.sendInternalMessage("Card selection in chat disabled.", network);
                                                 break;
                                             default:
                                                 break;
@@ -702,6 +702,9 @@ public class GameScreen extends ScreenAdapter {
                                         chat.sendInternalMessage("Commands:\n", network);
                                         chat.sendInternalMessage("\t FUNCITONAL", network);
                                         chat.sendInternalMessage("/h shows this dialogue.", network);
+                                        chat.sendInternalMessage("/c connect <ip>", network);
+                                        chat.sendInternalMessage("/c send-cards", network);
+                                        chat.sendInternalMessage("/c reset-cards", network);
                                         chat.sendInternalMessage("/c clear", network);
                                         chat.sendInternalMessage("/c set-name <name>", network);
                                         chat.sendInternalMessage("/c show <message>", network);
@@ -1196,5 +1199,53 @@ public class GameScreen extends ScreenAdapter {
         gamePlayer.chosenCards.clear();
         clearNonInteractiveStageElements();
         loadActorsInOrder();
+    }
+    /**
+     * Sends cards to host if all requirements for sending cards are met.
+     */
+    private boolean sendCardsIfPossible(){
+        if (gamePlayer.chosenCards.size() >= 5) {
+            if (network.isHost) {
+                if (((GameHost) gamePlayer).allCardsReady()) {
+                    System.out.println("Cards are being sent to processing. Stage size before deck clear: " + stage.getActors().size);
+                    clearNonInteractiveStageElements();
+                    for (Card c : gamePlayer.hand){
+                        for (Card d : gamePlayer.chosenCards){
+                            if (c.getCardType() == d.getCardType() && c.picked){
+                                Card fill = new Card();
+                                c.setCardType(CardType.NONE);
+                            }else {
+                                gamePlayer.discard.add(c);
+                            }
+                        }
+                    }
+                    gamePlayer.state = GamePlayer.PLAYERSTATE.SENDING_CARDS;
+                    gamePlayer.registerChosenCards();
+                    gamePlayer.drawCardsFromDeck();
+                    return true;
+                } else {
+                    System.out.println("Not all players have delivered their cards yet! Cannot process cards yet.");
+                    return false;
+                }
+            } else {
+                System.out.println("Cards are being sent to processing. Stage size before deck clear: " + stage.getActors().size);
+                clearNonInteractiveStageElements();
+                for (Card c : gamePlayer.hand){
+                    for (Card d : gamePlayer.chosenCards){
+                        if (c.getCardType() == d.getCardType() && c.picked){
+                            Card fill = new Card();
+                            c.setCardType(CardType.NONE);
+                        }else {
+                            gamePlayer.discard.add(c);
+                        }
+                    }
+                }
+                gamePlayer.state = GamePlayer.PLAYERSTATE.SENDING_CARDS;
+                gamePlayer.registerChosenCards();
+                gamePlayer.drawCardsFromDeck();
+                return true;
+            }
+        }
+        return false;
     }
 }
