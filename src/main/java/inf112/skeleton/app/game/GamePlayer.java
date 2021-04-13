@@ -60,17 +60,17 @@ public abstract class GamePlayer{
     /**
      * Adds cards to hand from deck, and sets playerstate to PICKING_CARDS when added
      */
-    public void drawCardsFromDeck(){
-        int cardsToAdd = Math.min(9-hand.size(), deck.size()-hand.size());
+    public void drawCardsFromDeck(int damageCounters){
+        int cardsToAdd = Math.min(9-damageCounters-hand.size(), deck.size()-hand.size());
 
         for (int i = 0; i<cardsToAdd; i++){
             hand.add(deck.remove(0));
         }
-        if (hand.size() != 9) {
+        if (hand.size() != 9-damageCounters) {
             deck.addAll(discard);
             Collections.shuffle(deck);
             discard = new ArrayList<>();
-            drawCardsFromDeck();
+            drawCardsFromDeck(damageCounters);
         }
         newCardsDelivered = true;
         state = PLAYERSTATE.PICKING_CARDS;

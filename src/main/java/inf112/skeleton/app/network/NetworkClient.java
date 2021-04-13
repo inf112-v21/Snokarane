@@ -42,7 +42,8 @@ public class NetworkClient extends Network {
                         giveNickname(gameClient.name);
                     }
                     else {
-                        gameClient.drawCardsFromDeck();
+                        System.out.println(((PlayerToken) object).name + " has won! Congratulations to them!");
+                        System.exit(0);
                     }
                 }
                 if (object instanceof NetworkDataWrapper){
@@ -55,8 +56,7 @@ public class NetworkClient extends Network {
                 }
 
                 if (object instanceof PlayerToken) {
-                    System.out.println(((PlayerToken) object).name + " has won! Congratulations to them!");
-                    System.exit(0);
+                    gameClient.drawCardsFromDeck(((PlayerToken) object).damage);
                 }
 
                 if (object instanceof Message){

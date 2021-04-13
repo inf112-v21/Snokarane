@@ -84,10 +84,10 @@ public class NetworkHost extends Network {
         System.out.println("Prompted clients to draw cards.");
         for (Integer connectionID : alivePlayers) {
             if (connectionID == hostID) {
-                host.drawCardsFromDeck();
+                host.drawCardsFromDeck(host.clientPlayers.get(connectionID).damage);
                 return;
             }
-            server.sendToTCP(connectionID, "Draw cards!");
+            server.sendToTCP(connectionID, host.clientPlayers.get(connectionID));
         }
     }
 
@@ -102,7 +102,7 @@ public class NetworkHost extends Network {
      */
     public void sendWinner(PlayerToken winner) {
         System.out.println(winner.name + " has won! Congratulations");
-        server.sendToAllTCP(winner);
+        server.sendToAllTCP(winner.name + " has won! Congratulations");
         System.exit(0);
     }
 
