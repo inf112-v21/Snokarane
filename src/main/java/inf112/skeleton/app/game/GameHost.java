@@ -153,7 +153,6 @@ public class GameHost extends GamePlayer {
      * Handles end of turn logic. Belt moving, lasers, rotating, repairs, etc.
      */
     public void endOfTurn(){
-        List<Integer> playersToKill = new ArrayList<>();
         for (Integer key : clientPlayers.keySet()){
             PlayerToken token = clientPlayers.get(key);
             if (token.diedThisTurn) continue;
@@ -248,14 +247,16 @@ public class GameHost extends GamePlayer {
                 // Get next card for the given player and pop it so it can be played
                 List<Card> cards = host.playerCards.get(key);
 
-                // get first card from players cards
-                Card currentCard = cards.remove(0);
+                if (!cards.isEmpty()) {
+                    // get first card from players cards
+                    Card currentCard = cards.remove(0);
 
-                // Add card to list of all clients cards
-                cardList.add(currentCard);
+                    // Add card to list of all clients cards
+                    cardList.add(currentCard);
 
-                // Map card to client
-                cardPlayerTokenMap.put(currentCard, clientPlayers.get(key));
+                    // Map card to client
+                    cardPlayerTokenMap.put(currentCard, clientPlayers.get(key));
+                }
             }
             // Sort cards by card priority
             cardList.sort(new Card.cardComparator());
