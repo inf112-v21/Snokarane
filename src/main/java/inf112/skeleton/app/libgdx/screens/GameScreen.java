@@ -395,6 +395,7 @@ public class GameScreen extends ScreenAdapter {
         loadCardBackground();
         loadBackButton();
         loadSendCardsButton();
+        loadResetCardChoicesButton();
         loadCardDeck();
         loadPlayerList();
         loadChatInputBox();
@@ -426,7 +427,7 @@ public class GameScreen extends ScreenAdapter {
             private void loadBackButton() {
                 TextButton backButton = new TextButton("Back", game.skin, "small");
                 backButton.setWidth(125);
-                backButton.setPosition(Gdx.graphics.getWidth()-145f, 30);
+                backButton.setPosition(Gdx.graphics.getWidth()-145f, 5);
                 backButton.setColor(0.1f, 0, 0, 1);
                 backButton.addListener(new InputListener(){
                     @Override
@@ -439,12 +440,30 @@ public class GameScreen extends ScreenAdapter {
                 stage.addActor(backButton);
             }
             /**
-             * Send cards button
+             * Reset card choices button
+             */
+            private void loadResetCardChoicesButton(){
+                TextButton resetCardChoicesButton = new TextButton("Reset cards", game.skin, "small");
+                resetCardChoicesButton.setWidth(125);
+                resetCardChoicesButton.setPosition(Gdx.graphics.getWidth()-145f, 65);
+                resetCardChoicesButton.setColor(0.1f, 0, 0, 1);
+                resetCardChoicesButton.addListener(new InputListener(){
+                    @Override
+                    public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+                        resetCardChoices();
+                        return true;
+                    }
+                });
+                resetCardChoicesButton.setName("reset-card-choices-button");
+                stage.addActor(resetCardChoicesButton);
+            }
+            /**
+            * Send cards button
              */
             private void loadSendCardsButton(){
                 TextButton sendCardsButton = new TextButton("Send cards", game.skin, "small");
                 sendCardsButton.setWidth(125);
-                sendCardsButton.setPosition(Gdx.graphics.getWidth()-145f, 105);
+                sendCardsButton.setPosition(Gdx.graphics.getWidth()-145f, 130);
                 sendCardsButton.setColor(0.1f, 0, 0, 1);
                 sendCardsButton.addListener(new InputListener(){
                     @Override
@@ -1126,5 +1145,16 @@ public class GameScreen extends ScreenAdapter {
                 }
             }
         }
+    }
+    /**
+     * Reset all card choices
+     */
+    public void resetCardChoices(){
+        for (Card c : gamePlayer.hand){
+            c.picked = false;
+        }
+        gamePlayer.chosenCards.clear();
+        clearNonInteractiveStageElements();
+        loadActorsInOrder();
     }
 }
