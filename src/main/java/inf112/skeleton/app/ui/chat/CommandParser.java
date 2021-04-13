@@ -6,6 +6,8 @@ public class CommandParser {
         SETCOLOR,
         SETFONTSTCALE,
         UWU,
+        CLEAR,
+        SENDINTERNAL,
         INVALID
     }
 
@@ -49,6 +51,10 @@ public class CommandParser {
                 return Command.SETFONTSTCALE;
             case "uwufy":
                 return Command.UWU;
+            case "clear":
+                return Command.CLEAR;
+            case "show":
+                return Command.SENDINTERNAL;
             default:
                 break;
         }

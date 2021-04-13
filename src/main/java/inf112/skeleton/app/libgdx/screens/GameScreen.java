@@ -622,24 +622,29 @@ public class GameScreen extends ScreenAdapter {
                                         switch (command){
                                             case SETNAME:
                                                 chat.setName(p.getArgs(commandContent));
+                                                chat.sendInternalMessage("Name changed to " + p.getArgs(commandContent) + ".", network);
                                                 break;
                                             case SETCOLOR:
                                                 switch (p.getArgs(commandContent)) {
                                                     case "r":
                                                         Color red = new Color(1, 0, 0, 1);
                                                         chat.chat.setChatColour(red);
+                                                        chat.sendInternalMessage("Chat color set to red.", network);
                                                         break;
                                                     case "g":
                                                         Color green = new Color(0, 1, 0, 1);
                                                         chat.chat.setChatColour(green);
+                                                        chat.sendInternalMessage("Chat color set to green.", network);
                                                         break;
                                                     case "b":
                                                         Color blue = new Color(0, 0, 1, 1);
                                                         chat.chat.setChatColour(blue);
+                                                        chat.sendInternalMessage("Chat color set to blue.", network);
                                                         break;
                                                     case "black":
                                                         Color black = new Color(1, 1, 1, 1);
                                                         chat.chat.setChatColour(black);
+                                                        chat.sendInternalMessage("Chat color set to black.", network);
                                                         break;
                                                     default:
                                                         System.out.println("Invalid colour.");
@@ -649,6 +654,7 @@ public class GameScreen extends ScreenAdapter {
                                             case SETFONTSTCALE:
                                                 float scale = Float.parseFloat(p.getArgs(commandContent));
                                                 chat.chat.setChatFontSize(scale);
+                                                chat.sendInternalMessage("Font scale set to " + scale + ".", network);
                                                 break;
                                             case INVALID:
                                                 chat.sendInternalMessage("Entered invalid command.", network);
@@ -656,6 +662,15 @@ public class GameScreen extends ScreenAdapter {
                                             case UWU:
                                                 Uwufier uwu = new Uwufier(network.messagesRecived); // TODO need to add non uwu backlog in network so can be reverted
                                                 network.messagesRecived = uwu.postUwudMessages;
+                                                chat.sendInternalMessage("UWUfication complete!", network);
+                                                break;
+                                            case CLEAR:
+                                                network.messagesRecived.clear();
+                                                chat.sendInternalMessage("Chat cleared.", network);
+                                                break;
+                                            case SENDINTERNAL:
+                                                chat.sendInternalMessage(p.getArgs(commandContent), network);
+                                                break;
                                             default:
                                                 break;
                                         }
@@ -666,8 +681,14 @@ public class GameScreen extends ScreenAdapter {
                                 if (inputBox.getText().length()>1){
                                     if (inputBox.getText().substring(0, 2).equals("/h")){
                                         isCommand = true;
-                                        chat.sendInternalMessage("Commands:", network);
+                                        chat.sendInternalMessage("Only you can see the messages in green.\n", network);
+                                        chat.sendInternalMessage("Commands:\n", network);
+                                        chat.sendInternalMessage("\t FUNCITONAL", network);
+                                        chat.sendInternalMessage("/h shows this dialogue.", network);
+                                        chat.sendInternalMessage("/c clear", network);
                                         chat.sendInternalMessage("/c set-name <name>", network);
+                                        chat.sendInternalMessage("/c show <message>\n", network);
+                                        chat.sendInternalMessage("\t VISUAL", network);
                                         chat.sendInternalMessage("/c chat-color <r, g, b, black>", network);
                                         chat.sendInternalMessage("/c font-scale <font scale>", network);
                                         chat.sendInternalMessage("/c uwufy", network);
