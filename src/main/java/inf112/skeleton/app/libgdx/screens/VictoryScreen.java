@@ -13,9 +13,6 @@ import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import inf112.skeleton.app.game.objects.PlayerToken;
 import inf112.skeleton.app.libgdx.RoboGame;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class VictoryScreen  extends ScreenAdapter implements IUiScreen{
     // RoboGame class instance
     private RoboGame game;
@@ -61,7 +58,7 @@ public class VictoryScreen  extends ScreenAdapter implements IUiScreen{
         Label n = new Label(winner.name + " won!", game.skin);
         n.setColor(0, 1, 1, 1);
         Label f = new Label("Flags visited: " + winner.getVisitedFlags().size(), game.skin);
-        Label h = new Label("Hp left: " + winner.hp, game.skin);
+        Label h = new Label("Hp left: " + winner.damage, game.skin);
 
         highScore.add(n);
         highScore.row();

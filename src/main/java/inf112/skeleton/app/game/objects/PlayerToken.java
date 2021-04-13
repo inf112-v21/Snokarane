@@ -19,7 +19,7 @@ public class PlayerToken {
 
     public int ID;
 
-    public int hp = 3;
+    public int damage = 0;
 
     public boolean diedThisTurn = false;
 
@@ -64,7 +64,7 @@ public class PlayerToken {
         position.x = -100; //spawnLoc.x;
         position.y = -100; //spawnLoc.y;
         diedThisTurn = true;
-        hp --;
+        hp--;
         playerDirection = Direction.NORTH;
         System.out.println(name + " died a tragic death");
      }

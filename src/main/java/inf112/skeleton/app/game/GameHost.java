@@ -200,7 +200,7 @@ public class GameHost extends GamePlayer {
                 lasers += map.laserLayer[token.getX()][token.getY()][i];
             }
             System.out.println("Took " + lasers + " damage");
-            token.hp -= lasers;
+            token.damage -= lasers;
 
             //Is this the right position?
             if (token.isDead()) {
@@ -208,8 +208,8 @@ public class GameHost extends GamePlayer {
             }
 
             if (map.isRepair(token.getX(), token.getY())){
-                token.hp++;
-                System.out.println(token.name + "healed, and now has " + token.hp + " health points");
+                token.damage++;
+                System.out.println(token.name + "healed, and now has " + token.damage + " health points");
             }
 
             //TODO ADD FLAG CHECK HERE
