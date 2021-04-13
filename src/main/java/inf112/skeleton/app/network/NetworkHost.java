@@ -84,7 +84,8 @@ public class NetworkHost extends Network {
         System.out.println("Prompted clients to draw cards.");
         for (Integer connectionID : alivePlayers) {
             if (connectionID == hostID) {
-                host.drawCardsFromDeck(host.clientPlayers.get(connectionID).damage);
+                host.damageCounters = host.clientPlayers.get(connectionID).damage;
+                host.drawCardsFromDeck();
                 return;
             }
             server.sendToTCP(connectionID, host.clientPlayers.get(connectionID));

@@ -38,6 +38,8 @@ public abstract class GamePlayer{
     // Cards that weren't selected
     public ArrayList<Card> discard = new ArrayList<>();
 
+    public int damageCounters = 0;
+
     /**
      * Give player a stack of cards to deck
      */
@@ -60,7 +62,7 @@ public abstract class GamePlayer{
     /**
      * Adds cards to hand from deck, and sets playerstate to PICKING_CARDS when added
      */
-    public void drawCardsFromDeck(int damageCounters){
+    public void drawCardsFromDeck(){
         int cardsToAdd = Math.min(9-damageCounters-hand.size(), deck.size()-hand.size());
 
         for (int i = 0; i<cardsToAdd; i++){
@@ -70,7 +72,7 @@ public abstract class GamePlayer{
             deck.addAll(discard);
             Collections.shuffle(deck);
             discard = new ArrayList<>();
-            drawCardsFromDeck(damageCounters);
+            drawCardsFromDeck();
         }
         newCardsDelivered = true;
         state = PLAYERSTATE.PICKING_CARDS;
