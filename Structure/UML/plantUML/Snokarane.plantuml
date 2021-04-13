@@ -1,6 +1,6 @@
 @startuml
 
-title __Roborally Class Diagram__\n
+title Snokaranes Roborally Class Diagram\n
 
   namespace inf112.skeleton.app {
     class inf112.skeleton.app.Main {
@@ -55,6 +55,16 @@ title __Roborally Class Diagram__\n
   namespace inf112.skeleton.app {
     namespace game {
       namespace objects {
+        enum Direction {
+        }
+      }
+    }
+  }
+  
+
+  namespace inf112.skeleton.app {
+    namespace game {
+      namespace objects {
         class inf112.skeleton.app.game.objects.Flag {
         }
       }
@@ -67,6 +77,14 @@ title __Roborally Class Diagram__\n
       namespace objects {
         class inf112.skeleton.app.game.objects.PlayerToken {
         }
+      }
+    }
+  }
+  
+
+  namespace inf112.skeleton.app {
+    namespace libgdx {
+      class inf112.skeleton.app.libgdx.CharacterCustomizer {
       }
     }
   }
@@ -91,6 +109,82 @@ title __Roborally Class Diagram__\n
   namespace inf112.skeleton.app {
     namespace libgdx {
       class inf112.skeleton.app.libgdx.NetworkDataWrapper {
+      }
+    }
+  }
+  
+
+  namespace inf112.skeleton.app {
+    namespace libgdx {
+      class inf112.skeleton.app.libgdx.PlayerConfig {
+      }
+    }
+  }
+  
+
+  namespace inf112.skeleton.app {
+    namespace libgdx {
+      class inf112.skeleton.app.libgdx.RoboGame {
+      }
+    }
+  }
+  
+
+  namespace inf112.skeleton.app {
+    namespace libgdx {
+      namespace screens {
+        class inf112.skeleton.app.libgdx.screens.CharacterCustomizationScreen {
+        }
+      }
+    }
+  }
+  
+
+  namespace inf112.skeleton.app {
+    namespace libgdx {
+      namespace screens {
+        class inf112.skeleton.app.libgdx.screens.GameScreen {
+        }
+      }
+    }
+  }
+  
+
+  namespace inf112.skeleton.app {
+    namespace libgdx {
+      namespace screens {
+        interface inf112.skeleton.app.libgdx.screens.IUiScreen {
+        }
+      }
+    }
+  }
+  
+
+  namespace inf112.skeleton.app {
+    namespace libgdx {
+      namespace screens {
+        class inf112.skeleton.app.libgdx.screens.MenuScreen {
+        }
+      }
+    }
+  }
+  
+
+  namespace inf112.skeleton.app {
+    namespace libgdx {
+      namespace screens {
+        class inf112.skeleton.app.libgdx.screens.SelectRoleScreen {
+        }
+      }
+    }
+  }
+  
+
+  namespace inf112.skeleton.app {
+    namespace libgdx {
+      namespace screens {
+        class inf112.skeleton.app.libgdx.screens.VictoryScreen {
+        }
       }
     }
   }
@@ -136,24 +230,148 @@ title __Roborally Class Diagram__\n
   }
   
 
+  namespace inf112.skeleton.app {
+    namespace ui.cards {
+      class inf112.skeleton.app.ui.cards.CardDisplay {
+      }
+    }
+  }
+  
+
+  namespace inf112.skeleton.app {
+    namespace ui.chat {
+      class inf112.skeleton.app.ui.chat.CommandParser {
+      }
+    }
+  }
+  
+
+  namespace inf112.skeleton.app {
+    namespace ui.chat {
+      namespace backend {
+        class inf112.skeleton.app.ui.chat.backend.ChatFormatter {
+        }
+      }
+    }
+  }
+  
+
+  namespace inf112.skeleton.app {
+    namespace ui.chat {
+      namespace backend {
+        class inf112.skeleton.app.ui.chat.backend.ChatterData {
+        }
+      }
+    }
+  }
+  
+
+  namespace inf112.skeleton.app {
+    namespace ui.chat {
+      namespace backend {
+        class inf112.skeleton.app.ui.chat.backend.Message {
+        }
+      }
+    }
+  }
+  
+
+  namespace inf112.skeleton.app {
+    namespace ui.chat {
+      namespace display {
+        class inf112.skeleton.app.ui.chat.display.Chat {
+        }
+      }
+    }
+  }
+  
+
+  namespace inf112.skeleton.app {
+    namespace ui.chat {
+      namespace managers {
+        class inf112.skeleton.app.ui.chat.managers.ChatClient {
+        }
+      }
+    }
+  }
+  
+
+  namespace inf112.skeleton.app {
+    namespace ui.chat {
+      namespace managers {
+        class inf112.skeleton.app.ui.chat.managers.ChatManager {
+        }
+      }
+    }
+  }
+  
+
+  namespace inf112.skeleton.app {
+    namespace ui.chat {
+      namespace managers {
+        abstract class inf112.skeleton.app.ui.chat.managers.Chatter {
+        }
+      }
+    }
+  }
+  
+
+  namespace inf112.skeleton.app {
+    namespace ui.chat {
+      namespace managers {
+        interface inf112.skeleton.app.ui.chat.managers.IChatter {
+        }
+      }
+    }
+  }
+  
+
   inf112.skeleton.app.game.GameClient -up-|> inf112.skeleton.app.game.GamePlayer
   inf112.skeleton.app.game.GameClient o-- inf112.skeleton.app.network.NetworkClient : client
   inf112.skeleton.app.game.GameHost -up-|> inf112.skeleton.app.game.GamePlayer
   inf112.skeleton.app.game.GameHost o-- inf112.skeleton.app.network.NetworkHost : host
-  inf112.skeleton.app.game.GameHost o-- inf112.skeleton.app.libgdx.Map : mlp
+  inf112.skeleton.app.game.GameHost o-- inf112.skeleton.app.libgdx.Map : map
   inf112.skeleton.app.game.GamePlayer o-- inf112.skeleton.app.game.GamePlayer.PLAYERSTATE : state
   inf112.skeleton.app.game.objects.Card o-- inf112.skeleton.app.game.objects.CardType : cardType
   inf112.skeleton.app.game.objects.PlayerToken o-- inf112.skeleton.app.game.objects.PlayerToken.CHARACTER_STATES : charState
-  inf112.skeleton.app.game.objects.PlayerToken o-- inf112.skeleton.app.game.objects.PlayerToken.Direction : playerDirection
+  inf112.skeleton.app.game.objects.PlayerToken o-- inf112.skeleton.app.game.objects.Direction : playerDirection
   inf112.skeleton.app.libgdx.Game .up.|> com.badlogic.gdx.ApplicationListener
   inf112.skeleton.app.libgdx.Game -up-|> com.badlogic.gdx.InputAdapter
-  inf112.skeleton.app.libgdx.Game o-- inf112.skeleton.app.game.GamePlayer : gamePlayer
-  inf112.skeleton.app.libgdx.Game o-- inf112.skeleton.app.libgdx.Map : mlp
-  inf112.skeleton.app.libgdx.Game o-- inf112.skeleton.app.network.Network : network
+  inf112.skeleton.app.libgdx.RoboGame -up-|> com.badlogic.gdx.Game
+  inf112.skeleton.app.libgdx.screens.CharacterCustomizationScreen .up.|> inf112.skeleton.app.libgdx.screens.IUiScreen
+  inf112.skeleton.app.libgdx.screens.CharacterCustomizationScreen -up-|> com.badlogic.gdx.ScreenAdapter
+  inf112.skeleton.app.libgdx.screens.CharacterCustomizationScreen o-- inf112.skeleton.app.libgdx.RoboGame : game
+  inf112.skeleton.app.libgdx.screens.GameScreen -up-|> com.badlogic.gdx.ScreenAdapter
+  inf112.skeleton.app.libgdx.screens.GameScreen o-- inf112.skeleton.app.ui.chat.managers.Chatter : chat
+  inf112.skeleton.app.libgdx.screens.GameScreen o-- inf112.skeleton.app.game.GamePlayer : gamePlayer
+  inf112.skeleton.app.libgdx.screens.GameScreen o-- inf112.skeleton.app.libgdx.Map : map
+  inf112.skeleton.app.libgdx.screens.GameScreen o-- inf112.skeleton.app.network.Network : network
+  inf112.skeleton.app.libgdx.screens.GameScreen o-- inf112.skeleton.app.libgdx.RoboGame : game
+  inf112.skeleton.app.libgdx.screens.MenuScreen .up.|> inf112.skeleton.app.libgdx.screens.IUiScreen
+  inf112.skeleton.app.libgdx.screens.MenuScreen -up-|> com.badlogic.gdx.ScreenAdapter
+  inf112.skeleton.app.libgdx.screens.MenuScreen o-- inf112.skeleton.app.libgdx.RoboGame : game
+  inf112.skeleton.app.libgdx.screens.SelectRoleScreen .up.|> inf112.skeleton.app.libgdx.screens.IUiScreen
+  inf112.skeleton.app.libgdx.screens.SelectRoleScreen -up-|> com.badlogic.gdx.ScreenAdapter
+  inf112.skeleton.app.libgdx.screens.SelectRoleScreen o-- inf112.skeleton.app.libgdx.RoboGame : game
+  inf112.skeleton.app.libgdx.screens.VictoryScreen .up.|> inf112.skeleton.app.libgdx.screens.IUiScreen
+  inf112.skeleton.app.libgdx.screens.VictoryScreen -up-|> com.badlogic.gdx.ScreenAdapter
+  inf112.skeleton.app.libgdx.screens.VictoryScreen o-- inf112.skeleton.app.game.objects.PlayerToken : winner
+  inf112.skeleton.app.libgdx.screens.VictoryScreen o-- inf112.skeleton.app.libgdx.RoboGame : game
   inf112.skeleton.app.network.NetworkClient -up-|> inf112.skeleton.app.network.Network
   inf112.skeleton.app.network.NetworkClient o-- inf112.skeleton.app.game.GameClient : gameClient
-  inf112.skeleton.app.network.NetworkClient o-- inf112.skeleton.app.libgdx.Map : mlp
+  inf112.skeleton.app.network.NetworkClient o-- inf112.skeleton.app.libgdx.Map : map
   inf112.skeleton.app.network.NetworkHost -up-|> inf112.skeleton.app.network.Network
+  inf112.skeleton.app.network.NetworkHost o-- inf112.skeleton.app.game.GameHost : host
+  inf112.skeleton.app.ui.chat.backend.Message o-- inf112.skeleton.app.ui.chat.backend.ChatterData : sender
+  inf112.skeleton.app.ui.chat.display.Chat o-- inf112.skeleton.app.ui.chat.backend.ChatFormatter : chat
+  inf112.skeleton.app.ui.chat.managers.ChatClient .up.|> inf112.skeleton.app.ui.chat.managers.IChatter
+  inf112.skeleton.app.ui.chat.managers.ChatClient -up-|> inf112.skeleton.app.ui.chat.managers.Chatter
+  inf112.skeleton.app.ui.chat.managers.ChatClient o-- inf112.skeleton.app.network.NetworkClient : client
+  inf112.skeleton.app.ui.chat.managers.ChatManager .up.|> inf112.skeleton.app.ui.chat.managers.IChatter
+  inf112.skeleton.app.ui.chat.managers.ChatManager -up-|> inf112.skeleton.app.ui.chat.managers.Chatter
+  inf112.skeleton.app.ui.chat.managers.ChatManager o-- inf112.skeleton.app.network.NetworkHost : host
+  inf112.skeleton.app.ui.chat.managers.Chatter o-- inf112.skeleton.app.ui.chat.backend.ChatterData : cData
+  inf112.skeleton.app.ui.chat.managers.Chatter o-- inf112.skeleton.app.ui.chat.display.Chat : chat
 
 
 right footer

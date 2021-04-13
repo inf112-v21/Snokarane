@@ -4,38 +4,26 @@ title __LIBGDX's Class Diagram__\n
 
   namespace inf112.skeleton.app {
     namespace libgdx {
+      class inf112.skeleton.app.libgdx.CharacterCustomizer {
+          {static} + generatePlayerTexture()
+          {static} + loadCharacterConfigFromFile()
+          {static} + saveCharacterConfigToFile()
+      }
+    }
+  }
+  
+
+  namespace inf112.skeleton.app {
+    namespace libgdx {
       class inf112.skeleton.app.libgdx.Game {
           {static} + BOARD_X : int
           {static} + BOARD_Y : int
-          + flagPositions : List<Flag>
-          - batch : SpriteBatch
-          - font : BitmapFont
-          - playerLayer : TiledMapTileLayer
-          - playerNormal : Cell
-          - playerWon : Cell
-          - renderer : OrthogonalTiledMapRenderer
-          - tiledMap : TiledMap
           + create()
           + dispose()
-          + keyUp()
-          + loadMapLayers()
-          + loadPlayerTextures()
-          + loadTileMapFromFile()
           + pause()
           + render()
           + resize()
           + resume()
-          + startGame()
-          + translatePlayerLayer()
-          + updateMap()
-          - drawDeck()
-          - getFlagPositionsFromLayer()
-          - initializeRendering()
-          - pickCardsOnKeyPress()
-          - resetCellRotation()
-          - rotateCellsAccordingToDirection()
-          - startClient()
-          - startHost()
       }
     }
   }
@@ -44,17 +32,59 @@ title __LIBGDX's Class Diagram__\n
   namespace inf112.skeleton.app {
     namespace libgdx {
       class inf112.skeleton.app.libgdx.Map {
+          + beltLayer : BeltInformation[][]
           + flagList : List<Flag>
+          + gearLayer : int[][]
+          + holeLayer : boolean[][]
+          + laserLayer : int[][][]
+          + laserShooters : List<LaserShooter>
           + playerLayer : PlayerRenderInformation[][]
+          + repairLayer : boolean[][]
+          + spawnPoints : List<GridPoint2>
+          + wallLayer : boolean[][][]
           - BOARD_X : int
           - BOARD_Y : int
           - ID : int
           + Map()
+          + canGo()
+          + clearLasers()
           + clearPlayerLayer()
+          + hasPlayer()
           + hasWon()
+          + isGear()
+          + isHole()
+          {static} + isInBounds()
+          {static} + isInBounds()
+          + isRepair()
           + loadPlayers()
           + registerFlags()
           + setID()
+          + shootLasers()
+          + wouldDie()
+      }
+    }
+  }
+  
+
+  namespace inf112.skeleton.app {
+    namespace libgdx {
+      class inf112.skeleton.app.libgdx.Map.BeltInformation {
+          + beltRotation : int
+          + isExpress : boolean
+          + BeltInformation()
+          + BeltInformation()
+      }
+    }
+  }
+  
+
+  namespace inf112.skeleton.app {
+    namespace libgdx {
+      class inf112.skeleton.app.libgdx.Map.LaserShooter {
+          ~ laserNum : int
+          ~ x : int
+          ~ y : int
+          + LaserShooter()
       }
     }
   }
@@ -73,6 +103,43 @@ title __LIBGDX's Class Diagram__\n
     namespace libgdx {
       class inf112.skeleton.app.libgdx.NetworkDataWrapper {
           + PlayerTokens : List<PlayerToken>
+          + laserLayer : int[][][]
+      }
+    }
+  }
+  
+
+  namespace inf112.skeleton.app {
+    namespace libgdx {
+      class inf112.skeleton.app.libgdx.PlayerConfig {
+          ~ image : String
+          ~ mainColor : Color
+          + PlayerConfig()
+          + PlayerConfig()
+          + getImage()
+          + getMainColor()
+          + setImage()
+          + setMainColor()
+      }
+    }
+  }
+  
+
+  namespace inf112.skeleton.app {
+    namespace libgdx {
+      class inf112.skeleton.app.libgdx.RoboGame {
+          {static} + BOARD_X : int
+          {static} + BOARD_Y : int
+          + batch : SpriteBatch
+          + font : BitmapFont
+          + renderer : OrthogonalTiledMapRenderer
+          + skin : Skin
+          + tiledMap : TiledMap
+          + create()
+          + dispose()
+          + loadTileMapFromFile()
+          + render()
+          - initializeRendering()
       }
     }
   }
@@ -80,12 +147,15 @@ title __LIBGDX's Class Diagram__\n
 
   inf112.skeleton.app.libgdx.Game .up.|> com.badlogic.gdx.ApplicationListener
   inf112.skeleton.app.libgdx.Game -up-|> com.badlogic.gdx.InputAdapter
-  inf112.skeleton.app.libgdx.Game o-- inf112.skeleton.app.game.GamePlayer : gamePlayer
-  inf112.skeleton.app.libgdx.Game o-- inf112.skeleton.app.libgdx.Map : mlp
-  inf112.skeleton.app.libgdx.Game o-- inf112.skeleton.app.network.Network : network
+  inf112.skeleton.app.libgdx.Map +-down- inf112.skeleton.app.libgdx.Map.BeltInformation
+  inf112.skeleton.app.libgdx.Map +-down- inf112.skeleton.app.libgdx.Map.LaserShooter
   inf112.skeleton.app.libgdx.Map +-down- inf112.skeleton.app.libgdx.Map.PlayerRenderInformation
-  inf112.skeleton.app.libgdx.Map.PlayerRenderInformation o-- inf112.skeleton.app.game.objects.PlayerToken.Direction : dir
+  inf112.skeleton.app.libgdx.Map.BeltInformation o-- inf112.skeleton.app.game.objects.Direction : beltDirection
+  inf112.skeleton.app.libgdx.Map.BeltInformation o-- inf112.skeleton.app.game.objects.Direction : beltRotationDirection
+  inf112.skeleton.app.libgdx.Map.LaserShooter o-- inf112.skeleton.app.game.objects.Direction : dir
+  inf112.skeleton.app.libgdx.Map.PlayerRenderInformation o-- inf112.skeleton.app.game.objects.Direction : dir
   inf112.skeleton.app.libgdx.Map.PlayerRenderInformation o-- inf112.skeleton.app.game.objects.PlayerToken.CHARACTER_STATES : state
+  inf112.skeleton.app.libgdx.RoboGame -up-|> com.badlogic.gdx.Game
 
 
 right footer

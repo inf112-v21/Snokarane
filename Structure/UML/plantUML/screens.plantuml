@@ -1,0 +1,200 @@
+@startuml
+
+title __SCREENS's Class Diagram__\n
+
+  namespace inf112.skeleton.app {
+    namespace libgdx {
+      namespace screens {
+        class inf112.skeleton.app.libgdx.screens.CharacterCustomizationScreen {
+            ~ blueSlider : Slider
+            ~ characterPreviewImage : Image
+            ~ defaultPlayerTexture : Texture
+            ~ gdxH : float
+            ~ gdxW : float
+            ~ greenSlider : Slider
+            ~ redSlider : Slider
+            ~ stage : Stage
+            ~ useLargeCheckBox : CheckBox
+            + CharacterCustomizationScreen()
+            + hide()
+            + loadUIIntractables()
+            + loadUIVisuals()
+            + render()
+            + show()
+            + startScreen()
+            - updatePreviewImage()
+        }
+      }
+    }
+  }
+  
+
+  namespace inf112.skeleton.app {
+    namespace libgdx {
+      namespace screens {
+        class inf112.skeleton.app.libgdx.screens.GameScreen {
+            + flagPositions : List<Flag>
+            ~ networkChatBacklogSize : int
+            - cardTemplates : HashMap<CardType, TextureRegion>
+            - doubleBoth : Cell
+            - doubleHorizontal : Cell
+            - doubleVertical : Cell
+            - duplicates : HashMap<CardType, Integer>
+            - playerLayer : TiledMapTileLayer
+            - playerNormal : Cell
+            - playerWon : Cell
+            - singleBoth : Cell
+            - singleHorizontal : Cell
+            - singleVertical : Cell
+            - stage : Stage
+            + GameScreen()
+            + create()
+            + dispose()
+            + generateClickableCard()
+            + getDuplicateCardsInHand()
+            + hide()
+            + keyUp()
+            + laserToTile()
+            + loadLasers()
+            + loadMapLayers()
+            + loadTextures()
+            + pause()
+            + render()
+            + resize()
+            + resume()
+            + show()
+            + startGame()
+            + translatePlayerLayer()
+            + updateMap()
+            - getBoardElementPositionsFromLayer()
+            - getFlagPositionsFromLayer()
+            - getStartPositions()
+            - initializeChatObjects()
+            - loadActorsInOrder()
+            - loadBackButton()
+            - loadCardBackground()
+            - loadCardDeck()
+            - loadCardTextures()
+            - loadPlayerList()
+            - loadSendCardsButton()
+            - pollUiUpdates()
+            - resetCellRotation()
+            - rotateCellsAccordingToDirection()
+            - setBeltInformation()
+            - setLaserDirection()
+            - setWallDirections()
+            - startClient()
+            - startHost()
+            - updateChat()
+        }
+      }
+    }
+  }
+  
+
+  namespace inf112.skeleton.app {
+    namespace libgdx {
+      namespace screens {
+        interface inf112.skeleton.app.libgdx.screens.IUiScreen {
+            {abstract} + loadUIIntractables()
+            {abstract} + loadUIVisuals()
+            {abstract} + startScreen()
+        }
+      }
+    }
+  }
+  
+
+  namespace inf112.skeleton.app {
+    namespace libgdx {
+      namespace screens {
+        class inf112.skeleton.app.libgdx.screens.MenuScreen {
+            ~ gdxH : float
+            ~ gdxW : float
+            ~ stage : Stage
+            + MenuScreen()
+            + hide()
+            + loadUIIntractables()
+            + loadUIVisuals()
+            + render()
+            + show()
+            + startScreen()
+        }
+      }
+    }
+  }
+  
+
+  namespace inf112.skeleton.app {
+    namespace libgdx {
+      namespace screens {
+        class inf112.skeleton.app.libgdx.screens.SelectRoleScreen {
+            ~ gdxH : float
+            ~ gdxW : float
+            ~ stage : Stage
+            - IPInputField : TextField
+            - IP_address : String
+            - nameInputField : TextArea
+            - roleHost : boolean
+            + SelectRoleScreen()
+            + hide()
+            + loadUIIntractables()
+            + loadUIVisuals()
+            + render()
+            + show()
+            + startScreen()
+            - loadTextButtons()
+            - loadTextFields()
+        }
+      }
+    }
+  }
+  
+
+  namespace inf112.skeleton.app {
+    namespace libgdx {
+      namespace screens {
+        class inf112.skeleton.app.libgdx.screens.VictoryScreen {
+            ~ stage : Stage
+            + VictoryScreen()
+            + hide()
+            + loadUIIntractables()
+            + loadUIVisuals()
+            + render()
+            + show()
+            + startScreen()
+        }
+      }
+    }
+  }
+  
+
+  inf112.skeleton.app.libgdx.screens.CharacterCustomizationScreen .up.|> inf112.skeleton.app.libgdx.screens.IUiScreen
+  inf112.skeleton.app.libgdx.screens.CharacterCustomizationScreen -up-|> com.badlogic.gdx.ScreenAdapter
+  inf112.skeleton.app.libgdx.screens.CharacterCustomizationScreen o-- inf112.skeleton.app.libgdx.RoboGame : game
+  inf112.skeleton.app.libgdx.screens.GameScreen -up-|> com.badlogic.gdx.ScreenAdapter
+  inf112.skeleton.app.libgdx.screens.GameScreen o-- inf112.skeleton.app.ui.chat.managers.Chatter : chat
+  inf112.skeleton.app.libgdx.screens.GameScreen o-- inf112.skeleton.app.game.GamePlayer : gamePlayer
+  inf112.skeleton.app.libgdx.screens.GameScreen o-- inf112.skeleton.app.libgdx.Map : map
+  inf112.skeleton.app.libgdx.screens.GameScreen o-- inf112.skeleton.app.network.Network : network
+  inf112.skeleton.app.libgdx.screens.GameScreen o-- inf112.skeleton.app.libgdx.RoboGame : game
+  inf112.skeleton.app.libgdx.screens.MenuScreen .up.|> inf112.skeleton.app.libgdx.screens.IUiScreen
+  inf112.skeleton.app.libgdx.screens.MenuScreen -up-|> com.badlogic.gdx.ScreenAdapter
+  inf112.skeleton.app.libgdx.screens.MenuScreen o-- inf112.skeleton.app.libgdx.RoboGame : game
+  inf112.skeleton.app.libgdx.screens.SelectRoleScreen .up.|> inf112.skeleton.app.libgdx.screens.IUiScreen
+  inf112.skeleton.app.libgdx.screens.SelectRoleScreen -up-|> com.badlogic.gdx.ScreenAdapter
+  inf112.skeleton.app.libgdx.screens.SelectRoleScreen o-- inf112.skeleton.app.libgdx.RoboGame : game
+  inf112.skeleton.app.libgdx.screens.VictoryScreen .up.|> inf112.skeleton.app.libgdx.screens.IUiScreen
+  inf112.skeleton.app.libgdx.screens.VictoryScreen -up-|> com.badlogic.gdx.ScreenAdapter
+  inf112.skeleton.app.libgdx.screens.VictoryScreen o-- inf112.skeleton.app.game.objects.PlayerToken : winner
+  inf112.skeleton.app.libgdx.screens.VictoryScreen o-- inf112.skeleton.app.libgdx.RoboGame : game
+
+
+right footer
+
+
+PlantUML diagram generated by SketchIt! (https://bitbucket.org/pmesmeur/sketch.it)
+For more information about this tool, please contact philippe.mesmeur@gmail.com
+endfooter
+
+@enduml

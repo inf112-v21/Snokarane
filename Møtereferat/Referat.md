@@ -348,4 +348,19 @@ Fortsette på planlegging av prosjekt og prosjektstruktur
 
 **Neste møte:** 26.03.2021
 
+## **Referat møte fredag 26.03.2021**
+
+**Stad:** Discord, tid 1015
+
+**Agenda:** Merging av greiner og finpuss før innlevering
+
+**Møtte:** Jørgen Lohne, Hallvard Kobbeltveit, Audun Ljone Henriksen og Peter Augustin Gillow Krooni
+
+**Diskusjon/arbeid:**
+- Starta med å merge branches slik at vi kan jobbe med bugs/feil så tidleg som mogleg
+- Fekk umiddelbart trøbbel med at spelet krasjer randomly
+- Fiksa opp i nemnde krasjes
+- Skreiv ytterlegare dokumentasjon
+- Sjekka opp i at alt var med og klart til innlevering
+- Leverte
 

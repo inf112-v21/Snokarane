@@ -10,10 +10,29 @@ A work in progress java implementaion of the board game ["RoboRally"](https://en
 
 
 # How to run
-0. Install Java 13 or later.
-1. Make sure to have installed Maven
-2. Clone project using Git.
-3. Run Main.java using an IDE such as IntelliJ (recommended) or Eclipse. Alternativly compile and run using your preferred method.
+1. Install Java 13 or later. Java can be found at https://www.oracle.com/java/technologies/javase-downloads.html
+2. Either download an IDE that supports java or use the command line to compile java files
+3. Make sure to have installed Maven in your IDE or command line
+4. Clone project using Git: This can be done using either HTTPS, SSH or GitHub CLI
+	
+	Using HTTPS, write in git bash (or your CLI of choice) command line 'git clone https://github.com/inf112-v21/Snokarane.git'
+	
+	Using SSH, write in git bash (or your CLI of choice) command line 'git clone git@github.com:inf112-v21/Snokarane.git'
+	
+	Using GitHub CLI, git bash (or your CLI of choice) write in command line 'gh repo clone inf112-v21/Snokarane'
+	
+	Alternatively, you can use your IDE's integrated VCS to log into your GitHub and clone from there.
+	
+	You can also download the source files by navigating to the lastest release tag.
+5. If using an IDE (such as Intellij), import maven changes and add a java configuration from Java 13 or later. 
+6. Run Main.java in your IDE, or compile it manually in the command line and run the resulting executable.
+	
+	To compile a Java program in the command line, use the command 'javac file-name',
+	
+	Then run 'java file-name' on the resulting file.
+	
+7. When running Main.java the application will appear on the screen, and from there you can use the application.
+
 
 ### 1. How to play
 
@@ -81,7 +100,7 @@ Chat test:
 5. Send a message in the chat in both the client and host instance, if both messages appear 
 		on both screens, the chat is receiving messages correctly
 
-Chat commands test
+Chat commands test:
 1. Start the game as host
 2. When the chat has loaded (the welcome message displays in the chat), enter /h to 
     see available commands
@@ -94,7 +113,35 @@ Chat commands test
 8. Write <c font-scale 1> in the chat (without the '<>' symbols)
 9. If the chat font has increased in size (default is 0.8), the font-scale command 
     is working correctly
-    
+
+
+CharacterCustomisationTest:
+
+1. Start the game as usual.
+2. Click on the "Customize" button.
+3. Change color values as desiered using the sliders or textboxes next to them (values above 255 are set to 255, blank values is set to 0).
+4. Take a screenshot (using your prefered method) or a take a picture of your screen using a camera (tips: your phones camra is easily accasible if you have a modern smartphone!)
+	3.a Make sure to include the character preview iamge in the picture!
+	
+	3.b Save the picture somewhere you can easily find it and view it.
+	
+5. Click the save button.
+6. Start a new game session.
+	6.a Navigate back to the main menu by pressing the "back" button or by closing and realunching the application.
+	
+	6.b From the main click on the "host/join game" button.
+	
+	6.c Click on the "host game" button
+	
+	6.d A promt with the message "All players connected" should appear. press the "OK" button on the prompot.
+
+7. Have a look at your charcter in game and compare with the screenshot/picture you took earlier.
+	
+	7.a if the playercharacter in the game matches the sceenshot/picture you took then the test has passed, if not the test has failed.	
+
+8. NOTE that If using the camera method keep in mind that your camra might warp the colors somewhat, if this is the case, use your best judgment to determine if the 		test has passed or not. 
+
+
 #  User stories
  
  User stories, acceptance criteria, and tasks can be found [here](https://docs.google.com/spreadsheets/d/1A_78OKM1BRXeeG4MR3e6AafYpPxnElqm3xPFjLozlGY/edit?usp=sharing)

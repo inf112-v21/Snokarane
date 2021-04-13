@@ -224,6 +224,8 @@ public class Map {
 
         for (int i = 0; i<wrapper.PlayerTokens.size(); i++) {
             PlayerToken token = wrapper.PlayerTokens.get(i);
+            //TODO as of now, dead people don't shoot lasers
+            if (token.diedThisTurn) continue;
             allLasers.add(new LaserShooter(token.getDirection(), 1, token.getX(), token.getY()));
         }
 
@@ -269,6 +271,7 @@ public class Map {
     public void loadPlayers(List<PlayerToken> players) {
         clearPlayerLayer();
         for (PlayerToken token: players) {
+            if (token.diedThisTurn) continue;
             if (token.ID == this.ID) {
                 playerLayer[token.getX()][token.getY()].state = PlayerToken.CHARACTER_STATES.PLAYERSELFNORMAL;
             } else {
