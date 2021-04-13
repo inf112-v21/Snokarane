@@ -38,23 +38,38 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+
+/**
+ * Controls most events that happen in game
+ * Every local change starts inside this class, as it contains the network that fetches updates
+ *
+ * WARNING
+ * This class is pretty large, but methods and variables have been moved so methods that are related are placed closeby
+ * Recommended way of reading this class is using collapse all, then exoand doc comments only:
+ * Can be done in intellij with (depending on keybinds):
+ *  1. CTRL+SHIT+A -> "Collapse All" -> CTRL+SHIFT+A -> "Expand Doc Comments
+ *  2. CTRL+SHIFT+NUMPAD_MINUS -> CTRL+SHIFT+A -> "Expand Doc Comments"
+ *
+ */
 public class GameScreen extends ScreenAdapter {
     private final RoboGame game;
     private final Stage stage;
 
 
-    //--------- ------------------ ------------------ ------------------ ---------
-    //--------- ------------------  Internal map vars ------------------ ---------
-    //--------- ------------------ ------------------ ------------------ ---------
+    /**--------- ------------------ ------------------ ------------------ ---------
+    /* --------- ------------------  Internal map vars ------------------ ---------
+    /* --------- ------------------ ------------------ ------------------ ---------
+    */
     Map map = new Map();
     // Flags on the map are stored here for easy access
     // TODO: this should really only useful in GameHost
     public List<Flag> flagPositions = new ArrayList<>();
 
 
-    //--------- ------------------ ------------------ ------------------ ---------
-    //--------- ------------------  Tiled map info    ------------------ ---------
-    //--------- ------------------ ------------------ ------------------ ---------
+    /**--------- ------------------ ------------------ ------------------ ---------
+    /* --------- ------------------  Tiled map info    ------------------ ---------
+    /* --------- ------------------ ------------------ ------------------ ---------
+    */
     // Layers of the map
     private TiledMapTileLayer playerLayer;
     // Cells for each player state
@@ -68,9 +83,10 @@ public class GameScreen extends ScreenAdapter {
     private TiledMapTileLayer.Cell doubleHorizontal;
 
 
-    //--------- ------------------ ------------------ ------------------ ---------
-    //--------- ------------------   Card helpers     ------------------ ---------
-    //--------- ------------------ ------------------ ------------------ ---------
+    /**--------- ------------------ ------------------ ------------------ ---------
+    /* --------- ------------------   Card helpers     ------------------ ---------
+    /* --------- ------------------ ------------------ ------------------ ---------
+    */
     /*
      * In order, index 0 to max is:
      * move 1, move 2, move 3, rotate left, rotate right, backup, uturn
@@ -83,9 +99,10 @@ public class GameScreen extends ScreenAdapter {
 
 
 
-    //--------- ------------------ ------------------ ------------------ ---------
-    //--------- ------------------Client-host helpers ------------------ ---------
-    //--------- ------------------ ------------------ ------------------ ---------
+    /**--------- ------------------ ------------------ ------------------ ---------
+    /* --------- ------------------Client-host helpers ------------------ ---------
+    /* --------- ------------------ ------------------ ------------------ ---------
+    */
     // Handles all player based actions (picking cards, decks to send over network etc.)
     GamePlayer gamePlayer;
     // Handles all data transfers over internet
@@ -107,7 +124,7 @@ public class GameScreen extends ScreenAdapter {
 
 
 
-    /*
+    /**
     --------- ------------------ ------------------ ------------------ ---------
     --------- ------------------ Class setup methods--------- ------------------
     --------- ------------------ ------------------ ------------------ ---------
@@ -243,7 +260,7 @@ public class GameScreen extends ScreenAdapter {
 
 
 
-    /*
+    /**
     --------- ------------------ ------------------ ------------------ ---------
     --------- ------------------   Texture handling --------- ------------------
     --------- ------------------ ------------------ ------------------ ---------
@@ -363,7 +380,7 @@ public class GameScreen extends ScreenAdapter {
 
 
 
-    /*
+    /**
     --------- ------------------ ------------------ ------------------ ---------
     --------- ------------------   Stage loading    --------- ------------------
     --------- ------------------ ------------------ ------------------ ---------
@@ -693,7 +710,7 @@ public class GameScreen extends ScreenAdapter {
 
 
 
-    /*
+    /**
     --------- ------------------ ------------------ ------------------ ---------
     --------- ------------------   Libgdx methods   --------- ------------------
     --------- ------------------ ------------------ ------------------ ---------
@@ -748,7 +765,7 @@ public class GameScreen extends ScreenAdapter {
 
 
 
-    /*
+    /**
     --------- ------------------ ------------------ ------------------ ---------
     --------- ------------------ Map display methods--------- ------------------
     --------- ------------------ ------------------ ------------------ ---------
@@ -870,7 +887,7 @@ public class GameScreen extends ScreenAdapter {
 
 
 
-    /*
+    /**
     --------- ------------------ ------------------ ------------------ ---------
     --------- ------------------     UI methods     --------- ------------------
     --------- ------------------ ------------------ ------------------ ---------
@@ -929,7 +946,7 @@ public class GameScreen extends ScreenAdapter {
 
 
 
-    /*
+    /**
     --------- ------------------ ------------------ ------------------ ---------
     --------- ------------------Map internal methods--------- ------------------
     --------- ------------------ ------------------ ------------------ ---------
@@ -1035,7 +1052,7 @@ public class GameScreen extends ScreenAdapter {
 
 
 
-    /*
+    /**
     --------- ------------------ ------------------ ------------------ ---------
     --------- ----------  Random getters/unspecified   ------------------
     --------- ------------------ ------------------ ------------------ ---------
