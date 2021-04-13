@@ -25,7 +25,7 @@ import java.util.List;
  * that can be used to render the chat directly into the main game screen.
  */
 public class Chat {
-    private ChatFormatter chat = new ChatFormatter();
+    public ChatFormatter chat = new ChatFormatter();
     private Table chatTable = new Table();
     private TextureRegionDrawable chatBackground;
     private float fontSize = 0.8f;
@@ -90,10 +90,18 @@ public class Chat {
                     int breakLoc = lineBreakLimit-s.length();
                     String mess1 = hss.get(s).substring(0, breakLoc);
                     String mess2 = hss.get(s).substring(breakLoc);
-                    messages.add(s + ": " + mess1);
+                    if (s.equals("")){
+                        messages.add(mess1);
+                    }else{
+                        messages.add(s + ": " + mess1);
+                    }
                     messages.add(mess2);
                 }else {
-                    messages.add(s + ": " + hss.get(s));
+                    if (s.equals("")){
+                        messages.add(hss.get(s));
+                    }else{
+                        messages.add(s + ": " + hss.get(s));
+                    }
                 }
             }
         }

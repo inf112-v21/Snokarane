@@ -613,7 +613,7 @@ public class GameScreen extends ScreenAdapter {
                                                 chat.chat.setChatFontSize(scale);
                                                 break;
                                             case INVALID:
-                                                chat.sendMessage("Entered invalid command.");
+                                                chat.sendInternalMessage("Entered invalid command.", network);
                                                 break;
                                             default:
                                                 break;
@@ -625,10 +625,10 @@ public class GameScreen extends ScreenAdapter {
                                 if (inputBox.getText().length()>1){
                                     if (inputBox.getText().substring(0, 2).equals("/h")){
                                         isCommand = true;
-                                        chat.sendInternalMessage("Commands:");
-                                        chat.sendInternalMessage("/c set-name <name>");
-                                        chat.sendInternalMessage("/c chat-color <r, g, b, black>");
-                                        chat.sendInternalMessage("/c font-scale <font scale>");
+                                        chat.sendInternalMessage("Commands:", network);
+                                        chat.sendInternalMessage("/c set-name <name>", network);
+                                        chat.sendInternalMessage("/c chat-color <r, g, b, black>", network);
+                                        chat.sendInternalMessage("/c font-scale <font scale>", network);
                                     }
                                 }
 
