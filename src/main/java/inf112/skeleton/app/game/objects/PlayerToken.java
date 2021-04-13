@@ -19,7 +19,7 @@ public class PlayerToken {
 
     public int ID;
 
-    public int hp = 10;
+    public int hp = 3;
 
     public boolean diedThisTurn = false;
 
@@ -61,8 +61,8 @@ public class PlayerToken {
     }
 
     public void died() {
-        position.x = spawnLoc.x;
-        position.y = spawnLoc.y;
+        position.x = -100; //spawnLoc.x;
+        position.y = -100; //spawnLoc.y;
         diedThisTurn = true;
         hp --;
         playerDirection = Direction.NORTH;

@@ -46,12 +46,14 @@ public class Map {
         int laserNum;
         int x;
         int y;
+        boolean isPermanent;
 
-        public LaserShooter(Direction dir, int laserNum, int x, int y) {
+        public LaserShooter(Direction dir, int laserNum, int x, int y, boolean isPermanent) {
             this.dir = dir;
             this.laserNum = laserNum;
             this.x = x;
             this.y = y;
+            this.isPermanent = isPermanent;
         }
     }
     /**
@@ -134,6 +136,7 @@ public class Map {
      * @return true if the tile has a player, false otherwise
      */
     public boolean hasPlayer(int x, int y) {
+        if (!isInBounds(x, y)) return false;
         return playerLayer[x][y].state != PlayerToken.CHARACTER_STATES.NONE;
     }
 
@@ -226,17 +229,22 @@ public class Map {
             PlayerToken token = wrapper.PlayerTokens.get(i);
             //TODO as of now, dead people don't shoot lasers
             if (token.diedThisTurn) continue;
-            allLasers.add(new LaserShooter(token.getDirection(), 1, token.getX(), token.getY()));
+            System.out.println(token.name + " is dead? " + token.diedThisTurn);
+            if (token.diedThisTurn) {
+                continue;
+            }
+            allLasers.add(new LaserShooter(token.getDirection(), 1, token.getX(), token.getY(), false));
         }
 
         for (LaserShooter laser : allLasers) {
             int x = laser.x;
             int y = laser.y;
             //If the laser comes from a player, it starts one tile ahead
-            int start = hasPlayer(x, y) ? 1 : 0;
+            int start = !laser.isPermanent ? 1 : 0;
 
             //If there is a wall directly in front of a player, or it's immediately out of bounds
-            if (hasPlayer(x, y) && (!canGo(x, y, laser.dir) || !isInBounds(x, y, laser.dir))) continue;
+            if (!laser.isPermanent && (!canGo(x, y, laser.dir) || !isInBounds(x, y, laser.dir))) continue;
+
             if (laser.dir == Direction.NORTH){
                 for (int i = start; i < BOARD_X; i++) {
                     laserLayer[x][y+i][0] = laser.laserNum;
