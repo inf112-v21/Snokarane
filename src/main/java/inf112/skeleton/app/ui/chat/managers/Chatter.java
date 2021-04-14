@@ -3,11 +3,13 @@ package inf112.skeleton.app.ui.chat.managers;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import inf112.skeleton.app.libgdx.RoboGame;
+import inf112.skeleton.app.network.Network;
 import inf112.skeleton.app.ui.chat.backend.ChatFormatter;
 import inf112.skeleton.app.ui.chat.backend.ChatterData;
 import inf112.skeleton.app.ui.chat.backend.Message;
 import inf112.skeleton.app.ui.chat.display.Chat;
 
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -16,9 +18,11 @@ import java.util.List;
 public abstract class Chatter {
     public Chat chat;
     public ChatterData cData = new ChatterData();
+    private ChatterData internalMessenger = new ChatterData();
 
     public Chatter(){
         cData.setData("name", 0);
+        internalMessenger.setData("", -1);
     }
 
     public void initializeChat(RoboGame game) {
@@ -43,6 +47,16 @@ public abstract class Chatter {
     }
 
     public abstract void sendMessage(String message);
+
+    /**
+     * Sends message that only displays on this client, sends without name
+     * used for information, displaying help commands
+     * @param message message to send internally
+     * @param net network object to permanently store message in, as all other message storage structures get wiped and updated from network
+     */
+    public void sendInternalMessage(String message, Network net){
+        net.messagesRecived.add(new Message(message, internalMessenger));
+    }
 
     public void setName(String name){
         this.cData.name = name;
