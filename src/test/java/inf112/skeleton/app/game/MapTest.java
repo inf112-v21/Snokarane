@@ -53,7 +53,7 @@ public class MapTest {
 
     @Test
     public void LaserDoesNotShootThroughWallsAndPlayers() {
-        map.laserShooters.add(new Map.LaserShooter(Direction.NORTH, 1, 0, 0));
+        map.laserShooters.add(new Map.LaserShooter(Direction.NORTH, 1, 0, 0, true));
         Map.PlayerRenderInformation player = new Map.PlayerRenderInformation();
         player.state = PlayerToken.CHARACTER_STATES.PLAYERNORMAL;
 
@@ -88,7 +88,7 @@ public class MapTest {
         assertFalse(map.laserLayer[0][4][0] > 0);
 
         //No obstacle should make it fire over the entire map
-        map.laserShooters.add(new Map.LaserShooter(Direction.NORTH, 1, 0, 5));
+        map.laserShooters.add(new Map.LaserShooter(Direction.NORTH, 1, 0, 5, true));
         map.shootLasers(wrapper);
         assertTrue(map.laserLayer[0][Game.BOARD_Y-1][0] > 0);
     }

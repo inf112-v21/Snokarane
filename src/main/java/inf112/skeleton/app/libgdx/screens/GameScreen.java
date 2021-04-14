@@ -77,9 +77,7 @@ public class GameScreen extends ScreenAdapter {
     private TiledMapTileLayer.Cell playerNormal;
     private TiledMapTileLayer.Cell playerWon;
     private TiledMapTileLayer.Cell singleHorizontal;
-    private TiledMapTileLayer.Cell singleBoth;
     private TiledMapTileLayer.Cell singleVertical;
-    private TiledMapTileLayer.Cell doubleBoth;
     private TiledMapTileLayer.Cell doubleVertical;
     private TiledMapTileLayer.Cell doubleHorizontal;
 
@@ -303,9 +301,7 @@ public class GameScreen extends ScreenAdapter {
         StaticTiledMapTile doubleHorizontal = new StaticTiledMapTile(splitLaserTextures[12][6]);
 
         this.singleHorizontal = new TiledMapTileLayer.Cell().setTile(singleHorizontal);
-        this.singleBoth = new TiledMapTileLayer.Cell().setTile(singleBoth);
         this.singleVertical = new TiledMapTileLayer.Cell().setTile(singleVertical);
-        this.doubleBoth = new TiledMapTileLayer.Cell().setTile(doubleBoth);
         this.doubleVertical = new TiledMapTileLayer.Cell().setTile(doubleVertical);
         this.doubleHorizontal = new TiledMapTileLayer.Cell().setTile(doubleHorizontal);
     }
@@ -935,9 +931,28 @@ public class GameScreen extends ScreenAdapter {
     public void loadLasers() {
         for (int x = 0; x < Game.BOARD_X; x++) {
             for (int y = 0; y < Game.BOARD_Y; y++) {
-                ((TiledMapTileLayer) game.tiledMap.getLayers().get("Laser")).setCell(x, y, laserToTile(x, y));
+                ((TiledMapTileLayer) game.tiledMap.getLayers().get("LaserV")).setCell(x, y, laserToTile(x, y, true));
+                ((TiledMapTileLayer) game.tiledMap.getLayers().get("LaserH")).setCell(x, y, laserToTile(x, y, false));
             }
         }
+    }
+    /**
+     @param x the x position of the tile
+     * @param y the y position of the tile
+     * @return the correct texture to put in the tile
+     */
+    public TiledMapTileLayer.Cell laserToTile(int x, int y, boolean isVert) {
+
+        //TODO FIX THIS SHIT to add support for doubles
+        if (map.laserLayer[x][y][0] == 1 && isVert) return singleVertical;
+        if (map.laserLayer[x][y][0] == 2 && isVert) return doubleVertical;
+        if (map.laserLayer[x][y][1] == 1 && !isVert) return singleHorizontal;
+        if (map.laserLayer[x][y][1] == 2 && !isVert) return doubleHorizontal;
+        if (map.laserLayer[x][y][2] == 1 && isVert) return singleVertical;
+        if (map.laserLayer[x][y][2] == 2 && isVert) return doubleVertical;
+        if (map.laserLayer[x][y][3] == 1 && !isVert) return singleHorizontal;
+        if (map.laserLayer[x][y][3] == 2 && !isVert) return doubleHorizontal;
+        else return null;
     }
     /**
      * Gets player locations and states from map and sets tiledmaplayer cells to correct texture
@@ -1060,10 +1075,10 @@ public class GameScreen extends ScreenAdapter {
      */
     private void setLaserDirection(TiledMapTileLayer.Cell laserCell, int i, int j) {
         // NORTH, EAST, SOUTH, WEST
-        if (laserCell.getTile().getId() == 38) map.laserShooters.add(new Map.LaserShooter(Direction.EAST, 1, i, j));
-        if (laserCell.getTile().getId() == 46) map.laserShooters.add(new Map.LaserShooter(Direction.WEST, 1, i, j));
-        if (laserCell.getTile().getId() == 95) map.laserShooters.add(new Map.LaserShooter(Direction.WEST, 2, i, j));
-        if (laserCell.getTile().getId() == 93) map.laserShooters.add(new Map.LaserShooter(Direction.EAST, 2, i, j));
+        if (laserCell.getTile().getId() == 38) map.laserShooters.add(new Map.LaserShooter(Direction.EAST, 1, i, j, true));
+        if (laserCell.getTile().getId() == 46) map.laserShooters.add(new Map.LaserShooter(Direction.WEST, 1, i, j, true));
+        if (laserCell.getTile().getId() == 95) map.laserShooters.add(new Map.LaserShooter(Direction.WEST, 2, i, j, true));
+        if (laserCell.getTile().getId() == 93) map.laserShooters.add(new Map.LaserShooter(Direction.EAST, 2, i, j, true));
     }
     /**
      * Sets the correct values for the wall in the wall layer in map

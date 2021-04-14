@@ -157,6 +157,7 @@ public class GameHost extends GamePlayer {
         List<Integer> playersToKill = new ArrayList<>();
         for (Integer key : clientPlayers.keySet()){
             PlayerToken token = clientPlayers.get(key);
+            if (token.diedThisTurn) continue;
 
             for (int i = 0; i < 2; i++) {
                 Map.BeltInformation belt = map.beltLayer[token.getX()][token.getY()];
@@ -194,6 +195,7 @@ public class GameHost extends GamePlayer {
             map.clearLasers();
             map.shootLasers(wrapper());
             int lasers = 0;
+
             for (int i = 0; i < 4; i++) {
                 lasers += map.laserLayer[token.getX()][token.getY()][i];
             }
@@ -256,6 +258,34 @@ public class GameHost extends GamePlayer {
         // Start processing each card sequentially
         isShowingCards = true;
     }
+    //TODO Use 8 directions, not 4
+    private void findPlayerRespawnLocation(PlayerToken player) {
+        int x = player.spawnLoc.x;
+        int y = player.spawnLoc.y;
+        int i = 0;
+        while (map.hasPlayer(x, y)) {
+            if (Map.isInBounds(x-i, y) && !map.hasPlayer(x-i, y)) {
+                x = x-i;
+                break;
+            }
+            if (Map.isInBounds(x+i, y) && !map.hasPlayer(x+i, y)) {
+                x = x+i;
+                break;
+            }
+            if (Map.isInBounds(x, y+i) && !map.hasPlayer(x, y+i)) {
+                y = y+i;
+                break;
+            }
+
+            if (Map.isInBounds(x, y-i) && !map.hasPlayer(x, y-i)) {
+                y = y-i;
+                break;
+            }
+            i++;
+        }
+        player.position.x = x;
+        player.position.y = y;
+    }
 
     /**
      * Rests which playertokens died this turn, and checks if anyone won
@@ -263,6 +293,7 @@ public class GameHost extends GamePlayer {
     private void resetPlayerTokens(){
         // Reset which players have died this turn, so that they can keep playing
         for (PlayerToken player: clientPlayers.values()) {
+            if (player.diedThisTurn) findPlayerRespawnLocation(player);
             player.diedThisTurn = false;
         }
         List<PlayerToken> playerTokens = new ArrayList<>(clientPlayers.values());
