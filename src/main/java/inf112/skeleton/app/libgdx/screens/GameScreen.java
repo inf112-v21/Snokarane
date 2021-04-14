@@ -30,7 +30,6 @@ import inf112.skeleton.app.network.Network;
 import inf112.skeleton.app.network.NetworkClient;
 import inf112.skeleton.app.network.NetworkHost;
 import inf112.skeleton.app.ui.chat.CommandParser;
-import inf112.skeleton.app.ui.chat.backend.Message;
 import inf112.skeleton.app.ui.chat.backend.Uwufier;
 import inf112.skeleton.app.ui.chat.managers.ChatClient;
 import inf112.skeleton.app.ui.chat.managers.ChatManager;
@@ -381,7 +380,6 @@ public class GameScreen extends ScreenAdapter {
 
 
 
-
     /**
     --------- ------------------ ------------------ ------------------ ---------
     --------- ------------------   Stage loading    --------- ------------------
@@ -568,169 +566,56 @@ public class GameScreen extends ScreenAdapter {
                     inputBox.addListener(new InputListener(){
                         @Override
                         public boolean keyDown(InputEvent event, int keycode) {
+                            // Send message key is pressed
                             if (keycode == Input.Keys.ENTER){
+                                // Check if message was intended as a command
                                 boolean isCommand = false;
+
+                                /*
+                                Check if /c command
+                                 */
+                                // Commands have to be more than 2 characters long, else substring gives an exception
                                 if (inputBox.getText().length()>2){
                                     // If chat is a command
                                     if (inputBox.getText().substring(0, 2).equals("/c")){
                                         isCommand = true;
-                                        CommandParser p = new CommandParser();
+                                        // Get content after /c indicator
                                         String commandContent = inputBox.getText().substring(3);
                                         System.out.println("Chat command entered: " + commandContent);
-
-                                        // Get what command was input by user
-                                        CommandParser.Command command = p.parseCommand(p.getCmd(commandContent));
-
                                         // Perform command
-                                        switch (command){
-                                            case SETNAME:
-                                                chat.setName(p.getArgs(commandContent));
-                                                chat.sendInternalMessage("Name changed to " + p.getArgs(commandContent) + ".", network);
-                                                break;
-                                            case SETCOLOR:
-                                                switch (p.getArgs(commandContent)) {
-                                                    case "r":
-                                                        Color red = new Color(1, 0, 0, 1);
-                                                        chat.chat.setChatColour(red);
-                                                        chat.sendInternalMessage("Chat color set to red.", network);
-                                                        break;
-                                                    case "g":
-                                                        Color green = new Color(0, 1, 0, 1);
-                                                        chat.chat.setChatColour(green);
-                                                        chat.sendInternalMessage("Chat color set to green.", network);
-                                                        break;
-                                                    case "b":
-                                                        Color blue = new Color(0, 0, 1, 1);
-                                                        chat.chat.setChatColour(blue);
-                                                        chat.sendInternalMessage("Chat color set to blue.", network);
-                                                        break;
-                                                    case "black":
-                                                        Color black = new Color(1, 1, 1, 1);
-                                                        chat.chat.setChatColour(black);
-                                                        chat.sendInternalMessage("Chat color set to black.", network);
-                                                        break;
-                                                    default:
-                                                        System.out.println("Invalid colour.");
-                                                        break;
-                                                }
-                                                break;
-                                            case SETFONTSTCALE:
-                                                float scale = Float.parseFloat(p.getArgs(commandContent));
-                                                chat.chat.setChatFontSize(scale);
-                                                chat.sendInternalMessage("Font scale set to " + scale + ".", network);
-                                                break;
-                                            case INVALID:
-                                                chat.sendInternalMessage("Entered invalid command.", network);
-                                                break;
-                                            case UWU:
-                                                Uwufier uwu = new Uwufier(network.messagesRecived); // TODO need to add non uwu backlog in network so can be reverted
-                                                network.messagesRecived = uwu.postUwudMessages;
-                                                chat.sendInternalMessage("UWUfication complete!", network);
-                                                break;
-                                            case CLEAR:
-                                                network.messagesRecived.clear();
-                                                chat.sendInternalMessage("Chat cleared.", network);
-                                                break;
-                                            case SENDINTERNAL:
-                                                chat.sendInternalMessage(p.getArgs(commandContent), network);
-                                                break;
-                                            case EXAMPLEMESSAGES:
-                                                if (p.getArgs(commandContent).equals("all")){
-                                                    chat.sendMessage("Hello! This is a message.");
-                                                    chat.sendMessage("I am playing roborally. ");
-                                                    chat.sendMessage("This is alot of fun!");
-                                                    chat.sendMessage("This game is impressive. Good job!");
-                                                    chat.sendInternalMessage("Sent example messages.", network);
-                                                }else {
-                                                    chat.sendInternalMessage("Hello! This is a message.", network);
-                                                    chat.sendInternalMessage("I am playing roborally. ", network);
-                                                    chat.sendInternalMessage("This is alot of fun!", network);
-                                                    chat.sendInternalMessage("This game is impressive. Good job!", network);
-                                                    chat.sendInternalMessage("Sent example messages.", network);
-                                                }
-                                                break;
-                                            case CONNECT:
-                                                String ip = p.getArgs(commandContent);
-                                                if (ip.contains(" ")){
-                                                    chat.sendInternalMessage("IP cannot contain spaces.", network);
-                                                }else {
-                                                    game.setScreen(new GameScreen(game, false, ip, chat.cData.name));
-                                                }
-                                            case SENDCARDS:
-                                                if (sendCardsIfPossible()){
-                                                    chat.sendInternalMessage("Cards sent!", network);
-                                                }else{
-                                                    chat.sendInternalMessage("Could not send cards.", network);
-                                                    chat.sendInternalMessage("Remember to select 5 cards.", network);
-                                                }
-                                                break;
-                                            case RESETCARDS:
-                                                resetCardChoices();
-                                                chat.sendInternalMessage("Card selection reset.", network);
-                                                break;
-                                            case SELECTCARD:
-                                                /*  this is buggy and doesn't work right now
-                                                if (gamePlayer.state == GamePlayer.PLAYERSTATE.PICKING_CARDS && gamePlayer.chosenCards.size()<5){
-                                                    int index = Integer.parseInt(p.getArgs(commandContent))-1;
-                                                    if (index < 0 || index > 8){
-                                                        chat.sendInternalMessage("Can only select cards 1-9.", network);
-                                                    }else {
-                                                        Card c = new Card();
-                                                        c.setCardType(gamePlayer.hand.get(index).getCardType());
-                                                        gamePlayer.chooseCards(index);
-                                                        gamePlayer.chosenCards.add(c);
-                                                        c.picked = true;
-                                                        clearNonInteractiveStageElements();
-                                                        loadActorsInOrder();
-                                                    }
-                                                }else{
-                                                    chat.sendInternalMessage("Cannot pick cards right now.", network);
-                                                }*/
-                                                chat.sendInternalMessage("Card selection in chat disabled.", network);
-                                                break;
-                                            default:
-                                                break;
-                                        }
-                                        // Send list of commands available if /h
+                                        executeChatCommand(commandContent);
                                     }
-
                                 }
+
+                                /*
+                                Check if /h command
+                                 */
+                                // Send list of commands available if /h, only need to check if length is >1 here as there are no args or commands for /h
                                 if (inputBox.getText().length()>1){
                                     if (inputBox.getText().substring(0, 2).equals("/h")){
                                         isCommand = true;
-                                        chat.sendInternalMessage("Only you can see the messages in green.\n", network);
-                                        chat.sendInternalMessage("Commands:\n", network);
-                                        chat.sendInternalMessage("\t FUNCITONAL", network);
-                                        chat.sendInternalMessage("/h shows this dialogue.", network);
-                                        chat.sendInternalMessage("/c connect <ip>", network);
-                                        chat.sendInternalMessage("/c send-cards", network);
-                                        chat.sendInternalMessage("/c reset-cards", network);
-                                        chat.sendInternalMessage("/c clear", network);
-                                        chat.sendInternalMessage("/c set-name <name>", network);
-                                        chat.sendInternalMessage("/c show <message>", network);
-                                        chat.sendInternalMessage("/c example-messages <all>", network);
-                                        chat.sendInternalMessage("leave empty for local  ^\n", network);
-                                        chat.sendInternalMessage("\t VISUAL", network);
-                                        chat.sendInternalMessage("/c chat-color <r, g, b, black>", network);
-                                        chat.sendInternalMessage("/c font-scale <font scale>", network);
-                                        chat.sendInternalMessage("/c uwufy", network);
+                                        showChatHelpDialogue();
                                     }
                                 }
 
-                                // Send message
+                                // Send message if no commands detected
                                 if (!isCommand){
                                     chat.sendMessage(inputBox.getText());
                                 }
+                                // Reset input text box after sending message
                                 inputBox.setText("");
                                 updateChat();
                             }
+                            // Needed for inputhandler keyDown
                             return true;
                         }
                     });
-                    // TODO place inputbox at correct position
+
+                    // Setup position and name of input box
                     inputBox.setX(Gdx.graphics.getWidth()-inputBox.getWidth());
                     inputBox.setY(200);
                     inputBox.setName(chatInputName);
+
                     stage.addActor(inputBox);
                 }
             }
@@ -738,20 +623,6 @@ public class GameScreen extends ScreenAdapter {
              * Get new messages that have been received from the network, get formatted table and add input box with listener.
              */
             private void updateChat(){
-                /*
-                    get stage chat table, clear everything in it, and add new chat from network to table
-                 */
-                // Something like this...
-                // stage.getActors().name.equals("chat") = localChat;
-
-                /*
-                PLAN:
-                get new network chat
-                generate chat table from network chat
-                loop through actors in stage, replace new chat table if name is correct
-                 */
-
-
                 // Get chat table from network
                 chat.updateChat(network.messagesRecived);
 
@@ -773,6 +644,158 @@ public class GameScreen extends ScreenAdapter {
                 stage.getActors().set(index, updatedChat);
             }
 
+
+
+
+
+    /**
+     --------- ------------------ ------------------ ------------------ ---------
+     --------- ----------    Chat command helpers    ------------------
+     --------- ------------------ ------------------ ------------------ ---------
+     */
+     /**
+     * Displays help dialogue in chat as a set internal messages
+     */
+    private void showChatHelpDialogue(){
+        chat.sendInternalMessage("Only you can see the messages in green.\n", network);
+        chat.sendInternalMessage("Commands:\n", network);
+        chat.sendInternalMessage("\t FUNCITONAL", network);
+        chat.sendInternalMessage("/h shows this dialogue.", network);
+        chat.sendInternalMessage("/c connect <ip>", network);
+        chat.sendInternalMessage("/c send-cards", network);
+        chat.sendInternalMessage("/c reset-cards", network);
+        chat.sendInternalMessage("/c clear", network);
+        chat.sendInternalMessage("/c set-name <name>", network);
+        chat.sendInternalMessage("/c show <message>", network);
+        chat.sendInternalMessage("/c example-messages <all>", network);
+        chat.sendInternalMessage("leave empty for local  ^\n", network);
+        chat.sendInternalMessage("\t VISUAL", network);
+        chat.sendInternalMessage("/c chat-color <r, g, b, black>", network);
+        chat.sendInternalMessage("/c font-scale <font scale>", network);
+        chat.sendInternalMessage("/c uwufy", network);
+    }
+    /**
+     * Perform command in chat
+     */
+    private void executeChatCommand(String commandInput){
+        CommandParser p = new CommandParser();
+
+        // Get what command was input by user
+        CommandParser.Command command = p.parseCommand(p.getCmd(commandInput));
+        // Get the arguments for command (if any)
+        String commandArgs = p.getArgs(commandInput);
+
+        // Perform command
+        switch (command){
+            case SETNAME:
+                chat.setName(commandArgs);
+                chat.sendInternalMessage("Name changed to " + commandArgs + ".", network);
+                break;
+            case SETCOLOR:
+                switch (commandArgs) {
+                    case "r":
+                        Color red = new Color(1, 0, 0, 1);
+                        chat.chat.setChatColour(red);
+                        chat.sendInternalMessage("Chat color set to red.", network);
+                        break;
+                    case "g":
+                        Color green = new Color(0, 1, 0, 1);
+                        chat.chat.setChatColour(green);
+                        chat.sendInternalMessage("Chat color set to green.", network);
+                        break;
+                    case "b":
+                        Color blue = new Color(0, 0, 1, 1);
+                        chat.chat.setChatColour(blue);
+                        chat.sendInternalMessage("Chat color set to blue.", network);
+                        break;
+                    case "black":
+                        Color black = new Color(1, 1, 1, 1);
+                        chat.chat.setChatColour(black);
+                        chat.sendInternalMessage("Chat color set to black.", network);
+                        break;
+                    default:
+                        System.out.println("Invalid colour.");
+                        break;
+                }
+                break;
+            case SETFONTSTCALE:
+                float scale = Float.parseFloat(commandArgs);
+                chat.chat.setChatFontSize(scale);
+                chat.sendInternalMessage("Font scale set to " + scale + ".", network);
+                break;
+            case INVALID:
+                chat.sendInternalMessage("Entered invalid command.", network);
+                break;
+            case UWU:
+                Uwufier uwu = new Uwufier(network.messagesRecived); // TODO need to add non uwu backlog in network so can be reverted
+                network.messagesRecived = uwu.postUwudMessages;
+                chat.sendInternalMessage("UWUfication complete!", network);
+                break;
+            case CLEAR:
+                network.messagesRecived.clear();
+                chat.sendInternalMessage("Chat cleared.", network);
+                break;
+            case SENDINTERNAL:
+                chat.sendInternalMessage(commandArgs, network);
+                break;
+            case EXAMPLEMESSAGES:
+                if (commandArgs.equals("all")){
+                    chat.sendMessage("Hello! This is a message.");
+                    chat.sendMessage("I am playing roborally. ");
+                    chat.sendMessage("This is alot of fun!");
+                    chat.sendMessage("This game is impressive. Good job!");
+                    chat.sendInternalMessage("Sent example messages.", network);
+                }else {
+                    chat.sendInternalMessage("Hello! This is a message.", network);
+                    chat.sendInternalMessage("I am playing roborally. ", network);
+                    chat.sendInternalMessage("This is alot of fun!", network);
+                    chat.sendInternalMessage("This game is impressive. Good job!", network);
+                    chat.sendInternalMessage("Sent example messages.", network);
+                }
+                break;
+            case CONNECT:
+                String ip = commandArgs;
+                if (ip.contains(" ")){
+                    chat.sendInternalMessage("IP cannot contain spaces.", network);
+                }else {
+                    game.setScreen(new GameScreen(game, false, ip, chat.cData.name));
+                }
+            case SENDCARDS:
+                if (sendCardsIfPossible()){
+                    chat.sendInternalMessage("Cards sent!", network);
+                }else{
+                    chat.sendInternalMessage("Could not send cards.", network);
+                    chat.sendInternalMessage("Remember to select 5 cards.", network);
+                }
+                break;
+            case RESETCARDS:
+                resetCardChoices();
+                chat.sendInternalMessage("Card selection reset.", network);
+                break;
+            case SELECTCARD:
+                                                /*  this is buggy and doesn't work right now
+                                                if (gamePlayer.state == GamePlayer.PLAYERSTATE.PICKING_CARDS && gamePlayer.chosenCards.size()<5){
+                                                    int index = Integer.parseInt(p.getArgs(commandContent))-1;
+                                                    if (index < 0 || index > 8){
+                                                        chat.sendInternalMessage("Can only select cards 1-9.", network);
+                                                    }else {
+                                                        Card c = new Card();
+                                                        c.setCardType(gamePlayer.hand.get(index).getCardType());
+                                                        gamePlayer.chooseCards(index);
+                                                        gamePlayer.chosenCards.add(c);
+                                                        c.picked = true;
+                                                        clearNonInteractiveStageElements();
+                                                        loadActorsInOrder();
+                                                    }
+                                                }else{
+                                                    chat.sendInternalMessage("Cannot pick cards right now.", network);
+                                                }*/
+                chat.sendInternalMessage("Card selection in chat disabled.", network);
+                break;
+            default:
+                break;
+        }
+    }
 
 
 
@@ -1114,7 +1137,6 @@ public class GameScreen extends ScreenAdapter {
         if (beltCell.getTile().getId() == 77) map.beltLayer[i][j] = new Map.BeltInformation(Direction.NORTH, true, 1, Direction.WEST);
         if (beltCell.getTile().getId() == 34) map.beltLayer[i][j] = new Map.BeltInformation(Direction.WEST, false, -1, Direction.SOUTH);
     }
-
 
 
 
