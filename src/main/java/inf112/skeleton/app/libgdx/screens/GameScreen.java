@@ -330,17 +330,15 @@ public class GameScreen extends ScreenAdapter {
     /**
      * Helper for card image loading with touchup event
      */
-    public Image generateClickableCard(CardType cardType, TextureRegion t){
+    public Image generateClickableCard(CardType cardType, TextureRegion t, boolean picked){
         int cardW = 100;
         int cardH = 135;
 
         Image img = new Image(t);
         img.setSize(cardW, cardH);
 
-        for (Card c : gamePlayer.hand){
-            if (c.picked){
-                img.setColor(0.5f, 0.7f, 0.5f, 0.5f);
-            }
+        if (picked){
+            img.setColor(0.5f, 0.7f, 0.5f, 0.5f);
         }
 
         img.addListener(new ClickListener(){
@@ -493,7 +491,7 @@ public class GameScreen extends ScreenAdapter {
                 List<Image> displayDeck = new ArrayList<>();
 
                 for (Card c : cardsToDisplay){
-                    Image img = generateClickableCard(c.getCardType(), cardTemplates.get(c.getCardType()));
+                    Image img = generateClickableCard(c.getCardType(), cardTemplates.get(c.getCardType()), c.picked);
                     img.setPosition(baseX, baseY);
                     displayDeck.add(img);
                     String prioText = "Priority: " + c.getPriority();
@@ -1005,13 +1003,6 @@ public class GameScreen extends ScreenAdapter {
      * Poll updates from the network client that needs to be updated to local session in real time
      */
     private void pollUiUpdates(){
-        // force chat to update when receiving new messages in network
-        if (networkChatBacklogSize < network.messagesRecived.size()){
-            clearNonInteractiveStageElements();
-            loadActorsInOrder();
-            networkChatBacklogSize = network.messagesRecived.size();
-        }
-
         // Force cards to update when new cards have been received
         if(gamePlayer.newCardsDelivered){
             clearNonInteractiveStageElements();
