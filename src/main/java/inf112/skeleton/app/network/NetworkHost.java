@@ -172,4 +172,9 @@ public class NetworkHost extends Network {
         messagesRecived.add(m);
         server.sendToAllTCP(m);
     }
+
+    public void sendReadySignal(){
+        readyToInitialize = true;
+        server.sendToAllTCP(true);
+    }
 }

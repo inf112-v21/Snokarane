@@ -62,6 +62,9 @@ public class NetworkClient extends Network {
                 if (object instanceof Message){
                     messagesRecived.add((Message) object);
                 }
+                if (object instanceof Boolean){
+                    readyToInitialize = true;
+                }
             }
             public void disconnected (Connection connection) {
                 System.exit(0);
