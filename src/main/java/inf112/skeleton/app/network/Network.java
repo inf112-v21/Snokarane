@@ -12,9 +12,11 @@ import java.util.Objects;
 public abstract class Network {
 
     public Boolean isHost;
+    public String name;
 
     // Messages recieved
     public List<Message> messagesRecived = new ArrayList<>();
+    public boolean readyToInitialize = false;
 
     /**
      * Prompts the user to choose server or client
