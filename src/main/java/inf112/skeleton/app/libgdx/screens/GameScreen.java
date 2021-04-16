@@ -159,8 +159,8 @@ public class GameScreen extends ScreenAdapter {
         // Send prompt to all connected clients
         Network.prompt("All players connected.", null);
         // Start connection to current clients. This is to be able to accept data transfers from clients
-        this.network.initConnections();
-
+        ((NetworkHost)network).updateConnections();
+        ((NetworkHost)network).finalizeConnections();
 
         ((GameHost) gamePlayer).initializeHostPlayerToken(playerName);
         gamePlayer.drawCards();
