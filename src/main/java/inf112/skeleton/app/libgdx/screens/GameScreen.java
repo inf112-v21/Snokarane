@@ -479,12 +479,17 @@ public class GameScreen extends ScreenAdapter {
 
                 getDuplicateCardsInHand();
 
+
                 game.batch.begin();
                 game.font.setColor(0.5f, 0.5f, 1, 1);
                 game.font.getData().setScale(2);
                 List<Card> cardsToDisplay = gamePlayer.hand;
                 cardsToDisplay.sort(new Card.cardComparator());
                 List<Image> displayDeck = new ArrayList<>();
+
+                Table cardDeck = new Table();
+                cardDeck.setPosition(0, 0);
+                cardDeck.setSize(perCardIncrementX*cardsToDisplay.size(), 135);
 
                 for (Card c : cardsToDisplay){
                     Image img = generateClickableCard(c.getCardType(), cardTemplates.get(c.getCardType()), c.picked);
@@ -498,7 +503,9 @@ public class GameScreen extends ScreenAdapter {
                 game.batch.end();
                 // Add all images to stage
                 displayDeck.forEach( (c) -> {c.setName("");});
-                displayDeck.forEach(stage::addActor);
+                displayDeck.forEach(cardDeck::addActor);
+                cardDeck.setName("card-deck");
+                stage.addActor(cardDeck);
             }
             /**
              * All player positions and directions
@@ -1014,6 +1021,8 @@ public class GameScreen extends ScreenAdapter {
                 }
         );
     }
+
+
     /**
      * Poll updates from the network client that needs to be updated to local session in real time
      */
@@ -1021,7 +1030,6 @@ public class GameScreen extends ScreenAdapter {
         // Force cards to update when new cards have been received
         if(gamePlayer.newCardsDelivered){
             clearNonInteractiveStageElements();
-
             loadActorsInOrder();
 
             // Check if any null actors are found, clear them if so
@@ -1035,6 +1043,17 @@ public class GameScreen extends ScreenAdapter {
                 System.out.println("Not able to remove null value from getActors, exception " + e);
             }
             gamePlayer.newCardsDelivered = false;
+        }
+
+        if(network.messagesRecived.size() > networkChatBacklogSize){
+            stage.getActors().forEach( (a) -> {
+                        if (a.getName().equals("chat")){
+                            a.clear();
+                        }
+                    }
+            );
+            updateChat();
+            networkChatBacklogSize = network.messagesRecived.size();
         }
     }
 
