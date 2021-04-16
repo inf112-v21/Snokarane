@@ -18,6 +18,7 @@ public class NetworkHost extends Network {
 
     private Server server;
     public Connection[] connections;
+    private int clientsRegistered = 0;
     public List<Integer> alivePlayers = new ArrayList<>();
     public GameHost host;
 
@@ -111,17 +112,60 @@ public class NetworkHost extends Network {
      * It also sends the IDs to the clients.
      */
     public void initConnections() {
-        promptName();
-        connections = server.getConnections();
+    }
 
-        // List of the connections which should get card
-        for (Connection c : connections) {
-            alivePlayers.add(c.getID());
+    /**
+     * Register new connected clients to the server
+     */
+    public void updateConnections(){
+        // only need to check connections if any have been received
+        if (connections != null){
+            System.out.println("Amount of connections: " + connections.length);
+            // Poll new connections from kryo
+            connections = server.getConnections();
+            System.out.println("Amount of updated connections: " + connections.length);
+            // Any new connections received from kryo
+            if (connections.length > clientsRegistered){
+                System.out.println("New connections to register. Currently registered: " + clientsRegistered);
+                System.out.println("Currently connected: " + connections.length);
+                // Register new clients to host
+                int amountOfConnectionsToRegister = connections.length-clientsRegistered;
+                // Start index of connections that haven't been registered yet,
+                // starting from last connection registered
+                int startIndex = clientsRegistered;
+                // Register the new clients
+                for (int i = 0; i<amountOfConnectionsToRegister; i++){
+                    registerClient(startIndex+i);
+                    clientsRegistered++;
+                }
+            }
+        }else{
+            // First time connection getter
+            connections = server.getConnections();
+            // Recurse back into updateConnections to check any new connections
+            updateConnections();
         }
+    }
+
+    /**
+     * Register client to server -
+     * add them to alive players, send them their connection id, and ask them for their name
+     * @param connectionIndex index of connection in connetions[] (from kryo)
+     */
+    private void registerClient(int connectionIndex){
+        // Register to hosts players
+        alivePlayers.add(connections[connectionIndex].getID());
+        // Send ID to new client
+        server.sendToTCP(connections[connectionIndex].getID(), connections[connectionIndex].getID());
+        // Request client name
+        server.sendToTCP(connections[connectionIndex].getID(), "Name");
+    }
+
+    /**
+     * Register hosts connection, call this when all clients have connected
+     */
+    public void finalizeConnections(){
         alivePlayers.add(hostID);
-        for (Connection c : connections) {
-            server.sendToTCP(c.getID(), c.getID());
-        }
     }
 
     public void sendMessageToAll(Message m){

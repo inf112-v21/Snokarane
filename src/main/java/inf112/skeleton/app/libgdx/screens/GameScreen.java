@@ -111,9 +111,8 @@ public class GameScreen extends ScreenAdapter {
     // To handle updates in the chat received from network
     int networkChatBacklogSize = 0;
 
-    public GameScreen(RoboGame game, boolean isHost, String ip, String playerName, Network network) {
+    public GameScreen(RoboGame game, boolean isHost, String ip, String playerName) {
         this.game = game;
-        this.network = network;
         stage = new Stage(new ScreenViewport());
 
         loadCardBackground();
@@ -137,6 +136,11 @@ public class GameScreen extends ScreenAdapter {
     public void startGame(boolean isHost, String ip, String playerName) {
         map.flagList = flagPositions;
 
+        // Choose whether to host or connect
+        network = Network.choseRole(isHost);
+        // Initializes connections, ports and opens for sending and receiving data
+        this.network.initialize();
+
         if (network.isHost)
             startHost(playerName);
         else
@@ -148,10 +152,16 @@ public class GameScreen extends ScreenAdapter {
      * @param playerName player name ID to identify player in game
      */
     private void startHost(String playerName) {
+
         // Starts GameHost session using network that was initialized
         gamePlayer = new GameHost((NetworkHost) network);
         gamePlayer.setMap(map);
-        ((NetworkHost)network).promptName();
+        // Send prompt to all connected clients
+        Network.prompt("All players connected.", null);
+        // Start connection to current clients. This is to be able to accept data transfers from clients
+        ((NetworkHost)network).updateConnections();
+        ((NetworkHost)network).finalizeConnections();
+
         ((GameHost) gamePlayer).initializeHostPlayerToken(playerName);
         gamePlayer.drawCards();
     }
@@ -161,8 +171,13 @@ public class GameScreen extends ScreenAdapter {
      * @param playerName player name ID to identify player in game
      */
     private void startClient(String ip, String playerName) {
-        gamePlayer = new GameClient((NetworkClient) network, playerName);
-        gamePlayer.setMap(map);
+        if (((NetworkClient) network).connectToServer(ip)) {
+            gamePlayer = new GameClient((NetworkClient) network, playerName);
+            gamePlayer.setMap(map);
+        } else {
+            System.out.println("Failed to start client due to connection error.");
+            System.exit(0);
+        }
     }
     /**
      * Initialize all libgdx objects:
@@ -464,12 +479,17 @@ public class GameScreen extends ScreenAdapter {
 
                 getDuplicateCardsInHand();
 
+
                 game.batch.begin();
                 game.font.setColor(0.5f, 0.5f, 1, 1);
                 game.font.getData().setScale(2);
                 List<Card> cardsToDisplay = gamePlayer.hand;
                 cardsToDisplay.sort(new Card.cardComparator());
                 List<Image> displayDeck = new ArrayList<>();
+
+                Table cardDeck = new Table();
+                cardDeck.setPosition(0, 0);
+                cardDeck.setSize(perCardIncrementX*cardsToDisplay.size(), 135);
 
                 for (Card c : cardsToDisplay){
                     Image img = generateClickableCard(c.getCardType(), cardTemplates.get(c.getCardType()), c.picked);
@@ -483,7 +503,9 @@ public class GameScreen extends ScreenAdapter {
                 game.batch.end();
                 // Add all images to stage
                 displayDeck.forEach( (c) -> {c.setName("");});
-                displayDeck.forEach(stage::addActor);
+                displayDeck.forEach(cardDeck::addActor);
+                cardDeck.setName("card-deck");
+                stage.addActor(cardDeck);
             }
             /**
              * All player positions and directions
@@ -737,7 +759,7 @@ public class GameScreen extends ScreenAdapter {
                 if (ip.contains(" ")){
                     chat.sendInternalMessage("IP cannot contain spaces.", network);
                 }else {
-                    game.setScreen(new GameScreen(game, false, ip, chat.cData.name, network));
+                    game.setScreen(new GameScreen(game, false, ip, chat.cData.name));
                 }
             case SENDCARDS:
                 if (sendCardsIfPossible()){
@@ -999,6 +1021,8 @@ public class GameScreen extends ScreenAdapter {
                 }
         );
     }
+
+
     /**
      * Poll updates from the network client that needs to be updated to local session in real time
      */
@@ -1006,7 +1030,6 @@ public class GameScreen extends ScreenAdapter {
         // Force cards to update when new cards have been received
         if(gamePlayer.newCardsDelivered){
             clearNonInteractiveStageElements();
-
             loadActorsInOrder();
 
             // Check if any null actors are found, clear them if so
@@ -1020,6 +1043,17 @@ public class GameScreen extends ScreenAdapter {
                 System.out.println("Not able to remove null value from getActors, exception " + e);
             }
             gamePlayer.newCardsDelivered = false;
+        }
+
+        if(network.messagesRecived.size() > networkChatBacklogSize){
+            stage.getActors().forEach( (a) -> {
+                        if (a.getName().equals("chat")){
+                            a.clear();
+                        }
+                    }
+            );
+            updateChat();
+            networkChatBacklogSize = network.messagesRecived.size();
         }
     }
 
