@@ -192,6 +192,9 @@ public class GameScreen extends ScreenAdapter {
         loadMapLayers(game.tiledMap);
 
         // Initialize player textures from .png file
+        loadPlayerTextures();
+
+        // Initialize textures from .png file
         loadTextures();
 
         // Initialize card template textures
@@ -267,7 +270,8 @@ public class GameScreen extends ScreenAdapter {
     /**
      * Load player texture and split into each player state
      */
-    public void loadTextures() {
+
+    public void loadPlayerTextures(){
         // Load the entire player texture
         //Color playerColor = Color.RED;
 
@@ -287,6 +291,11 @@ public class GameScreen extends ScreenAdapter {
         // Set player state cells to corresponding tiles
         playerNormal = new TiledMapTileLayer.Cell().setTile(playerStaticTile);
         playerWon = new TiledMapTileLayer.Cell().setTile(playerStaticTile);
+
+
+    }
+
+    public void loadTextures() {
 
         Texture rawLaserTexture = new Texture("tiles.png");
 
