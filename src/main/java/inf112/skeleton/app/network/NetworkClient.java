@@ -39,15 +39,17 @@ public class NetworkClient extends Network {
             public void received (Connection connection, Object object) {
                 if (object instanceof String) {
                     if (object.equals("Name")) {
-                        giveNickname(gameClient.name);
+                        giveNickname(name);
                     }
                     else {
                         gameClient.drawCardsFromDeck();
                     }
                 }
                 if (object instanceof NetworkDataWrapper){
-                    map.loadPlayers(((NetworkDataWrapper) object).PlayerTokens);
-                    map.laserLayer = ((NetworkDataWrapper) object).laserLayer;
+                    if (map != null){
+                        map.loadPlayers(((NetworkDataWrapper) object).PlayerTokens);
+                        map.laserLayer = ((NetworkDataWrapper) object).laserLayer;
+                    }
                 }
 
                 if(object instanceof Integer) {

@@ -18,7 +18,7 @@ public class NetworkHost extends Network {
 
     private Server server;
     public Connection[] connections;
-    private int clientsRegistered = 0;
+    public int clientsRegistered = 0;
     public List<Integer> alivePlayers = new ArrayList<>();
     public GameHost host;
 
@@ -32,9 +32,11 @@ public class NetworkHost extends Network {
     // Initialize internet
     @Override
     public boolean initialize(){
+
         server = new Server();
         registerClasses(server);
         server.start();
+
         server.addListener(new Listener() {
             @Override
             public void received (Connection c, Object object) {
@@ -120,13 +122,11 @@ public class NetworkHost extends Network {
     public void updateConnections(){
         // only need to check connections if any have been received
         if (connections != null){
-            System.out.println("Amount of connections: " + connections.length);
             // Poll new connections from kryo
             connections = server.getConnections();
-            System.out.println("Amount of updated connections: " + connections.length);
             // Any new connections received from kryo
             if (connections.length > clientsRegistered){
-                System.out.println("New connections to register. Currently registered: " + clientsRegistered);
+                System.out.println("New connections to register. Already registered: " + clientsRegistered);
                 System.out.println("Currently connected: " + connections.length);
                 // Register new clients to host
                 int amountOfConnectionsToRegister = connections.length-clientsRegistered;
@@ -155,10 +155,7 @@ public class NetworkHost extends Network {
     private void registerClient(int connectionIndex){
         // Register to hosts players
         alivePlayers.add(connections[connectionIndex].getID());
-        // Send ID to new client
-        server.sendToTCP(connections[connectionIndex].getID(), connections[connectionIndex].getID());
-        // Request client name
-        server.sendToTCP(connections[connectionIndex].getID(), "Name");
+        System.out.println("Added connection " + connections[connectionIndex].getID() + " to alive players.");
     }
 
     /**
@@ -166,6 +163,18 @@ public class NetworkHost extends Network {
      */
     public void finalizeConnections(){
         alivePlayers.add(hostID);
+    }
+
+    public void sendIDs(){
+        for (Integer i : alivePlayers){
+            server.sendToTCP(i, i);
+        }
+    }
+
+    public void requestNames(){
+        for (Integer i : alivePlayers){
+            server.sendToTCP(i, "Name");
+        }
     }
 
     public void sendMessageToAll(Message m){
