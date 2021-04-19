@@ -13,26 +13,19 @@ import java.util.HashMap;
 public class CharacterCustomizer {
 
 
-
-
-
-
-
-
     /*
     *
     *   Instantiate variables bellow in loadPlayerTexture
     *
     *   //roboPlayerTexture
     *
-    *   Texture roboPlayerTexture = generatePlayerTexture(playerIsLarge);
+    *   Texture roboPlayerTexture = generatePlayerTexture(String img, color col);
     *   TextureRegion roboPlayerSplitTexture = new TextureRegion(roboPlayerTexture);
     *
     *    StaticTiledMapTile playerRoboStaticTile = new StaticTiledMapTile(roboPlayerSplitTexture);
     *    roboPlayer = new TiledMapTileLayer.Cell().setTile(playerRoboStaticTile);
     *
     * */
-
 
 
     /**
