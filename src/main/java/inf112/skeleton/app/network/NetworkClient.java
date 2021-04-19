@@ -7,6 +7,7 @@ import inf112.skeleton.app.game.GameClient;
 import inf112.skeleton.app.game.objects.PlayerToken;
 import inf112.skeleton.app.libgdx.Map;
 import inf112.skeleton.app.libgdx.NetworkDataWrapper;
+import inf112.skeleton.app.libgdx.PlayerConfig;
 import inf112.skeleton.app.ui.chat.backend.Message;
 
 import java.io.IOException;
@@ -45,6 +46,7 @@ public class NetworkClient extends Network {
                         gameClient.drawCardsFromDeck();
                     }
                 }
+
                 if (object instanceof NetworkDataWrapper){
                     map.loadPlayers(((NetworkDataWrapper) object).PlayerTokens);
                     map.laserLayer = ((NetworkDataWrapper) object).laserLayer;
