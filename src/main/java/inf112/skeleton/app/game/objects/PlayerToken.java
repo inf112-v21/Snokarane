@@ -27,6 +27,7 @@ public class PlayerToken {
 
     public String name;
 
+    public boolean powerDown = false;
 
     // What texture gets displayed on character
     public enum CHARACTER_STATES{

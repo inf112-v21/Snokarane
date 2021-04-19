@@ -8,6 +8,7 @@ import inf112.skeleton.app.game.objects.PlayerToken;
 import inf112.skeleton.app.libgdx.Map;
 import inf112.skeleton.app.libgdx.NetworkDataWrapper;
 import inf112.skeleton.app.network.NetworkHost;
+import inf112.skeleton.app.network.Network;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -94,6 +95,7 @@ public class GameHost extends GamePlayer {
 
         //Update the clientCards in host
         host.playerCards.put(NetworkHost.hostID, chosenCards);
+        clientPlayers.get(NetworkHost.hostID).powerDown = Boolean.parseBoolean(Network.prompt("Do you wish to power down", new Boolean[] {true, false}));;
         checkCards();
     }
 
@@ -233,6 +235,13 @@ public class GameHost extends GamePlayer {
                 host.alivePlayers.remove(key);
             }
         }
+        //Do this here because we don't have a well defined start of turn...
+        for (PlayerToken token : clientPlayers.values()) {
+            if (token.powerDown) {
+                token.damage = 0;
+            }
+        }
+
         drawCards();
     }
     /**
@@ -272,6 +281,7 @@ public class GameHost extends GamePlayer {
         // Start processing each card sequentially
         isShowingCards = true;
     }
+
     //TODO Use 8 directions, not 4
     private void findPlayerRespawnLocation(PlayerToken player) {
         int x = player.spawnLoc.x;

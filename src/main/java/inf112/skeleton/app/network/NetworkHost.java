@@ -41,6 +41,7 @@ public class NetworkHost extends Network {
                 // Only cards get sent through here
                 if (object instanceof CardList) {
                     System.out.println("Recieved cards from " + host.clientPlayers.get(c.getID()).name);
+                    server.sendToTCP(c.getID(), "Power down!");
                     playerCards.put(c.getID(),((CardList) object).cardList);
                     host.checkCards();
                 }
@@ -56,6 +57,9 @@ public class NetworkHost extends Network {
                 }
                 if (object instanceof Message){
                     sendMessageToAll((Message) object);
+                }
+                if (object instanceof Boolean) {
+                    host.clientPlayers.get(c.getID()).powerDown = (Boolean) object;
                 }
             }
         });
@@ -84,12 +88,17 @@ public class NetworkHost extends Network {
     public void promptCardDraw() {
         System.out.println("Prompted clients to draw cards.");
         for (Integer connectionID : alivePlayers) {
+            PlayerToken token = host.clientPlayers.get(connectionID);
             if (connectionID == hostID) {
-                host.damageCounters = host.clientPlayers.get(connectionID).damage;
+                host.damageCounters = token.damage;
                 host.drawCardsFromDeck();
-                return;
+                //TODO was return here, should be continue?
+                continue;
             }
-            System.out.println(host.clientPlayers);
+            if (token.powerDown) {
+                token.powerDown = false;
+                playerCards.put(connectionID, new ArrayList<>());
+            }
             server.sendToTCP(connectionID, host.clientPlayers.get(connectionID));
         }
     }
