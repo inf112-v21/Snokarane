@@ -126,16 +126,11 @@ public class NetworkHost extends Network {
             connections = server.getConnections();
             // Any new connections received from kryo
             if (connections.length > clientsRegistered){
-                System.out.println("New connections to register. Already registered: " + clientsRegistered);
-                System.out.println("Currently connected: " + connections.length);
                 // Register new clients to host
                 int amountOfConnectionsToRegister = connections.length-clientsRegistered;
-                // Start index of connections that haven't been registered yet,
-                // starting from last connection registered
-                int startIndex = clientsRegistered;
                 // Register the new clients
                 for (int i = 0; i<amountOfConnectionsToRegister; i++){
-                    registerClient(startIndex+i);
+                    registerClient(i);
                     clientsRegistered++;
                 }
             }
@@ -155,7 +150,11 @@ public class NetworkHost extends Network {
     private void registerClient(int connectionIndex){
         // Register to hosts players
         alivePlayers.add(connections[connectionIndex].getID());
-        System.out.println("Added connection " + connections[connectionIndex].getID() + " to alive players.");
+        System.out.println("Connection index " + connectionIndex + " retrieved ID " + connections[connectionIndex].getID());
+        System.out.println("All connections IDs: ");
+        for (Connection c : connections){
+            System.out.println(c.getID());
+        }
     }
 
     /**
