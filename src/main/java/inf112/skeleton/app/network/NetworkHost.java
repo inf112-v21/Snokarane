@@ -38,13 +38,6 @@ public class NetworkHost extends Network {
         server.addListener(new Listener() {
             @Override
             public void received (Connection c, Object object) {
-                // Only cards get sent through here
-                if (object instanceof CardList) {
-                    System.out.println("Recieved cards from " + host.clientPlayers.get(c.getID()).name);
-                    server.sendToTCP(c.getID(), "Power down!");
-                    playerCards.put(c.getID(),((CardList) object).cardList);
-                    host.checkCards();
-                }
                 if (object instanceof String) {
                     //TODO Put all this in a public method in gamehost?
                     System.out.println("Recieved the name " + object + " from client number " + c.getID());
@@ -54,6 +47,16 @@ public class NetworkHost extends Network {
                     token.name = (String) object;
                     token = host.initializePlayerPos(token);
                     host.clientPlayers.put(c.getID(), token);
+                }
+                //If the player is dead, ignore them
+                if (!host.clientPlayers.containsKey(c.getID())) return;
+                // Only cards get sent through here
+                if (object instanceof CardList) {
+                    System.out.println("Recieved cards from " + host.clientPlayers.get(c.getID()).name);
+                    //TODO We need to make sure that we wait for the answer here...
+                    server.sendToTCP(c.getID(), "Power down!");
+                    playerCards.put(c.getID(),((CardList) object).cardList);
+                    host.checkCards();
                 }
                 if (object instanceof Message){
                     sendMessageToAll((Message) object);
@@ -87,9 +90,13 @@ public class NetworkHost extends Network {
      */
     public void promptCardDraw() {
         System.out.println("Prompted clients to draw cards.");
+        //TODO There's a bug here if everybody dies
+        //TODO a bit shady, but the idea is to force the game to move on if everyone has powered down
+        boolean allPoweredDown = !alivePlayers.isEmpty();
         for (Integer connectionID : alivePlayers) {
             PlayerToken token = host.clientPlayers.get(connectionID);
-            if (connectionID == hostID) {
+            if (connectionID == hostID && !token.powerDown) {
+                allPoweredDown = false;
                 host.damageCounters = token.damage;
                 host.drawCardsFromDeck();
                 //TODO was return here, should be continue?
@@ -98,9 +105,17 @@ public class NetworkHost extends Network {
             if (token.powerDown) {
                 System.out.println(token.name + " has decided to power down! Good on them");
                 token.powerDown = false;
+                //Empty list here to simulate a player
                 playerCards.put(connectionID, new ArrayList<>());
             }
-            server.sendToTCP(connectionID, host.clientPlayers.get(connectionID));
+            else {
+                allPoweredDown = false;
+                server.sendToTCP(connectionID, host.clientPlayers.get(connectionID));
+            }
+        }
+        if (allPoweredDown) {
+            host.checkCards();
+            host.endOfTurn();
         }
     }
 

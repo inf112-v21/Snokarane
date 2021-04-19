@@ -112,6 +112,7 @@ public class GameHost extends GamePlayer {
      */
     public void checkCards(){
         if (host.playerCards.keySet().size() == host.alivePlayers.size()) {
+            System.out.println("Processing cards!");
             processCards();
 
             // Reset the chosen cards and the hand
@@ -155,6 +156,7 @@ public class GameHost extends GamePlayer {
      * Handles end of turn logic. Belt moving, lasers, rotating, repairs, etc.
      */
     public void endOfTurn(){
+        List<Integer> tokensToRemove = new ArrayList<>();
         for (Integer key : clientPlayers.keySet()){
             PlayerToken token = clientPlayers.get(key);
             if (token.diedThisTurn) continue;
@@ -200,6 +202,7 @@ public class GameHost extends GamePlayer {
         }
         map.clearLasers();
         map.shootLasers(wrapper());
+        //TODO If a player is moved off the map by a belt, it's still hit by a laser
         //TODO Does this make sense
         for (Integer key : clientPlayers.keySet()){
             PlayerToken token = clientPlayers.get(key);
@@ -230,10 +233,16 @@ public class GameHost extends GamePlayer {
 
         for (Integer key : clientPlayers.keySet()) {
             if (clientPlayers.get(key).isPermanentlyDestroyed()) {
-                clientPlayers.remove(clientPlayers.remove(key));
-                host.alivePlayers.remove(key);
+                tokensToRemove.add(key);
+
             }
         }
+
+        for (Integer key : tokensToRemove) {
+            clientPlayers.remove(key);
+            host.alivePlayers.remove(key);
+        }
+
         //Do this here because we don't have a well defined start of turn...
         for (PlayerToken token : clientPlayers.values()) {
             if (token.powerDown) {
@@ -250,6 +259,7 @@ public class GameHost extends GamePlayer {
         //System.out.println("-------------------------------------");
         //System.out.println("Preparing card selections...");
         // iterator i is same as client connection id
+
         for (int i = 0; i<cardsProcessedPerRound; i++){
             List<Card> cardList = new ArrayList<>();
             for (int key : clientPlayers.keySet()){
