@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class PlayerConfig {
 
+    //Image file as string
     String image;
 
     @JsonProperty("mainColor")
@@ -36,7 +37,6 @@ public class PlayerConfig {
     public void setImage(String image) {
         this.image = image;
     }
-
 
 
 }
