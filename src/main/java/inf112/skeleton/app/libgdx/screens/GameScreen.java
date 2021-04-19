@@ -961,6 +961,9 @@ public class GameScreen extends ScreenAdapter {
         for (int x = 0; x< map.playerLayer.length; x++){
             for (int y = 0; y< map.playerLayer[x].length; y++){
                 switch (map.playerLayer[x][y].state){
+
+                    //TODO: update based on playerToken
+
                     case PLAYERNORMAL:
                         playerLayer.setCell(x, y, playerNormal);
                         break;
