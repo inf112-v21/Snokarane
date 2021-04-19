@@ -6,7 +6,9 @@ import com.esotericsoftware.kryonet.Server;
 import inf112.skeleton.app.game.GameHost;
 import inf112.skeleton.app.game.objects.Card;
 import inf112.skeleton.app.game.objects.PlayerToken;
+import inf112.skeleton.app.libgdx.CharacterCustomizer;
 import inf112.skeleton.app.libgdx.NetworkDataWrapper;
+import inf112.skeleton.app.libgdx.PlayerConfig;
 import inf112.skeleton.app.ui.chat.backend.Message;
 
 import java.io.IOException;
@@ -50,6 +52,7 @@ public class NetworkHost extends Network {
                     token.charState = PlayerToken.CHARACTER_STATES.PLAYERNORMAL;
                     token.ID = c.getID();
                     token.name = (String) object;
+                    token.setConfig(CharacterCustomizer.loadCharacterConfigFromFile());
                     token = host.initializePlayerPos(token);
                     host.clientPlayers.put(c.getID(), token);
                 }
@@ -91,6 +94,7 @@ public class NetworkHost extends Network {
         }
     }
 
+
     public void promptName() {
         System.out.println("Asked for client names");
         server.sendToAllTCP("Name");
@@ -105,6 +109,8 @@ public class NetworkHost extends Network {
         server.sendToAllTCP(winner);
         System.exit(0);
     }
+
+
 
     /**
      * Initializes the connections for the server. Call this only when all users are connected.
