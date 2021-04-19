@@ -96,6 +96,7 @@ public class NetworkHost extends Network {
                 continue;
             }
             if (token.powerDown) {
+                System.out.println(token.name + " has decided to power down! Good on them");
                 token.powerDown = false;
                 playerCards.put(connectionID, new ArrayList<>());
             }

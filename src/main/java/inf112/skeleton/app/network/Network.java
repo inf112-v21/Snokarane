@@ -48,7 +48,7 @@ public abstract class Network {
      */
     public abstract boolean initialize();
 
-    public static String prompt(String prompt, Object[] possibilities) {
+    public static boolean prompt(String prompt, Object[] possibilities) {
         String choice;
         if(Objects.isNull(possibilities)) {
             choice = JOptionPane.showInputDialog(
@@ -68,6 +68,6 @@ public abstract class Network {
                     possibilities,
                     possibilities[0]);
         }
-        return choice;
+        return Boolean.parseBoolean(choice);
     }
 }

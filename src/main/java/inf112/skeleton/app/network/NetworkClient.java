@@ -42,7 +42,7 @@ public class NetworkClient extends Network {
                         giveNickname(gameClient.name);
                     }
                     else if (object.equals("Power down!")) {
-                        client.sendTCP(Boolean.valueOf(Network.prompt("Do you wish to power down?", new Boolean[] {true, false})));
+                        client.sendTCP(Network.prompt("Do you wish to power down", new String[] {"true", "false"}));
                     }
                     else {
                         System.out.println(((String) object));
