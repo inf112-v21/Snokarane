@@ -148,12 +148,12 @@ public class WaitingRoomScreen extends ScreenAdapter implements IUiScreen {
             // wait for host to press start button here
             if (network.readyToInitialize){
                 ((NetworkHost) network).finalizeConnections();
-                game.setScreen(new GameScreen(game, host, ip, name/* network*/));
+                game.setScreen(new GameScreen(game, host, ip, name, network));
             }
         }else{
             if (network.readyToInitialize){
                 connectionIndicatorLabel.setText("Connected.");
-                game.setScreen(new GameScreen(game, host, ip, name/* network*/));
+                game.setScreen(new GameScreen(game, host, ip, name, network));
             }
         }
 

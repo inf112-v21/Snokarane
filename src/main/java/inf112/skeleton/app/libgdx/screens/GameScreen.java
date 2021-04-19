@@ -38,6 +38,7 @@ import inf112.skeleton.app.ui.chat.managers.Chatter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 
 /**
@@ -110,9 +111,13 @@ public class GameScreen extends ScreenAdapter {
     Chatter chat;
     // To handle updates in the chat received from network
     int networkChatBacklogSize = 0;
+    // Grace time to give clients for responding to name request
+    // If client ping is greater than this grace time, the players token won't be initialized
+    int clientResponseGraceTime = 500; // ping, in ms
 
-    public GameScreen(RoboGame game, boolean isHost, String ip, String playerName) {
+    public GameScreen(RoboGame game, boolean isHost, String ip, String playerName, Network net) {
         this.game = game;
+        this.network = net;
         stage = new Stage(new ScreenViewport());
 
         loadCardBackground();
@@ -136,11 +141,6 @@ public class GameScreen extends ScreenAdapter {
     public void startGame(boolean isHost, String ip, String playerName) {
         map.flagList = flagPositions;
 
-        // Choose whether to host or connect
-        network = Network.choseRole(isHost);
-        // Initializes connections, ports and opens for sending and receiving data
-        this.network.initialize();
-
         if (network.isHost)
             startHost(playerName);
         else
@@ -152,17 +152,25 @@ public class GameScreen extends ScreenAdapter {
      * @param playerName player name ID to identify player in game
      */
     private void startHost(String playerName) {
-
         // Starts GameHost session using network that was initialized
         gamePlayer = new GameHost((NetworkHost) network);
         gamePlayer.setMap(map);
-        // Send prompt to all connected clients
-        Network.prompt("All players connected.", null);
-        // Start connection to current clients. This is to be able to accept data transfers from clients
-        ((NetworkHost)network).updateConnections();
-        ((NetworkHost)network).finalizeConnections();
+
+        // Assign ID's to client maps
+        ((NetworkHost)network).sendIDs();
+        // Assign ID's to client maps
+        ((NetworkHost)network).requestNames();
+
+        // This wait time is to give clients some grace time to respond to name requests
+        // If this is removed, the host won't receive client names in time, and as such clients will
+        // Start generating cards and map from objects that haven't been initialized yet (like NetworkClient.map and NetworkClient.gameClient)
+        if (((NetworkHost) network).clientsRegistered > 0){
+            long time = System.currentTimeMillis();
+            while (System.currentTimeMillis() < time+clientResponseGraceTime);
+        }
 
         ((GameHost) gamePlayer).initializeHostPlayerToken(playerName);
+
         gamePlayer.drawCards();
     }
     /**
@@ -171,13 +179,8 @@ public class GameScreen extends ScreenAdapter {
      * @param playerName player name ID to identify player in game
      */
     private void startClient(String ip, String playerName) {
-        if (((NetworkClient) network).connectToServer(ip)) {
-            gamePlayer = new GameClient((NetworkClient) network, playerName);
-            gamePlayer.setMap(map);
-        } else {
-            System.out.println("Failed to start client due to connection error.");
-            System.exit(0);
-        }
+        gamePlayer = new GameClient((NetworkClient) network, playerName);
+        gamePlayer.setMap(map);
     }
     /**
      * Initialize all libgdx objects:
@@ -759,7 +762,7 @@ public class GameScreen extends ScreenAdapter {
                 if (ip.contains(" ")){
                     chat.sendInternalMessage("IP cannot contain spaces.", network);
                 }else {
-                    game.setScreen(new GameScreen(game, false, ip, chat.cData.name));
+                    game.setScreen(new GameScreen(game, false, ip, chat.cData.name, network));
                 }
             case SENDCARDS:
                 if (sendCardsIfPossible()){
