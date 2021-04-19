@@ -130,6 +130,7 @@ public class NetworkHost extends Network {
                 int amountOfConnectionsToRegister = connections.length-clientsRegistered;
                 // Register the new clients
                 for (int i = 0; i<amountOfConnectionsToRegister; i++){
+                    // New connections get pushed to the start of connections array... so can start at index 0
                     registerClient(i);
                     clientsRegistered++;
                 }
@@ -150,8 +151,6 @@ public class NetworkHost extends Network {
     private void registerClient(int connectionIndex){
         // Register to hosts players
         alivePlayers.add(connections[connectionIndex].getID());
-        System.out.println("Connection index " + connectionIndex + " retrieved ID " + connections[connectionIndex].getID());
-        System.out.println("All connections IDs: ");
         for (Connection c : connections){
             System.out.println(c.getID());
         }
