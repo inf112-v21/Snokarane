@@ -26,6 +26,7 @@ public class PlayerToken {
     public String name;
 
 
+
     // What texture gets displayed on character
     public enum CHARACTER_STATES{
         PLAYERNORMAL,

@@ -195,6 +195,9 @@ public class GameScreen extends ScreenAdapter {
         loadMapLayers(game.tiledMap);
 
         // Initialize player textures from .png file
+        loadPlayerTexures();
+
+        // Initialize game-element textures
         loadTextures();
 
         // Initialize card template textures
@@ -262,6 +265,7 @@ public class GameScreen extends ScreenAdapter {
 
 
 
+
     /**
     --------- ------------------ ------------------ ------------------ ---------
     --------- ------------------   Texture handling --------- ------------------
@@ -270,10 +274,13 @@ public class GameScreen extends ScreenAdapter {
     /**
      * Load player texture and split into each player state
      */
-    public void loadTextures() {
-        // Load the entire player texture
-        //Color playerColor = Color.RED;
+    public void loadPlayerTexures() {
 
+        //***********************
+        // Loading player texture
+        //***********************
+
+        // Load the entire player texture
         //load playercolor from file if possible
         PlayerConfig config = CharacterCustomizer.loadCharacterConfigFromFile();
         Color playerColor = config.getMainColor();
@@ -281,19 +288,26 @@ public class GameScreen extends ScreenAdapter {
 
         Texture rawPlayerTexture = CharacterCustomizer.generatePlayerTexture(playerImage, playerColor);
 
-        // Split player texture into seperate regions
+        // Split player texture into separate regions
         TextureRegion roboPlayerSplitTexture = new TextureRegion(rawPlayerTexture,300, 300);
 
-        // Put the texture region into seperate tiles
+        // Put the texture region into separate tiles
         StaticTiledMapTile playerStaticTile = new StaticTiledMapTile(roboPlayerSplitTexture);
 
         // Set player state cells to corresponding tiles
-        playerNormal = new TiledMapTileLayer.Cell().setTile(playerStaticTile);
+        //playerNormal = new TiledMapTileLayer.Cell().setTile(playerStaticTile);
         playerWon = new TiledMapTileLayer.Cell().setTile(playerStaticTile);
 
-        Texture rawLaserTexture = new Texture("tiles.png");
+    }
 
-        // Split player texture into seperate regions
+
+    /**
+    * Load Game textures and split into tiles
+    * */
+    public void loadTextures() {
+
+        Texture rawLaserTexture = new Texture("tiles.png");
+        // Split laser texture into separate regions
         TextureRegion[][] splitLaserTextures = TextureRegion.split(rawLaserTexture, 300, 300);
 
         StaticTiledMapTile singleHorizontal = new StaticTiledMapTile(splitLaserTextures[4][6]);
