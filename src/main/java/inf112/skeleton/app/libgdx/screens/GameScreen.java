@@ -974,6 +974,7 @@ public class GameScreen extends ScreenAdapter {
                 TiledMapTileLayer.Cell currentCell = new TiledMapTileLayer.Cell();
 
                 if(map.playerLayer[x][y].config != null){
+
                     // Generate cell from config if config for tile found
                     PlayerConfig c = map.playerLayer[x][y].config;
                     TextureRegion textReg = new TextureRegion(CharacterCustomizer.generatePlayerTexture(c.getImage(), c.getMainColor()));
