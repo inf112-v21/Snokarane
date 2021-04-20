@@ -2,10 +2,14 @@ package inf112.skeleton.app.libgdx.screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.ScreenAdapter;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL30;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
@@ -13,6 +17,8 @@ import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import inf112.skeleton.app.game.GameClient;
 import inf112.skeleton.app.game.GameHost;
 import inf112.skeleton.app.game.objects.PlayerToken;
+import inf112.skeleton.app.libgdx.CharacterCustomizer;
+import inf112.skeleton.app.libgdx.PlayerConfig;
 import inf112.skeleton.app.libgdx.RoboGame;
 import inf112.skeleton.app.network.Network;
 import inf112.skeleton.app.network.NetworkClient;
@@ -49,6 +55,7 @@ public class WaitingRoomScreen extends ScreenAdapter implements IUiScreen {
 
     // This players waiting room avatar
     PlayerAvatar avatar;
+    int localAvatars = 0;
 
     // Indicates connection status
     Label connectionIndicatorLabel;
@@ -58,22 +65,34 @@ public class WaitingRoomScreen extends ScreenAdapter implements IUiScreen {
 
     public WaitingRoomScreen(RoboGame game, boolean roleHost, String IP_Address, String name){
         this.game = game;
+
         // Init network depending on if role is host or client, take functions from gamescreen
         this.ip = IP_Address;
         this.host = roleHost;
         this.name = name;
+
+        this.avatar = new PlayerAvatar(CharacterCustomizer.loadCharacterConfigFromFile(), name);
+
         // Choose whether to host or connect
         network = Network.choseRole(this.host);
         // Initializes connections, ports and opens for sending and receiving data
         this.network.initialize();
         this.network.name = name;
+
         if (!roleHost){
             if (!((NetworkClient)network).connectToServer(ip)){
                 System.out.println("Failed to start client due to connection error.");
                 ((NetworkClient) network).client.close();
                 game.setScreen(new SelectRoleScreen(game));
+            }else{
+                // Send clients avatar
+                ((NetworkClient)network).sendAvatar(avatar);
             }
+        }else{
+            // Add hosts avatar to avatars
+            network.avatars.add(avatar);
         }
+        loadUIVisuals();
         loadUIIntractables();
     }
 
@@ -83,24 +102,34 @@ public class WaitingRoomScreen extends ScreenAdapter implements IUiScreen {
 
     @Override
     public void loadUIVisuals() {
-
+        // Background image
+        Texture backgroundImage = new Texture(Gdx.files.internal("decorative/roborally-boardgame-irl.jpg"));
+        Image background = new Image(backgroundImage);
+        background.setSize(gdxW, gdxH);
+        background.setPosition(0, 0);
+        background.setColor(1, 1, 1, 0.15f);
+        background.setName("back-image");
+        stage.addActor(background);
     }
 
     @Override
     public void loadUIIntractables() {
         TextButton backButton = new TextButton("Back", game.skin, "small");
+        backButton.setName("back-button");
         float backLocationY = 6f;
         backButton.setWidth(100);
         backButton.setPosition(gdxW/2- backButton.getWidth()/2, gdxH/backLocationY- backButton.getHeight()/2);
         backButton.addListener(new InputListener(){
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+                network.close();
                 game.setScreen(new MenuScreen(game));
                 return true;
             }
         });
         stage.addActor(backButton);
         connectionIndicatorLabel = new Label("", game.skin);
+        connectionIndicatorLabel.setName("conn-indicator");
         connectionIndicatorLabel.setWidth(200f);
         connectionIndicatorLabel.setPosition(gdxW/2-connectionIndicatorLabel.getWidth()/2, gdxH-200);
         if (host){
@@ -113,6 +142,7 @@ public class WaitingRoomScreen extends ScreenAdapter implements IUiScreen {
 
     private void loadHostInteractables(){
         TextButton startGamebutton = new TextButton("Start game", game.skin, "small");
+        startGamebutton.setName("start-game-button");
         float startGamebuttonLocationY = 4f;
         startGamebutton.setWidth(150);
         startGamebutton.setPosition(gdxW/2- startGamebutton.getWidth()/2, gdxH/startGamebuttonLocationY- startGamebutton.getHeight()/2);
@@ -129,7 +159,7 @@ public class WaitingRoomScreen extends ScreenAdapter implements IUiScreen {
     }
 
     private void loadClientInteractables(){
-        connectionIndicatorLabel.setText("Connecting...");
+        connectionIndicatorLabel.setText("Waiting for connections...");
     }
 
     @Override
@@ -157,8 +187,42 @@ public class WaitingRoomScreen extends ScreenAdapter implements IUiScreen {
             }
         }
 
+        // poll avatar updates
+        if (network.avatars.size() > localAvatars){
+            for (Actor a : stage.getActors()){
+                if (a.getName().equals("players-connected")){
+                    a.clear();
+                }
+            }
+            localAvatars = network.avatars.size();
+            loadPlayerAvatars();
+        }
+
+
         stage.act();
         stage.draw();
+    }
+
+    private void loadPlayerAvatars(){
+        Table playersConnected = new Table(game.skin);
+        playersConnected.setSize(gdxW-100, 500);
+        playersConnected.setPosition(50, 250);
+        playersConnected.setName("players-connected");
+
+        for (PlayerAvatar av : network.avatars){
+            PlayerConfig c = av.playerConfig;
+            Texture text = CharacterCustomizer.generatePlayerTexture(c.getImage(), c.getMainColor());
+            Image i = new Image(text);
+            playersConnected.add(i);
+        }
+
+        playersConnected.row();
+
+        for (PlayerAvatar av : network.avatars){
+            Label l = new Label(av.playerName, game.skin);
+            playersConnected.add(l);
+        }
+        stage.addActor(playersConnected);
     }
 
     @Override
