@@ -36,6 +36,8 @@ public class NetworkData {
         classesToRegister.add(Message.class);
         classesToRegister.add(ChatterData.class);
         classesToRegister.add(PlayerConfig.class);
+        classesToRegister.add(com.badlogic.gdx.graphics.Color.class);
+
 
         return classesToRegister;
     }
