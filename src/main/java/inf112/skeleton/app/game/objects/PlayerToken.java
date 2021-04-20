@@ -36,6 +36,7 @@ public class PlayerToken {
 
     private PlayerConfig config;
 
+
     // What texture gets displayed on character
     public enum CHARACTER_STATES{
         PLAYERNORMAL,

@@ -9,6 +9,7 @@ import inf112.skeleton.app.libgdx.CharacterCustomizer;
 import inf112.skeleton.app.libgdx.Map;
 import inf112.skeleton.app.libgdx.NetworkDataWrapper;
 import inf112.skeleton.app.libgdx.PlayerConfig;
+import inf112.skeleton.app.ui.avatars.PlayerAvatar;
 import inf112.skeleton.app.ui.chat.backend.Message;
 
 import java.io.IOException;
@@ -41,7 +42,7 @@ public class NetworkClient extends Network {
             public void received (Connection connection, Object object) {
                 if (object instanceof String) {
                     if (object.equals("Name")) {
-                        giveNickname(gameClient.name);
+                        giveNickname(name);
                     }
                     else if (object.equals("Config")) {
                         PlayerConfig config = CharacterCustomizer.loadCharacterConfigFromFile();
@@ -53,8 +54,10 @@ public class NetworkClient extends Network {
                 }
 
                 if (object instanceof NetworkDataWrapper){
-                    map.loadPlayers(((NetworkDataWrapper) object).PlayerTokens);
-                    map.laserLayer = ((NetworkDataWrapper) object).laserLayer;
+                    if (map != null){
+                        map.loadPlayers(((NetworkDataWrapper) object).PlayerTokens);
+                        map.laserLayer = ((NetworkDataWrapper) object).laserLayer;
+                    }
                 }
 
                 if(object instanceof Integer) {
@@ -69,12 +72,24 @@ public class NetworkClient extends Network {
                 if (object instanceof Message){
                     messagesRecived.add((Message) object);
                 }
+                if (object instanceof Boolean){
+                    readyToInitialize = true;
+                }
+                if (object instanceof PlayerAvatar){
+                    if (!avatars.contains(object)){
+                        avatars.add((PlayerAvatar)object);
+                    }
+                }
             }
             public void disconnected (Connection connection) {
                 System.exit(0);
             }
         }));
         return true;
+    }
+
+    public void close(){
+        client.close();
     }
 
     /**
@@ -93,6 +108,8 @@ public class NetworkClient extends Network {
             return false;
         }
     }
+
+    public void sendAvatar(PlayerAvatar avatar){ client.sendTCP(avatar); }
 
     public void sendMessage(Message m){ client.sendTCP(m); }
 
