@@ -16,7 +16,8 @@ public class PlayerAvatar {
     public PlayerAvatar(){}
 
     public PlayerAvatar(PlayerConfig config, String name){
-
+        this.playerConfig = config;
+        this.playerName = name;
     }
 
     public void givePlayerNumber(int number){
