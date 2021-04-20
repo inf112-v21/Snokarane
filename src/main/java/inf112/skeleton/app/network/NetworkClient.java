@@ -5,6 +5,7 @@ import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
 import inf112.skeleton.app.game.GameClient;
 import inf112.skeleton.app.game.objects.PlayerToken;
+import inf112.skeleton.app.libgdx.CharacterCustomizer;
 import inf112.skeleton.app.libgdx.Map;
 import inf112.skeleton.app.libgdx.NetworkDataWrapper;
 import inf112.skeleton.app.libgdx.PlayerConfig;
@@ -41,6 +42,10 @@ public class NetworkClient extends Network {
                 if (object instanceof String) {
                     if (object.equals("Name")) {
                         giveNickname(gameClient.name);
+                    }
+                    else if (object.equals("Config")) {
+                        PlayerConfig config = CharacterCustomizer.loadCharacterConfigFromFile();
+                        client.sendTCP(config);
                     }
                     else {
                         gameClient.drawCardsFromDeck();
@@ -92,6 +97,13 @@ public class NetworkClient extends Network {
     public void sendMessage(Message m){ client.sendTCP(m); }
 
     public void giveNickname(String name) {
-        client.sendTCP(name);
+        //load config from file
+        PlayerConfig config = CharacterCustomizer.loadCharacterConfigFromFile();
+
+        //adds name to config
+        config.setName(name);
+
+        //sends config including name
+        client.sendTCP(config);
     }
 }
