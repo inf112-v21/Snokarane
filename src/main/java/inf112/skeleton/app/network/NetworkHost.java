@@ -45,14 +45,14 @@ public class NetworkHost extends Network {
                     playerCards.put(c.getID(),((CardList) object).cardList);
                     host.checkCards();
                 }
-                if (object instanceof String) {
+                if (object instanceof PlayerConfig) {
                     //TODO Put all this in a public method in gamehost?
-                    System.out.println("Recieved the name " + object + " from client number " + c.getID());
+                    System.out.println("Recieved the name " + ((PlayerConfig) object).getName() + " from client number " + c.getID());
                     PlayerToken token = new PlayerToken();
                     token.charState = PlayerToken.CHARACTER_STATES.PLAYERNORMAL;
                     token.ID = c.getID();
-                    token.name = (String) object;
-                    token.setConfig(CharacterCustomizer.loadCharacterConfigFromFile());
+                    token.name = (String) ((PlayerConfig) object).getName();
+                    token.setConfig((PlayerConfig) object);
                     token = host.initializePlayerPos(token);
                     host.clientPlayers.put(c.getID(), token);
                 }
@@ -99,6 +99,9 @@ public class NetworkHost extends Network {
         System.out.println("Asked for client names");
         server.sendToAllTCP("Name");
     }
+
+
+
 
     /**
      * Broadcasts the winner so that all the clients and the host can display and handle it
