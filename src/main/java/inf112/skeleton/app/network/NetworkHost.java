@@ -6,7 +6,9 @@ import com.esotericsoftware.kryonet.Server;
 import inf112.skeleton.app.game.GameHost;
 import inf112.skeleton.app.game.objects.Card;
 import inf112.skeleton.app.game.objects.PlayerToken;
+import inf112.skeleton.app.libgdx.CharacterCustomizer;
 import inf112.skeleton.app.libgdx.NetworkDataWrapper;
+import inf112.skeleton.app.libgdx.PlayerConfig;
 import inf112.skeleton.app.ui.avatars.PlayerAvatar;
 import inf112.skeleton.app.ui.chat.backend.Message;
 
@@ -47,13 +49,14 @@ public class NetworkHost extends Network {
                     playerCards.put(c.getID(),((CardList) object).cardList);
                     host.checkCards();
                 }
-                if (object instanceof String) {
+                if (object instanceof PlayerConfig) {
                     //TODO Put all this in a public method in gamehost?
-                    System.out.println("Recieved the name " + object + " from client number " + c.getID());
+                    System.out.println("Recieved the name " + ((PlayerConfig) object).getName() + " from client number " + c.getID());
                     PlayerToken token = new PlayerToken();
                     token.charState = PlayerToken.CHARACTER_STATES.PLAYERNORMAL;
                     token.ID = c.getID();
-                    token.name = (String) object;
+                    token.name = (String) ((PlayerConfig) object).getName();
+                    token.setConfig((PlayerConfig) object);
                     token = host.initializePlayerPos(token);
                     host.clientPlayers.put(c.getID(), token);
                 }
@@ -99,10 +102,14 @@ public class NetworkHost extends Network {
         }
     }
 
+
     public void promptName() {
         System.out.println("Asked for client names");
         server.sendToAllTCP("Name");
     }
+
+
+
 
     /**
      * Broadcasts the winner so that all the clients and the host can display and handle it
@@ -113,6 +120,8 @@ public class NetworkHost extends Network {
         server.sendToAllTCP(winner);
         System.exit(0);
     }
+
+
 
     /**
      * Initializes the connections for the server. Call this only when all users are connected.

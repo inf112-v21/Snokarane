@@ -64,6 +64,7 @@ public class Map {
     public static class PlayerRenderInformation{
         public PlayerToken.CHARACTER_STATES state = PlayerToken.CHARACTER_STATES.NONE;
         public Direction dir = Direction.NORTH;
+        public PlayerConfig config;
         public PlayerRenderInformation(){}
     }
 
@@ -285,6 +286,8 @@ public class Map {
             } else {
                 playerLayer[token.getX()][token.getY()].state = token.charState;
             }
+
+            playerLayer[token.getX()][token.getY()].config = token.getConfig();
             playerLayer[token.getX()][token.getY()].dir = token.getDirection();
         }
     }

@@ -196,7 +196,7 @@ public class GameScreen extends ScreenAdapter {
         loadMapLayers(game.tiledMap);
 
         // Initialize player textures from .png file
-        //loadPlayerTexures();
+        loadPlayerTextures();
 
         // Initialize game-element textures
         loadTextures();
@@ -275,7 +275,8 @@ public class GameScreen extends ScreenAdapter {
     /**
      * Load player texture and split into each player state
      */
-    public void loadTextures() {
+
+    public void loadPlayerTextures(){
         // Load the entire player texture
         //Color playerColor = Color.RED;
 
@@ -295,6 +296,11 @@ public class GameScreen extends ScreenAdapter {
         // Set player state cells to corresponding tiles
         playerNormal = new TiledMapTileLayer.Cell().setTile(playerStaticTile);
         playerWon = new TiledMapTileLayer.Cell().setTile(playerStaticTile);
+
+
+    }
+
+    public void loadTextures() {
 
         Texture rawLaserTexture = new Texture("tiles.png");
 
@@ -975,20 +981,34 @@ public class GameScreen extends ScreenAdapter {
     public void translatePlayerLayer(){
         for (int x = 0; x< map.playerLayer.length; x++){
             for (int y = 0; y< map.playerLayer[x].length; y++){
+
+                // Initialize empty cell
+                TiledMapTileLayer.Cell currentCell = new TiledMapTileLayer.Cell();
+
+                if(map.playerLayer[x][y].config != null){
+
+                    // Generate cell from config if config for tile found
+                    PlayerConfig c = map.playerLayer[x][y].config;
+                    TextureRegion textReg = new TextureRegion(CharacterCustomizer.generatePlayerTexture(c.getImage(), c.getMainColor()));
+                    StaticTiledMapTile currentTile = new StaticTiledMapTile(textReg);
+                    // Set tile to empty cell
+                    currentCell.setTile(currentTile);
+                }
+
                 switch (map.playerLayer[x][y].state){
                     case PLAYERNORMAL:
-                        playerLayer.setCell(x, y, playerNormal);
+                        playerLayer.setCell(x, y, currentCell);
                         break;
                     case PLAYERWON:
-                        playerLayer.setCell(x, y, playerWon);
+                        playerLayer.setCell(x, y, currentCell);
                         break;
                     case PLAYERSELFNORMAL:
                         // todo we don't have a texture to show which player this player is, so using playerwon as filler
-                        playerLayer.setCell(x, y, playerWon);
+                        playerLayer.setCell(x, y, currentCell);
                         break;
                     case PLAYERSELFWON:
                         // todo
-                        playerLayer.setCell(x, y, playerWon);
+                        playerLayer.setCell(x, y, currentCell);
                         break;
                     case NONE:
                         // Clear cell if no players are found

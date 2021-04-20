@@ -3,6 +3,7 @@ package inf112.skeleton.app.game;
 import inf112.skeleton.app.game.objects.Card;
 import inf112.skeleton.app.game.objects.CardType;
 import inf112.skeleton.app.libgdx.Map;
+import inf112.skeleton.app.libgdx.PlayerConfig;
 import inf112.skeleton.app.network.NetworkClient;
 import inf112.skeleton.app.network.CardList;
 
@@ -13,6 +14,7 @@ import java.util.Collections;
  * This class contains information the client needs to interact with the game
  */
 public class GameClient extends GamePlayer {
+
     //TODO Maybe do this differently?
     public String name;
     /**
@@ -28,6 +30,7 @@ public class GameClient extends GamePlayer {
     }
 
     private NetworkClient client;
+
 
     /**
      * Send clients chosen card to NetworkHost
