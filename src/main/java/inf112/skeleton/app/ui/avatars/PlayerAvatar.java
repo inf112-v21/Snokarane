@@ -9,8 +9,6 @@ import inf112.skeleton.app.libgdx.PlayerConfig;
 public class PlayerAvatar {
     public PlayerConfig playerConfig;
     public String playerName;
-    // 1 to n in order of connected to host, first to last
-    public int playerNumber;
 
     // Empty constructor for kryo
     public PlayerAvatar(){}
@@ -18,9 +16,5 @@ public class PlayerAvatar {
     public PlayerAvatar(PlayerConfig config, String name){
         this.playerConfig = config;
         this.playerName = name;
-    }
-
-    public void givePlayerNumber(int number){
-        this.playerNumber = number;
     }
 }
