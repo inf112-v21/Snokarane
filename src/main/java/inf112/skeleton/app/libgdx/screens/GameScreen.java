@@ -165,6 +165,7 @@ public class GameScreen extends ScreenAdapter {
         // If this is removed, the host won't receive client names in time, and as such clients will
         // Start generating cards and map from objects that haven't been initialized yet (like NetworkClient.map and NetworkClient.gameClient)
         if (((NetworkHost) network).clientsRegistered > 0){
+            System.out.println(((NetworkHost) network).clientsRegistered + " clients registeered.");
             long time = System.currentTimeMillis();
             while (System.currentTimeMillis() < time+clientResponseGraceTime);
         }
@@ -195,7 +196,7 @@ public class GameScreen extends ScreenAdapter {
         loadMapLayers(game.tiledMap);
 
         // Initialize player textures from .png file
-        loadPlayerTexures();
+        //loadPlayerTexures();
 
         // Initialize game-element textures
         loadTextures();
@@ -274,13 +275,10 @@ public class GameScreen extends ScreenAdapter {
     /**
      * Load player texture and split into each player state
      */
-    public void loadPlayerTexures() {
-
-        //***********************
-        // Loading player texture
-        //***********************
-
+    public void loadTextures() {
         // Load the entire player texture
+        //Color playerColor = Color.RED;
+
         //load playercolor from file if possible
         PlayerConfig config = CharacterCustomizer.loadCharacterConfigFromFile();
         Color playerColor = config.getMainColor();
@@ -288,26 +286,19 @@ public class GameScreen extends ScreenAdapter {
 
         Texture rawPlayerTexture = CharacterCustomizer.generatePlayerTexture(playerImage, playerColor);
 
-        // Split player texture into separate regions
+        // Split player texture into seperate regions
         TextureRegion roboPlayerSplitTexture = new TextureRegion(rawPlayerTexture,300, 300);
 
-        // Put the texture region into separate tiles
+        // Put the texture region into seperate tiles
         StaticTiledMapTile playerStaticTile = new StaticTiledMapTile(roboPlayerSplitTexture);
 
         // Set player state cells to corresponding tiles
-        //playerNormal = new TiledMapTileLayer.Cell().setTile(playerStaticTile);
+        playerNormal = new TiledMapTileLayer.Cell().setTile(playerStaticTile);
         playerWon = new TiledMapTileLayer.Cell().setTile(playerStaticTile);
 
-    }
-
-
-    /**
-    * Load Game textures and split into tiles
-    * */
-    public void loadTextures() {
-
         Texture rawLaserTexture = new Texture("tiles.png");
-        // Split laser texture into separate regions
+
+        // Split player texture into seperate regions
         TextureRegion[][] splitLaserTextures = TextureRegion.split(rawLaserTexture, 300, 300);
 
         StaticTiledMapTile singleHorizontal = new StaticTiledMapTile(splitLaserTextures[4][6]);
