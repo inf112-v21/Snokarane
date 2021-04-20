@@ -286,6 +286,7 @@ public class Map {
             } else {
                 playerLayer[token.getX()][token.getY()].state = token.charState;
             }
+            playerLayer[token.getX()][token.getY()].config = token.getConfig();
             playerLayer[token.getX()][token.getY()].dir = token.getDirection();
         }
     }
