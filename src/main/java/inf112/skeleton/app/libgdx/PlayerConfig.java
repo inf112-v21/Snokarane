@@ -9,6 +9,9 @@ public class PlayerConfig {
     //Image file as string
     String image;
 
+    //gets set when prompted by host
+    String name;
+
     @JsonProperty("mainColor")
     Color mainColor;
 
@@ -38,5 +41,12 @@ public class PlayerConfig {
         this.image = image;
     }
 
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
 
 }
