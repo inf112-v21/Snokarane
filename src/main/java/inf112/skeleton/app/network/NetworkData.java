@@ -1,8 +1,11 @@
 package inf112.skeleton.app.network;
 
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.GridPoint2;
 import inf112.skeleton.app.game.objects.*;
 import inf112.skeleton.app.libgdx.NetworkDataWrapper;
+import inf112.skeleton.app.libgdx.PlayerConfig;
+import inf112.skeleton.app.ui.avatars.PlayerAvatar;
 import inf112.skeleton.app.ui.chat.backend.ChatterData;
 import inf112.skeleton.app.ui.chat.backend.Message;
 
@@ -34,6 +37,9 @@ public class NetworkData {
         classesToRegister.add(int.class);
         classesToRegister.add(Message.class);
         classesToRegister.add(ChatterData.class);
+        classesToRegister.add(PlayerAvatar.class);
+        classesToRegister.add(PlayerConfig.class);
+        classesToRegister.add(Color.class);
 
         return classesToRegister;
     }

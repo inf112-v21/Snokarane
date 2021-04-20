@@ -7,6 +7,7 @@ import inf112.skeleton.app.game.GameClient;
 import inf112.skeleton.app.game.objects.PlayerToken;
 import inf112.skeleton.app.libgdx.Map;
 import inf112.skeleton.app.libgdx.NetworkDataWrapper;
+import inf112.skeleton.app.ui.avatars.PlayerAvatar;
 import inf112.skeleton.app.ui.chat.backend.Message;
 
 import java.io.IOException;
@@ -67,12 +68,21 @@ public class NetworkClient extends Network {
                 if (object instanceof Boolean){
                     readyToInitialize = true;
                 }
+                if (object instanceof PlayerAvatar){
+                    if (!avatars.contains(object)){
+                        avatars.add((PlayerAvatar)object);
+                    }
+                }
             }
             public void disconnected (Connection connection) {
                 System.exit(0);
             }
         }));
         return true;
+    }
+
+    public void close(){
+        client.close();
     }
 
     /**
@@ -91,6 +101,8 @@ public class NetworkClient extends Network {
             return false;
         }
     }
+
+    public void sendAvatar(PlayerAvatar avatar){ client.sendTCP(avatar); }
 
     public void sendMessage(Message m){ client.sendTCP(m); }
 

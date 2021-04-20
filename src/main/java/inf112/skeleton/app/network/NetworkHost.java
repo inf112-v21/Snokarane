@@ -7,6 +7,7 @@ import inf112.skeleton.app.game.GameHost;
 import inf112.skeleton.app.game.objects.Card;
 import inf112.skeleton.app.game.objects.PlayerToken;
 import inf112.skeleton.app.libgdx.NetworkDataWrapper;
+import inf112.skeleton.app.ui.avatars.PlayerAvatar;
 import inf112.skeleton.app.ui.chat.backend.Message;
 
 import java.io.IOException;
@@ -58,6 +59,10 @@ public class NetworkHost extends Network {
                 }
                 if (object instanceof Message){
                     sendMessageToAll((Message) object);
+                }
+                if (object instanceof PlayerAvatar){
+                    avatars.add((PlayerAvatar)object);
+                    sendAvatars();
                 }
             }
         });
@@ -163,6 +168,10 @@ public class NetworkHost extends Network {
         alivePlayers.add(hostID);
     }
 
+    public void close(){
+        server.close();
+    }
+
     public void sendIDs(){
         for (Integer i : alivePlayers){
             server.sendToTCP(i, i);
@@ -183,5 +192,11 @@ public class NetworkHost extends Network {
     public void sendReadySignal(){
         readyToInitialize = true;
         server.sendToAllTCP(true);
+    }
+
+    public void sendAvatars(){
+        for (PlayerAvatar a : avatars){
+            server.sendToAllTCP(a);
+        }
     }
 }
