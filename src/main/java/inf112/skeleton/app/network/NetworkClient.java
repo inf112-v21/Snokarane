@@ -65,7 +65,7 @@ public class NetworkClient extends Network {
                 }
 
                 if(object instanceof Integer) {
-                    map.setID((Integer) object);
+                   //can set map ID here, but map ID is deprecated
                 }
 
                 if (object instanceof PlayerToken) {

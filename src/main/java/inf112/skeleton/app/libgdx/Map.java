@@ -17,7 +17,7 @@ public class Map {
 
     private final int BOARD_X = Game.BOARD_X;
     private final int BOARD_Y = Game.BOARD_Y;
-    private int ID;
+    private int ID = -1; // deprecated
     public List<Flag> flagList;
 
     /**
