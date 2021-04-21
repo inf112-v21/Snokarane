@@ -2,6 +2,7 @@ package inf112.skeleton.app.game.objects;
 
 import com.badlogic.gdx.math.GridPoint2;
 import inf112.skeleton.app.libgdx.Map;
+import inf112.skeleton.app.libgdx.PlayerConfig;
 
 import java.util.*;
 
@@ -24,6 +25,16 @@ public class PlayerToken {
     public boolean diedThisTurn = false;
 
     public String name;
+
+    public PlayerConfig getConfig() {
+        return config;
+    }
+
+    public void setConfig(PlayerConfig config) {
+        this.config = config;
+    }
+
+    private PlayerConfig config;
 
 
     // What texture gets displayed on character
