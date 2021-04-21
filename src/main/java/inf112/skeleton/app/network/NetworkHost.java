@@ -64,6 +64,7 @@ public class NetworkHost extends Network {
                     sendMessageToAll((Message) object);
                 }
                 if (object instanceof PlayerAvatar){
+                    ((PlayerAvatar)object).id = avatars.size()-1;
                     avatars.add((PlayerAvatar)object);
                     sendAvatars();
                 }

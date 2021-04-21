@@ -90,6 +90,7 @@ public class WaitingRoomScreen extends ScreenAdapter implements IUiScreen {
             }
         }else{
             // Add hosts avatar to avatars
+            avatar.id = network.avatars.size()-1;
             network.avatars.add(avatar);
         }
         loadUIVisuals();
@@ -219,7 +220,7 @@ public class WaitingRoomScreen extends ScreenAdapter implements IUiScreen {
         playersConnected.row();
 
         for (PlayerAvatar av : network.avatars){
-            Label l = new Label(av.playerName, game.skin);
+            Label l = new Label(av.id+". "+av.playerName, game.skin);
             playersConnected.add(l);
         }
         stage.addActor(playersConnected);

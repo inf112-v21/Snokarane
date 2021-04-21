@@ -9,6 +9,7 @@ import inf112.skeleton.app.libgdx.PlayerConfig;
 public class PlayerAvatar {
     public PlayerConfig playerConfig;
     public String playerName;
+    public int id;
 
     // Empty constructor for kryo
     public PlayerAvatar(){}

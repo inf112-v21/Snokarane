@@ -76,7 +76,13 @@ public class NetworkClient extends Network {
                     readyToInitialize = true;
                 }
                 if (object instanceof PlayerAvatar){
-                    if (!avatars.contains(object)){
+                    boolean newPlayer = true;
+                    for (PlayerAvatar a : avatars){
+                        if (((PlayerAvatar)object).id == a.id){
+                            newPlayer = false;
+                        }
+                    }
+                    if (newPlayer){
                         avatars.add((PlayerAvatar)object);
                     }
                 }
