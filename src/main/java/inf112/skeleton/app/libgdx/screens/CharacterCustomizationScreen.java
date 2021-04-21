@@ -109,6 +109,7 @@ public class CharacterCustomizationScreen extends ScreenAdapter implements IUiSc
         backButton.addListener(new InputListener(){
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+                game.buttonPressSound.play();
                 game.setScreen(new MenuScreen(game));
                 return true;
             }
@@ -139,6 +140,7 @@ public class CharacterCustomizationScreen extends ScreenAdapter implements IUiSc
         saveButton.addListener(new InputListener(){
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button){
+                game.buttonPressSound.play();
                 String defaultImage = "robot_small.png";
                 String image;
 
@@ -391,7 +393,6 @@ public class CharacterCustomizationScreen extends ScreenAdapter implements IUiSc
 
             }
         });
-
 
         stage.addActor(redSlider);
         stage.addActor(redSliderLabel);

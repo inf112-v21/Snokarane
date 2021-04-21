@@ -1,11 +1,12 @@
 package inf112.skeleton.app.libgdx;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
@@ -30,6 +31,11 @@ public class RoboGame extends Game{
     public OrthogonalTiledMapRenderer renderer;
     public TiledMap tiledMap;
 
+    public Music menuMusic;
+    public Music gameMusic;
+
+    public Sound buttonPressSound;
+
     public void create(){
         batch = new SpriteBatch();
         font = new BitmapFont();
@@ -38,6 +44,15 @@ public class RoboGame extends Game{
 
         // Load .tmx file from disk
         tiledMap = loadTileMapFromFile("hazardous.tmx");
+
+        // Load music
+        menuMusic = Gdx.audio.newMusic(Gdx.files.internal("audio/menu.mp3"));
+        gameMusic = Gdx.audio.newMusic(Gdx.files.internal("audio/game.mp3"));
+
+        // Load sounds
+        buttonPressSound = Gdx.audio.newSound(Gdx.files.internal("audio/button-press.mp3"));
+
+        startMenuMusic();
 
         // Start camera/rendering
         initializeRendering();
@@ -70,6 +85,38 @@ public class RoboGame extends Game{
         renderer = new OrthogonalTiledMapRenderer(tiledMap, 1F/300F);
         // Set renderer to view camera
         renderer.setView(camera);
+    }
+
+    /**
+     * Starts menu music
+     */
+    public void startMenuMusic(){
+        menuMusic.setLooping(true);
+        menuMusic.setVolume(0.15f);
+        menuMusic.play();
+    }
+
+    /**
+     * Stop menu music
+     */
+    public void stopMenuMusic(){
+        menuMusic.stop();
+    }
+
+    /**
+     * Start game music
+     */
+    public void startGameMusic(){
+        gameMusic.setLooping(true);
+        gameMusic.setVolume(0.15f);
+        gameMusic.play();
+    }
+
+    /**
+     * Stop game music
+     */
+    public void stopGameMusic(){
+        gameMusic.stop();
     }
 
     /**

@@ -3,12 +3,15 @@ package inf112.skeleton.app.libgdx.screens;
 import com.badlogic.gdx.*;
 import com.badlogic.gdx.graphics.GL30;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.Slider;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import inf112.skeleton.app.libgdx.RoboGame;
@@ -73,6 +76,7 @@ public class MenuScreen extends ScreenAdapter implements IUiScreen{
         playButton.addListener(new InputListener(){
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+                game.buttonPressSound.play();
                 game.setScreen(new SelectRoleScreen(game));;
                 return true;
             }
@@ -86,11 +90,28 @@ public class MenuScreen extends ScreenAdapter implements IUiScreen{
         charCustom.addListener(new InputListener(){
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+                game.buttonPressSound.play();
                 game.setScreen(new CharacterCustomizationScreen(game));
                 return true;
             }
         });
 
+        Slider volumeSlider = new Slider(0f, 1f, 0.01f, false, game.skin);
+        volumeSlider.setPosition(Gdx.graphics.getWidth()/2-volumeSlider.getWidth()/2, 50);
+        volumeSlider.setValue(game.menuMusic.getVolume());
+        volumeSlider.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent changeEvent, Actor actor) {
+                game.menuMusic.setVolume(volumeSlider.getValue());
+                game.gameMusic.setVolume(volumeSlider.getValue());
+            }
+        });
+
+        Label volumeSliderLabel = new Label("Volume", game.skin);
+        volumeSliderLabel.setPosition(volumeSlider.getX()+volumeSlider.getWidth()/2-volumeSliderLabel.getWidth()/2, volumeSlider.getY()-19);
+
+        stage.addActor(volumeSlider);
+        stage.addActor(volumeSliderLabel);
         stage.addActor(charCustom);
         stage.addActor(playButton);
     }

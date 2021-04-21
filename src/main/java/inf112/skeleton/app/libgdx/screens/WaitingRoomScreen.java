@@ -126,6 +126,7 @@ public class WaitingRoomScreen extends ScreenAdapter implements IUiScreen {
         backButton.addListener(new InputListener(){
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+                game.buttonPressSound.play();
                 network.close();
                 game.setScreen(new MenuScreen(game));
                 return true;
@@ -153,6 +154,7 @@ public class WaitingRoomScreen extends ScreenAdapter implements IUiScreen {
         startGamebutton.addListener(new InputListener(){
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+                game.buttonPressSound.play();
                 ((NetworkHost)network).sendReadySignal();
                 return true;
             }
@@ -225,7 +227,7 @@ public class WaitingRoomScreen extends ScreenAdapter implements IUiScreen {
         playersConnected.row();
 
         for (PlayerAvatar av : network.avatars){
-            Label l = new Label(av.id+". "+av.playerName, game.skin);
+            Label l = new Label(av.playerName, game.skin);
             playersConnected.add(l);
         }
         stage.addActor(playersConnected);

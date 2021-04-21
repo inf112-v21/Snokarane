@@ -66,6 +66,7 @@ public class SelectRoleScreen extends ScreenAdapter implements IUiScreen{
         startGamebutton.addListener(new InputListener(){
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+                game.buttonPressSound.play();
                 IP_address = IPInputField.getText();
                 // Set default text input to route to localhost, for easy testing
                 if (IP_address.equals("IP address")){
@@ -84,6 +85,7 @@ public class SelectRoleScreen extends ScreenAdapter implements IUiScreen{
         hostButton.addListener(new InputListener(){
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+                game.buttonPressSound.play();
                 roleHost = true;
                 game.setScreen(new WaitingRoomScreen(game, roleHost, "", nameInputField.getText()));
                 return true;
@@ -97,6 +99,7 @@ public class SelectRoleScreen extends ScreenAdapter implements IUiScreen{
         backButton.addListener(new InputListener(){
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+                game.buttonPressSound.play();
                 game.setScreen(new MenuScreen(game));
                 return true;
             }

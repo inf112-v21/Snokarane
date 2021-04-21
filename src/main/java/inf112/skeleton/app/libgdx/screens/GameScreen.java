@@ -116,6 +116,9 @@ public class GameScreen extends ScreenAdapter {
         this.network = net;
         stage = new Stage(new ScreenViewport());
 
+        game.stopMenuMusic();
+        game.startGameMusic();
+
         loadCardBackground();
         create(isHost, ip, playerName);
     }
@@ -433,6 +436,8 @@ public class GameScreen extends ScreenAdapter {
         backButton.addListener(new InputListener(){
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+                game.stopGameMusic();
+                game.startMenuMusic();
                 game.setScreen(new MenuScreen(game));
                 return true;
             }
