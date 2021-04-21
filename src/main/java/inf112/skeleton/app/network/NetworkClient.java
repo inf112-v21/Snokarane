@@ -49,7 +49,7 @@ public class NetworkClient extends Network {
                         client.sendTCP(config);
                     }
                     else if (object.equals("Power down!")) {
-                        client.sendTCP(Network.prompt("Do you wish to power down", new String[] {"true", "false"}));
+                        client.sendTCP(gameClient.powerDown);
                     }
                     else {
                         System.out.println(((String) object));

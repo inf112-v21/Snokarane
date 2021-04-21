@@ -14,6 +14,7 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
+import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
@@ -402,6 +403,7 @@ public class GameScreen extends ScreenAdapter {
         loadResetCardChoicesButton();
         loadCardDeck();
         loadPlayerList();
+        loadPowerDown();
         loadChatInputBox();
         updateChat();
     }
@@ -560,6 +562,21 @@ public class GameScreen extends ScreenAdapter {
         }
         tableList.setName("player-list");
         stage.addActor(tableList);
+    }
+    /**
+     * Load power down interactiable
+     */
+    private void loadPowerDown(){
+        CheckBox powerDownCheckBox = new CheckBox("Power down this turn", game.skin);
+        powerDownCheckBox.setName("powerdown-checkbox");
+        powerDownCheckBox.setPosition(Gdx.graphics.getWidth()-375, 15);
+        powerDownCheckBox.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent changeEvent, Actor actor) {
+                gamePlayer.powerDown = powerDownCheckBox.isChecked();
+            }
+        });
+        stage.addActor(powerDownCheckBox);
     }
     /**
      * Load chat input box with commands and message events

@@ -97,7 +97,7 @@ public class GameHost extends GamePlayer {
 
         //Update the clientCards in host
         host.playerCards.put(NetworkHost.hostID, chosenCards);
-        clientPlayers.get(NetworkHost.hostID).powerDown = Network.prompt("Do you wish to power down", new String[] {"true", "false"});
+        clientPlayers.get(NetworkHost.hostID).powerDown = powerDown;
         checkCards();
     }
 

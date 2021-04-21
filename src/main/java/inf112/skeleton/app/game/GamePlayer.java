@@ -25,6 +25,7 @@ public abstract class GamePlayer{
 
     // Whether game screen needs to update card deck, is true when all cards recieved for one round
     public boolean newCardsDelivered = false;
+    public boolean powerDown = false;
 
     // Current state of gameplay of player
     public PLAYERSTATE state = PLAYERSTATE.NONE;
