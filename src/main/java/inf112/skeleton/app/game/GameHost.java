@@ -226,7 +226,7 @@ public class GameHost extends GamePlayer {
 
             if (map.isRepair(token.getX(), token.getY())){
                 System.out.println(token.name + " has " + token.damage + " damage tokens");
-                token.damage--;
+                if (token.damage > 0) token.damage--;
                 System.out.println(token.name + " healed, and now has " + token.damage + " damage tokens");
             }
 
