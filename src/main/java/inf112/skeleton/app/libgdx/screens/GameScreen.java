@@ -567,9 +567,9 @@ public class GameScreen extends ScreenAdapter {
      * Load power down interactiable
      */
     private void loadPowerDown(){
-        CheckBox powerDownCheckBox = new CheckBox("Power down this turn", game.skin);
+        CheckBox powerDownCheckBox = new CheckBox("Power down next turn", game.skin);
         powerDownCheckBox.setName("powerdown-checkbox");
-        powerDownCheckBox.setPosition(Gdx.graphics.getWidth()-375, 15);
+        powerDownCheckBox.setPosition(Gdx.graphics.getWidth()-375, 25);
         powerDownCheckBox.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent changeEvent, Actor actor) {
