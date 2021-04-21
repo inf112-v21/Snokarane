@@ -10,5 +10,5 @@ import java.util.List;
  */
 public class NetworkDataWrapper {
     public List<PlayerToken> PlayerTokens = new ArrayList<>();
-    public int laserLayer [][][] = new int [Game.BOARD_X][Game.BOARD_Y][4];
+    public int[][][] laserLayer  = new int [Game.BOARD_X][Game.BOARD_Y][4];
 }

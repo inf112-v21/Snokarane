@@ -20,11 +20,15 @@ public class PlayerToken {
 
     public int ID;
 
-    public int hp = 3;
+    public int hp = 1;
+
+    public int damage = 2;
 
     public boolean diedThisTurn = false;
 
     public String name;
+
+    public boolean powerDown = false;
 
     public PlayerConfig getConfig() {
         return config;
@@ -75,13 +79,14 @@ public class PlayerToken {
         position.x = -100; //spawnLoc.x;
         position.y = -100; //spawnLoc.y;
         diedThisTurn = true;
-        hp --;
+        hp--;
+        damage = 0;
         playerDirection = Direction.NORTH;
         System.out.println(name + " died a tragic death");
      }
 
 
-    public boolean isDead(){
+    public boolean isPermanentlyDestroyed(){
         return hp < 1;
     }
 

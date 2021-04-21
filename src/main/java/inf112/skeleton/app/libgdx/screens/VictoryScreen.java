@@ -13,9 +13,6 @@ import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import inf112.skeleton.app.game.objects.PlayerToken;
 import inf112.skeleton.app.libgdx.RoboGame;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class VictoryScreen  extends ScreenAdapter implements IUiScreen{
     // RoboGame class instance
     private RoboGame game;

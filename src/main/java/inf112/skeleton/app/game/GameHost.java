@@ -9,6 +9,7 @@ import inf112.skeleton.app.libgdx.CharacterCustomizer;
 import inf112.skeleton.app.libgdx.Map;
 import inf112.skeleton.app.libgdx.NetworkDataWrapper;
 import inf112.skeleton.app.network.NetworkHost;
+import inf112.skeleton.app.network.Network;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -78,7 +79,6 @@ public class GameHost extends GamePlayer {
         token.setConfig(CharacterCustomizer.loadCharacterConfigFromFile());
         token = initializePlayerPos(token);
         clientPlayers.put(NetworkHost.hostID, token);
-
     }
 
     /**
@@ -97,6 +97,7 @@ public class GameHost extends GamePlayer {
 
         //Update the clientCards in host
         host.playerCards.put(NetworkHost.hostID, chosenCards);
+        clientPlayers.get(NetworkHost.hostID).powerDown = Network.prompt("Do you wish to power down", new String[] {"true", "false"});
         checkCards();
     }
 
@@ -113,6 +114,7 @@ public class GameHost extends GamePlayer {
      */
     public void checkCards(){
         if (host.playerCards.keySet().size() == host.alivePlayers.size()) {
+            System.out.println("Processing cards!");
             processCards();
 
             // Reset the chosen cards and the hand
@@ -156,7 +158,7 @@ public class GameHost extends GamePlayer {
      * Handles end of turn logic. Belt moving, lasers, rotating, repairs, etc.
      */
     public void endOfTurn(){
-        List<Integer> playersToKill = new ArrayList<>();
+        List<Integer> tokensToRemove = new ArrayList<>();
         for (Integer key : clientPlayers.keySet()){
             PlayerToken token = clientPlayers.get(key);
             if (token.diedThisTurn) continue;
@@ -171,7 +173,10 @@ public class GameHost extends GamePlayer {
                         movePlayer(token, 1, belt.beltDirection, false);
                     }
                 }
+                if (token.diedThisTurn) break;
                 //TODO Need to make sure that they do move if one player is on a belt directly in front of another
+
+                //TODO There's a bug here, when you're pushed off the map
                 Map.BeltInformation nextBelt = map.beltLayer[token.getX()][token.getY()];
                 if (nextBelt != null && nextBelt.beltRotationDirection != null) {
                     assert belt != null;
@@ -185,6 +190,8 @@ public class GameHost extends GamePlayer {
                     }
                 }
             }
+            //These are really ugly //TODO FIX
+            if (token.diedThisTurn) break;
             int rotation = map.isGear(token.position.x, token.position.y);
             if (rotation == 1) {
                 System.out.println(token.name + " is on a gear!");
@@ -194,31 +201,55 @@ public class GameHost extends GamePlayer {
                 System.out.println(token.name + " is on a gear!");
                 token.rotate(CardType.TURNLEFT);
             }
-            map.clearLasers();
-            map.shootLasers(wrapper());
+        }
+        map.clearLasers();
+        map.shootLasers(wrapper());
+        //TODO If a player is moved off the map by a belt, it's still hit by a laser
+        //TODO Does this make sense
+        for (Integer key : clientPlayers.keySet()){
+            PlayerToken token = clientPlayers.get(key);
+            if (token.diedThisTurn) {
+                continue;
+            }
+
             int lasers = 0;
 
             for (int i = 0; i < 4; i++) {
                 lasers += map.laserLayer[token.getX()][token.getY()][i];
             }
             System.out.println("Took " + lasers + " damage");
-            token.hp -= lasers;
-
-            //Is this the right position?
-            if (token.isDead()) {
-                playersToKill.add(key);
+            token.damage += lasers;
+            if (token.damage > 9) {
+                token.died();
+                continue;
             }
 
             if (map.isRepair(token.getX(), token.getY())){
-                token.hp++;
-                System.out.println(token.name + "healed, and now has " + token.hp + " health points");
+                System.out.println(token.name + " has " + token.damage + " damage tokens");
+                token.damage--;
+                System.out.println(token.name + " healed, and now has " + token.damage + " damage tokens");
             }
 
             //TODO ADD FLAG CHECK HERE
         }
-        for (Integer key: playersToKill) {
-            clientPlayers.remove(clientPlayers.remove(key));
+
+        for (Integer key : clientPlayers.keySet()) {
+            if (clientPlayers.get(key).isPermanentlyDestroyed()) {
+                tokensToRemove.add(key);
+
+            }
+        }
+
+        for (Integer key : tokensToRemove) {
+            clientPlayers.remove(key);
             host.alivePlayers.remove(key);
+        }
+
+        //Do this here because we don't have a well defined start of turn...
+        for (PlayerToken token : clientPlayers.values()) {
+            if (token.powerDown) {
+                token.damage = 0;
+            }
         }
 
         drawCards();
@@ -230,20 +261,23 @@ public class GameHost extends GamePlayer {
         //System.out.println("-------------------------------------");
         //System.out.println("Preparing card selections...");
         // iterator i is same as client connection id
+
         for (int i = 0; i<cardsProcessedPerRound; i++){
             List<Card> cardList = new ArrayList<>();
             for (int key : clientPlayers.keySet()){
                 // Get next card for the given player and pop it so it can be played
                 List<Card> cards = host.playerCards.get(key);
 
-                // get first card from players cards
-                Card currentCard = cards.remove(0);
+                if (!cards.isEmpty()) {
+                    // get first card from players cards
+                    Card currentCard = cards.remove(0);
 
-                // Add card to list of all clients cards
-                cardList.add(currentCard);
+                    // Add card to list of all clients cards
+                    cardList.add(currentCard);
 
-                // Map card to client
-                cardPlayerTokenMap.put(currentCard, clientPlayers.get(key));
+                    // Map card to client
+                    cardPlayerTokenMap.put(currentCard, clientPlayers.get(key));
+                }
             }
             // Sort cards by card priority
             cardList.sort(new Card.cardComparator());
@@ -260,6 +294,7 @@ public class GameHost extends GamePlayer {
         // Start processing each card sequentially
         isShowingCards = true;
     }
+
     //TODO Use 8 directions, not 4
     private void findPlayerRespawnLocation(PlayerToken player) {
         int x = player.spawnLoc.x;
@@ -350,7 +385,7 @@ public class GameHost extends GamePlayer {
      */
     private void handleSinglePlayerCard(Card card){
         // Check if the player is dead
-        if (!cardPlayerTokenMap.get(card).diedThisTurn && !cardPlayerTokenMap.get(card).isDead()){
+        if (!cardPlayerTokenMap.get(card).diedThisTurn && !cardPlayerTokenMap.get(card).isPermanentlyDestroyed()){
             // Move the clients player token
             resolveCard(card, cardPlayerTokenMap.get(card));
         }

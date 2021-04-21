@@ -355,7 +355,7 @@ public class GameScreen extends ScreenAdapter {
             // Assign event handler to handle card choice on click
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                if (gamePlayer.state == GamePlayer.PLAYERSTATE.PICKING_CARDS && gamePlayer.chosenCards.size()<5){
+                if (gamePlayer.state == GamePlayer.PLAYERSTATE.PICKING_CARDS && gamePlayer.chosenCards.size()<Math.min(5, 9-gamePlayer.damageCounters)){
                     Card c = new Card();
                     c.setCardType(cardType);
                     System.out.println("Clicked card with move " + cardType);
@@ -521,6 +521,56 @@ public class GameScreen extends ScreenAdapter {
                 cardDeck.setName("card-deck");
                 stage.addActor(cardDeck);
             }
+
+        }
+    }
+    /**
+     * Send cards button
+     */
+    private void loadSendCardsButton(){
+        TextButton sendCardsButton = new TextButton("Send cards", game.skin, "small");
+        sendCardsButton.setWidth(125);
+        sendCardsButton.setPosition(Gdx.graphics.getWidth()-145f, 105);
+        sendCardsButton.setColor(0.1f, 0, 0, 1);
+        sendCardsButton.addListener(new InputListener(){
+            @Override
+            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+                if (gamePlayer.chosenCards.size() >= Math.min(5, 9- gamePlayer.damageCounters)) {
+                    if (network.isHost) {
+                        if (((GameHost) gamePlayer).allCardsReady()) {
+                            System.out.println("Cards are being sent to processing. Stage size before deck clear: " + stage.getActors().size);
+                            clearNonInteractiveStageElements();
+                            for (Card c : gamePlayer.hand){
+                                for (Card d : gamePlayer.chosenCards){
+                                    if (c.getCardType() == d.getCardType() && c.picked){
+                                        Card fill = new Card();
+                                        c.setCardType(CardType.NONE);
+                                    }else {
+                                        gamePlayer.discard.add(c);
+                                    }
+                                }
+                            }
+                            gamePlayer.state = GamePlayer.PLAYERSTATE.SENDING_CARDS;
+                            gamePlayer.registerChosenCards();
+                        } else {
+                            System.out.println("Not all players have delivered their cards yet! Cannot process cards yet.");
+                        }
+                    } else {
+                        System.out.println("Cards are being sent to processing. Stage size before deck clear: " + stage.getActors().size);
+                        clearNonInteractiveStageElements();
+                        for (Card c : gamePlayer.hand){
+                            for (Card d : gamePlayer.chosenCards){
+                                if (c.getCardType() == d.getCardType() && c.picked){
+                                    Card fill = new Card();
+                                    c.setCardType(CardType.NONE);
+                                }else {
+                                    gamePlayer.discard.add(c);
+                                }
+                            }
+                        }
+                        gamePlayer.state = GamePlayer.PLAYERSTATE.SENDING_CARDS;
+                        gamePlayer.registerChosenCards();
+
             /**
              * All player positions and directions
              */
@@ -548,6 +598,7 @@ public class GameScreen extends ScreenAdapter {
                             tableList.row();
                             playNo++;
                         }
+
                     }
                 }
                 if (!anyPlayers){

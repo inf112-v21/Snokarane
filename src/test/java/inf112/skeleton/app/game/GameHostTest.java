@@ -3,13 +3,11 @@ package inf112.skeleton.app.game;
 import com.badlogic.gdx.math.GridPoint2;
 import inf112.skeleton.app.game.objects.*;
 import inf112.skeleton.app.libgdx.Map;
-import inf112.skeleton.app.network.NetworkClient;
 import inf112.skeleton.app.network.NetworkHost;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.*;
@@ -94,11 +92,11 @@ public class GameHostTest {
     @Test
     public void repairTilesRepair(){
         assertTrue(player.getX() == 0 && player.getY() == 0);
-        int hp = player.hp;
+        int hp = player.damage;
         host.map.loadPlayers(host.wrapper().PlayerTokens);
         host.map.repairLayer[0][0] = true;
         host.endOfTurn();
-        assertEquals(hp+1, player.hp);
+        assertEquals(hp+1, player.damage);
     }
 
     @Test

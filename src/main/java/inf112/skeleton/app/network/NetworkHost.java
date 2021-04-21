@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 public class NetworkHost extends Network {
 
@@ -43,13 +44,16 @@ public class NetworkHost extends Network {
         server.addListener(new Listener() {
             @Override
             public void received (Connection c, Object object) {
+              
                 // Only cards get sent through here
                 if (object instanceof CardList) {
                     System.out.println("Recieved cards from " + host.clientPlayers.get(c.getID()).name);
                     playerCards.put(c.getID(),((CardList) object).cardList);
                     host.checkCards();
                 }
+              
                 if (object instanceof PlayerConfig) {
+
                     //TODO Put all this in a public method in gamehost?
                     System.out.println("Recieved the name " + ((PlayerConfig) object).getName() + " from client number " + c.getID());
                     PlayerToken token = new PlayerToken();
@@ -60,9 +64,27 @@ public class NetworkHost extends Network {
                     token = host.initializePlayerPos(token);
                     host.clientPlayers.put(c.getID(), token);
                 }
+              
+                //If the player is dead, ignore them
+                if (!host.clientPlayers.containsKey(c.getID())) return;
+              
+                // Only cards get sent through here
+                if (object instanceof CardList) {
+                    System.out.println("Recieved cards from " + host.clientPlayers.get(c.getID()).name);
+                    //TODO We need to make sure that we wait for the answer here...
+                    server.sendToTCP(c.getID(), "Power down!");
+                    playerCards.put(c.getID(),((CardList) object).cardList);
+                    host.checkCards();
+                }
+              
                 if (object instanceof Message){
                     sendMessageToAll((Message) object);
                 }
+                  
+                if (object instanceof Boolean) {
+                    host.clientPlayers.get(c.getID()).powerDown = (Boolean) object;
+                }
+              
                 if (object instanceof PlayerAvatar){
                     ((PlayerAvatar)object).id = avatars.size()-1;
                     avatars.add((PlayerAvatar)object);
@@ -94,12 +116,32 @@ public class NetworkHost extends Network {
      */
     public void promptCardDraw() {
         System.out.println("Prompted clients to draw cards.");
+        //TODO There's a bug here if everybody dies
+        //TODO a bit shady, but the idea is to force the game to move on if everyone has powered down
+        boolean allPoweredDown = !alivePlayers.isEmpty();
         for (Integer connectionID : alivePlayers) {
-            if (connectionID == hostID) {
+            PlayerToken token = host.clientPlayers.get(connectionID);
+            if (connectionID == hostID && !token.powerDown) {
+                allPoweredDown = false;
+                host.damageCounters = token.damage;
                 host.drawCardsFromDeck();
-                return;
+                //TODO was return here, should be continue?
+                continue;
             }
-            server.sendToTCP(connectionID, "Draw cards!");
+            if (token.powerDown) {
+                System.out.println(token.name + " has decided to power down! Good on them");
+                token.powerDown = false;
+                //Empty list here to simulate a player
+                playerCards.put(connectionID, new ArrayList<>());
+            }
+            else {
+                allPoweredDown = false;
+                server.sendToTCP(connectionID, host.clientPlayers.get(connectionID));
+            }
+        }
+        if (allPoweredDown) {
+            host.checkCards();
+            host.endOfTurn();
         }
     }
 
@@ -118,7 +160,7 @@ public class NetworkHost extends Network {
      */
     public void sendWinner(PlayerToken winner) {
         System.out.println(winner.name + " has won! Congratulations");
-        server.sendToAllTCP(winner);
+        server.sendToAllTCP(winner.name + " has won! Congratulations");
         System.exit(0);
     }
 
@@ -128,9 +170,10 @@ public class NetworkHost extends Network {
      * Initializes the connections for the server. Call this only when all users are connected.
      * It also sends the IDs to the clients.
      */
+
     public void initConnections() {
     }
-
+          
     /**
      * Register new connected clients to the server
      */

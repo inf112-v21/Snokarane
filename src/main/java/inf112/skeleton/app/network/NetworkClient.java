@@ -48,8 +48,12 @@ public class NetworkClient extends Network {
                         PlayerConfig config = CharacterCustomizer.loadCharacterConfigFromFile();
                         client.sendTCP(config);
                     }
+                    else if (object.equals("Power down!")) {
+                        client.sendTCP(Network.prompt("Do you wish to power down", new String[] {"true", "false"}));
+                    }
                     else {
-                        gameClient.drawCardsFromDeck();
+                        System.out.println(((String) object));
+                        System.exit(0);
                     }
                 }
 
@@ -65,8 +69,8 @@ public class NetworkClient extends Network {
                 }
 
                 if (object instanceof PlayerToken) {
-                    System.out.println(((PlayerToken) object).name + " has won! Congratulations to them!");
-                    System.exit(0);
+                    gameClient.damageCounters = ((PlayerToken) object).damage;
+                    gameClient.drawCardsFromDeck();
                 }
 
                 if (object instanceof Message){
