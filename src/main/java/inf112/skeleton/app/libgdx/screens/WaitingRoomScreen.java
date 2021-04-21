@@ -25,6 +25,9 @@ import inf112.skeleton.app.network.NetworkClient;
 import inf112.skeleton.app.network.NetworkHost;
 import inf112.skeleton.app.ui.avatars.PlayerAvatar;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class WaitingRoomScreen extends ScreenAdapter implements IUiScreen {
     // RoboGame class instance
     private RoboGame game;
@@ -210,7 +213,9 @@ public class WaitingRoomScreen extends ScreenAdapter implements IUiScreen {
         playersConnected.setPosition(50, 250);
         playersConnected.setName("players-connected");
 
-        for (PlayerAvatar av : network.avatars){
+        List<PlayerAvatar> avatars = new ArrayList<>(network.avatars);
+
+        for (PlayerAvatar av : avatars){
             PlayerConfig c = av.playerConfig;
             Texture text = CharacterCustomizer.generatePlayerTexture(c.getImage(), c.getMainColor());
             Image i = new Image(text);

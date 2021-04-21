@@ -20,7 +20,7 @@ public class PlayerToken {
 
     public int ID;
 
-    public int hp = 1;
+    public int hp = 3;
 
     public int damage = 2;
 

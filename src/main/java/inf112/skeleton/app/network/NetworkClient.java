@@ -82,8 +82,9 @@ public class NetworkClient extends Network {
                 if (object instanceof PlayerAvatar){
                     boolean newPlayer = true;
                     for (PlayerAvatar a : avatars){
-                        if (((PlayerAvatar)object).id == a.id){
+                        if (((PlayerAvatar) object).id == a.id) {
                             newPlayer = false;
+                            break;
                         }
                     }
                     if (newPlayer){

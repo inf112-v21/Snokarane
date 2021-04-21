@@ -38,7 +38,6 @@ import inf112.skeleton.app.ui.chat.managers.Chatter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 
 /**
@@ -74,9 +73,6 @@ public class GameScreen extends ScreenAdapter {
      */
     // Layers of the map
     private TiledMapTileLayer playerLayer;
-    // Cells for each player state
-    private TiledMapTileLayer.Cell playerNormal;
-    private TiledMapTileLayer.Cell playerWon;
     private TiledMapTileLayer.Cell singleHorizontal;
     private TiledMapTileLayer.Cell singleVertical;
     private TiledMapTileLayer.Cell doubleVertical;
@@ -294,8 +290,9 @@ public class GameScreen extends ScreenAdapter {
         StaticTiledMapTile playerStaticTile = new StaticTiledMapTile(roboPlayerSplitTexture);
 
         // Set player state cells to corresponding tiles
-        playerNormal = new TiledMapTileLayer.Cell().setTile(playerStaticTile);
-        playerWon = new TiledMapTileLayer.Cell().setTile(playerStaticTile);
+        // Cells for each player state
+        TiledMapTileLayer.Cell playerNormal = new TiledMapTileLayer.Cell().setTile(playerStaticTile);
+        TiledMapTileLayer.Cell playerWon = new TiledMapTileLayer.Cell().setTile(playerStaticTile);
 
 
     }
@@ -308,9 +305,7 @@ public class GameScreen extends ScreenAdapter {
         TextureRegion[][] splitLaserTextures = TextureRegion.split(rawLaserTexture, 300, 300);
 
         StaticTiledMapTile singleHorizontal = new StaticTiledMapTile(splitLaserTextures[4][6]);
-        StaticTiledMapTile singleBoth = new StaticTiledMapTile(splitLaserTextures[4][7]);
         StaticTiledMapTile singleVertical = new StaticTiledMapTile(splitLaserTextures[5][6]);
-        StaticTiledMapTile doubleBoth = new StaticTiledMapTile(splitLaserTextures[12][4]);
         StaticTiledMapTile doubleVertical = new StaticTiledMapTile(splitLaserTextures[12][5]);
         StaticTiledMapTile doubleHorizontal = new StaticTiledMapTile(splitLaserTextures[12][6]);
 

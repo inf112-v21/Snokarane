@@ -45,13 +45,6 @@ public class NetworkHost extends Network {
             @Override
             public void received (Connection c, Object object) {
               
-                // Only cards get sent through here
-                if (object instanceof CardList) {
-                    System.out.println("Recieved cards from " + host.clientPlayers.get(c.getID()).name);
-                    playerCards.put(c.getID(),((CardList) object).cardList);
-                    host.checkCards();
-                }
-              
                 if (object instanceof PlayerConfig) {
 
                     //TODO Put all this in a public method in gamehost?
@@ -66,7 +59,7 @@ public class NetworkHost extends Network {
                 }
               
                 //If the player is dead, ignore them
-                if (!host.clientPlayers.containsKey(c.getID())) return;
+                if (host != null && !host.clientPlayers.containsKey(c.getID())) return;
               
                 // Only cards get sent through here
                 if (object instanceof CardList) {
