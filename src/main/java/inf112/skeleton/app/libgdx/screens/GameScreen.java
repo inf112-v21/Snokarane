@@ -59,9 +59,9 @@ public class GameScreen extends ScreenAdapter {
 
 
     /**--------- ------------------ ------------------ ------------------ ---------
-    /* --------- ------------------  Internal map vars ------------------ ---------
-    /* --------- ------------------ ------------------ ------------------ ---------
-    */
+     /* --------- ------------------  Internal map vars ------------------ ---------
+     /* --------- ------------------ ------------------ ------------------ ---------
+     */
     Map map = new Map();
     // Flags on the map are stored here for easy access
     // TODO: this should really only useful in GameHost
@@ -69,9 +69,9 @@ public class GameScreen extends ScreenAdapter {
 
 
     /**--------- ------------------ ------------------ ------------------ ---------
-    /* --------- ------------------  Tiled map info    ------------------ ---------
-    /* --------- ------------------ ------------------ ------------------ ---------
-    */
+     /* --------- ------------------  Tiled map info    ------------------ ---------
+     /* --------- ------------------ ------------------ ------------------ ---------
+     */
     // Layers of the map
     private TiledMapTileLayer playerLayer;
     // Cells for each player state
@@ -84,9 +84,9 @@ public class GameScreen extends ScreenAdapter {
 
 
     /**--------- ------------------ ------------------ ------------------ ---------
-    /* --------- ------------------   Card helpers     ------------------ ---------
-    /* --------- ------------------ ------------------ ------------------ ---------
-    */
+     /* --------- ------------------   Card helpers     ------------------ ---------
+     /* --------- ------------------ ------------------ ------------------ ---------
+     */
     /*
      * In order, index 0 to max is:
      * move 1, move 2, move 3, rotate left, rotate right, backup, uturn
@@ -100,9 +100,9 @@ public class GameScreen extends ScreenAdapter {
 
 
     /**--------- ------------------ ------------------ ------------------ ---------
-    /* --------- ------------------Client-host helpers ------------------ ---------
-    /* --------- ------------------ ------------------ ------------------ ---------
-    */
+     /* --------- ------------------Client-host helpers ------------------ ---------
+     /* --------- ------------------ ------------------ ------------------ ---------
+     */
     // Handles all player based actions (picking cards, decks to send over network etc.)
     GamePlayer gamePlayer;
     // Handles all data transfers over internet
@@ -129,9 +129,9 @@ public class GameScreen extends ScreenAdapter {
 
 
     /**
-    --------- ------------------ ------------------ ------------------ ---------
-    --------- ------------------ Class setup methods--------- ------------------
-    --------- ------------------ ------------------ ------------------ ---------
+     --------- ------------------ ------------------ ------------------ ---------
+     --------- ------------------ Class setup methods--------- ------------------
+     --------- ------------------ ------------------ ------------------ ---------
      */
     /**
      * Initialize objects depending on host status
@@ -268,10 +268,10 @@ public class GameScreen extends ScreenAdapter {
 
 
     /**
-    --------- ------------------ ------------------ ------------------ ---------
-    --------- ------------------   Texture handling --------- ------------------
-    --------- ------------------ ------------------ ------------------ ---------
-    */
+     --------- ------------------ ------------------ ------------------ ---------
+     --------- ------------------   Texture handling --------- ------------------
+     --------- ------------------ ------------------ ------------------ ---------
+     */
     /**
      * Load player texture and split into each player state
      */
@@ -355,7 +355,7 @@ public class GameScreen extends ScreenAdapter {
             // Assign event handler to handle card choice on click
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                if (gamePlayer.state == GamePlayer.PLAYERSTATE.PICKING_CARDS && gamePlayer.chosenCards.size()<Math.min(5, 9-gamePlayer.damageCounters)){
+                if (gamePlayer.state == GamePlayer.PLAYERSTATE.PICKING_CARDS && gamePlayer.chosenCards.size()<5){
                     Card c = new Card();
                     c.setCardType(cardType);
                     System.out.println("Clicked card with move " + cardType);
@@ -389,9 +389,9 @@ public class GameScreen extends ScreenAdapter {
 
 
     /**
-    --------- ------------------ ------------------ ------------------ ---------
-    --------- ------------------   Stage loading    --------- ------------------
-    --------- ------------------ ------------------ ------------------ ---------
+     --------- ------------------ ------------------ ------------------ ---------
+     --------- ------------------   Stage loading    --------- ------------------
+     --------- ------------------ ------------------ ------------------ ---------
      */
     /**
      * Load visual backgrounds first, then render important elements at the end
@@ -407,122 +407,61 @@ public class GameScreen extends ScreenAdapter {
         loadChatInputBox();
         updateChat();
     }
-            /**
-             * Decorative background for card deck
-             */
-            private void loadCardBackground(){
-                // Simple border around cards
-                Texture cardBackgroundTexture = new Texture(Gdx.files.internal("cards/bottom-border.png"));
-                Image cardBackground = new Image(cardBackgroundTexture);
-                cardBackground.setPosition(0, 0);
-                cardBackground.setSize(Gdx.graphics.getWidth()-375, 200);
-                cardBackground.setName("card-background");
-                stage.addActor(cardBackground);
+    /**
+     * Decorative background for card deck
+     */
+    private void loadCardBackground(){
+        // Simple border around cards
+        Texture cardBackgroundTexture = new Texture(Gdx.files.internal("cards/bottom-border.png"));
+        Image cardBackground = new Image(cardBackgroundTexture);
+        cardBackground.setPosition(0, 0);
+        cardBackground.setSize(Gdx.graphics.getWidth()-375, 200);
+        cardBackground.setName("card-background");
+        stage.addActor(cardBackground);
 
-                // Simple colour texture behind buttons
-                Texture buttonBackgroundTexture = new Texture(Gdx.files.internal("cards/bottom-background-color.png"));
-                Image buttonBackground = new Image(buttonBackgroundTexture);
-                buttonBackground.setPosition(Gdx.graphics.getWidth()-375, 0);
-                buttonBackground.setSize(375, 200);
-                buttonBackground.setName("button-background");
-                stage.addActor(buttonBackground);
+        // Simple colour texture behind buttons
+        Texture buttonBackgroundTexture = new Texture(Gdx.files.internal("cards/bottom-background-color.png"));
+        Image buttonBackground = new Image(buttonBackgroundTexture);
+        buttonBackground.setPosition(Gdx.graphics.getWidth()-375, 0);
+        buttonBackground.setSize(375, 200);
+        buttonBackground.setName("button-background");
+        stage.addActor(buttonBackground);
+    }
+    /**
+     * Back button
+     */
+    private void loadBackButton() {
+        TextButton backButton = new TextButton("Back", game.skin, "small");
+        backButton.setWidth(125);
+        backButton.setPosition(Gdx.graphics.getWidth()-145f, 5);
+        backButton.setColor(0.1f, 0, 0, 1);
+        backButton.addListener(new InputListener(){
+            @Override
+            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+                game.setScreen(new MenuScreen(game));
+                return true;
             }
-            /**
-             * Back button
-             */
-            private void loadBackButton() {
-                TextButton backButton = new TextButton("Back", game.skin, "small");
-                backButton.setWidth(125);
-                backButton.setPosition(Gdx.graphics.getWidth()-145f, 5);
-                backButton.setColor(0.1f, 0, 0, 1);
-                backButton.addListener(new InputListener(){
-                    @Override
-                    public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                        game.setScreen(new MenuScreen(game));
-                        return true;
-                    }
-                });
-                backButton.setName("back-button");
-                stage.addActor(backButton);
+        });
+        backButton.setName("back-button");
+        stage.addActor(backButton);
+    }
+    /**
+     * Reset card choices button
+     */
+    private void loadResetCardChoicesButton(){
+        TextButton resetCardChoicesButton = new TextButton("Reset cards", game.skin, "small");
+        resetCardChoicesButton.setWidth(125);
+        resetCardChoicesButton.setPosition(Gdx.graphics.getWidth()-145f, 65);
+        resetCardChoicesButton.setColor(0.1f, 0, 0, 1);
+        resetCardChoicesButton.addListener(new InputListener(){
+            @Override
+            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+                resetCardChoices();
+                return true;
             }
-            /**
-             * Reset card choices button
-             */
-            private void loadResetCardChoicesButton(){
-                TextButton resetCardChoicesButton = new TextButton("Reset cards", game.skin, "small");
-                resetCardChoicesButton.setWidth(125);
-                resetCardChoicesButton.setPosition(Gdx.graphics.getWidth()-145f, 65);
-                resetCardChoicesButton.setColor(0.1f, 0, 0, 1);
-                resetCardChoicesButton.addListener(new InputListener(){
-                    @Override
-                    public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                        resetCardChoices();
-                        return true;
-                    }
-                });
-                resetCardChoicesButton.setName("reset-card-choices-button");
-                stage.addActor(resetCardChoicesButton);
-            }
-            /**
-            * Send cards button
-             */
-            private void loadSendCardsButton(){
-                TextButton sendCardsButton = new TextButton("Send cards", game.skin, "small");
-                sendCardsButton.setWidth(125);
-                sendCardsButton.setPosition(Gdx.graphics.getWidth()-145f, 130);
-                sendCardsButton.setColor(0.1f, 0, 0, 1);
-                sendCardsButton.addListener(new InputListener(){
-                    @Override
-                    public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                        sendCardsIfPossible();
-                        return true;
-                    }
-                });
-
-                sendCardsButton.setName("send-cards-button");
-                stage.addActor(sendCardsButton);
-            }
-            /**
-             * Clear current stage cards and add new actors to stage
-             */
-            private void loadCardDeck(){
-                // Base for entire hand
-                int baseX = 75;
-                int baseY = 30;
-                int perCardIncrementX = 110;
-
-                getDuplicateCardsInHand();
-
-
-                game.batch.begin();
-                game.font.setColor(0.5f, 0.5f, 1, 1);
-                game.font.getData().setScale(2);
-                List<Card> cardsToDisplay = gamePlayer.hand;
-                cardsToDisplay.sort(new Card.cardComparator());
-                List<Image> displayDeck = new ArrayList<>();
-
-                Table cardDeck = new Table();
-                cardDeck.setPosition(0, 0);
-                cardDeck.setSize(perCardIncrementX*cardsToDisplay.size(), 135);
-
-                for (Card c : cardsToDisplay){
-                    Image img = generateClickableCard(c.getCardType(), cardTemplates.get(c.getCardType()), c.picked);
-                    img.setPosition(baseX, baseY);
-                    displayDeck.add(img);
-                    String prioText = "Priority: " + c.getPriority();
-                    game.font.draw(game.batch, prioText, (float)baseX, (float)baseY-20);
-                    baseX += perCardIncrementX;
-                }
-                game.font.draw(game.batch, "WEEE", 0, 0);
-                game.batch.end();
-                // Add all images to stage
-                displayDeck.forEach( (c) -> {c.setName("");});
-                displayDeck.forEach(cardDeck::addActor);
-                cardDeck.setName("card-deck");
-                stage.addActor(cardDeck);
-            }
-
-        }
+        });
+        resetCardChoicesButton.setName("reset-card-choices-button");
+        stage.addActor(resetCardChoicesButton);
     }
     /**
      * Send cards button
@@ -530,185 +469,195 @@ public class GameScreen extends ScreenAdapter {
     private void loadSendCardsButton(){
         TextButton sendCardsButton = new TextButton("Send cards", game.skin, "small");
         sendCardsButton.setWidth(125);
-        sendCardsButton.setPosition(Gdx.graphics.getWidth()-145f, 105);
+        sendCardsButton.setPosition(Gdx.graphics.getWidth()-145f, 130);
         sendCardsButton.setColor(0.1f, 0, 0, 1);
         sendCardsButton.addListener(new InputListener(){
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                if (gamePlayer.chosenCards.size() >= Math.min(5, 9- gamePlayer.damageCounters)) {
-                    if (network.isHost) {
-                        if (((GameHost) gamePlayer).allCardsReady()) {
-                            System.out.println("Cards are being sent to processing. Stage size before deck clear: " + stage.getActors().size);
-                            clearNonInteractiveStageElements();
-                            for (Card c : gamePlayer.hand){
-                                for (Card d : gamePlayer.chosenCards){
-                                    if (c.getCardType() == d.getCardType() && c.picked){
-                                        Card fill = new Card();
-                                        c.setCardType(CardType.NONE);
-                                    }else {
-                                        gamePlayer.discard.add(c);
-                                    }
-                                }
-                            }
-                            gamePlayer.state = GamePlayer.PLAYERSTATE.SENDING_CARDS;
-                            gamePlayer.registerChosenCards();
-                        } else {
-                            System.out.println("Not all players have delivered their cards yet! Cannot process cards yet.");
-                        }
-                    } else {
-                        System.out.println("Cards are being sent to processing. Stage size before deck clear: " + stage.getActors().size);
-                        clearNonInteractiveStageElements();
-                        for (Card c : gamePlayer.hand){
-                            for (Card d : gamePlayer.chosenCards){
-                                if (c.getCardType() == d.getCardType() && c.picked){
-                                    Card fill = new Card();
-                                    c.setCardType(CardType.NONE);
-                                }else {
-                                    gamePlayer.discard.add(c);
-                                }
-                            }
-                        }
-                        gamePlayer.state = GamePlayer.PLAYERSTATE.SENDING_CARDS;
-                        gamePlayer.registerChosenCards();
+                sendCardsIfPossible();
+                return true;
+            }
+        });
 
-            /**
-             * All player positions and directions
-             */
-            private void loadPlayerList(){
-                Table tableList = new Table();
-                tableList.top().left().pad(5).setSize(210, 145);
-                tableList.setPosition(Gdx.graphics.getWidth()-375, 30);
+        sendCardsButton.setName("send-cards-button");
+        stage.addActor(sendCardsButton);
+    }
+    /**
+     * Clear current stage cards and add new actors to stage
+     */
+    private void loadCardDeck(){
+        // Base for entire hand
+        int baseX = 75;
+        int baseY = 30;
+        int perCardIncrementX = 110;
 
-                Label tIndicator = new Label("Player locations:", game.skin);
-                tableList.add(tIndicator);
-                tableList.row();
+        getDuplicateCardsInHand();
 
-                int playNo = 1;
-                boolean anyPlayers = false;
-                for (int x = 0; x<map.playerLayer.length; x++){
-                    for (int y = 0; y<map.playerLayer[x].length; y++){
-                        if (map.playerLayer[x][y].state != PlayerToken.CHARACTER_STATES.NONE){
-                            anyPlayers = true;
-                            String str = "Player "+ playNo +" at " + x + ", " + y + " - Facing: " + map.playerLayer[x][y].dir.toString();
-                            Label l = new Label(str, game.skin);
-                            l.setColor(0.7588f, 0.3188f, 0.1960f, 1);
-                            l.setAlignment(Align.left);
-                            l.setFontScale(0.8f);
-                            tableList.add(l);
-                            tableList.row();
-                            playNo++;
-                        }
 
-                    }
-                }
-                if (!anyPlayers){
-                    String str = "Waiting for first round to start.";
+        game.batch.begin();
+        game.font.setColor(0.5f, 0.5f, 1, 1);
+        game.font.getData().setScale(2);
+        List<Card> cardsToDisplay = gamePlayer.hand;
+        cardsToDisplay.sort(new Card.cardComparator());
+        List<Image> displayDeck = new ArrayList<>();
+
+        Table cardDeck = new Table();
+        cardDeck.setPosition(0, 0);
+        cardDeck.setSize(perCardIncrementX*cardsToDisplay.size(), 135);
+
+        for (Card c : cardsToDisplay){
+            Image img = generateClickableCard(c.getCardType(), cardTemplates.get(c.getCardType()), c.picked);
+            img.setPosition(baseX, baseY);
+            displayDeck.add(img);
+            String prioText = "Priority: " + c.getPriority();
+            game.font.draw(game.batch, prioText, (float)baseX, (float)baseY-20);
+            baseX += perCardIncrementX;
+        }
+        game.font.draw(game.batch, "WEEE", 0, 0);
+        game.batch.end();
+        // Add all images to stage
+        displayDeck.forEach( (c) -> {c.setName("");});
+        displayDeck.forEach(cardDeck::addActor);
+        cardDeck.setName("card-deck");
+        stage.addActor(cardDeck);
+    }
+    /**
+     * All player positions and directions
+     */
+    private void loadPlayerList(){
+        Table tableList = new Table();
+        tableList.top().left().pad(5).setSize(210, 145);
+        tableList.setPosition(Gdx.graphics.getWidth()-375, 30);
+
+        Label tIndicator = new Label("Player locations:", game.skin);
+        tableList.add(tIndicator);
+        tableList.row();
+
+        int playNo = 1;
+        boolean anyPlayers = false;
+        for (int x = 0; x<map.playerLayer.length; x++){
+            for (int y = 0; y<map.playerLayer[x].length; y++){
+                if (map.playerLayer[x][y].state != PlayerToken.CHARACTER_STATES.NONE){
+                    anyPlayers = true;
+                    String str = "Player "+ playNo +" at " + x + ", " + y + " - Facing: " + map.playerLayer[x][y].dir.toString();
                     Label l = new Label(str, game.skin);
                     l.setColor(0.7588f, 0.3188f, 0.1960f, 1);
+                    l.setAlignment(Align.left);
                     l.setFontScale(0.8f);
                     tableList.add(l);
                     tableList.row();
+                    playNo++;
                 }
-                tableList.setName("player-list");
-                stage.addActor(tableList);
             }
-            /**
-             * Load chat input box with commands and message events
-             */
-            private void loadChatInputBox(){
-                boolean alreadyInitialized = false;
-                String chatInputName = "chat-input";
-                for (Actor a : stage.getActors()){
-                    if (a.getName().equals(chatInputName)){
-                        alreadyInitialized = true;
-                    }
-                }
+        }
+        if (!anyPlayers){
+            String str = "Waiting for first round to start.";
+            Label l = new Label(str, game.skin);
+            l.setColor(0.7588f, 0.3188f, 0.1960f, 1);
+            l.setFontScale(0.8f);
+            tableList.add(l);
+            tableList.row();
+        }
+        tableList.setName("player-list");
+        stage.addActor(tableList);
+    }
+    /**
+     * Load chat input box with commands and message events
+     */
+    private void loadChatInputBox(){
+        boolean alreadyInitialized = false;
+        String chatInputName = "chat-input";
+        for (Actor a : stage.getActors()){
+            if (a.getName().equals(chatInputName)){
+                alreadyInitialized = true;
+            }
+        }
 
-                if (!alreadyInitialized){
-                    Color inputBoxColor = new Color(1f, 1f, 1f, 1);
-                    TextField inputBox = new TextField("", game.skin);
-                    inputBox.setWidth(375f);
-                    inputBox.setColor(inputBoxColor);
-                    inputBox.addListener(new InputListener(){
-                        @Override
-                        public boolean keyDown(InputEvent event, int keycode) {
-                            // Send message key is pressed
-                            if (keycode == Input.Keys.ENTER){
-                                // Check if message was intended as a command
-                                boolean isCommand = false;
+        if (!alreadyInitialized){
+            Color inputBoxColor = new Color(1f, 1f, 1f, 1);
+            TextField inputBox = new TextField("", game.skin);
+            inputBox.setWidth(375f);
+            inputBox.setColor(inputBoxColor);
+            inputBox.addListener(new InputListener(){
+                @Override
+                public boolean keyDown(InputEvent event, int keycode) {
+                    // Send message key is pressed
+                    if (keycode == Input.Keys.ENTER){
+                        // Check if message was intended as a command
+                        boolean isCommand = false;
 
                                 /*
                                 Check if /c command
                                  */
-                                // Commands have to be more than 2 characters long, else substring gives an exception
-                                if (inputBox.getText().length()>2){
-                                    // If chat is a command
-                                    if (inputBox.getText().substring(0, 2).equals("/c")){
-                                        isCommand = true;
-                                        // Get content after /c indicator
-                                        String commandContent = inputBox.getText().substring(3);
-                                        System.out.println("Chat command entered: " + commandContent);
-                                        // Perform command
-                                        executeChatCommand(commandContent);
-                                    }
-                                }
+                        // Commands have to be more than 2 characters long, else substring gives an exception
+                        if (inputBox.getText().length()>2){
+                            // If chat is a command
+                            if (inputBox.getText().substring(0, 2).equals("/c")){
+                                isCommand = true;
+                                // Get content after /c indicator
+                                String commandContent = inputBox.getText().substring(3);
+                                System.out.println("Chat command entered: " + commandContent);
+                                // Perform command
+                                executeChatCommand(commandContent);
+                            }
+                        }
 
                                 /*
                                 Check if /h command
                                  */
-                                // Send list of commands available if /h, only need to check if length is >1 here as there are no args or commands for /h
-                                if (inputBox.getText().length()>1){
-                                    if (inputBox.getText().substring(0, 2).equals("/h")){
-                                        isCommand = true;
-                                        showChatHelpDialogue();
-                                    }
-                                }
-
-                                // Send message if no commands detected
-                                if (!isCommand){
-                                    chat.sendMessage(inputBox.getText());
-                                }
-                                // Reset input text box after sending message
-                                inputBox.setText("");
-                                updateChat();
+                        // Send list of commands available if /h, only need to check if length is >1 here as there are no args or commands for /h
+                        if (inputBox.getText().length()>1){
+                            if (inputBox.getText().substring(0, 2).equals("/h")){
+                                isCommand = true;
+                                showChatHelpDialogue();
                             }
-                            // Needed for inputhandler keyDown
-                            return true;
                         }
-                    });
 
-                    // Setup position and name of input box
-                    inputBox.setX(Gdx.graphics.getWidth()-inputBox.getWidth());
-                    inputBox.setY(200);
-                    inputBox.setName(chatInputName);
-
-                    stage.addActor(inputBox);
-                }
-            }
-            /**
-             * Get new messages that have been received from the network, get formatted table and add input box with listener.
-             */
-            private void updateChat(){
-                // Get chat table from network
-                chat.updateChat(network.messagesRecived);
-
-                // Get index of table on stage
-                int index = 0;
-                // Update stage chat
-                for (int i = 0; i<stage.getActors().size; i++){
-                    if (stage.getActors().get(i) != null){
-                        if (stage.getActors().get(i).getName().equals("chat")){
-                            index = i;
-                            break;
+                        // Send message if no commands detected
+                        if (!isCommand){
+                            chat.sendMessage(inputBox.getText());
                         }
+                        // Reset input text box after sending message
+                        inputBox.setText("");
+                        updateChat();
                     }
+                    // Needed for inputhandler keyDown
+                    return true;
                 }
+            });
 
-                Table updatedChat = chat.getChatAsTable();
-                updatedChat.setName("chat");
-                // Update stage value chat
-                stage.getActors().set(index, updatedChat);
+            // Setup position and name of input box
+            inputBox.setX(Gdx.graphics.getWidth()-inputBox.getWidth());
+            inputBox.setY(200);
+            inputBox.setName(chatInputName);
+
+            stage.addActor(inputBox);
+        }
+    }
+    /**
+     * Get new messages that have been received from the network, get formatted table and add input box with listener.
+     */
+    private void updateChat(){
+        // Get chat table from network
+        chat.updateChat(network.messagesRecived);
+
+        // Get index of table on stage
+        int index = 0;
+        // Update stage chat
+        for (int i = 0; i<stage.getActors().size; i++){
+            if (stage.getActors().get(i) != null){
+                if (stage.getActors().get(i).getName().equals("chat")){
+                    index = i;
+                    break;
+                }
             }
+        }
+
+        Table updatedChat = chat.getChatAsTable();
+        updatedChat.setName("chat");
+        // Update stage value chat
+        stage.getActors().set(index, updatedChat);
+    }
 
 
 
@@ -719,7 +668,7 @@ public class GameScreen extends ScreenAdapter {
      --------- ----------    Chat command helpers    ------------------
      --------- ------------------ ------------------ ------------------ ---------
      */
-     /**
+    /**
      * Displays help dialogue in chat as a set internal messages
      */
     private void showChatHelpDialogue(){
@@ -868,9 +817,9 @@ public class GameScreen extends ScreenAdapter {
 
 
     /**
-    --------- ------------------ ------------------ ------------------ ---------
-    --------- ------------------   Libgdx methods   --------- ------------------
-    --------- ------------------ ------------------ ------------------ ---------
+     --------- ------------------ ------------------ ------------------ ---------
+     --------- ------------------   Libgdx methods   --------- ------------------
+     --------- ------------------ ------------------ ------------------ ---------
      */
     /**
      * Render all objects and text to the screen
@@ -923,9 +872,9 @@ public class GameScreen extends ScreenAdapter {
 
 
     /**
-    --------- ------------------ ------------------ ------------------ ---------
-    --------- ------------------ Map display methods--------- ------------------
-    --------- ------------------ ------------------ ------------------ ---------
+     --------- ------------------ ------------------ ------------------ ---------
+     --------- ------------------ Map display methods--------- ------------------
+     --------- ------------------ ------------------ ------------------ ---------
      */
     /**
      * Reset cell rotation on all cells in the map to 0
@@ -1010,7 +959,7 @@ public class GameScreen extends ScreenAdapter {
     }
     /**
      @param x the x position of the tile
-     * @param y the y position of the tile
+      * @param y the y position of the tile
      * @return the correct texture to put in the tile
      */
     public TiledMapTileLayer.Cell laserToTile(int x, int y, boolean isVert) {
@@ -1078,9 +1027,9 @@ public class GameScreen extends ScreenAdapter {
 
 
     /**
-    --------- ------------------ ------------------ ------------------ ---------
-    --------- ------------------     UI methods     --------- ------------------
-    --------- ------------------ ------------------ ------------------ ---------
+     --------- ------------------ ------------------ ------------------ ---------
+     --------- ------------------     UI methods     --------- ------------------
+     --------- ------------------ ------------------ ------------------ ---------
      */
     /**
      * Clears all stage elements that are not interactive
@@ -1142,9 +1091,9 @@ public class GameScreen extends ScreenAdapter {
 
 
     /**
-    --------- ------------------ ------------------ ------------------ ---------
-    --------- ------------------Map internal methods--------- ------------------
-    --------- ------------------ ------------------ ------------------ ---------
+     --------- ------------------ ------------------ ------------------ ---------
+     --------- ------------------Map internal methods--------- ------------------
+     --------- ------------------ ------------------ ------------------ ---------
      */
     /**
      * returns the correct texture for a tile with a laser
@@ -1247,9 +1196,9 @@ public class GameScreen extends ScreenAdapter {
 
 
     /**
-    --------- ------------------ ------------------ ------------------ ---------
-    --------- ----------  Random getters/unspecified   ------------------
-    --------- ------------------ ------------------ ------------------ ---------
+     --------- ------------------ ------------------ ------------------ ---------
+     --------- ----------  Random getters/unspecified   ------------------
+     --------- ------------------ ------------------ ------------------ ---------
      */
     /**
      * gets the spawn points from the map and puts them in the map class //TODO move this to getBoardElementPositions
@@ -1347,7 +1296,6 @@ public class GameScreen extends ScreenAdapter {
                     }
                     gamePlayer.state = GamePlayer.PLAYERSTATE.SENDING_CARDS;
                     gamePlayer.registerChosenCards();
-                    gamePlayer.drawCardsFromDeck();
                     return true;
                 } else {
                     System.out.println("Not all players have delivered their cards yet! Cannot process cards yet.");
@@ -1368,7 +1316,6 @@ public class GameScreen extends ScreenAdapter {
                 }
                 gamePlayer.state = GamePlayer.PLAYERSTATE.SENDING_CARDS;
                 gamePlayer.registerChosenCards();
-                gamePlayer.drawCardsFromDeck();
                 return true;
             }
         }
