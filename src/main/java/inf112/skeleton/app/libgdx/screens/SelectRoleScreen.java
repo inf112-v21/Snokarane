@@ -67,8 +67,12 @@ public class SelectRoleScreen extends ScreenAdapter implements IUiScreen{
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
                 IP_address = IPInputField.getText();
+                // Set default text input to route to localhost, for easy testing
+                if (IP_address.equals("IP address")){
+                    IP_address = "";
+                }
                 roleHost = false;
-                game.setScreen(new GameScreen(game, roleHost, IP_address, nameInputField.getText()));
+                game.setScreen(new WaitingRoomScreen(game, roleHost, IP_address, nameInputField.getText()));
                 return true;
             }
         });
@@ -81,7 +85,7 @@ public class SelectRoleScreen extends ScreenAdapter implements IUiScreen{
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
                 roleHost = true;
-                game.setScreen(new GameScreen(game, roleHost, "", nameInputField.getText()));
+                game.setScreen(new WaitingRoomScreen(game, roleHost, "", nameInputField.getText()));
                 return true;
             }
         });

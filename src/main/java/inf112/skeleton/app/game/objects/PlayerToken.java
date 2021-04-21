@@ -2,6 +2,7 @@ package inf112.skeleton.app.game.objects;
 
 import com.badlogic.gdx.math.GridPoint2;
 import inf112.skeleton.app.libgdx.Map;
+import inf112.skeleton.app.libgdx.PlayerConfig;
 
 import java.util.*;
 
@@ -28,6 +29,17 @@ public class PlayerToken {
     public String name;
 
     public boolean powerDown = false;
+
+    public PlayerConfig getConfig() {
+        return config;
+    }
+
+    public void setConfig(PlayerConfig config) {
+        this.config = config;
+    }
+
+    private PlayerConfig config;
+
 
     // What texture gets displayed on character
     public enum CHARACTER_STATES{

@@ -2,6 +2,7 @@ package inf112.skeleton.app.network;
 
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryonet.EndPoint;
+import inf112.skeleton.app.ui.avatars.PlayerAvatar;
 import inf112.skeleton.app.ui.chat.backend.Message;
 
 import javax.swing.*;
@@ -12,9 +13,14 @@ import java.util.Objects;
 public abstract class Network {
 
     public Boolean isHost;
+    public String name;
 
     // Messages recieved
     public List<Message> messagesRecived = new ArrayList<>();
+    public boolean readyToInitialize = false;
+
+    // Waiting room avatars
+    public List<PlayerAvatar> avatars = new ArrayList<>();
 
     /**
      * Prompts the user to choose server or client
@@ -25,6 +31,8 @@ public abstract class Network {
         net.isHost = isHost;
         return net;
     }
+
+    public abstract void close();
 
     /**
      * For hosts only

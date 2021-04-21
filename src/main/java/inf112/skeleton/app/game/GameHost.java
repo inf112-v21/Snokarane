@@ -5,6 +5,7 @@ import inf112.skeleton.app.game.objects.Card;
 import inf112.skeleton.app.game.objects.CardType;
 import inf112.skeleton.app.game.objects.Direction;
 import inf112.skeleton.app.game.objects.PlayerToken;
+import inf112.skeleton.app.libgdx.CharacterCustomizer;
 import inf112.skeleton.app.libgdx.Map;
 import inf112.skeleton.app.libgdx.NetworkDataWrapper;
 import inf112.skeleton.app.network.NetworkHost;
@@ -75,6 +76,7 @@ public class GameHost extends GamePlayer {
         token.charState = PlayerToken.CHARACTER_STATES.PLAYERNORMAL;
         token.name = name;
         token.ID = NetworkHost.hostID;
+        token.setConfig(CharacterCustomizer.loadCharacterConfigFromFile());
         token = initializePlayerPos(token);
         clientPlayers.put(NetworkHost.hostID, token);
     }
