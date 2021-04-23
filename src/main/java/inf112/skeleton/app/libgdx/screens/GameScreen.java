@@ -1055,7 +1055,7 @@ public class GameScreen extends ScreenAdapter {
         }
 
         if(network.winner != null){
-            game.setScreen(new VictoryScreen(game, network.winner));
+            game.setScreen(new VictoryScreen(game, network.winner, network));
         }
     }
 

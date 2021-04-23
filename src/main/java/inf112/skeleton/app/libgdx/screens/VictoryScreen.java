@@ -12,6 +12,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import inf112.skeleton.app.game.objects.PlayerToken;
 import inf112.skeleton.app.libgdx.RoboGame;
+import inf112.skeleton.app.network.Network;
 
 public class VictoryScreen  extends ScreenAdapter implements IUiScreen{
     // RoboGame class instance
@@ -20,9 +21,12 @@ public class VictoryScreen  extends ScreenAdapter implements IUiScreen{
     Stage stage = new Stage(new ScreenViewport());
     // Winner
     PlayerToken winner;
+    // Used for closing client and server when going back
+    Network network;
 
-    public VictoryScreen(RoboGame game, PlayerToken winner){
+    public VictoryScreen(RoboGame game, PlayerToken winner, Network network){
         this.winner = winner;
+        this.network = network;
         startScreen(game);
     }
 
@@ -62,6 +66,7 @@ public class VictoryScreen  extends ScreenAdapter implements IUiScreen{
         backButton.addListener(new InputListener(){
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+                network.close();
                 game.setScreen(new MenuScreen(game));
                 return true;
             }
