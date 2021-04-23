@@ -47,7 +47,11 @@ public class RoboGame extends Game{
 
         // Load music
         menuMusic = Gdx.audio.newMusic(Gdx.files.internal("audio/menu.mp3"));
+        menuMusic.setLooping(true);
+        menuMusic.setVolume(0.075f);
         gameMusic = Gdx.audio.newMusic(Gdx.files.internal("audio/game.mp3"));
+        gameMusic.setLooping(true);
+        gameMusic.setVolume(0.075f);
 
         // Load sounds
         buttonPressSound = Gdx.audio.newSound(Gdx.files.internal("audio/button-press.mp3"));
@@ -91,8 +95,6 @@ public class RoboGame extends Game{
      * Starts menu music
      */
     public void startMenuMusic(){
-        menuMusic.setLooping(true);
-        menuMusic.setVolume(0.15f);
         menuMusic.play();
     }
 
@@ -107,8 +109,6 @@ public class RoboGame extends Game{
      * Start game music
      */
     public void startGameMusic(){
-        gameMusic.setLooping(true);
-        gameMusic.setVolume(0.15f);
         gameMusic.play();
     }
 
