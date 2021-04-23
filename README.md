@@ -68,6 +68,10 @@ Manual tests can be found under ManualTests -> ManualTests.md
 
 Class diagramas can be found in the structure directory. Structure -> Class diagrams
 
+# Acknowledgements 
+
+A huge thank you to Olga Lohne for producing two pieces of original music for us to use in this project
+
 # Known bugs
 
 The host has to be the last actor to choose their 5 cards. Otherwise the program crashes.
