@@ -116,7 +116,6 @@ Chat commands test:
 
 
 CharacterCustomisationTest:
-
 1. Start the game as usual.
 2. Click on the "Customize" button.
 3. Change color values as desiered using the sliders or textboxes next to them (values above 255 are set to 255, blank values is set to 0).
@@ -140,6 +139,35 @@ CharacterCustomisationTest:
 	7.a if the playercharacter in the game matches the sceenshot/picture you took then the test has passed, if not the test has failed.	
 
 8. NOTE that If using the camera method keep in mind that your camra might warp the colors somewhat, if this is the case, use your best judgment to determine if the 		test has passed or not. 
+
+
+
+Custom character over network test:
+1. Follow the CharacterCustomisationTest up to stage 5 on two sepperate devices.
+2. Host a Game on one of the devices, and connect with the other device.
+3. The "Waiting for connections screen" on both devices should now show a preview of the custom characters on all devices.
+4. Start the game on the host device. 
+5. Compare the pictures on both devices using the same method as described in "CharacterCustomisationTest"
+6. If the customisation for each character appears the same as the way they were customisatised on their respective device;
+ the test has passed, otherwise the test has failed
+
+
+
+Main menu music test:
+1. Make sure your audio device is configured correctly on your device
+2. Start the application as normal
+3. If you can hear music the test has passed
+
+
+
+In game music test:
+1. Make sure your audio device is configured correctly on your device
+2. Start the application as normal
+3. Host a game by clicking on "Host/Join game" -> "Host Game" -> "Start Game"
+4. If you can hear music, then the test has passed
+
+
+
 
 
 #  User stories
