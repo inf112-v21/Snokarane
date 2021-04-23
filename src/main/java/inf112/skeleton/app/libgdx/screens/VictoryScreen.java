@@ -25,6 +25,8 @@ public class VictoryScreen  extends ScreenAdapter implements IUiScreen{
     Network network;
 
     public VictoryScreen(RoboGame game, PlayerToken winner, Network network){
+        game.stopGameMusic();
+        game.startMenuMusic();
         this.winner = winner;
         this.network = network;
         startScreen(game);
