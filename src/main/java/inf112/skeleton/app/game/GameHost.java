@@ -293,7 +293,6 @@ public class GameHost extends GamePlayer {
         isShowingCards = true;
     }
 
-    //TODO Use 8 directions, not 4
     private void findPlayerRespawnLocation(PlayerToken player) {
         int x = player.spawnLoc.x;
         int y = player.spawnLoc.y;
@@ -405,7 +404,6 @@ public class GameHost extends GamePlayer {
         cardPlayerTokenMap.clear();
         currentCardRound = 1;
 
-        //TODO Should be other places?
         resetPlayerTokens();
     }
 
@@ -504,7 +502,6 @@ public class GameHost extends GamePlayer {
             player.move(direction);
             if (player.diedThisTurn) return true;
         }
-            // TODO this is shady as heck
         map.loadPlayers(wrapper().PlayerTokens);
         //host.sendMapLayerWrapper(wrapper());
         movePlayer(player, dist-1, direction, shouldPush);
