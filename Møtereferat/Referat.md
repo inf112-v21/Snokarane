@@ -378,6 +378,7 @@ Fortsette på planlegging av prosjekt og prosjektstruktur
 - Vart einig om å fikse bugs i eksisterande implementasjon før vi starter på implementasjon
 - Ny/mogleg implementasjon på sikt; vise hp, vise kva kort som blir spelt, optionskort, etc
 - Vart einig om å avslutte møte tidleg då fleire hadde mykje anna å gjere
+- Delte opp arbeidet slik som forrige gong; Audun og Hallvard har ansvaret for implentasjon av ytterlegare spel-logikk medan Peter og Jørgen ordner implementasjon som har med GUI/Libgdx 
 
 **Neste møte:** 14.04.2021
 
