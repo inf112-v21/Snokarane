@@ -16,10 +16,18 @@ title __CHAT's Class Diagram__\n
   namespace inf112.skeleton.app {
     namespace ui.chat {
       enum Command {
+        CLEAR
+        CONNECT
+        EXAMPLEMESSAGES
         INVALID
+        RESETCARDS
+        SELECTCARD
+        SENDCARDS
+        SENDINTERNAL
         SETCOLOR
         SETFONTSTCALE
         SETNAME
+        UWU
       }
     }
   }

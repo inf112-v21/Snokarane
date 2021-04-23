@@ -14,9 +14,13 @@ title __NETWORK's Class Diagram__\n
   namespace inf112.skeleton.app {
     namespace network {
       abstract class inf112.skeleton.app.network.Network {
+          + avatars : List<PlayerAvatar>
           + isHost : Boolean
           + messagesRecived : List<Message>
+          + name : String
+          + readyToInitialize : boolean
           {static} + choseRole()
+          {abstract} + close()
           {abstract} + initConnections()
           {abstract} + initialize()
           {static} + prompt()
@@ -30,11 +34,12 @@ title __NETWORK's Class Diagram__\n
     namespace network {
       class inf112.skeleton.app.network.NetworkClient {
           + client : Client
-          # IP : String
+          + close()
           + connectToServer()
           + giveNickname()
           + initConnections()
           + initialize()
+          + sendAvatar()
           + sendMessage()
       }
     }
@@ -54,22 +59,31 @@ title __NETWORK's Class Diagram__\n
     namespace network {
       class inf112.skeleton.app.network.NetworkHost {
           + alivePlayers : List<Integer>
+          + clientsRegistered : int
           + connections : Connection[]
           {static} + hostID : int
           + playerCards : HashMap<Integer, List<Card>>
           - server : Server
+          + close()
+          + finalizeConnections()
           + initConnections()
           + initialize()
           + promptCardDraw()
-          + promptName()
+          + requestNames()
+          + sendAvatars()
+          + sendIDs()
           + sendMapLayerWrapper()
           + sendMessageToAll()
+          + sendReadySignal()
           + sendWinner()
+          + updateConnections()
+          - registerClient()
       }
     }
   }
   
 
+  inf112.skeleton.app.network.Network o-- inf112.skeleton.app.game.objects.PlayerToken : winner
   inf112.skeleton.app.network.NetworkClient -up-|> inf112.skeleton.app.network.Network
   inf112.skeleton.app.network.NetworkClient o-- inf112.skeleton.app.game.GameClient : gameClient
   inf112.skeleton.app.network.NetworkClient o-- inf112.skeleton.app.libgdx.Map : map

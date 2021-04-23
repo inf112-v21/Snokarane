@@ -82,20 +82,24 @@ title __OBJECTS's Class Diagram__\n
       namespace objects {
         class inf112.skeleton.app.game.objects.PlayerToken {
             + ID : int
+            + damage : int
             + diedThisTurn : boolean
             + hp : int
             + name : String
             + position : GridPoint2
+            + powerDown : boolean
             + spawnLoc : GridPoint2
             - flagsVisited : List<Flag>
             + died()
+            + getConfig()
             + getDirection()
             + getVisitedFlags()
             + getX()
             + getY()
-            + isDead()
+            + isPermanentlyDestroyed()
             + move()
             + rotate()
+            + setConfig()
             + visitFlag()
             + wouldEndUp()
             - moveDir()
@@ -124,6 +128,7 @@ title __OBJECTS's Class Diagram__\n
   inf112.skeleton.app.game.objects.Card +-down- inf112.skeleton.app.game.objects.Card.cardComparator
   inf112.skeleton.app.game.objects.Card.cardComparator .up.|> java.util.Comparator
   inf112.skeleton.app.game.objects.PlayerToken o-- inf112.skeleton.app.game.objects.PlayerToken.CHARACTER_STATES : charState
+  inf112.skeleton.app.game.objects.PlayerToken o-- inf112.skeleton.app.libgdx.PlayerConfig : config
   inf112.skeleton.app.game.objects.PlayerToken o-- inf112.skeleton.app.game.objects.Direction : playerDirection
   inf112.skeleton.app.game.objects.PlayerToken +-down- inf112.skeleton.app.game.objects.PlayerToken.CHARACTER_STATES
 

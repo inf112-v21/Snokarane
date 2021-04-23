@@ -40,7 +40,21 @@ title __BACKEND's Class Diagram__\n
             + Message()
             + Message()
             + assignID()
-            + getSender()
+        }
+      }
+    }
+  }
+  
+
+  namespace inf112.skeleton.app {
+    namespace ui.chat {
+      namespace backend {
+        class inf112.skeleton.app.ui.chat.backend.Uwufier {
+            + postUwudMessages : List<Message>
+            + preUwudMessages : List<Message>
+            - emojiis : String[]
+            + Uwufier()
+            + uwufyString()
         }
       }
     }

@@ -26,7 +26,6 @@ title __GAME's Class Diagram__\n
           - cardsProcessedPerRound : int
           - currentCardListBeingProcessed : List<Card>
           - currentCardRound : int
-          - pauseBetweenEachCardProcess : long
           - timeSinceLastCardProcessed : long
           + GameHost()
           + allCardsReady()
@@ -37,16 +36,17 @@ title __GAME's Class Diagram__\n
           + initializeHostPlayerToken()
           + initializePlayerPos()
           + registerChosenCards()
+          + resetPlayerTokens()
           + resolveCard()
           + setMap()
           + updateMap()
           + wrapper()
+          - findPlayerRespawnLocation()
           - getNthSelectionFromEachPlayer()
           - handleSinglePlayerCard()
           - movePlayer()
           - processCards()
           - resetCardDelayVariables()
-          - resetPlayerTokens()
       }
     }
   }
@@ -56,9 +56,11 @@ title __GAME's Class Diagram__\n
     namespace game {
       abstract class inf112.skeleton.app.game.GamePlayer {
           + chosenCards : ArrayList<Card>
+          + damageCounters : int
           + discard : ArrayList<Card>
           + hand : ArrayList<Card>
           + newCardsDelivered : boolean
+          + powerDown : boolean
           # deck : ArrayList<Card>
           + GamePlayer()
           + chooseCards()

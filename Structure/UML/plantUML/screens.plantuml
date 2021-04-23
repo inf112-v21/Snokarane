@@ -34,16 +34,13 @@ title __SCREENS's Class Diagram__\n
       namespace screens {
         class inf112.skeleton.app.libgdx.screens.GameScreen {
             + flagPositions : List<Flag>
+            ~ clientResponseGraceTime : int
             ~ networkChatBacklogSize : int
             - cardTemplates : HashMap<CardType, TextureRegion>
-            - doubleBoth : Cell
             - doubleHorizontal : Cell
             - doubleVertical : Cell
             - duplicates : HashMap<CardType, Integer>
             - playerLayer : TiledMapTileLayer
-            - playerNormal : Cell
-            - playerWon : Cell
-            - singleBoth : Cell
             - singleHorizontal : Cell
             - singleVertical : Cell
             - stage : Stage
@@ -53,19 +50,21 @@ title __SCREENS's Class Diagram__\n
             + generateClickableCard()
             + getDuplicateCardsInHand()
             + hide()
-            + keyUp()
             + laserToTile()
             + loadLasers()
             + loadMapLayers()
             + loadTextures()
             + pause()
             + render()
+            + resetCardChoices()
             + resize()
             + resume()
             + show()
             + startGame()
             + translatePlayerLayer()
             + updateMap()
+            - clearNonInteractiveStageElements()
+            - executeChatCommand()
             - getBoardElementPositionsFromLayer()
             - getFlagPositionsFromLayer()
             - getStartPositions()
@@ -75,14 +74,19 @@ title __SCREENS's Class Diagram__\n
             - loadCardBackground()
             - loadCardDeck()
             - loadCardTextures()
+            - loadChatInputBox()
             - loadPlayerList()
+            - loadPowerDown()
+            - loadResetCardChoicesButton()
             - loadSendCardsButton()
             - pollUiUpdates()
             - resetCellRotation()
             - rotateCellsAccordingToDirection()
+            - sendCardsIfPossible()
             - setBeltInformation()
             - setLaserDirection()
             - setWallDirections()
+            - showChatHelpDialogue()
             - startClient()
             - startHost()
             - updateChat()
@@ -135,7 +139,6 @@ title __SCREENS's Class Diagram__\n
             - IPInputField : TextField
             - IP_address : String
             - nameInputField : TextArea
-            - roleHost : boolean
             + SelectRoleScreen()
             + hide()
             + loadUIIntractables()
@@ -169,6 +172,34 @@ title __SCREENS's Class Diagram__\n
   }
   
 
+  namespace inf112.skeleton.app {
+    namespace libgdx {
+      namespace screens {
+        class inf112.skeleton.app.libgdx.screens.WaitingRoomScreen {
+            ~ connectionIndicatorLabel : Label
+            ~ gdxH : float
+            ~ gdxW : float
+            ~ host : boolean
+            ~ ip : String
+            ~ localAvatars : int
+            ~ name : String
+            ~ stage : Stage
+            + WaitingRoomScreen()
+            + hide()
+            + loadUIIntractables()
+            + loadUIVisuals()
+            + render()
+            + show()
+            + startScreen()
+            - loadClientInteractables()
+            - loadHostInteractables()
+            - loadPlayerAvatars()
+        }
+      }
+    }
+  }
+  
+
   inf112.skeleton.app.libgdx.screens.CharacterCustomizationScreen .up.|> inf112.skeleton.app.libgdx.screens.IUiScreen
   inf112.skeleton.app.libgdx.screens.CharacterCustomizationScreen -up-|> com.badlogic.gdx.ScreenAdapter
   inf112.skeleton.app.libgdx.screens.CharacterCustomizationScreen o-- inf112.skeleton.app.libgdx.RoboGame : game
@@ -186,8 +217,14 @@ title __SCREENS's Class Diagram__\n
   inf112.skeleton.app.libgdx.screens.SelectRoleScreen o-- inf112.skeleton.app.libgdx.RoboGame : game
   inf112.skeleton.app.libgdx.screens.VictoryScreen .up.|> inf112.skeleton.app.libgdx.screens.IUiScreen
   inf112.skeleton.app.libgdx.screens.VictoryScreen -up-|> com.badlogic.gdx.ScreenAdapter
+  inf112.skeleton.app.libgdx.screens.VictoryScreen o-- inf112.skeleton.app.network.Network : network
   inf112.skeleton.app.libgdx.screens.VictoryScreen o-- inf112.skeleton.app.game.objects.PlayerToken : winner
   inf112.skeleton.app.libgdx.screens.VictoryScreen o-- inf112.skeleton.app.libgdx.RoboGame : game
+  inf112.skeleton.app.libgdx.screens.WaitingRoomScreen .up.|> inf112.skeleton.app.libgdx.screens.IUiScreen
+  inf112.skeleton.app.libgdx.screens.WaitingRoomScreen -up-|> com.badlogic.gdx.ScreenAdapter
+  inf112.skeleton.app.libgdx.screens.WaitingRoomScreen o-- inf112.skeleton.app.ui.avatars.PlayerAvatar : avatar
+  inf112.skeleton.app.libgdx.screens.WaitingRoomScreen o-- inf112.skeleton.app.network.Network : network
+  inf112.skeleton.app.libgdx.screens.WaitingRoomScreen o-- inf112.skeleton.app.libgdx.RoboGame : game
 
 
 right footer

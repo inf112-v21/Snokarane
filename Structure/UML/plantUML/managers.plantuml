@@ -34,9 +34,8 @@ title __MANAGERS's Class Diagram__\n
         abstract class inf112.skeleton.app.ui.chat.managers.Chatter {
             + Chatter()
             + getChatAsTable()
-            + getChatterData()
             + initializeChat()
-            + initializeChat()
+            + sendInternalMessage()
             {abstract} + sendMessage()
             + setChatDisplay()
             + setChatScaling()
@@ -68,6 +67,7 @@ title __MANAGERS's Class Diagram__\n
   inf112.skeleton.app.ui.chat.managers.ChatManager o-- inf112.skeleton.app.network.NetworkHost : host
   inf112.skeleton.app.ui.chat.managers.Chatter o-- inf112.skeleton.app.ui.chat.backend.ChatterData : cData
   inf112.skeleton.app.ui.chat.managers.Chatter o-- inf112.skeleton.app.ui.chat.display.Chat : chat
+  inf112.skeleton.app.ui.chat.managers.Chatter o-- inf112.skeleton.app.ui.chat.backend.ChatterData : internalMessenger
 
 
 right footer

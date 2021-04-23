@@ -9,7 +9,6 @@ title __DISPLAY's Class Diagram__\n
             - chatBackground : TextureRegionDrawable
             - chatColor : Color
             - chatSkin : Skin
-            - chatTable : Table
             - fontSize : float
             - h : float
             - w : float
@@ -29,7 +28,20 @@ title __DISPLAY's Class Diagram__\n
   }
   
 
+  namespace inf112.skeleton.app {
+    namespace ui.chat {
+      namespace display {
+        enum ChatOutputColors {
+          DEFAULT
+          GREEN
+        }
+      }
+    }
+  }
+  
+
   inf112.skeleton.app.ui.chat.display.Chat o-- inf112.skeleton.app.ui.chat.backend.ChatFormatter : chat
+  inf112.skeleton.app.ui.chat.display.Chat +-down- inf112.skeleton.app.ui.chat.display.Chat.ChatOutputColors
 
 
 right footer

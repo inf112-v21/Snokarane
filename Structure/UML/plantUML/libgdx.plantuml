@@ -81,6 +81,7 @@ title __LIBGDX's Class Diagram__\n
   namespace inf112.skeleton.app {
     namespace libgdx {
       class inf112.skeleton.app.libgdx.Map.LaserShooter {
+          ~ isPermanent : boolean
           ~ laserNum : int
           ~ x : int
           ~ y : int
@@ -114,12 +115,15 @@ title __LIBGDX's Class Diagram__\n
       class inf112.skeleton.app.libgdx.PlayerConfig {
           ~ image : String
           ~ mainColor : Color
+          ~ name : String
           + PlayerConfig()
           + PlayerConfig()
           + getImage()
           + getMainColor()
+          + getName()
           + setImage()
           + setMainColor()
+          + setName()
       }
     }
   }
@@ -131,7 +135,10 @@ title __LIBGDX's Class Diagram__\n
           {static} + BOARD_X : int
           {static} + BOARD_Y : int
           + batch : SpriteBatch
+          + buttonPressSound : Sound
           + font : BitmapFont
+          + gameMusic : Music
+          + menuMusic : Music
           + renderer : OrthogonalTiledMapRenderer
           + skin : Skin
           + tiledMap : TiledMap
@@ -139,6 +146,10 @@ title __LIBGDX's Class Diagram__\n
           + dispose()
           + loadTileMapFromFile()
           + render()
+          + startGameMusic()
+          + startMenuMusic()
+          + stopGameMusic()
+          + stopMenuMusic()
           - initializeRendering()
       }
     }
@@ -153,6 +164,7 @@ title __LIBGDX's Class Diagram__\n
   inf112.skeleton.app.libgdx.Map.BeltInformation o-- inf112.skeleton.app.game.objects.Direction : beltDirection
   inf112.skeleton.app.libgdx.Map.BeltInformation o-- inf112.skeleton.app.game.objects.Direction : beltRotationDirection
   inf112.skeleton.app.libgdx.Map.LaserShooter o-- inf112.skeleton.app.game.objects.Direction : dir
+  inf112.skeleton.app.libgdx.Map.PlayerRenderInformation o-- inf112.skeleton.app.libgdx.PlayerConfig : config
   inf112.skeleton.app.libgdx.Map.PlayerRenderInformation o-- inf112.skeleton.app.game.objects.Direction : dir
   inf112.skeleton.app.libgdx.Map.PlayerRenderInformation o-- inf112.skeleton.app.game.objects.PlayerToken.CHARACTER_STATES : state
   inf112.skeleton.app.libgdx.RoboGame -up-|> com.badlogic.gdx.Game
