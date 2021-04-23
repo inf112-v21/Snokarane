@@ -1,6 +1,5 @@
 package inf112.skeleton.app.ui.chat.backend;
 
-import inf112.skeleton.app.ui.chat.backend.Message;
 
 import java.util.ArrayList;
 import java.util.HashMap;

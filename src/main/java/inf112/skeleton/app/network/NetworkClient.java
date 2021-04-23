@@ -17,7 +17,6 @@ import java.io.IOException;
 public class NetworkClient extends Network {
 
     public Client client;
-    protected String IP;
     public Map map;
     public GameClient gameClient;
 
@@ -62,10 +61,6 @@ public class NetworkClient extends Network {
                         map.loadPlayers(((NetworkDataWrapper) object).PlayerTokens);
                         map.laserLayer = ((NetworkDataWrapper) object).laserLayer;
                     }
-                }
-
-                if(object instanceof Integer) {
-                   //can set map ID here, but map ID is deprecated
                 }
 
                 if (object instanceof PlayerToken) {

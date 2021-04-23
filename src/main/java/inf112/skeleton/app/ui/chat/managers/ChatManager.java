@@ -1,21 +1,15 @@
 package inf112.skeleton.app.ui.chat.managers;
 
-import com.badlogic.gdx.graphics.Color;
-import inf112.skeleton.app.libgdx.RoboGame;
 import inf112.skeleton.app.network.NetworkHost;
-import inf112.skeleton.app.ui.chat.backend.ChatterData;
 import inf112.skeleton.app.ui.chat.backend.Message;
-import inf112.skeleton.app.ui.chat.display.Chat;
 
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Chat class for network host
  */
 public class ChatManager extends Chatter implements IChatter {
 
-    private NetworkHost host;
+    private final NetworkHost host;
 
     /**
      * Assign

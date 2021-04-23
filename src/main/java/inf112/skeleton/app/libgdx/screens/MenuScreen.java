@@ -77,7 +77,7 @@ public class MenuScreen extends ScreenAdapter implements IUiScreen{
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
                 game.buttonPressSound.play();
-                game.setScreen(new SelectRoleScreen(game));;
+                game.setScreen(new SelectRoleScreen(game));
                 return true;
             }
         });

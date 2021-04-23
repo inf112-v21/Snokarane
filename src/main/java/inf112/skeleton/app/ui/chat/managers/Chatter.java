@@ -9,7 +9,7 @@ import inf112.skeleton.app.ui.chat.backend.ChatterData;
 import inf112.skeleton.app.ui.chat.backend.Message;
 import inf112.skeleton.app.ui.chat.display.Chat;
 
-import java.util.HashMap;
+
 import java.util.List;
 
 /**
@@ -18,27 +18,24 @@ import java.util.List;
 public abstract class Chatter {
     public Chat chat;
     public ChatterData cData = new ChatterData();
-    private ChatterData internalMessenger = new ChatterData();
+    private final ChatterData internalMessenger = new ChatterData();
 
     public Chatter(){
         cData.setData("name", 0);
         internalMessenger.setData("", -1);
     }
 
-    public void initializeChat(RoboGame game) {
-        chat = new Chat(game.skin);
-    }
 
-    public void initializeChat(RoboGame game, float fontScale, Color chatColor, String backgroundImagePath, float w, float h, float x, float y) {
+    public void initializeChat(RoboGame game, float fontScale, Color chatColor, float w, float h, float x, float y) {
         chat = new Chat(game.skin);
-        setChatDisplay(fontScale, chatColor, backgroundImagePath);
+        setChatDisplay(fontScale, chatColor);
         setChatScaling(w, h, x, y);
     }
 
-    public void setChatDisplay(float fontScale, Color chatColor, String backgroundImagePath){
+    public void setChatDisplay(float fontScale, Color chatColor){
         this.chat.setChatFontSize(fontScale);
         this.chat.setChatColour(chatColor);
-        this.chat.setChatBackground(backgroundImagePath);
+        this.chat.setChatBackground();
     }
 
     public void setChatScaling(float w, float h, float x, float y){
@@ -64,10 +61,6 @@ public abstract class Chatter {
 
     public void setChatterID(int id){
         this.cData.chatterID = id;
-    }
-
-    public ChatterData getChatterData() {
-        return cData;
     }
 
     public void updateChat(List<Message> messages){

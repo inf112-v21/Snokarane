@@ -45,7 +45,7 @@ public class CharacterCustomizationScreen extends ScreenAdapter implements IUiSc
 
     //Character preview defaults
     Image characterPreviewImage;
-    Texture defaultPlayerTexture = CharacterCustomizer.generatePlayerTexture(loadCharacterConfigFromFile().getImage(), loadCharacterConfigFromFile().getMainColor()); //TODO: perhaps change default color?
+    Texture defaultPlayerTexture = CharacterCustomizer.generatePlayerTexture(loadCharacterConfigFromFile().getImage(), loadCharacterConfigFromFile().getMainColor());
 
     //checkBox
     CheckBox useLargeCheckBox;
@@ -223,11 +223,8 @@ public class CharacterCustomizationScreen extends ScreenAdapter implements IUiSc
             greenTextField.setText(Integer.toString(Math.round( playerConfig.getMainColor().g * possibleColors)));
             blueTextField.setText(Integer.toString(Math.round( playerConfig.getMainColor().b * possibleColors)));
 
-            if(playerConfig.getImage().equals("robot_large.png")){ //sets checkbox to checked if config says playerIsLarge
-                useLargeCheckBox.setChecked(true);
-            } else {
-                useLargeCheckBox.setChecked(false);
-            }
+            //sets checkbox to checked if config says playerIsLarge
+            useLargeCheckBox.setChecked(playerConfig.getImage().equals("robot_large.png"));
 
 
             updatePreviewImage();

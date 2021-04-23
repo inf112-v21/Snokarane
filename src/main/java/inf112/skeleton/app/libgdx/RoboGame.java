@@ -8,16 +8,11 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.maps.tiled.TiledMap;
-import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
-import inf112.skeleton.app.game.objects.Flag;
 import inf112.skeleton.app.libgdx.screens.MenuScreen;
 import com.badlogic.gdx.Game;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class RoboGame extends Game{
     public SpriteBatch batch;

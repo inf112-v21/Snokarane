@@ -6,7 +6,6 @@ import com.esotericsoftware.kryonet.Server;
 import inf112.skeleton.app.game.GameHost;
 import inf112.skeleton.app.game.objects.Card;
 import inf112.skeleton.app.game.objects.PlayerToken;
-import inf112.skeleton.app.libgdx.CharacterCustomizer;
 import inf112.skeleton.app.libgdx.NetworkDataWrapper;
 import inf112.skeleton.app.libgdx.PlayerConfig;
 import inf112.skeleton.app.ui.avatars.PlayerAvatar;
@@ -16,7 +15,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 public class NetworkHost extends Network {
 
@@ -52,7 +50,7 @@ public class NetworkHost extends Network {
                     PlayerToken token = new PlayerToken();
                     token.charState = PlayerToken.CHARACTER_STATES.PLAYERNORMAL;
                     token.ID = c.getID();
-                    token.name = (String) ((PlayerConfig) object).getName();
+                    token.name = ((PlayerConfig) object).getName();
                     token.setConfig((PlayerConfig) object);
                     token = host.initializePlayerPos(token);
                     host.clientPlayers.put(c.getID(), token);
@@ -137,14 +135,6 @@ public class NetworkHost extends Network {
             host.endOfTurn();
         }
     }
-
-
-    public void promptName() {
-        System.out.println("Asked for client names");
-        server.sendToAllTCP("Name");
-    }
-
-
 
 
     /**

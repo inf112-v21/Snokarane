@@ -8,7 +8,6 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.*;
-import java.util.HashMap;
 
 public class CharacterCustomizer {
 
@@ -47,7 +46,6 @@ public class CharacterCustomizer {
         }
         Pixmap roboPixmap = roboTexture.getTextureData().consumePixmap();
 
-        Color mainColor = inputColor;
         Color secondaryColor = Color.PINK; //TODO: change to take in a players chosen colour value?
 
         //iterates over all pixels in the pixmap
@@ -58,7 +56,7 @@ public class CharacterCustomizer {
                 //Checks for colors that should be changed, and changes them based on desired colors
                 //Add else if for each color you wish to change
                 if(currentPixelColor.toString().equals("ffcc00ff")) { //checks if the color of the pixel is the primary color used in the robot textures //TODO: make this a method parameter
-                    roboPixmap.setColor(mainColor);
+                    roboPixmap.setColor(inputColor);
                     roboPixmap.fillRectangle(x, y,1,1);
                 }
                 else if (currentPixelColor.toString().equals("e7b900ff")) { //checks if the color of the pixel is the secondary color used in the robot textures //TODO make this a method parameter
@@ -83,8 +81,9 @@ public class CharacterCustomizer {
         if(configFile.exists()){
             try {
                 ObjectMapper mapper = new ObjectMapper();
-                InputStream inputStream = new FileInputStream(new File("src/main/customisation/playerConfig.json"));
-                TypeReference<PlayerConfig> typeReference = new TypeReference<PlayerConfig>() {};
+                InputStream inputStream = new FileInputStream("src/main/customisation/playerConfig.json");
+                TypeReference<PlayerConfig> typeReference = new TypeReference<>() {
+                };
                 PlayerConfig playerConfig = mapper.readValue(inputStream, typeReference);
                 inputStream.close();
                 return playerConfig;

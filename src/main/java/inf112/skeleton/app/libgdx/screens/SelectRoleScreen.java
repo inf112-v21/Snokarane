@@ -24,7 +24,6 @@ public class SelectRoleScreen extends ScreenAdapter implements IUiScreen{
     float gdxW = Gdx.graphics.getWidth();
     float gdxH = Gdx.graphics.getHeight();
 
-    private boolean roleHost;
     private String IP_address;
 
     private TextArea nameInputField;
@@ -72,8 +71,7 @@ public class SelectRoleScreen extends ScreenAdapter implements IUiScreen{
                 if (IP_address.equals("IP address")){
                     IP_address = "";
                 }
-                roleHost = false;
-                game.setScreen(new WaitingRoomScreen(game, roleHost, IP_address, nameInputField.getText()));
+                game.setScreen(new WaitingRoomScreen(game, false, IP_address, nameInputField.getText()));
                 return true;
             }
         });
@@ -86,8 +84,7 @@ public class SelectRoleScreen extends ScreenAdapter implements IUiScreen{
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
                 game.buttonPressSound.play();
-                roleHost = true;
-                game.setScreen(new WaitingRoomScreen(game, roleHost, "", nameInputField.getText()));
+                game.setScreen(new WaitingRoomScreen(game, true, "", nameInputField.getText()));
                 return true;
             }
         });

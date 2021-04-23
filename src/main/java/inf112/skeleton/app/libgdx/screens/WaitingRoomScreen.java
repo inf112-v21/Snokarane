@@ -2,7 +2,6 @@ package inf112.skeleton.app.libgdx.screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.ScreenAdapter;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL30;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.Actor;
@@ -14,9 +13,6 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
-import inf112.skeleton.app.game.GameClient;
-import inf112.skeleton.app.game.GameHost;
-import inf112.skeleton.app.game.objects.PlayerToken;
 import inf112.skeleton.app.libgdx.CharacterCustomizer;
 import inf112.skeleton.app.libgdx.PlayerConfig;
 import inf112.skeleton.app.libgdx.RoboGame;
@@ -30,12 +26,9 @@ import java.util.List;
 
 public class WaitingRoomScreen extends ScreenAdapter implements IUiScreen {
     // RoboGame class instance
-    private RoboGame game;
+    private final RoboGame game;
     // Stage for UI items
     Stage stage = new Stage(new ScreenViewport());
-
-    // Table to contain player avatars
-    Table playerAvatars;
 
     // Screen width + height
     float gdxW = Gdx.graphics.getWidth();
@@ -44,17 +37,14 @@ public class WaitingRoomScreen extends ScreenAdapter implements IUiScreen {
     // Handles all data transfers over internet
     Network network;
 
-    // Ready to load game
-    boolean readyToStart = false;
-
     // Address to connect to if client
-    String ip = "";
+    String ip;
 
     // Player name
-    String name = "";
+    String name;
 
     // Host or client
-    boolean host = false;
+    boolean host;
 
     // This players waiting room avatar
     PlayerAvatar avatar;
@@ -62,9 +52,6 @@ public class WaitingRoomScreen extends ScreenAdapter implements IUiScreen {
 
     // Indicates connection status
     Label connectionIndicatorLabel;
-
-    // used by host to keep track of new connetions
-    private int currentConnections = 0;
 
     public WaitingRoomScreen(RoboGame game, boolean roleHost, String IP_Address, String name){
         this.game = game;
@@ -184,12 +171,12 @@ public class WaitingRoomScreen extends ScreenAdapter implements IUiScreen {
             // wait for host to press start button here
             if (network.readyToInitialize){
                 ((NetworkHost) network).finalizeConnections();
-                game.setScreen(new GameScreen(game, host, ip, name, network));
+                game.setScreen(new GameScreen(game,  name, network));
             }
         }else{
             if (network.readyToInitialize){
                 connectionIndicatorLabel.setText("Connected.");
-                game.setScreen(new GameScreen(game, host, ip, name, network));
+                game.setScreen(new GameScreen(game, name, network));
             }
         }
 

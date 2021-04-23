@@ -38,23 +38,6 @@ public class VictoryScreen  extends ScreenAdapter implements IUiScreen{
         Label gameOverTitle = new Label("Game over!", game.skin);
         Table highScore = new Table(game.skin);
 
-        // Add stats and names for each player
-        /*
-        for (PlayerToken p : players){
-            Label n = (p.getVisitedFlags().size() == 4) ? // todo generic win state
-                    new Label(p.name + " winner!", game.skin) :
-                    new Label(p.name, game.skin);;
-
-            Label f = new Label("Flags visited: " + p.getVisitedFlags().size(), game.skin);
-            Label h = new Label("Hp left: " + p.hp, game.skin);
-
-            highScore.add(n);
-            highScore.add(f);
-            highScore.add(h);
-
-            highScore.row();
-        }*/
-
         Label n = new Label(winner.name + " won!", game.skin);
         n.setColor(0, 1, 1, 1);
         Label f = new Label("Flags visited: " + winner.getVisitedFlags().size(), game.skin);

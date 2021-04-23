@@ -9,7 +9,6 @@ import inf112.skeleton.app.libgdx.CharacterCustomizer;
 import inf112.skeleton.app.libgdx.Map;
 import inf112.skeleton.app.libgdx.NetworkDataWrapper;
 import inf112.skeleton.app.network.NetworkHost;
-import inf112.skeleton.app.network.Network;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -45,7 +44,6 @@ public class GameHost extends GamePlayer {
     private final int cardsProcessedPerRound = 5;
     private int currentCardRound = 1;
     private long timeSinceLastCardProcessed = System.currentTimeMillis();
-    private final long pauseBetweenEachCardProcess = 300 ;
 
     public NetworkHost host;
 
@@ -349,7 +347,8 @@ public class GameHost extends GamePlayer {
      */
     public void handleSingleCardRound(){
         map.clearLasers();
-        if (System.currentTimeMillis() >= timeSinceLastCardProcessed+pauseBetweenEachCardProcess){
+        long pauseBetweenEachCardProcess = 300;
+        if (System.currentTimeMillis() >= timeSinceLastCardProcessed+ pauseBetweenEachCardProcess){
             // If current Nth card list empty, start next round of cards
             if (currentCardListBeingProcessed.size() == 0){
                 getNthSelectionFromEachPlayer();

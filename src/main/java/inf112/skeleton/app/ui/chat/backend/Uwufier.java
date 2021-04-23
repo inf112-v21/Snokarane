@@ -1,15 +1,10 @@
 package inf112.skeleton.app.ui.chat.backend;
 
-import java.lang.reflect.Array;
 import java.util.List;
 import java.util.Random;
 
 public class Uwufier {
-    private String[] emojiis = {"^.^", ":3", ">_<", "x3", "(U w U)", "ony-chan", "UwU", "OwO"};
-    public boolean smolify = true; // convert words like "small" to "smol"
-    public boolean L_R_replace = true; // replace "L" and "R" with "W"
-    public boolean stutter = true; // Stutter sometimes "Hi" -> "H-Hi"
-    public boolean emojiAfterPunc = true; // Occasionally add emoji after punctiation (!, ., ,)
+    private final String[] emojiis = {"^.^", ":3", ">_<", "x3", "(U w U)", "ony-chan", "UwU", "OwO"};
 
     public List<Message> preUwudMessages;
     public List<Message> postUwudMessages;
@@ -23,7 +18,7 @@ public class Uwufier {
     }
 
     public String uwufyString(String s){
-        String result = "";
+        StringBuilder result = new StringBuilder();
         char[] stringCharArray = s.toCharArray();
         Random rand = new Random();
         boolean stutterOnNext = false;
@@ -74,8 +69,8 @@ public class Uwufier {
                     break;
 
             }
-            result += app;
+            result.append(app);
         }
-        return result;
+        return result.toString();
     }
 }

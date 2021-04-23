@@ -1,17 +1,10 @@
 package inf112.skeleton.app.ui.chat.display;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.scenes.scene2d.Event;
-import com.badlogic.gdx.scenes.scene2d.EventListener;
-import com.badlogic.gdx.scenes.scene2d.InputEvent;
-import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import inf112.skeleton.app.ui.chat.backend.ChatFormatter;
 
@@ -26,16 +19,13 @@ import java.util.List;
  */
 public class Chat {
     public ChatFormatter chat = new ChatFormatter();
-    private Table chatTable = new Table();
     private TextureRegionDrawable chatBackground;
     private float fontSize = 0.8f;
     private Color chatColor = new Color();
-    private Skin chatSkin;
+    private final Skin chatSkin;
     private float w = 0f, h = 0f, x = 0f, y = 0f;
 
     private enum ChatOutputColors{
-        RED,
-        ORANGE,
         GREEN,
         DEFAULT
     }
@@ -66,12 +56,12 @@ public class Chat {
         this.chat = chat;
     }
 
-    public void setChatBackground(String texturePath){
+    public void setChatBackground(){
         this.chatBackground = new TextureRegionDrawable(new Texture("chat/chat-background.png"));
     }
 
     public Table getChatAsTable(){
-        chatTable = new Table();
+        Table chatTable = new Table();
         if (chatBackground != null){
             chatTable.setBackground(chatBackground);
         }else {
@@ -97,9 +87,9 @@ public class Chat {
                     int breakLoc = lineBreakLimit-s.length();
                     String mess1 = hss.get(s).substring(0, breakLoc);
                     String mess2 = hss.get(s).substring(breakLoc);
+                    HashMap<String, ChatOutputColors> messageI = new HashMap<>();
                     if (s.equals("")){
                         // internal message
-                        HashMap<String, ChatOutputColors> messageI = new HashMap<>();
                         messageI.put(mess1, ChatOutputColors.GREEN);
                         messages.add(messageI);
 
@@ -107,7 +97,6 @@ public class Chat {
                         messageI2.put(s + ": " + mess2, ChatOutputColors.GREEN);
                         messages.add(messageI2);
                     }else{
-                        HashMap<String, ChatOutputColors> messageI = new HashMap<>();
                         messageI.put(s + ": " + mess1, ChatOutputColors.DEFAULT);
                         messages.add(messageI);
 
@@ -116,15 +105,13 @@ public class Chat {
                         messages.add(messageI2);
                     }
                 }else {
+                    HashMap<String, ChatOutputColors> messageI = new HashMap<>();
                     if (s.equals("")){
-                        HashMap<String, ChatOutputColors> messageI = new HashMap<>();
                         messageI.put(hss.get(s), ChatOutputColors.GREEN);
-                        messages.add(messageI);
                     }else{
-                        HashMap<String, ChatOutputColors> messageI = new HashMap<>();
                         messageI.put(s + ": " + hss.get(s), ChatOutputColors.DEFAULT);
-                        messages.add(messageI);
                     }
+                    messages.add(messageI);
                 }
             }
         }

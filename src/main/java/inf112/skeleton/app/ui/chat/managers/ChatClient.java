@@ -12,7 +12,7 @@ import inf112.skeleton.app.ui.chat.display.Chat;
  */
 public class ChatClient extends Chatter implements IChatter {
 
-    private NetworkClient client;
+    private final NetworkClient client;
 
     /**
      * @param client network client that sends messages to host

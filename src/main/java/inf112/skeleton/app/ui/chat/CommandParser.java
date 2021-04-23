@@ -17,20 +17,20 @@ public class CommandParser {
     }
 
     public String getCmd(String cmd){
-        String stringCmd = "";
+        StringBuilder stringCmd = new StringBuilder();
 
         for (Character c : cmd.toCharArray()){
             if (c == ' '){
-                return stringCmd;
+                return stringCmd.toString();
             }else {
-                stringCmd += c;
+                stringCmd.append(c);
             }
         }
-        return stringCmd;
+        return stringCmd.toString();
     }
 
     public String getArgs(String cmd){
-        String stringArg = "";
+        StringBuilder stringArg = new StringBuilder();
         boolean atArgs = false;
 
         for (Character c : cmd.toCharArray()){
@@ -38,11 +38,11 @@ public class CommandParser {
                 atArgs = true;
             }else {
                 if (atArgs){
-                    stringArg+=c;
+                    stringArg.append(c);
                 }
             }
         }
-        return stringArg;
+        return stringArg.toString();
     }
     public Command parseCommand(String cmd){
         Command command = Command.INVALID;

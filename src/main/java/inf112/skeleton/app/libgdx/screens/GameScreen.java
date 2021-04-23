@@ -64,7 +64,6 @@ public class GameScreen extends ScreenAdapter {
      */
     Map map = new Map();
     // Flags on the map are stored here for easy access
-    // TODO: this should really only useful in GameHost
     public List<Flag> flagPositions = new ArrayList<>();
 
 
@@ -91,8 +90,6 @@ public class GameScreen extends ScreenAdapter {
     private final HashMap<CardType, TextureRegion> cardTemplates = new HashMap<>();
     // Duplicate card types currently in deck (for use in rendering)
     private final HashMap<CardType, Integer> duplicates = new HashMap<>();
-    // Maps card types to priority
-    private final List<HashMap<CardType, Integer>> cardPriorityMap = new ArrayList<>();
 
 
 
@@ -112,7 +109,7 @@ public class GameScreen extends ScreenAdapter {
     // If client ping is greater than this grace time, the players token won't be initialized
     int clientResponseGraceTime = 500; // ping, in ms
 
-    public GameScreen(RoboGame game, boolean isHost, String ip, String playerName, Network net) {
+    public GameScreen(RoboGame game, String playerName, Network net) {
         this.game = game;
         this.network = net;
         stage = new Stage(new ScreenViewport());
@@ -121,7 +118,7 @@ public class GameScreen extends ScreenAdapter {
         game.startGameMusic();
 
         loadCardBackground();
-        create(isHost, ip, playerName);
+        create(playerName);
     }
 
 
@@ -133,18 +130,19 @@ public class GameScreen extends ScreenAdapter {
      --------- ------------------ Class setup methods--------- ------------------
      --------- ------------------ ------------------ ------------------ ---------
      */
+
     /**
      * Initialize objects depending on host status
      * These methods are needed to start a game session to other players over network
      * Function called regardless of host or player status, initializes network and asks for host/client role selection
      */
-    public void startGame(boolean isHost, String ip, String playerName) {
+    public void startGame(String playerName) {
         map.flagList = flagPositions;
 
         if (network.isHost)
             startHost(playerName);
         else
-            startClient(ip, playerName);
+            startClient(playerName);
 
     }
     /**
@@ -176,10 +174,9 @@ public class GameScreen extends ScreenAdapter {
     }
     /**
      *
-     * @param ip IP to connect to
      * @param playerName player name ID to identify player in game
      */
-    private void startClient(String ip, String playerName) {
+    private void startClient(String playerName) {
         gamePlayer = new GameClient((NetworkClient) network, playerName);
         gamePlayer.setMap(map);
     }
@@ -190,13 +187,10 @@ public class GameScreen extends ScreenAdapter {
      * <p>
      * This function is called on libgdx startup
      */
-    public void create(boolean isHost, String ip, String playerName) {
+    public void create(String playerName) {
 
         // Load the map's layers
         loadMapLayers(game.tiledMap);
-
-        // Initialize player textures from .png file
-        loadPlayerTextures();
 
         // Initialize game-element textures
         loadTextures();
@@ -205,7 +199,7 @@ public class GameScreen extends ScreenAdapter {
         loadCardTextures();
 
         // Start game/network objects
-        startGame(isHost, ip, playerName);
+        startGame(playerName);
 
         // Initialize chat variables and objects
         initializeChatObjects(playerName);
@@ -224,7 +218,7 @@ public class GameScreen extends ScreenAdapter {
         int subMenuHeight = 200;
         int sideMenuWidth = 375; // TODO fix hardcoded values
 
-        chat.initializeChat(game, 0.85f, chatColor, "", sideMenuWidth, Gdx.graphics.getHeight()-subMenuHeight,  Gdx.graphics.getWidth()-sideMenuWidth, subMenuHeight);
+        chat.initializeChat(game, 0.85f, chatColor, sideMenuWidth, Gdx.graphics.getHeight()-subMenuHeight,  Gdx.graphics.getWidth()-sideMenuWidth, subMenuHeight);
         chat.setName(playerName);
         Table emptyChat = chat.getChatAsTable();
         emptyChat.setName("chat");
@@ -272,34 +266,6 @@ public class GameScreen extends ScreenAdapter {
      --------- ------------------   Texture handling --------- ------------------
      --------- ------------------ ------------------ ------------------ ---------
      */
-    /**
-     * Load player texture and split into each player state
-     */
-
-    public void loadPlayerTextures(){
-        // Load the entire player texture
-        //Color playerColor = Color.RED;
-
-        //load playercolor from file if possible
-        PlayerConfig config = CharacterCustomizer.loadCharacterConfigFromFile();
-        Color playerColor = config.getMainColor();
-        String playerImage = config.getImage();
-
-        Texture rawPlayerTexture = CharacterCustomizer.generatePlayerTexture(playerImage, playerColor);
-
-        // Split player texture into seperate regions
-        TextureRegion roboPlayerSplitTexture = new TextureRegion(rawPlayerTexture,300, 300);
-
-        // Put the texture region into seperate tiles
-        StaticTiledMapTile playerStaticTile = new StaticTiledMapTile(roboPlayerSplitTexture);
-
-        // Set player state cells to corresponding tiles
-        // Cells for each player state
-        TiledMapTileLayer.Cell playerNormal = new TiledMapTileLayer.Cell().setTile(playerStaticTile);
-        TiledMapTileLayer.Cell playerWon = new TiledMapTileLayer.Cell().setTile(playerStaticTile);
-
-
-    }
 
     public void loadTextures() {
 
@@ -518,7 +484,7 @@ public class GameScreen extends ScreenAdapter {
         game.font.draw(game.batch, "WEEE", 0, 0);
         game.batch.end();
         // Add all images to stage
-        displayDeck.forEach( (c) -> {c.setName("");});
+        displayDeck.forEach( (c) -> c.setName(""));
         displayDeck.forEach(cardDeck::addActor);
         cardDeck.setName("card-deck");
         stage.addActor(cardDeck);
@@ -609,7 +575,7 @@ public class GameScreen extends ScreenAdapter {
                         // Commands have to be more than 2 characters long, else substring gives an exception
                         if (inputBox.getText().length()>2){
                             // If chat is a command
-                            if (inputBox.getText().substring(0, 2).equals("/c")){
+                            if (inputBox.getText().startsWith("/c")){
                                 isCommand = true;
                                 // Get content after /c indicator
                                 String commandContent = inputBox.getText().substring(3);
@@ -624,7 +590,7 @@ public class GameScreen extends ScreenAdapter {
                                  */
                         // Send list of commands available if /h, only need to check if length is >1 here as there are no args or commands for /h
                         if (inputBox.getText().length()>1){
-                            if (inputBox.getText().substring(0, 2).equals("/h")){
+                            if (inputBox.getText().startsWith("/h")){
                                 isCommand = true;
                                 showChatHelpDialogue();
                             }
@@ -776,21 +742,19 @@ public class GameScreen extends ScreenAdapter {
                     chat.sendMessage("I am playing roborally. ");
                     chat.sendMessage("This is alot of fun!");
                     chat.sendMessage("This game is impressive. Good job!");
-                    chat.sendInternalMessage("Sent example messages.", network);
                 }else {
                     chat.sendInternalMessage("Hello! This is a message.", network);
                     chat.sendInternalMessage("I am playing roborally. ", network);
                     chat.sendInternalMessage("This is alot of fun!", network);
                     chat.sendInternalMessage("This game is impressive. Good job!", network);
-                    chat.sendInternalMessage("Sent example messages.", network);
                 }
+                chat.sendInternalMessage("Sent example messages.", network);
                 break;
             case CONNECT:
-                String ip = commandArgs;
-                if (ip.contains(" ")){
+                if (commandArgs.contains(" ")){
                     chat.sendInternalMessage("IP cannot contain spaces.", network);
                 }else {
-                    game.setScreen(new GameScreen(game, false, ip, chat.cData.name, network));
+                    game.setScreen(new GameScreen(game, chat.cData.name, network));
                 }
             case SENDCARDS:
                 if (sendCardsIfPossible()){
@@ -949,7 +913,6 @@ public class GameScreen extends ScreenAdapter {
             map = gamePlayer.updateMap(null);
             //
             if (network.isHost) {
-                // TODO Also maybe fix this
                 ((GameHost) gamePlayer).host.sendMapLayerWrapper(((GameHost) gamePlayer).wrapper());
                 ((GameHost) gamePlayer).map.loadPlayers(((GameHost) gamePlayer).wrapper().PlayerTokens);
                 if (((GameHost) gamePlayer).isShowingCards) {
@@ -960,7 +923,6 @@ public class GameScreen extends ScreenAdapter {
             resetCellRotation();
             rotateCellsAccordingToDirection();
             loadLasers();
-            // TODO: board and flag layer doesn't change as of this version
         }
     }
     /**
@@ -981,7 +943,6 @@ public class GameScreen extends ScreenAdapter {
      */
     public TiledMapTileLayer.Cell laserToTile(int x, int y, boolean isVert) {
 
-        //TODO FIX THIS SHIT to add support for doubles
         if (map.laserLayer[x][y][0] == 1 && isVert) return singleVertical;
         if (map.laserLayer[x][y][0] == 2 && isVert) return doubleVertical;
         if (map.laserLayer[x][y][1] == 1 && !isVert) return singleHorizontal;
@@ -1014,17 +975,9 @@ public class GameScreen extends ScreenAdapter {
 
                 switch (map.playerLayer[x][y].state){
                     case PLAYERNORMAL:
-                        playerLayer.setCell(x, y, currentCell);
-                        break;
-                    case PLAYERWON:
-                        playerLayer.setCell(x, y, currentCell);
-                        break;
                     case PLAYERSELFNORMAL:
-                        // todo we don't have a texture to show which player this player is, so using playerwon as filler
-                        playerLayer.setCell(x, y, currentCell);
-                        break;
                     case PLAYERSELFWON:
-                        // todo
+                    case PLAYERWON:
                         playerLayer.setCell(x, y, currentCell);
                         break;
                     case NONE:
@@ -1081,7 +1034,7 @@ public class GameScreen extends ScreenAdapter {
             try {
                 stage.getActors().forEach((n) -> {
                     if (n == null) {
-                        stage.getActors().removeValue(n, true);
+                        stage.getActors().removeValue(null, true);
                     }
                 });
             } catch (Exception e) {
@@ -1113,25 +1066,6 @@ public class GameScreen extends ScreenAdapter {
      --------- ------------------ ------------------ ------------------ ---------
      */
     /**
-     * returns the correct texture for a tile with a laser
-     * @param x the x position of the tile
-     * @param y the y position of the tile
-     * @return the correct texture to put in the tile
-     */
-    public TiledMapTileLayer.Cell laserToTile(int x, int y) {
-
-        //TODO FIX THIS SHIT to add support for doubles
-        if (map.laserLayer[x][y][0] == 1) return singleVertical;
-        if (map.laserLayer[x][y][0] == 2) return doubleVertical;
-        if (map.laserLayer[x][y][1] == 1) return singleHorizontal;
-        if (map.laserLayer[x][y][1] == 2) return doubleHorizontal;
-        if (map.laserLayer[x][y][2] == 1) return singleVertical;
-        if (map.laserLayer[x][y][2] == 2) return doubleVertical;
-        if (map.laserLayer[x][y][3] == 1) return singleHorizontal;
-        if (map.laserLayer[x][y][3] == 2) return doubleHorizontal;
-        else return null;
-    }
-    /**
      * Adds a permanent laser shooter to the map if there is a laser shooter in the laser cell
      * @param laserCell the cell you wish to check for lasers
      * @param i its i position
@@ -1154,7 +1088,6 @@ public class GameScreen extends ScreenAdapter {
         //TODO a lot of these are lacking
 
         // NORTH, EAST, SOUTH, WEST. This is where the wall is placed
-        //TODO redo all these?
         if (wallCell.getTile().getId() == 24) map.wallLayer[i][j] = new boolean[] {true, false, false, true};
         if (wallCell.getTile().getId() == 31) map.wallLayer[i][j] = new boolean[] {true, false, false, false};
         if (wallCell.getTile().getId() == 16) map.wallLayer[i][j] = new boolean[] {true, true, false, false};
@@ -1304,7 +1237,6 @@ public class GameScreen extends ScreenAdapter {
                     for (Card c : gamePlayer.hand){
                         for (Card d : gamePlayer.chosenCards){
                             if (c.getCardType() == d.getCardType() && c.picked){
-                                Card fill = new Card();
                                 c.setCardType(CardType.NONE);
                             }else {
                                 gamePlayer.discard.add(c);
@@ -1324,7 +1256,6 @@ public class GameScreen extends ScreenAdapter {
                 for (Card c : gamePlayer.hand){
                     for (Card d : gamePlayer.chosenCards){
                         if (c.getCardType() == d.getCardType() && c.picked){
-                            Card fill = new Card();
                             c.setCardType(CardType.NONE);
                         }else {
                             gamePlayer.discard.add(c);

@@ -13,9 +13,6 @@ public class Message {
     // No args constructor required for kryo
     public Message(){}
 
-    public ChatterData getSender(){
-        return sender;
-    }
 
     public void assignID(int messageID){
         this.messageID = messageID;

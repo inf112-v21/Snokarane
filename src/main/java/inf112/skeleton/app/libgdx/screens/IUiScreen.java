@@ -1,8 +1,5 @@
 package inf112.skeleton.app.libgdx.screens;
 
-import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import inf112.skeleton.app.libgdx.RoboGame;
 
 /**
