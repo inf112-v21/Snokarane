@@ -66,6 +66,7 @@ public class PlayerTokenTest {
 
     @Test
     public void wouldEndUpDoesNotMeet() {
+        assertTrue(player.getX() == 0 && player.getY() == 0);
         player.wouldEndUp(Direction.NORTH);
         assertEquals(0, player.getX());
         assertEquals(0, player.getY());

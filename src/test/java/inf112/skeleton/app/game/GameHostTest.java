@@ -22,6 +22,7 @@ public class GameHostTest {
         host = new GameHost(network);
         host.map = new Map();
         player = new PlayerToken();
+        player.charState = PlayerToken.CHARACTER_STATES.PLAYERNORMAL;
         host.clientPlayers.put(0, player);
     }
 
@@ -64,14 +65,20 @@ public class GameHostTest {
         host.resolveCard(makeCard(CardType.FORWARDTHREE), player);
         assertTrue(player.diedThisTurn);
         player.diedThisTurn = false;
+        player.position = new GridPoint2(0, 0);
 
         assertEquals(0, player.getY());
         assertEquals(0, player.getX());
-        assertTrue(player.getDirection() == Direction.NORTH);
+        assertSame(player.getDirection(), Direction.NORTH);
         PlayerToken player1 = new PlayerToken();
+        player1.charState = PlayerToken.CHARACTER_STATES.PLAYERNORMAL;
         player1.position = new GridPoint2(0, 1);
+        assertEquals(1, player1.getY());
+        assertEquals(0, player1.getX());
         host.clientPlayers.put(1, player1);
         host.map.loadPlayers(host.wrapper().PlayerTokens);
+        assertNotSame(host.map.playerLayer[0][1].state, PlayerToken.CHARACTER_STATES.NONE);
+        assertNotSame(host.map.playerLayer[0][0].state, PlayerToken.CHARACTER_STATES.NONE);
         host.resolveCard(makeCard(CardType.FORWARDTHREE), player);
         assertEquals(3, player.getY());
         assertEquals(4, player1.getY());
@@ -92,11 +99,12 @@ public class GameHostTest {
     @Test
     public void repairTilesRepair(){
         assertTrue(player.getX() == 0 && player.getY() == 0);
-        int hp = player.damage;
+        player.damage = 3;
+        int damage = player.damage;
         host.map.loadPlayers(host.wrapper().PlayerTokens);
         host.map.repairLayer[0][0] = true;
         host.endOfTurn();
-        assertEquals(hp+1, player.damage);
+        assertEquals(damage-1, player.damage);
     }
 
     @Test
@@ -130,6 +138,7 @@ public class GameHostTest {
 
         PlayerToken player1 = new PlayerToken();
         player1.position = new GridPoint2(0, 4);
+        player1.charState = PlayerToken.CHARACTER_STATES.PLAYERNORMAL;
         host.clientPlayers.put(1, player1);
         host.map.loadPlayers(host.wrapper().PlayerTokens);
         host.endOfTurn();
@@ -147,11 +156,11 @@ public class GameHostTest {
         //This is exactly what resetPlayerTokens does
         host.map.registerFlags(host.wrapper().PlayerTokens);
         assertEquals(1, player.getVisitedFlags().size());
-        assertTrue(host.map.hasWon(host.wrapper().PlayerTokens) == null);
+        assertNull(host.map.hasWon(host.wrapper().PlayerTokens));
         host.resolveCard(makeCard(CardType.FORWARDONE), player);
         //This is exactly what resetPlayerTokens does
         host.map.registerFlags(host.wrapper().PlayerTokens);
-        assertTrue(host.map.hasWon(host.wrapper().PlayerTokens) == player);
+        assertSame(host.map.hasWon(host.wrapper().PlayerTokens), player);
 
     }
 

@@ -19,7 +19,7 @@ public class ChatTest {
     NetworkHost nHost;
 
     @Before
-    public void setUp() throws InterruptedException {
+    public void setUp(){
         nClient = new NetworkClient();
         nHost = new NetworkHost();
         nHost.isHost = true;
@@ -48,6 +48,6 @@ public class ChatTest {
         // have to let kryonet do its thing
         Thread.sleep(500);
 
-        assertEquals(1, nHost.messagesRecived.size());
+        assertEquals(2, nHost.messagesRecived.size());
     }
 }

@@ -22,7 +22,7 @@ public class PlayerToken {
 
     public int hp = 3;
 
-    public int damage = 2;
+    public int damage = 0;
 
     public boolean diedThisTurn = false;
 

@@ -327,7 +327,8 @@ public class GameHost extends GamePlayer {
     /**
      * Rests which playertokens died this turn, and checks if anyone won
      */
-    private void resetPlayerTokens(){
+    //This is public for testing purposes
+    public void resetPlayerTokens(){
         // Reset which players have died this turn, so that they can keep playing
         for (PlayerToken player: clientPlayers.values()) {
             if (player.diedThisTurn) findPlayerRespawnLocation(player);
