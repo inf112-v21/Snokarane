@@ -14,7 +14,7 @@ Hallvard og Audun fortsatte å arbeide med å implementere spel-logikk medan Pet
 
 Som følgje av at vi jobba meir i par var det ikkje behov for så mange felles møter og dermed vart mykje av kommunikasjonen tatt skriftleg på discord. Dersom det eine laget trong noko frå det andre, vart dette kommunisert og som regel ordna ganske raskt. Vi har i heile tatt blitt mykje tryggare på kvarandre ila prosjektet, noko som har gjort at kommunikasjonen har vore meir effektiv. 
  
-Vi haldt fram med parprogrammering, noko som har vore eit nyttig verktøy gjennom heile prosjektet. 
+Vi haldt fram med parprogrammering. Dette har vore eit nyttig verktøy gjennom heile prosjektet. 
 
 ### Krav
 
