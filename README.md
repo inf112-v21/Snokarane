@@ -166,6 +166,11 @@ In game music test:
 3. Host a game by clicking on "Host/Join game" -> "Host Game" -> "Start Game"
 4. If you can hear music, then the test has passed
 
+Power down test:
+1. Host a game with a minimum of 2 players
+2. Make sure one player powers down on the first turn, by clicking the power down button, while the rest do not power down
+3. If the player that powered down does not recieve cards, but the rest do, and the turn progresses after all the non-powered down players sent their cards, the test has passed 
+
 
 
 
