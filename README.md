@@ -72,7 +72,7 @@ Network test:
 
 Card dealt test:
 1. Start the game in either single or mutiplayer mode (if using muliplayer make sure there is a host!)
-2. If cards appear on screen (as text) the test has passed.
+2. If cards appear on screen the test has passed.
 
 Card sequence test:
 1. Start the game in either single or mutiplayer mode (if using muliplayer make sure there is a host!)
