@@ -51,8 +51,8 @@ public class NetworkClient extends Network {
                         client.sendTCP(gameClient.powerDown);
                     }
                     else {
-                        System.out.println(((String) object));
-                        System.exit(0);
+                        winner = new PlayerToken();
+                        winner.name = ((String) object);
                     }
                 }
 

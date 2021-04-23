@@ -139,12 +139,12 @@ public class NetworkHost extends Network {
 
     /**
      * Broadcasts the winner so that all the clients and the host can display and handle it
-     * @param winner The player who won.
+     * @param winnerToken The player who won.
      */
-    public void sendWinner(PlayerToken winner) {
-        System.out.println(winner.name + " has won! Congratulations");
-        server.sendToAllTCP(winner.name + " has won! Congratulations");
-        System.exit(0);
+    public void sendWinner(PlayerToken winnerToken) {
+        this.winner = new PlayerToken();
+        winner.name = winnerToken.name;
+        server.sendToAllTCP(winner.name);
     }
 
 

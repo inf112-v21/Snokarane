@@ -2,6 +2,7 @@ package inf112.skeleton.app.network;
 
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryonet.EndPoint;
+import inf112.skeleton.app.game.objects.PlayerToken;
 import inf112.skeleton.app.ui.avatars.PlayerAvatar;
 import inf112.skeleton.app.ui.chat.backend.Message;
 
@@ -14,6 +15,7 @@ public abstract class Network {
 
     public Boolean isHost;
     public String name;
+    public PlayerToken winner = null;
 
     // Messages recieved
     public List<Message> messagesRecived = new ArrayList<>();

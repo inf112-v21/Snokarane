@@ -1053,6 +1053,10 @@ public class GameScreen extends ScreenAdapter {
             updateChat();
             networkChatBacklogSize = network.messagesRecived.size();
         }
+
+        if(network.winner != null){
+            game.setScreen(new VictoryScreen(game, network.winner));
+        }
     }
 
 
