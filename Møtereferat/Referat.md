@@ -364,3 +364,63 @@ Fortsette på planlegging av prosjekt og prosjektstruktur
 - Sjekka opp i at alt var med og klart til innlevering
 - Leverte
 
+**Neste møte:** 07.04.2021
+
+## **Referat møte onsdag 07.04.2021**
+
+**Stad:** Discord, tid 1215
+
+**Agenda:** Planlegging av neste innlevering
+
+**Møtte:** Jørgen Lohne, Hallvard Kobbeltveit, Audun Ljone Henriksen og Peter Augustin Gillow Krooni
+
+**Diskusjon/arbeid:**
+- Vart einig om å fikse bugs i eksisterande implementasjon før vi starter på implementasjon
+- Ny/mogleg implementasjon på sikt; vise hp, vise kva kort som blir spelt, optionskort, etc
+- Vart einig om å avslutte møte tidleg då fleire hadde mykje anna å gjere
+
+**Neste møte:** 14.04.2021
+
+## **Referat møte onsdag 14.04.2021**
+
+**Stad:** Discord, tid 1215
+
+**Agenda:** Catch up og planlegging
+
+**Møtte:** Jørgen Lohne, Hallvard Kobbeltveit, Audun Ljone Henriksen og Peter Augustin Gillow Krooni
+
+**Diskusjon/arbeid:**
+- Alle la fram arbeidet dei hadde gjort sidan sist
+- Einig om at det hadde vore fint med musikk i menyen - Jørgen og Peter meinte dette var enkelt å få til, men at det ikkje har høg prioritet
+- Peter har rydda opp i gamescreenklassen
+- Hallvard og Audun har ordna at vertikale og horisontale lasere blir vist på same tile
+- Hallvard og Audun har implementert damage counters og generell damage handling
+- Jørgen har jobba vidare med customization over nett
+- Peter har fiksa chatten ytterlegare - det går no an at fleire skriv samstundes
+- Fekk tilbakemelding på forrige innlevering - alle var nøgd
+- Testa chatbranchen i plenum - den fungerte som den skulle
+
+**Neste møte:** 21.04.2021
+
+## **Referat møte onsdag 21.04.2021**
+
+**Stad:** Discord, tid 1215
+
+**Agenda:** Catch up og planlegging
+
+**Møtte:** Jørgen Lohne, Audun Ljone Henriksen og Peter Augustin Gillow Krooni
+
+**Diskusjon/arbeid:**
+- Hallvard kunne ikkje stille
+- Merga Menu-polish inn i master
+- Merga resten av spel-logikk inn i master
+- Fiksa errors som dukka opp under merginga
+- Bestemte oss for å leggje inn musikk før innlevering
+- La inn eit møte på innleveringsdagen for finpuss
+
+**Neste møte:** 23.04.2021
+
+
+
+
+
