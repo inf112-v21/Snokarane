@@ -421,7 +421,22 @@ Fortsette på planlegging av prosjekt og prosjektstruktur
 
 **Neste møte:** 23.04.2021
 
+## **Referat møte fredag 23.04.2021**
 
+**Stad:** Discord, tid 1015
+
+**Agenda:** Catch up og planlegging
+
+**Møtte:** Jørgen Lohne, Hallvard Kobbeltveit, Audun Ljone Henriksen og Peter Augustin Gillow Krooni
+
+**Diskusjon/arbeid:**
+- Mergeparty
+- Testa spelet i plenum for bugs
+- La til funksjon at serveren blir lukka når ein speler vinner
+- La inn dokumentasjon
+- Peter litt sletn etter å ha bært vaskemaskin
+- Reflekterte litt over prosjektet og prosessen
+- Leverte
 
 
 

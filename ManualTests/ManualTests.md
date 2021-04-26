@@ -56,7 +56,25 @@
 8. Write <c font-scale 1> in the chat (without the '<>' symbols)
 9. If the chat font has increased in size (default is 0.8), the font-scale command
    is working correctly
-
+10.  write <c example-messages> to send a set of example messages to test chat messages  
+   Do the same thing except append all to example messages, and these messages should be sent to all clients connected
+12.  write </c uwufy> to change the messages in the chat to an emoji-speak like language
+   text in the chat should be transformed according to the rules in ui/chat/backend/Uwufier
+13.  write </c clear> to clear the messages on screen
+   all messages send should be wiped.
+14.  write </c show message> to send internal message
+   the message sent should appear in green in the chat. 
+15. write </c send-cards> after having chosen 5 cards
+   the command should operate with the same functionality as Send Cards button. If having selected less than 5 cards, the chat should show and internal error message.
+16. write </c reset-cards> after having selected atleast 1 card.
+   the card deck should then reset all card choices made.
+   
+### Waiting room test:
+1. Start two instances of the game.
+2. Click on the "host/join game" button on both instances
+3. Select "host game" on one of the instances
+4. After hosting on one instance, select "join game" on the other instance
+5. Both instances should now show two player avatars in the waiting room screen.
 
 ### CharacterCustomisationTest:
 1. Start the game as usual.
