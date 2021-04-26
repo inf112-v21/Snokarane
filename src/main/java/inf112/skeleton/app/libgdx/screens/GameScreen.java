@@ -1238,15 +1238,6 @@ public class GameScreen extends ScreenAdapter {
                 if (((GameHost) gamePlayer).allCardsReady()) {
                     System.out.println("Cards are being sent to processing. Stage size before deck clear: " + stage.getActors().size);
                     clearNonInteractiveStageElements();
-                    for (Card c : gamePlayer.hand){
-                        for (Card d : gamePlayer.chosenCards){
-                            if (c.getCardType() == d.getCardType() && c.picked){
-                                c.setCardType(CardType.NONE);
-                            }else {
-                                gamePlayer.discard.add(c);
-                            }
-                        }
-                    }
                     gamePlayer.state = GamePlayer.PLAYERSTATE.SENDING_CARDS;
                     gamePlayer.registerChosenCards();
                     return true;
@@ -1257,15 +1248,6 @@ public class GameScreen extends ScreenAdapter {
             } else {
                 System.out.println("Cards are being sent to processing. Stage size before deck clear: " + stage.getActors().size);
                 clearNonInteractiveStageElements();
-                for (Card c : gamePlayer.hand){
-                    for (Card d : gamePlayer.chosenCards){
-                        if (c.getCardType() == d.getCardType() && c.picked){
-                            c.setCardType(CardType.NONE);
-                        }else {
-                            gamePlayer.discard.add(c);
-                        }
-                    }
-                }
                 gamePlayer.state = GamePlayer.PLAYERSTATE.SENDING_CARDS;
                 gamePlayer.registerChosenCards();
                 return true;

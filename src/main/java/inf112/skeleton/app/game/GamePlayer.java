@@ -71,6 +71,9 @@ public abstract class GamePlayer{
         }
 
         if (hand.size() < 9-damageCounters) {
+            for (int i = 0; i<discard.size(); i++){
+                discard.get(i).picked = false;
+            }
             deck.addAll(discard);
             Collections.shuffle(deck);
             discard = new ArrayList<>();
