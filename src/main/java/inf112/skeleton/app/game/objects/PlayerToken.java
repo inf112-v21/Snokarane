@@ -51,7 +51,7 @@ public class PlayerToken {
     }
 
     //Current direction of player
-    private Direction playerDirection = Direction.NORTH;
+    public Direction playerDirection = Direction.NORTH;
 
     /**
      * Use this method to move a player when the player is being pushed by something.

@@ -1255,7 +1255,7 @@ public class GameScreen extends ScreenAdapter {
      * Sends cards to host if all requirements for sending cards are met.
      */
     private boolean sendCardsIfPossible(){
-        if (gamePlayer.chosenCards.size() >= 5) {
+        if (gamePlayer.chosenCards.size() >= 5 - gamePlayer.damageCounters) {
             if (network.isHost) {
                 if (((GameHost) gamePlayer).allCardsReady()) {
                     System.out.println("Cards are being sent to processing. Stage size before deck clear: " + stage.getActors().size);

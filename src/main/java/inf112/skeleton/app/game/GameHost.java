@@ -63,6 +63,10 @@ public class GameHost extends GamePlayer {
         player.position.x = pos.x;
         player.position.y = pos.y;
 
+        if (player.position.y != 0) {
+            player.playerDirection = Direction.SOUTH;
+        }
+
         return player;
     }
     /**
