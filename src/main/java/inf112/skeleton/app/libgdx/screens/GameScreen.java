@@ -371,6 +371,7 @@ public class GameScreen extends ScreenAdapter {
         loadPlayerList();
         loadPowerDown();
         loadChatInputBox();
+        loadVolumeSlider();
         updateChat();
     }
     /**
@@ -616,6 +617,27 @@ public class GameScreen extends ScreenAdapter {
 
             stage.addActor(inputBox);
         }
+    }
+    private void loadVolumeSlider(){
+        Slider volumeSlider = new Slider(0f, 1f, 0.01f, false, game.skin);
+        volumeSlider.setPosition(Gdx.graphics.getWidth()-305-volumeSlider.getWidth()/2, 60);
+        volumeSlider.setValue(game.menuMusic.getVolume());
+        volumeSlider.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent changeEvent, Actor actor) {
+                game.menuMusic.setVolume(volumeSlider.getValue());
+                game.gameMusic.setVolume(volumeSlider.getValue());
+            }
+        });
+
+        Label volumeSliderLabel = new Label("Vol", game.skin);
+        volumeSliderLabel.setPosition(volumeSlider.getX()+volumeSlider.getWidth()/2-volumeSliderLabel.getWidth()/2+volumeSlider.getWidth()-50, volumeSlider.getY()+6);
+
+        volumeSlider.setName("vol-slider");
+        volumeSliderLabel.setName("vol-slider-label");
+
+        stage.addActor(volumeSlider);
+        stage.addActor(volumeSliderLabel);
     }
     /**
      * Get new messages that have been received from the network, get formatted table and add input box with listener.
