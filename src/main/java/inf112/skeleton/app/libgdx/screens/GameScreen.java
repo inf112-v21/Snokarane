@@ -620,7 +620,7 @@ public class GameScreen extends ScreenAdapter {
     }
     private void loadVolumeSlider(){
         Slider volumeSlider = new Slider(0f, 1f, 0.01f, false, game.skin);
-        volumeSlider.setPosition(Gdx.graphics.getWidth()-305-volumeSlider.getWidth()/2, 60);
+        volumeSlider.setPosition(Gdx.graphics.getWidth()-265-volumeSlider.getWidth()/2, 45);
         volumeSlider.setValue(game.menuMusic.getVolume());
         volumeSlider.addListener(new ChangeListener() {
             @Override
