@@ -46,18 +46,15 @@ public abstract class GamePlayer{
      */
     public GamePlayer(){
         Random random = new Random();
-        //Move1, Move2, Move3, Back up, Rotate right, Rotate left, U-turn
-        List<Integer> numOfEachCardType = Arrays.asList(new Integer[]{18, 12, 6, 6, 18, 18, 6});
-        for(int i = 0; i < numOfEachCardType.size(); i++) {
+
+        List<Integer> jorgenCards = Arrays.asList(new Integer[]{4, 1, 5, 1, 6, 0, 3, 4, 5, 4, 5, 6, 0, 0, 0, 3, 3, 6, 1, 2, 3, 4, 5, 6, 6, 5, 4, 3, 2, 1, 1, 2, 3, 4, 5, 6, 6, 5, 4, 3, 2, 1});
+        for (int i : jorgenCards) {
             CardType cardType = CardType.values()[i];
-            for (int j = 0; j < numOfEachCardType.get(i); j++) {
-                Card card = new Card();
-                card.setCardType(cardType);
-                card.setPriority(random.nextInt(1000));
-                deck.add(card);
-            }
+            Card card = new Card();
+            card.setCardType(cardType);
+            card.setPriority(random.nextInt(1000));
+            deck.add(card);
         }
-        Collections.shuffle(deck);
     }
 
     /**
